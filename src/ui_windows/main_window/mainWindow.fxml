@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="650.0" prefWidth="1250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.main_window.MainWindowsController">
+    <children>
+      <AnchorPane prefHeight="25.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+        <MenuBar fx:id="mnuBar" layoutY="2.0" prefHeight="25.0" prefWidth="1200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <menus>
+                <Menu fx:id="miFile" mnemonicParsing="false" text="   Файл   ">
+                    <items>
+                        <MenuItem fx:id="mniOpenNow" mnemonicParsing="false" onAction="#openNow" text="     Обновиться по выгрузке с NOW     " />
+                    </items>
+                </Menu>
+                <Menu fx:id="miOptions" mnemonicParsing="false" text="   Настройки  ">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#openOptionsWindow" text="     Открыть окно настроек     " />
+                    </items>
+                </Menu>
+            <Menu mnemonicParsing="false" text="   Запросы   ">
+              <items>
+                <MenuItem fx:id="miRequestCertExistence" mnemonicParsing="false" onAction="#actionRequestCertificates" text="     Наличие сертификатов     " />
+              </items>
+            </Menu>
+            <Menu fx:id="miReports" mnemonicParsing="false" text="   Данные   ">
+              <items>
+                  <RadioMenuItem fx:id="rmiAllItems" mnemonicParsing="false" onAction="#reportAllItems" text="     Все позиции     " />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <RadioMenuItem fx:id="rmiWithoutCerts" mnemonicParsing="false" onAction="#reportNoCertificates" text="     Позиции без сертификатов     " />
+                  <RadioMenuItem fx:id="rmiWithProblemCerts" mnemonicParsing="false" onAction="#reportProblemCertificates" text="     Позиции с проблемными сертификатами     " />
+                  <RadioMenuItem fx:id="rmiWithExpCerts" mnemonicParsing="false" onAction="#reportExpiredSoonCertificates" text="     Позиции с истекающими сертификатами     " />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <RadioMenuItem fx:id="rmiLastImportResult" mnemonicParsing="false" onAction="#selectLastImportResult" text="     Результаты последнего импорта     " />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <RadioMenuItem fx:id="rmiDoubles" mnemonicParsing="false" onAction="#reportDoubles" text="     Дублирующиеся позиции     " />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="   Фильтр   ">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#displayFilterOptions" text="     Настройки фильтра     " />
+              </items>
+            </Menu>
+                <Menu mnemonicParsing="false" text="   Авторизация   ">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#actionLogin" text="     Ввести пароль     " />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#userInfo" text="     Данные о текущем пользователе     " />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <TableView fx:id="tvTable" layoutX="26.0" layoutY="34.0" prefHeight="513.0" prefWidth="1180.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="30.0">
+            <contextMenu>
+                <ContextMenu>
+                    <items>
+                        <MenuItem fx:id="mniAdd" disable="true" mnemonicParsing="false" onAction="#addProduct" text="     Добавить     " />
+                        <MenuItem fx:id="mniEdit" mnemonicParsing="false" onAction="#editProduct" text="     Редактировать     " />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem disable="true" mnemonicParsing="false" text="     В архив     " />
+                        <MenuItem disable="true" mnemonicParsing="false" text="     Из архива     " />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="mniDelete" disable="true" mnemonicParsing="false" onAction="#deleteProduct" text="     Удалить     " />
+                    </items>
+                </ContextMenu>
+            </contextMenu></TableView>
+        <Label alignment="CENTER_RIGHT" layoutX="96.0" layoutY="578.0" prefHeight="17.0" prefWidth="53.0" text="Поиск" AnchorPane.bottomAnchor="42.0" AnchorPane.leftAnchor="96.0" />
+        <Label layoutX="989.0" layoutY="578.0" text="Найдено записей:" AnchorPane.bottomAnchor="42.0" AnchorPane.rightAnchor="112.0" />
+        <Label fx:id="lbRecordCount" layoutX="1092.0" layoutY="578.0" text="ХХХХХХХ" AnchorPane.bottomAnchor="42.0" AnchorPane.rightAnchor="58.0" />
+      <Pane layoutY="770.0" prefHeight="25.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+      <ProgressBar fx:id="pbExecuted" layoutX="993.0" layoutY="5.0" prefWidth="200.0" progress="0.0" visible="false" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+    </children>
+</AnchorPane>

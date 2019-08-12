@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="753.0" prefWidth="1171.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.options_window.OptionsWindowController">
+   <children>
+      <TabPane fx:id="tpOptions" prefHeight="753.0" prefWidth="1172.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <tabs>
+          <Tab fx:id="tabCertificates" text="   Сертификаты   ">
+            <content>
+              <AnchorPane fx:id="apCertificates" minHeight="0.0" minWidth="0.0" prefHeight="724.0" prefWidth="1171.0">
+                     <children>
+                        <TableView fx:id="tvCertificateTypes" layoutX="35.0" layoutY="32.0" prefHeight="200.0" prefWidth="1109.0">
+                           <columns>
+                              <TableColumn prefWidth="177.0" text="Сокращенное название" />
+                              <TableColumn prefWidth="892.0" text="Полное название" />
+                           </columns>
+                           <contextMenu>
+                              <ContextMenu fx:id="cmCertTypes">
+                                <items>
+                                  <MenuItem fx:id="miAdd" mnemonicParsing="false" onAction="#actionAddCertificateType" text="     Добавить    " />
+                                    <MenuItem fx:id="miEdit" mnemonicParsing="false" onAction="#actionEditCertificateType" text="     Редактировать    " />
+                                    <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem fx:id="miDelete" mnemonicParsing="false" onAction="#actionDeleteCertificateType" text="     Удалить     " />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu>
+                        </TableView>
+                        <TableView fx:id="tvCertificates" layoutX="35.0" layoutY="264.0" prefHeight="450.0" prefWidth="1109.0">
+                          <columns>
+                            <TableColumn prefWidth="409.0" text="Название" />
+                              <TableColumn prefWidth="111.0" text="Срок действия" />
+                              <TableColumn minWidth="0.0" prefWidth="109.0" text="Осталось (мес.)" />
+                              <TableColumn prefWidth="513.0" text="Имя файла" />
+                          </columns>
+                           <contextMenu>
+                              <ContextMenu fx:id="cmCertificates">
+                                <items>
+                                    <MenuItem fx:id="miAdd1" mnemonicParsing="false" onAction="#actionAddCertificate" text="     Добавить    " />
+                                    <MenuItem fx:id="miEdit1" mnemonicParsing="false" onAction="#actionEditCertificate" text="     Редактировать    " />
+                                    <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem fx:id="miDelete1" mnemonicParsing="false" onAction="#actionDeleteCertificate" text="     Удалить     " />
+                                    <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem fx:id="miCheckCertificates" mnemonicParsing="false" onAction="#actionCheckCertificates" text="     Поиск несоответствий     " />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab fx:id="tabFamilies" text="   Направления   ">
+            <content>
+              <AnchorPane fx:id="apProductFamilies" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="tvFamilies" layoutX="40.0" layoutY="41.0" prefHeight="200.0" prefWidth="1108.0">
+                          <columns>
+                            <TableColumn minWidth="0.0" prefWidth="343.0" text="Направление" />
+                            <TableColumn minWidth="0.0" prefWidth="715.0" text="Ответственные" />
+                          </columns>
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#actionAddFamily" text="     Добавить    " />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionEditFamily" text="     Редактировать" />
+                                    <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionDeleteFamily" text="     Удалить     " />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu>
+                        </TableView>
+                        <TableView fx:id="tvLgbk" layoutX="40.0" layoutY="306.0" prefHeight="403.0" prefWidth="1109.0">
+                          <columns>
+                            <TableColumn prefWidth="149.0" text="LGBK" />
+                              <TableColumn prefWidth="142.0" text="Иерархия" />
+                            <TableColumn prefWidth="215.0" text="Описание" />
+                          </columns>
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#actionAddLgbk" text="     Добавить    " />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionEditLgbk" text="     Редактировать     " />
+                                    <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionDeleteLgbk" text="     Удалить     " />
+                                    <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionReCheckLgbkFromProducts" text="     Сверка     " />
+                                    <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionApplyChangedLgbkToProducts" text="     Применить     " />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu>
+                        </TableView>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+            <Tab fx:id="tabOrderable" text="   Доступность для заказа   ">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="tvOrdersAccessibility" layoutX="23.0" layoutY="31.0" prefHeight="683.0" prefWidth="1129.0">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#actionAddOrderAccessItem" text="     Добавить     " />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionEditOrderAccessItem" text="     Редактировать     " />
+                                    <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionDeleteOrderAccessItem" text="     Удалить     " />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab fx:id="tabUsers" text="   Пользователи   ">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="726.0" prefWidth="1200.0">
+                     <children>
+                        <TableView fx:id="tvProfiles" layoutX="19.0" layoutY="38.0" prefHeight="276.0" prefWidth="1132.0">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#actionAddProfile" text="     Добавить     " />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionEditProfile" text="     Редактировать     " />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionSaveProfile" text="     Сохранить     " />
+                                    <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionDeleteProfile" text="     Удалить     " />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu>
+                        </TableView>
+                        <TableView fx:id="tvUsers" layoutX="20.0" layoutY="369.0" prefHeight="343.0" prefWidth="1130.0">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#actionAddUser" text="     Добавить     " />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionEditUser" text="     Редактировать     " />
+                                    <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionDeleteUser" text="     Удалить     " />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>

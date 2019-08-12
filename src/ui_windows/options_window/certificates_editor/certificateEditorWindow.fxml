@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.media.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="744.0" prefWidth="1053.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.options_window.certificates_editor.CertificateEditorWindowController">
+   <children>
+      <TextField fx:id="tfCertName" layoutX="140.0" layoutY="29.0" prefHeight="25.0" prefWidth="490.0" />
+      <Label alignment="CENTER_RIGHT" layoutX="49.0" layoutY="33.0" prefHeight="17.0" prefWidth="70.0" text="Название" textAlignment="CENTER" />
+      <DatePicker fx:id="dpDatePicker" layoutX="142.0" layoutY="233.0" promptText="Выберите дату" />
+      <Label alignment="CENTER_RIGHT" layoutX="21.0" layoutY="237.0" prefHeight="17.0" prefWidth="105.0" text="Срок действия" textAlignment="CENTER" />
+      <Label alignment="CENTER_RIGHT" layoutX="652.0" layoutY="30.0" prefHeight="17.0" prefWidth="125.0" text="Страны производства" textAlignment="CENTER" />
+      <Label alignment="CENTER_RIGHT" layoutX="43.0" layoutY="265.0" prefHeight="17.0" prefWidth="84.0" text="Имя файла" textAlignment="CENTER" />
+      <TextField fx:id="tfFileName" editable="false" layoutX="142.0" layoutY="263.0" prefHeight="25.0" prefWidth="423.0" promptText="Нажмите кнопку Обзор для выбора" />
+      <Button fx:id="btnApply" layoutX="251.0" layoutY="705.0" mnemonicParsing="false" onAction="#apply" prefHeight="25.0" prefWidth="150.0" text="Сохранить" />
+      <Button fx:id="btnCancel" layoutX="652.0" layoutY="705.0" mnemonicParsing="false" onAction="#cancel" prefHeight="25.0" prefWidth="150.0" text="Отмена" />
+      <Button fx:id="btnFolderSelect" layoutX="567.0" layoutY="263.0" mnemonicParsing="false" onAction="#selectFolder" prefHeight="25.0" prefWidth="64.0" text="Обзор" />
+      <TableView fx:id="tvContent" layoutX="9.0" layoutY="301.0" prefHeight="385.0" prefWidth="1003.0">
+        <columns>
+          <TableColumn fx:id="tcType" prefWidth="404.0" text="Тип оборудования" />
+            <TableColumn fx:id="tсTnVed" minWidth="0.0" prefWidth="105.0" text="ТН ВЭД" />
+          <TableColumn fx:id="tcNames" minWidth="0.0" prefWidth="572.0" text="Наименование" />
+        </columns>
+         <contextMenu>
+            <ContextMenu fx:id="cmCertificateContent">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#addItem" text="     Добавить     " />
+                  <MenuItem mnemonicParsing="false" onAction="#editItem" text="     Редактировать     " />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#deleteItem" text="     Удалить     " />
+              </items>
+            </ContextMenu>
+         </contextMenu>
+      </TableView>
+      <ComboBox fx:id="cbCountrySelect" editable="true" layoutX="652.0" layoutY="261.0" prefHeight="25.0" prefWidth="259.0" promptText="Выберите или введите название страны" />
+      <Button fx:id="btnAddCountry" layoutX="916.0" layoutY="261.0" mnemonicParsing="false" onAction="#addCountry" prefHeight="25.0" prefWidth="97.0" text="Добавить" />
+      <ListView fx:id="lvCountries" layoutX="652.0" layoutY="53.0" onKeyPressed="#countryKey" prefHeight="205.0" prefWidth="361.0" />
+      <Separator layoutX="639.0" layoutY="27.0" orientation="VERTICAL" prefHeight="261.0" prefWidth="6.0" />
+      <ListView fx:id="lvNorms" layoutX="140.0" layoutY="65.0" onKeyPressed="#normsKey" prefHeight="109.0" prefWidth="490.0" />
+      <Label alignment="CENTER_RIGHT" layoutX="12.0" layoutY="212.0" prefHeight="17.0" prefWidth="114.0" text="Совпадение имени" textAlignment="CENTER" />
+      <Label alignment="CENTER_RIGHT" layoutX="14.0" layoutY="65.0" prefHeight="17.0" prefWidth="105.0" text="Регламенты" textAlignment="CENTER" />
+      <CheckBox fx:id="ckbNameMatch" contentDisplay="GRAPHIC_ONLY" layoutX="141.0" layoutY="212.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="20.0" text="CheckBox" />
+      <Separator layoutX="12.0" layoutY="293.0" prefHeight="0.0" prefWidth="1003.0" />
+      <Button fx:id="btnAddNorm" layoutX="533.0" layoutY="178.0" mnemonicParsing="false" onAction="#addNorm" prefHeight="25.0" prefWidth="97.0" text="Добавить" />
+      <ComboBox fx:id="cbNormSelect" editable="true" layoutX="142.0" layoutY="178.0" prefHeight="25.0" prefWidth="388.0" promptText="Выберите или введите название регламента" />
+      <CheckBox fx:id="ckbMaterialMatch" contentDisplay="GRAPHIC_ONLY" layoutX="418.0" layoutY="212.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="29.0" text="CheckBox" />
+      <Label alignment="CENTER_RIGHT" layoutX="254.0" layoutY="212.0" prefHeight="17.0" prefWidth="156.0" text="Поиск в заказном номере" textAlignment="CENTER" />
+   </children>
+</AnchorPane>

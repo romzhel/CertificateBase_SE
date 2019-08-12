@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="277.0" prefWidth="578.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.options_window.product_lgbk.LgbkEditorWindowController">
+   <children>
+      <Label layoutX="110.0" layoutY="23.0" text="LGBK" />
+      <Label layoutX="83.0" layoutY="61.0" text="Иерархия" />
+      <Label layoutX="82.0" layoutY="101.0" text="Описание" />
+      <Label layoutX="63.0" layoutY="140.0" text="Направление" />
+      <Label layoutX="50.0" layoutY="173.0" text="Не используется" />
+      <CheckBox fx:id="ckbNotUsed" contentDisplay="GRAPHIC_ONLY" layoutX="154.0" layoutY="173.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="10.0" text="CheckBox" />
+      <ComboBox fx:id="cbFamily" layoutX="154.0" layoutY="136.0" prefHeight="25.0" prefWidth="364.0" />
+      <TextField fx:id="tfDescription" layoutX="154.0" layoutY="97.0" prefHeight="25.0" prefWidth="364.0" />
+      <TextField fx:id="tfLgbk" layoutX="154.0" layoutY="19.0" />
+      <TextField fx:id="tfHierarchy" layoutX="154.0" layoutY="57.0" />
+      <Button fx:id="btnApply" layoutX="115.0" layoutY="227.0" mnemonicParsing="false" onAction="#apply" prefHeight="25.0" prefWidth="137.0" text="Сохранить" />
+      <Button fx:id="btnCancel" layoutX="336.0" layoutY="227.0" mnemonicParsing="false" onAction="#close" prefHeight="25.0" prefWidth="137.0" text="Закрыть" />
+   </children>
+</AnchorPane>

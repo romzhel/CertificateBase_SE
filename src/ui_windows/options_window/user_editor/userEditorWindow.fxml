@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="542.0" prefWidth="618.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.options_window.user_editor.userEditorWindowController">
+   <children>
+      <TextField fx:id="tfName" layoutX="138.0" layoutY="22.0" prefHeight="25.0" prefWidth="448.0" />
+      <TextField fx:id="tfSurname" layoutX="138.0" layoutY="55.0" prefHeight="25.0" prefWidth="448.0" />
+      <ListView fx:id="lvFamilies" layoutX="138.0" layoutY="87.0" prefHeight="220.0" prefWidth="200.0" />
+      <ListView fx:id="lvSelectedFamilies" layoutX="386.0" layoutY="87.0" prefHeight="220.0" prefWidth="200.0" />
+      <TextField fx:id="tfPassword" layoutX="138.0" layoutY="351.0" prefHeight="25.0" prefWidth="245.0" />
+      <ListView fx:id="lvPcNames" layoutX="138.0" layoutY="393.0" prefHeight="76.0" prefWidth="448.0" />
+      <ComboBox fx:id="cbProfile" layoutX="138.0" layoutY="314.0" prefHeight="25.0" prefWidth="448.0" />
+      <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="21.0" layoutY="26.0" prefHeight="17.0" prefWidth="106.0" text="Имя" textAlignment="CENTER" />
+      <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="21.0" layoutY="59.0" prefHeight="17.0" prefWidth="106.0" text="Фамилия" textAlignment="CENTER" />
+      <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="21.0" layoutY="87.0" prefHeight="17.0" prefWidth="106.0" text="Линейки" textAlignment="CENTER" />
+      <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="21.0" layoutY="104.0" prefHeight="17.0" prefWidth="106.0" text="оборудования" textAlignment="CENTER" />
+      <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="21.0" layoutY="318.0" prefHeight="17.0" prefWidth="106.0" text="Профиль" textAlignment="CENTER" />
+      <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="21.0" layoutY="355.0" prefHeight="17.0" prefWidth="106.0" text="Пароль" textAlignment="CENTER" />
+      <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="21.0" layoutY="393.0" prefHeight="17.0" prefWidth="106.0" text="Привязка к" textAlignment="CENTER" />
+      <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="21.0" layoutY="410.0" prefHeight="17.0" prefWidth="106.0" text="именам" textAlignment="CENTER" />
+      <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="21.0" layoutY="429.0" prefHeight="17.0" prefWidth="106.0" text="компьютеров" textAlignment="CENTER" />
+      <Button fx:id="btnMoveSelected" layoutX="350.0" layoutY="109.0" mnemonicParsing="false" onAction="#moveFamily" text="&gt;" />
+      <Button fx:id="btnRemoveSelected" layoutX="350.0" layoutY="145.0" mnemonicParsing="false" onAction="#removeFamily" text="&lt;" />
+      <Button fx:id="btnRemoveAll" layoutX="346.0" layoutY="253.0" mnemonicParsing="false" onAction="#removeAllFamilies" text="&lt;&lt;" />
+      <Button fx:id="btnMoveAll" layoutX="346.0" layoutY="217.0" mnemonicParsing="false" onAction="#moveAllFamilies" text="&gt;&gt;" />
+      <Button fx:id="btnApply" layoutX="74.0" layoutY="494.0" mnemonicParsing="false" onAction="#actionApply" prefHeight="25.0" prefWidth="175.0" text="Сохранить" />
+      <Button fx:id="btnClose" layoutX="375.0" layoutY="494.0" mnemonicParsing="false" onAction="#actionClose" prefHeight="25.0" prefWidth="175.0" text="Закрыть" />
+   </children>
+</AnchorPane>
