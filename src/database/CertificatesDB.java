@@ -26,7 +26,7 @@ public class CertificatesDB implements Request {
             deleteData = CoreModule.getDataBase().getDbConnection().prepareStatement("DELETE FROM certificates " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            System.out.println("prepared statements exception " + e.getMessage());
+            showErrorMessage(e.getMessage(), "prepared statements exception: " + e.getMessage() + "\n" + e.getStackTrace());
         }
     }
 
@@ -41,7 +41,7 @@ public class CertificatesDB implements Request {
             }
 
         } catch (SQLException e) {
-            System.out.println("SQL exception cert types");
+            showErrorMessage(e.getMessage(), "SQL exception cert types: " + e.getMessage() + "\n" + e.getStackTrace());
         }
 
         return certificates;
@@ -80,7 +80,8 @@ public class CertificatesDB implements Request {
                 }
 
             } catch (SQLException e) {
-                System.out.println("exception of writing to BD");
+                System.out.println();
+                showErrorMessage(e.getMessage(), "exception of writing to BD: " + e.getMessage() + "\n" + e.getStackTrace());
             }
 
         }
@@ -114,7 +115,7 @@ public class CertificatesDB implements Request {
                 }
 
             } catch (SQLException e) {
-                System.out.println("exception of writing to BD");
+                showErrorMessage(e.getMessage(), "exception of writing to BD: " + e.getMessage() + "\n" + e.getStackTrace());
             }
 
             MainWindow.setProgress(0.0);
@@ -141,10 +142,16 @@ public class CertificatesDB implements Request {
                 }
 
             } catch (SQLException e) {
-                System.out.println("exception of writing to BD");
+                System.out.println();
+                showErrorMessage(e.getMessage(), "exception of writing to BD: " + e.getMessage() + "\n" + e.getStackTrace());
             }
         }
         MainWindow.setProgress(0.0);
         return false;
+    }
+
+    public void showErrorMessage(String messageText, String logText){
+        Dialogs.showMessage("Ошибка работы с базой данных", messageText);
+        System.out.println(logText);
     }
 }
