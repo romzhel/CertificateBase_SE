@@ -134,10 +134,7 @@ public class OptionsWindowController implements Initializable {
         description.setPrefWidth(300);
 
         ttvLgbk.getColumns().addAll(lgbkCol, hierarchy, description);
-
-        ProductLgbkGroups plgs = new ProductLgbkGroups();
-        plgs.create(CoreModule.getProducts());
-        ttvLgbk.setRoot(CoreModule.getProductLgbks().getFromLgbkGroups(plgs));
+        ttvLgbk.setRoot(CoreModule.getProductLgbkGroups().getLgbkTreeSet());
 
 
         //------------------------------------------order accessibility-------------------------------------------------

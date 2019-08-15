@@ -16,6 +16,7 @@ import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.options_window.product_lgbk.ProductLgbks;
 import ui_windows.options_window.profile_editor.Profiles;
 import ui_windows.options_window.user_editor.Users;
@@ -39,6 +40,7 @@ public class CoreModule {
     private static ProductTypes productTypes;
     private static ProductFamilies productFamilies;
     private static ProductLgbks productLgbks;
+    private static ProductLgbkGroups productLgbkGroups;
     private static OrdersAccessibility ordersAccessibility;
     private static Profiles profiles;
     private static Users users;
@@ -76,6 +78,8 @@ public class CoreModule {
         filter = new Filter();
         products = new Products().getFromDB();
         currentItems = products.getItems();
+
+        productLgbkGroups = new ProductLgbkGroups().get();
 
         if (users.getCurrentUser().getProfile().getName() == "Общий доступ") {
             if (!dataBase.disconnect()) System.out.println("fail of DB disconnecting");
@@ -227,5 +231,9 @@ public class CoreModule {
 
     public static synchronized void setCurrentItems(ArrayList<Product> currentItems) {
         CoreModule.currentItems = currentItems;
+    }
+
+    public static ProductLgbkGroups getProductLgbkGroups() {
+        return productLgbkGroups;
     }
 }

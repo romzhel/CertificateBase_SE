@@ -26,22 +26,6 @@ public class ProductLgbks {
         return this;
     }
 
-    public TreeItem<ProductLgbk> getFromLgbkGroups(ProductLgbkGroups lgbkGroups) {
-        TreeItem<ProductLgbk> rootNode = new TreeItem<>(new ProductLgbk("Все позиции", ""));
-
-        for (ProductLgbkGroups.ProductLgbkGroup lgbkGroup : lgbkGroups.getLgbkGroups()) {
-            TreeItem<ProductLgbk> lgbkGroupNode = new TreeItem<>(new ProductLgbk(lgbkGroup.getLgbkName(), "Все"));
-
-            for (String hierarchyName : lgbkGroup.getHierarchyNames()) {
-                lgbkGroupNode.getChildren().add(new TreeItem<>(new ProductLgbk(lgbkGroup.getLgbkName(), hierarchyName + "...")));
-            }
-
-            rootNode.getChildren().add(lgbkGroupNode);
-        }
-
-        return rootNode;
-    }
-
     public void addItem(ProductLgbk productLgbk) {
         if (db.putData(productLgbk)) {
             productLgbks.add(productLgbk);

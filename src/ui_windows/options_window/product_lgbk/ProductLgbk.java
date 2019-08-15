@@ -16,8 +16,8 @@ public class ProductLgbk {
     private int id;
     private StringProperty lgbk;
     private StringProperty hierarchy;
-    private StringProperty description;
-    private int familyId;
+    private StringProperty description = new SimpleStringProperty("");
+    private int familyId = -1;
     private boolean isNotUsed;
 
 
