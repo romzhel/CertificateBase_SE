@@ -1,10 +1,12 @@
 package ui_windows.options_window.product_lgbk;
 
+import core.CoreModule;
 import core.Dialogs;
 import database.ProductLgbksDB;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableView;
 import ui_windows.main_window.Product;
 import ui_windows.main_window.Products;
 import ui_windows.options_window.families_editor.ProductFamily;
@@ -30,19 +32,21 @@ public class ProductLgbks {
         if (db.putData(productLgbk)) {
             productLgbks.add(productLgbk);
 
-            TableView<ProductLgbk> tableView = productLgbksTable.getTableView();
-            tableView.getItems().add(productLgbk);
+            TreeTableView<ProductLgbk> tableView = productLgbksTable.getTableView();
+            CoreModule.getProductLgbkGroups().createFromLgbks(this);
+            tableView.setRoot(CoreModule.getProductLgbkGroups().getLgbkTreeSet());
 
-            tableView.getColumns().get(0).setSortType(TableColumn.SortType.DESCENDING);
-            tableView.getColumns().get(1).setSortType(TableColumn.SortType.ASCENDING);
-            tableView.getSortOrder().setAll(tableView.getColumns().get(0), tableView.getColumns().get(1));
+//            tableView.getColumns().get(0).setSortType(TableColumn.SortType.DESCENDING);
+//            tableView.getColumns().get(1).setSortType(TableColumn.SortType.ASCENDING);
+//            tableView.getSortOrder().setAll(tableView.getColumns().get(0), tableView.getColumns().get(1));
         }
     }
 
     public void removeItem(ProductLgbk pl) {
         if (db.deleteData(pl)) {
             productLgbks.remove(pl);
-            productLgbksTable.getTableView().getItems().remove(pl);
+            CoreModule.getProductLgbkGroups().createFromLgbks(this);
+            productLgbksTable.getTableView().setRoot(CoreModule.getProductLgbkGroups().getLgbkTreeSet());
         }
     }
 

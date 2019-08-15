@@ -52,9 +52,9 @@ public class OptionsWindowController implements Initializable {
     TableView<ProductFamily> tvFamilies;
 
     @FXML
-    TableView<ProductLgbk> tvLgbk;
+    TableView<ProductLgbk> tvLgbk_;
     @FXML
-    TreeTableView<ProductLgbk> ttvLgbk;
+    TreeTableView<ProductLgbk> tvLgbk;
 
     @FXML
     TableView<OrderAccessibility> tvOrdersAccessibility;
@@ -116,26 +116,6 @@ public class OptionsWindowController implements Initializable {
                 }
             }
         });
-
-        tvLgbk.getColumns().get(0).setSortType(TableColumn.SortType.DESCENDING);
-        tvLgbk.getColumns().get(1).setSortType(TableColumn.SortType.ASCENDING);
-        tvLgbk.getSortOrder().setAll(tvLgbk.getColumns().get(0), tvLgbk.getColumns().get(1));
-
-        //---------
-        TreeTableColumn<ProductLgbk, String> lgbkCol = new TreeTableColumn<>("lgbk");
-        lgbkCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("lgbk"));
-        lgbkCol.setPrefWidth(100);
-
-        TreeTableColumn<ProductLgbk, String> hierarchy = new TreeTableColumn<>("hierarchy");
-        hierarchy.setCellValueFactory(new TreeItemPropertyValueFactory<>("hierarchy"));
-        hierarchy.setPrefWidth(75);
-
-        TreeTableColumn<ProductLgbk, String> description = new TreeTableColumn<>("description");
-        description.setPrefWidth(300);
-
-        ttvLgbk.getColumns().addAll(lgbkCol, hierarchy, description);
-        ttvLgbk.setRoot(CoreModule.getProductLgbkGroups().getLgbkTreeSet());
-
 
         //------------------------------------------order accessibility-------------------------------------------------
         CoreModule.getOrdersAccessibility().setTable(new OrdersAccessibilityTable(tvOrdersAccessibility)); //fill order acc table
@@ -225,13 +205,13 @@ public class OptionsWindowController implements Initializable {
 
         if (index >= 0) {
             if (Dialogs.confirm("Удаление элемента", "Действительно желаете удалить элемент"))
-                CoreModule.getProductLgbks().removeItem(tvLgbk.getItems().get(index));
+                CoreModule.getProductLgbks().removeItem(tvLgbk.getTreeItem(index).getValue());
         }
 
     }
 
     public void actionReCheckLgbkFromProducts() {
-        ArrayList<ProductLgbk> lostLgbk = CoreModule.getProductLgbks().getLostLgbkFromProducts(CoreModule.getProducts());
+        /*ArrayList<ProductLgbk> lostLgbk = CoreModule.getProductLgbks().getLostLgbkFromProducts(CoreModule.getProducts());
 
         if (lostLgbk.size() == 0) Dialogs.showMessage("Проверка lgbk", "Все lgbk учтены");
         else {
@@ -241,7 +221,9 @@ public class OptionsWindowController implements Initializable {
             }
 
             Dialogs.showMessage("Проверка lgbk", "Есть неучтенные lgbk:\n\n" + result);
-        }
+        }*/
+
+        CoreModule.getProductLgbkGroups().checkConsistency();
     }
 
     public void actionApplyChangedLgbkToProducts() {

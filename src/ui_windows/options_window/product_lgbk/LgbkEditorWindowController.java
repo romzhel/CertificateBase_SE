@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.AnchorPane;
 import utils.Utils;
 
@@ -38,9 +39,8 @@ public class LgbkEditorWindowController implements Initializable {
                 }
             }
         } else if (LgbkEditorWindow.getMode() == EDIT){
-            TableView<ProductLgbk> plt = CoreModule.getProductLgbks().getProductLgbksTable().getTableView();
-            int index = plt.getSelectionModel().getSelectedIndex();
-            ProductLgbk pl = plt.getItems().get(index);
+            TreeTableView<ProductLgbk> plt = CoreModule.getProductLgbks().getProductLgbksTable().getTableView();
+            ProductLgbk pl = plt.getSelectionModel().getSelectedItem().getValue();
 
             pl.setDescription(Utils.getControlValue(root, "tfDescription"));
             pl.setLgbk(Utils.getControlValue(root, "tfLgbk"));

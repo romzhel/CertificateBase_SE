@@ -74,12 +74,12 @@
                               </ContextMenu>
                            </contextMenu>
                         </TableView>
-                        <TableView fx:id="tvLgbk" layoutX="40.0" layoutY="306.0" prefHeight="403.0" prefWidth="1109.0">
-                          <columns>
-                            <TableColumn prefWidth="149.0" text="LGBK" />
-                              <TableColumn prefWidth="142.0" text="Иерархия" />
-                            <TableColumn prefWidth="215.0" text="Описание" />
-                          </columns>
+                        <TreeTableView fx:id="tvLgbk" layoutX="40.0" layoutY="350.0" prefHeight="350.0" prefWidth="1100.0">
+                            <columns>
+                                <TreeTableColumn prefWidth="149.0" text="LGBK" />
+                                <TreeTableColumn prefWidth="142.0" text="Иерархия" />
+                                <TreeTableColumn prefWidth="215.0" text="Описание" />
+                            </columns>
                            <contextMenu>
                               <ContextMenu>
                                 <items>
@@ -93,9 +93,7 @@
                                     <MenuItem mnemonicParsing="false" onAction="#actionApplyChangedLgbkToProducts" text="     Применить     " />
                                 </items>
                               </ContextMenu>
-                           </contextMenu>
-                        </TableView>
-                        <TreeTableView fx:id="ttvLgbk" layoutX="40.0" layoutY="350.0" prefHeight="350.0" prefWidth="1100.0" />
+                           </contextMenu></TreeTableView>
                      </children></AnchorPane>
             </content>
           </Tab>

@@ -1,6 +1,7 @@
 package ui_windows.options_window.product_lgbk;
 
 import core.CoreModule;
+import core.Dialogs;
 import database.ProductLgbksDB;
 import javafx.scene.control.TreeItem;
 import ui_windows.main_window.Product;
@@ -28,7 +29,7 @@ public class ProductLgbkGroups {
         return this;
     }
 
-    public void createFromProducts(Products products) {
+    public ArrayList<ProductLgbk> createFromProducts(Products products) {
         ArrayList<ProductLgbk> newLgbkItems = new ArrayList<>();
         ProductLgbksDB lgbksDB = new ProductLgbksDB();
 
@@ -52,6 +53,8 @@ public class ProductLgbkGroups {
 
         CoreModule.getProductLgbks().getProductLgbks().clear();
         CoreModule.getProductLgbks().getProductLgbks().addAll(newLgbkItems);
+
+        return newLgbkItems;
     }
 
     public void createFromLgbks(ProductLgbks productLgbks) {
@@ -81,9 +84,9 @@ public class ProductLgbkGroups {
     }
 
     public void checkConsistency() {
-        createFromProducts(CoreModule.getProducts());
-        CoreModule.getProductLgbks().getProductLgbksTable().getTableView().getItems().clear();
-        CoreModule.getProductLgbks().getProductLgbksTable().getTableView().getItems().addAll(getLgbkTreeSet())
+        Dialogs.showMessage("Проверка новых направлений", "Обнаружено новых напрвлений: " +
+                createFromProducts(CoreModule.getProducts()).size());
+        CoreModule.getProductLgbks().getProductLgbksTable().getTableView().setRoot(getLgbkTreeSet());
     };
 
     public TreeItem<ProductLgbk> getLgbkTreeSet() {
