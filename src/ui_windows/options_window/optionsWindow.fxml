@@ -95,6 +95,7 @@
                               </ContextMenu>
                            </contextMenu>
                         </TableView>
+                        <TreeTableView fx:id="ttvLgbk" layoutX="40.0" layoutY="350.0" prefHeight="350.0" prefWidth="1100.0" />
                      </children></AnchorPane>
             </content>
           </Tab>

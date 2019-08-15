@@ -6,8 +6,11 @@ import database.ProfilesDB;
 import files.ExportToExcel;
 import javafx.application.Platform;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import ui_windows.main_window.Product;
 import ui_windows.options_window.certificates_editor.*;
+import ui_windows.options_window.product_lgbk.*;
 import ui_windows.options_window.profile_editor.Profile;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,9 +21,6 @@ import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibilityEditorWindow;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibilityTable;
-import ui_windows.options_window.product_lgbk.LgbkEditorWindow;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
-import ui_windows.options_window.product_lgbk.ProductLgbksTable;
 import ui_windows.options_window.profile_editor.ProfilesTable;
 import ui_windows.options_window.user_editor.User;
 import ui_windows.options_window.user_editor.UserEditorWindow;
@@ -53,6 +53,8 @@ public class OptionsWindowController implements Initializable {
 
     @FXML
     TableView<ProductLgbk> tvLgbk;
+    @FXML
+    TreeTableView<ProductLgbk> ttvLgbk;
 
     @FXML
     TableView<OrderAccessibility> tvOrdersAccessibility;
@@ -118,6 +120,25 @@ public class OptionsWindowController implements Initializable {
         tvLgbk.getColumns().get(0).setSortType(TableColumn.SortType.DESCENDING);
         tvLgbk.getColumns().get(1).setSortType(TableColumn.SortType.ASCENDING);
         tvLgbk.getSortOrder().setAll(tvLgbk.getColumns().get(0), tvLgbk.getColumns().get(1));
+
+        //---------
+        TreeTableColumn<ProductLgbk, String> lgbkCol = new TreeTableColumn<>("lgbk");
+        lgbkCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("lgbk"));
+        lgbkCol.setPrefWidth(100);
+
+        TreeTableColumn<ProductLgbk, String> hierarchy = new TreeTableColumn<>("hierarchy");
+        hierarchy.setCellValueFactory(new TreeItemPropertyValueFactory<>("hierarchy"));
+        hierarchy.setPrefWidth(75);
+
+        TreeTableColumn<ProductLgbk, String> description = new TreeTableColumn<>("description");
+        description.setPrefWidth(300);
+
+        ttvLgbk.getColumns().addAll(lgbkCol, hierarchy, description);
+
+        ProductLgbkGroups plgs = new ProductLgbkGroups();
+        plgs.create(CoreModule.getProducts());
+        ttvLgbk.setRoot(CoreModule.getProductLgbks().getFromLgbkGroups(plgs));
+
 
         //------------------------------------------order accessibility-------------------------------------------------
         CoreModule.getOrdersAccessibility().setTable(new OrdersAccessibilityTable(tvOrdersAccessibility)); //fill order acc table

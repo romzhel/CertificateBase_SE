@@ -4,12 +4,12 @@ import core.Dialogs;
 import database.ProductLgbksDB;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TreeItem;
 import ui_windows.main_window.Product;
 import ui_windows.main_window.Products;
 import ui_windows.options_window.families_editor.ProductFamily;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class ProductLgbks {
     private ArrayList<ProductLgbk> productLgbks;
@@ -24,6 +24,22 @@ public class ProductLgbks {
     public ProductLgbks getFromDB() {
         productLgbks = db.getData();
         return this;
+    }
+
+    public TreeItem<ProductLgbk> getFromLgbkGroups(ProductLgbkGroups lgbkGroups) {
+        TreeItem<ProductLgbk> rootNode = new TreeItem<>(new ProductLgbk("Все позиции", ""));
+
+        for (ProductLgbkGroups.ProductLgbkGroup lgbkGroup : lgbkGroups.getLgbkGroups()) {
+            TreeItem<ProductLgbk> lgbkGroupNode = new TreeItem<>(new ProductLgbk(lgbkGroup.getLgbkName(), "Все"));
+
+            for (String hierarchyName : lgbkGroup.getHierarchyNames()) {
+                lgbkGroupNode.getChildren().add(new TreeItem<>(new ProductLgbk(lgbkGroup.getLgbkName(), hierarchyName + "...")));
+            }
+
+            rootNode.getChildren().add(lgbkGroupNode);
+        }
+
+        return rootNode;
     }
 
     public void addItem(ProductLgbk productLgbk) {
