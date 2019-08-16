@@ -52,8 +52,6 @@ public class OptionsWindowController implements Initializable {
     TableView<ProductFamily> tvFamilies;
 
     @FXML
-    TableView<ProductLgbk> tvLgbk_;
-    @FXML
     TreeTableView<ProductLgbk> tvLgbk;
 
     @FXML
