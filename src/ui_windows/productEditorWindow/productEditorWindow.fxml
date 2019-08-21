@@ -12,16 +12,15 @@
       <Separator layoutX="137.0" layoutY="28.0" prefHeight="3.0" prefWidth="931.0" />
       <Label alignment="CENTER_RIGHT" layoutX="27.0" layoutY="43.0" prefHeight="17.0" prefWidth="92.0" text="Заказной номер" />
       <Label alignment="CENTER_RIGHT" layoutX="295.0" layoutY="43.0" prefHeight="17.0" prefWidth="52.0" text="Артикул" />
-      <Label alignment="CENTER_RIGHT" layoutX="239.0" layoutY="246.0" prefHeight="17.0" prefWidth="39.0" text="LGBK" />
-      <Label alignment="CENTER_RIGHT" layoutX="378.0" layoutY="246.0" prefHeight="17.0" prefWidth="154.0" text="Линейка оборудования" />
-      <Label alignment="CENTER_RIGHT" layoutX="39.0" layoutY="279.0" prefHeight="17.0" prefWidth="76.0" text="PM" />
-      <Label alignment="CENTER_RIGHT" layoutX="33.0" layoutY="113.0" prefHeight="17.0" prefWidth="86.0" text="Описание" />
+      <Label alignment="CENTER_RIGHT" layoutX="774.0" layoutY="246.0" prefHeight="17.0" prefWidth="29.0" text="LGBK" />
+      <Label alignment="CENTER_RIGHT" layoutX="23.0" layoutY="280.0" prefHeight="17.0" prefWidth="92.0" text="Линейка" />
+      <Label alignment="CENTER_RIGHT" layoutX="774.0" layoutY="279.0" prefHeight="17.0" prefWidth="23.0" text="PM" />
       <Label alignment="CENTER_RIGHT" layoutX="528.0" layoutY="332.0" prefHeight="17.0" prefWidth="86.0" text="Доступно до" />
       <Label alignment="CENTER_RIGHT" layoutX="764.0" layoutY="332.0" prefHeight="17.0" prefWidth="120.0" text="Страна производства" />
       <Label alignment="CENTER_RIGHT" layoutX="30.0" layoutY="332.0" prefHeight="17.0" prefWidth="86.0" text="Доступность" />
       <Label alignment="CENTER_RIGHT" layoutX="13.0" layoutY="365.0" prefHeight="17.0" prefWidth="104.0" text="Ограничения " />
       <Label alignment="CENTER_RIGHT" layoutX="8.0" layoutY="190.0" prefHeight="17.0" prefWidth="110.0" text="Тип" />
-      <Label alignment="CENTER_RIGHT" layoutX="6.0" layoutY="246.0" prefHeight="17.0" prefWidth="110.0" text="Иерархия" />
+      <Label alignment="CENTER_RIGHT" layoutX="904.0" layoutY="246.0" prefHeight="17.0" prefWidth="61.0" text="Иерархия" />
       <CheckBox fx:id="cbxPrice" contentDisplay="CENTER" layoutX="526.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="76.0" text="Прайс   " />
       <CheckBox fx:id="cbxArchive" contentDisplay="CENTER" layoutX="629.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="86.0" text="Архив   " />
       <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="418.0" prefHeight="17.0" prefWidth="110.0" text="Имя файла" />
@@ -42,9 +41,9 @@
          </font>
       </Label>
       <Separator layoutX="154.0" layoutY="227.0" prefHeight="3.0" prefWidth="916.0" />
-      <TextField fx:id="tfHierarchy" editable="false" layoutX="124.0" layoutY="242.0" prefHeight="25.0" prefWidth="86.0" />
-      <TextField fx:id="tfLgbk" editable="false" layoutX="283.0" layoutY="242.0" prefHeight="25.0" prefWidth="86.0" />
-      <TextField fx:id="tfPm" editable="false" layoutX="124.0" layoutY="275.0" prefHeight="25.0" prefWidth="319.0" />
+      <TextField fx:id="tfHierarchy" editable="false" layoutX="969.0" layoutY="242.0" prefHeight="25.0" prefWidth="86.0" />
+      <TextField fx:id="tfLgbk" editable="false" layoutX="813.0" layoutY="242.0" prefHeight="25.0" prefWidth="86.0" />
+      <TextField fx:id="tfPm" editable="false" layoutX="813.0" layoutY="275.0" prefHeight="25.0" prefWidth="244.0" />
       <Separator layoutX="82.0" layoutY="315.0" prefHeight="3.0" prefWidth="986.0" />
       <Label layoutX="16.0" layoutY="307.0" prefHeight="17.0" prefWidth="76.0" text="Логистика">
          <font>
@@ -69,6 +68,8 @@
               <items>
                 <MenuItem fx:id="miGetCertFile" mnemonicParsing="false" onAction="#getCertificateFile" text="     Копировать файл     " />
                   <MenuItem fx:id="miGetAllCertFiles" mnemonicParsing="false" onAction="#getAllCertificatesFiles" text="     Копировать все файлы     " />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#configNorms" text="     Настройки наличия сертификатов" />
               </items>
             </ContextMenu>
          </contextMenu></TableView>
@@ -86,10 +87,12 @@
       <Button fx:id="btnApply" layoutX="220.0" layoutY="745.0" mnemonicParsing="false" onAction="#apply" prefWidth="150.0" text="Сохранить" />
       <Button layoutX="612.0" layoutY="745.0" mnemonicParsing="false" onAction="#cancel" prefWidth="150.0" text="Отмена" />
       <CheckBox fx:id="cbxNotUsed" contentDisplay="CENTER" layoutX="754.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="127.0" text="Не используется   " />
-      <ComboBox fx:id="cbFamily" layoutX="554.0" layoutY="242.0" prefHeight="25.0" prefWidth="500.0" />
+      <ComboBox fx:id="cbFamily" layoutX="124.0" layoutY="276.0" prefHeight="25.0" prefWidth="628.0" />
       <CheckBox fx:id="cbxOrderable" contentDisplay="GRAPHIC_ONLY" layoutX="124.0" layoutY="332.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="12.0" text="CheckBox" />
       <TextArea fx:id="taDescriptionEn" layoutX="124.0" layoutY="126.0" prefHeight="48.0" prefWidth="931.0" wrapText="true" />
-      <Label alignment="CENTER_RIGHT" layoutX="32.0" layoutY="86.0" prefHeight="17.0" prefWidth="86.0" text="ru" />
-      <Label alignment="CENTER_RIGHT" layoutX="32.0" layoutY="141.0" prefHeight="17.0" prefWidth="86.0" text="en" />
+      <Label alignment="CENTER_RIGHT" layoutX="32.0" layoutY="86.0" prefHeight="17.0" prefWidth="86.0" text=" Описание (ru)" />
+      <Label alignment="CENTER_RIGHT" layoutX="32.0" layoutY="141.0" prefHeight="17.0" prefWidth="86.0" text="Описание (en)" />
+      <TextField fx:id="tfManHier" editable="false" layoutX="123.0" layoutY="242.0" prefHeight="25.0" prefWidth="628.0" />
+      <Label alignment="CENTER_RIGHT" layoutX="23.0" layoutY="246.0" prefHeight="17.0" prefWidth="92.0" text="Назначение" />
    </children>
 </AnchorPane>

@@ -1,18 +1,19 @@
 package ui_windows.options_window.certificates_editor;
 
 import ui_windows.main_window.Product;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 public class CertificateCheckingResult {
-    private ArrayList<CertificateVerification> problemCv;
+    private ArrayList<CertificateVerificationItem> problemCv;
     private HashSet<Certificate> problemCertificates;
     private HashSet<Product> problemProducts;
     private HashSet<File> problemCertsFiles;
 
-    public CertificateCheckingResult(ArrayList<CertificateVerification> problemCv,
+    public CertificateCheckingResult(ArrayList<CertificateVerificationItem> problemCv,
                                      HashSet<Certificate> problemCertificates, HashSet<Product> problemProducts,
                                      HashSet<File> problemCertsFiles) {
         this.problemCv = problemCv;
@@ -21,7 +22,7 @@ public class CertificateCheckingResult {
         this.problemCertsFiles = problemCertsFiles;
     }
 
-    public ArrayList<CertificateVerification> getProblemCv() {
+    public ArrayList<CertificateVerificationItem> getProblemCv() {
         return problemCv;
     }
 

@@ -22,11 +22,16 @@ public class ProductLgbksTable {
         this.tableView = tableView;
 
         tableView.getColumns().get(0).setCellValueFactory(new TreeItemPropertyValueFactory<>("lgbk"));
+        tableView.getColumns().get(0).setPrefWidth(125);
         tableView.getColumns().get(1).setCellValueFactory(new TreeItemPropertyValueFactory<>("hierarchy"));
-        tableView.getColumns().get(2).setCellValueFactory(new TreeItemPropertyValueFactory<>("description"));
+        tableView.getColumns().get(1).setPrefWidth(125);
+        tableView.getColumns().get(2).setCellValueFactory(new TreeItemPropertyValueFactory<>("description_en"));
+        tableView.getColumns().get(2).setPrefWidth(250);
+        tableView.getColumns().get(3).setCellValueFactory(new TreeItemPropertyValueFactory<>("description_ru"));
+        tableView.getColumns().get(3).setPrefWidth(250);
 
         TreeTableColumn<ProductLgbk, String> col = new TreeTableColumn<>("Направление");
-        col.setPrefWidth(343);
+        col.setPrefWidth(225);
         col.setCellValueFactory(param -> new SimpleStringProperty(
                 CoreModule.getProductFamilies().getFamilyNameById(param.getValue().getValue().getFamilyId())));
 

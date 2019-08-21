@@ -20,7 +20,7 @@ public class ProductEditorWindow extends OrdinalWindow {
         super(MainWindow.getMainStage(), Modality.APPLICATION_MODAL,
                 editorMode, "productEditorWindow.fxml", "");
 
-        Product product = ProductEditorWindowActions.getItem();
+        Product product = ProductEditorWindowActions.getEditedItem();
         String lastUpdate = product.getLastChangeDate() == null ? "нет данных" : product.getLastChangeDate();
         stage.setTitle("Продукт " + product.getArticle() + " (посл. обновление: " + lastUpdate + ")");
 

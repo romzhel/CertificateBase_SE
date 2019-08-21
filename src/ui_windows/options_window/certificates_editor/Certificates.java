@@ -5,16 +5,19 @@ import core.Dialogs;
 import database.CertificatesDB;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.main_window.Product;
-import ui_windows.options_window.requirements_types_editor.RequirementType;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificatesChecker;
 import utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Certificates {
+    private CertificatesChecker certificatesChecker;
     private ArrayList<Certificate> certificates;
 
     public Certificates() {
+        certificatesChecker = new CertificatesChecker();
         certificates = new CertificatesDB().getData();
     }
 
@@ -78,8 +81,8 @@ public class Certificates {
         return null;
     }
 
-    public ArrayList<CertificateVerification> checkCertificates(Product product) {
-        ArrayList<CertificateVerification> result = new ArrayList<>();
+    /*public ArrayList<CertificateVerificationItem> checkCertificates(Product product) {
+        ArrayList<CertificateVerificationItem> result = new ArrayList<>();
         ArrayList<String> prodNames = new ArrayList<>();
 
         for (Certificate cert : certificates) {//check all certificates
@@ -120,7 +123,7 @@ public class Certificates {
                             if (status == "") status = "OK, до " + cert.getExpirationDate();
 
                             String norms = CoreModule.getRequirementTypes().getNormsShortNamesByIds(cert.getNorms());
-                            result.add(new CertificateVerification(norms, contentName, content.getEquipmentType(),
+                            result.add(new CertificateVerificationItem(norms, contentName, content.getEquipmentType(),
                                     cert.getFileName(), status, cert.getExpirationDate(), cert, product));
                         }
                     }
@@ -129,5 +132,5 @@ public class Certificates {
         }
 
         return result;
-    }
+    }*/
 }

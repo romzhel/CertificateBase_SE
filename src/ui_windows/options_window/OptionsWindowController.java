@@ -5,28 +5,31 @@ import core.Dialogs;
 import database.ProfilesDB;
 import files.ExportToExcel;
 import javafx.application.Platform;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TreeItemPropertyValueFactory;
-import ui_windows.main_window.Product;
-import ui_windows.options_window.certificates_editor.*;
-import ui_windows.options_window.product_lgbk.*;
-import ui_windows.options_window.profile_editor.Profile;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
+import ui_windows.main_window.Product;
+import ui_windows.options_window.certificates_editor.*;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.families_editor.FamiliesEditorWindow;
 import ui_windows.options_window.families_editor.ProductFamiliesTable;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibilityEditorWindow;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibilityTable;
+import ui_windows.options_window.product_lgbk.LgbkEditorWindow;
+import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.options_window.product_lgbk.ProductLgbksTable;
+import ui_windows.options_window.profile_editor.Profile;
 import ui_windows.options_window.profile_editor.ProfilesTable;
+import ui_windows.options_window.requirements_types_editor.RequirementType;
+import ui_windows.options_window.requirements_types_editor.RequirementTypeEditorWindow;
+import ui_windows.options_window.requirements_types_editor.RequirementTypeEditorWindowActions;
+import ui_windows.options_window.requirements_types_editor.RequirementTypesTable;
 import ui_windows.options_window.user_editor.User;
 import ui_windows.options_window.user_editor.UserEditorWindow;
 import ui_windows.options_window.user_editor.UsersTable;
-import ui_windows.options_window.requirements_types_editor.*;
-import utils.Utils;
 
 import java.awt.*;
 import java.io.File;
@@ -37,8 +40,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 
-import static ui_windows.Mode.*;
-import static ui_windows.options_window.profile_editor.SimpleRight.*;
+import static ui_windows.Mode.ADD;
+import static ui_windows.Mode.EDIT;
 
 public class OptionsWindowController implements Initializable {
 
@@ -114,6 +117,8 @@ public class OptionsWindowController implements Initializable {
                 }
             }
         });
+        tvLgbk.getRoot().setExpanded(true);
+//        tvLgbk.setStyle();
 
         //------------------------------------------order accessibility-------------------------------------------------
         CoreModule.getOrdersAccessibility().setTable(new OrdersAccessibilityTable(tvOrdersAccessibility)); //fill order acc table
@@ -199,28 +204,24 @@ public class OptionsWindowController implements Initializable {
     }
 
     public void actionDeleteLgbk() {
-        int index = tvLgbk.getSelectionModel().getSelectedIndex();
-
-        if (index >= 0) {
-            if (Dialogs.confirm("Удаление элемента", "Действительно желаете удалить элемент"))
-                CoreModule.getProductLgbks().removeItem(tvLgbk.getTreeItem(index).getValue());
+        TreeItem<ProductLgbk> deletedItem = tvLgbk.getSelectionModel().getSelectedItem();
+        ProductLgbk deletedLgbk = deletedItem.getValue();
+        if (deletedItem == null) {
+            Dialogs.showMessage("Удаление элемента", "Выберите элемент");
+            return;
         }
 
+        if (deletedLgbk.getNodeType() == 0 || deletedLgbk.getNodeType() == 1) {
+            Dialogs.showMessage("Удаление элемента", "Удаление корневого элемента и элементов групп не поддерживается");
+        } else {
+            if (Dialogs.confirm("Удаление элемента", "Действительно желаете удалить элемент?")){
+                CoreModule.getProductLgbks().removeItem(deletedLgbk);
+                deletedItem.getParent().getChildren().remove(deletedItem);
+            }
+        }
     }
 
     public void actionReCheckLgbkFromProducts() {
-        /*ArrayList<ProductLgbk> lostLgbk = CoreModule.getProductLgbks().getLostLgbkFromProducts(CoreModule.getProducts());
-
-        if (lostLgbk.size() == 0) Dialogs.showMessage("Проверка lgbk", "Все lgbk учтены");
-        else {
-            String result = "";
-            for (ProductLgbk pl : lostLgbk) {
-                result = result.concat(pl.getLgbk().concat(" (").concat(pl.getHierarchy()).concat(")").concat("\n"));
-            }
-
-            Dialogs.showMessage("Проверка lgbk", "Есть неучтенные lgbk:\n\n" + result);
-        }*/
-
         CoreModule.getProductLgbkGroups().checkConsistency();
     }
 
@@ -305,13 +306,13 @@ public class OptionsWindowController implements Initializable {
 
     public void actionCheckCertificates() {
         new Thread(() -> {
-            ArrayList<CertificateVerification> problemCv = new ArrayList<>();
+            ArrayList<CertificateVerificationItem> problemCv = new ArrayList<>();
             HashSet<Certificate> problemCertificates = new HashSet<>();
             HashSet<Product> problemProducts = new HashSet<>();
             HashSet<File> files = new HashSet<>();
 
             for (Product product : CoreModule.getProducts().getItems()) {
-                for (CertificateVerification cv : CoreModule.getCertificates().checkCertificates(product)) {
+                for (CertificateVerificationItem cv : CoreModule.getCertificates().checkCertificates(product)) {
                     if (cv.getStatus().startsWith("НЕ ОК, нет страны")) {
                         problemCv.add(cv);
                         problemCertificates.add(cv.getCertificate());
@@ -332,7 +333,7 @@ public class OptionsWindowController implements Initializable {
 
                     Platform.runLater(() -> Dialogs.showMessage("Ошибка копирования файла",
                             "Произошла ошибка копирования файла\n" +
-                            certFile.getPath() + "\n\nв папку " + targetFile.getPath()));
+                                    certFile.getPath() + "\n\nв папку " + targetFile.getPath()));
                 }
             }
 

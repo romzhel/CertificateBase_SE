@@ -22,6 +22,7 @@ import java.nio.file.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 
 public class Utils {
@@ -113,7 +114,7 @@ public class Utils {
         return "";
     }
 
-    public static ArrayList<String> getControlValueFromLV(AnchorPane root, String id) {
+    public static ArrayList<String> getALControlValueFromLV(AnchorPane root, String id) {
         ArrayList<String> result = new ArrayList<>();
         for (Node n : root.getChildren()) {
             if (n.getId() != null && n.getId().equals(id)) {
@@ -125,7 +126,7 @@ public class Utils {
         return result;
     }
 
-    public static void setControlValueLV(AnchorPane root, String id, ArrayList<String> items) {
+    public static void setControlValueLVfromAL(AnchorPane root, String id, ArrayList<String> items) {
         if (items == null) return;
 
         for (Node n : root.getChildren()) {
@@ -197,6 +198,7 @@ public class Utils {
     }
 
     public static void setControlValue(AnchorPane root, String id, ArrayList<?> items) {
+        if (items == null) return;
         ComboBox<String> cb = null;
         for (Node n : root.getChildren()) {
             if (n.getId() != null && n.getId().equals(id)) {
@@ -291,7 +293,7 @@ public class Utils {
         return temp;
     }
 
-    public static String listToString(ArrayList<String> list) {
+    public static String listToString(List<String> list) {
         String temp = "";
         if (list.size() > 0) temp = list.get(0);
 

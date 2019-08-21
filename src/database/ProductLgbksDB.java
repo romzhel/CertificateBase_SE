@@ -18,14 +18,16 @@ public class ProductLgbksDB implements Request {
     public ProductLgbksDB() {
         try {
             addData = CoreModule.getDataBase().getDbConnection().prepareStatement("INSERT INTO " +
-                    "lgbk (lgbk, hierarchy, description, family_id, not_used) VALUES (?, ?, ?, ?, ?);",
+                    "lgbk (lgbk, hierarchy, description_en, family_id, not_used, node_type, description_ru, norms_list) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = CoreModule.getDataBase().getDbConnection().prepareStatement("UPDATE lgbk " +
-                    "SET lgbk = ?, hierarchy = ?, description = ?, family_id = ?, not_used = ? WHERE id = ?");
+                    "SET lgbk = ?, hierarchy = ?, description_en = ?, family_id = ?, not_used = ?, node_type = ?," +
+                    "description_ru = ?, norms_list = ? WHERE id = ?");
             deleteData = CoreModule.getDataBase().getDbConnection().prepareStatement("DELETE FROM lgbk " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            System.out.println("product lgbk prepared statements exception");
+            System.out.println("product lgbk prepared statements exception: " + e.getMessage());
         }
     }
 
@@ -50,12 +52,16 @@ public class ProductLgbksDB implements Request {
     public boolean putData(Object object) {
         if (object instanceof ProductLgbk) {
             ProductLgbk pl = (ProductLgbk) object;
+            int index = 1;
             try {
-                addData.setString(1, pl.getLgbk());
-                addData.setString(2, pl.getHierarchy());
-                addData.setString(3, pl.getDescription());
-                addData.setInt(4, pl.getFamilyId());
-                addData.setBoolean(5, pl.isNotUsed());
+                addData.setString(index++, pl.getLgbk());
+                addData.setString(index++, pl.getHierarchy());
+                addData.setString(index++, pl.getDescription_en());
+                addData.setInt(index++, pl.getFamilyId());
+                addData.setBoolean(index++, pl.isNotUsed());
+                addData.setInt(index++, pl.getNodeType());
+                addData.setString(index++, pl.getDescription_ru());
+                addData.setString(index++, pl.getNormsList().getStringLine());
 
                 MainWindow.setProgress(1.0);
 
@@ -87,21 +93,28 @@ public class ProductLgbksDB implements Request {
         if (object instanceof ProductLgbk) {
             ProductLgbk pl = (ProductLgbk) object;
 
+            int index = 1;
             try {
-                updateData.setString(1, pl.getLgbk());
-                updateData.setString(2, pl.getHierarchy());
-                updateData.setString(3, pl.getDescription());
-                updateData.setInt(4, pl.getFamilyId());
-                updateData.setBoolean(5, pl.isNotUsed());
-                updateData.setInt(6, pl.getId());
+                updateData.setString(index++, pl.getLgbk());
+                updateData.setString(index++, pl.getHierarchy());
+                updateData.setString(index++, pl.getDescription_en());
+                updateData.setInt(index++, pl.getFamilyId());
+                updateData.setBoolean(index++, pl.isNotUsed());
+                updateData.setInt(index++, pl.getNodeType());
+                updateData.setString(index++, pl.getDescription_ru());
+                updateData.setString(index++, pl.getNormsList().getStringLine());
+
+                updateData.setInt(index++, pl.getId());
 
                 MainWindow.setProgress(1.0);
 
-                if (updateData.executeUpdate() > 0) {//successful
+                int result = updateData.executeUpdate();
+
+                if (result > 0) {//successful
                     MainWindow.setProgress(0.0);
                     return true;
                 } else {
-                    Dialogs.showMessage("Ошибка БД", "Ошибка работы с БД");
+                    Dialogs.showMessage("Ошибка БД", "Ошибка обновления LGBK в БД (ответ = " + result + ")\n " + pl.toString());
                 }
 
             } catch (SQLException e) {

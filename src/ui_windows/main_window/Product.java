@@ -3,6 +3,7 @@ package ui_windows.main_window;
 import core.CoreModule;
 import javafx.scene.paint.Color;
 import ui_windows.main_window.filter_window.Filter;
+import ui_windows.options_window.product_lgbk.NormsList;
 import utils.ColumnsMapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -15,6 +16,7 @@ import ui_windows.options_window.product_lgbk.ProductLgbk;
 import utils.Countries;
 import utils.Utils;
 
+import javax.rmi.CORBA.Util;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -50,9 +52,10 @@ public class Product {
     private String fileName = "";
     private String comments = "";
     private String replacement = "";
+    private NormsList normsList;
+    private int normsMode = NormsList.ADD_TO_GLOBAL;
 
-    public Product() {
-    }
+    public Product() {}
 
     public Product(AnchorPane root) {
         id = 0;
@@ -134,6 +137,9 @@ public class Product {
         type_id = rs.getInt("type_id");
         changecodes = rs.getString("change_codes");
         lastImportcodes = rs.getString("last_import_codes") == null ? "" : rs.getString("last_import_codes");
+
+        normsList = new NormsList(rs.getString("norms_list"));
+        normsMode = rs.getInt("norms_mode");
     }
 
     public boolean hasLgbkMapping() {
@@ -198,6 +204,7 @@ public class Product {
         Utils.setControlValue(root, "cbxNeedAction", isNeedaction());
         Utils.setControlValue(root, "cbxNotUsed", isNotused());
         Utils.setControlValue(root, "lHistory", getHistory());
+        Utils.setControlValue(root, "tfManHier", CoreModule.getProductLgbkGroups().getFullDescription(new ProductLgbk(getLgbk(), getHierarchy())));
 
         String fileName = getFileName().isEmpty() ? getMaterial().replaceAll("[\\\\/:*?\"<>|]+", "") +
                 "_" + getArticle().replaceAll("[\\\\/:*?\"<>|]+", "") + ".pdf" : getFileName();
@@ -543,6 +550,22 @@ public class Product {
 
     private String nullToEmpty(String text){
         return text == null? "" : text;
+    }
+
+    public NormsList getNormsList() {
+        return normsList;
+    }
+
+    public void setNormsList(NormsList normsList) {
+        this.normsList = normsList;
+    }
+
+    public int getNormsMode() {
+        return normsMode;
+    }
+
+    public void setNormsMode(int normsMode) {
+        this.normsMode = normsMode;
     }
 }
 

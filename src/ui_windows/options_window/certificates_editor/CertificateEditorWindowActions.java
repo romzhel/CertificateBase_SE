@@ -7,9 +7,7 @@ import database.CertificatesDB;
 import javafx.application.Platform;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import ui_windows.options_window.OptionsWindow;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContentActions;
-import ui_windows.options_window.profile_editor.Profile;
 import utils.Countries;
 import utils.Utils;
 
@@ -77,8 +75,8 @@ public class CertificateEditorWindowActions {
 
         cert.setName(Utils.getControlValue(root, "tfCertName"));
         cert.setExpirationDate(Utils.getControlValue(root, "dpDatePicker"));
-        cert.setCountries(Countries.getShortNames(Utils.getControlValueFromLV(root, "lvCountries")));
-        cert.setNorms(CoreModule.getRequirementTypes().getRequirementIdsLine(Utils.getControlValueFromLV(root, "lvNorms")));
+        cert.setCountries(Countries.getShortNames(Utils.getALControlValueFromLV(root, "lvCountries")));
+        cert.setNorms(CoreModule.getRequirementTypes().getReqIdsLineFromShortNamesAL(Utils.getALControlValueFromLV(root, "lvNorms")));
         cert.setFileName(Utils.getControlValue(root, "tfFileName"));
         cert.setFullNameMatch(Utils.getControlValue(root, "ckbNameMatch") == "true" ? true : false);
         cert.setMaterialMatch(Utils.getControlValue(root, "ckbMaterialMatch") == "true" ? true : false);
@@ -96,8 +94,8 @@ public class CertificateEditorWindowActions {
 
             Utils.setControlValue(root, "tfCertName", cert.getName());
             Utils.setControlValue(root, "dpDatePicker", cert.getExpirationDate());
-            Utils.setControlValueLV(root, "lvCountries", Countries.getCombinedNames(cert.getCountries()));
-            Utils.setControlValueLV(root, "lvNorms", CoreModule.getRequirementTypes().getRequirementsList(cert.getNorms()));
+            Utils.setControlValueLVfromAL(root, "lvCountries", Countries.getCombinedNames(cert.getCountries()));
+            Utils.setControlValueLVfromAL(root, "lvNorms", CoreModule.getRequirementTypes().getRequirementsList(cert.getNorms()));
             Utils.setControlValue(root, "tfFileName", cert.getFileName());
 
             File certFile = new File(CoreModule.getFolders().getCertFolder() + "\\" + cert.getFileName());
@@ -138,7 +136,7 @@ public class CertificateEditorWindowActions {
         AnchorPane root = (AnchorPane) CertificateEditorWindow.getStage().getScene().getRoot();
 
         Utils.setControlValue(root, "cbCountrySelect", Countries.getItems());//add countries
-        Utils.setControlValue(root, "cbNormSelect", CoreModule.getRequirementTypes().getAllRequirementTypes());
+        Utils.setControlValue(root, "cbNormSelect", CoreModule.getRequirementTypes().getAllRequirementTypesShortNames());
 //        Utils.setControlValue(root, "cbCountrySelect", Countries.getItems().get(0));//display first country
     }
 

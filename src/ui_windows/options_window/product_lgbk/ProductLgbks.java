@@ -3,9 +3,6 @@ package ui_windows.options_window.product_lgbk;
 import core.CoreModule;
 import core.Dialogs;
 import database.ProductLgbksDB;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import ui_windows.main_window.Product;
 import ui_windows.main_window.Products;
@@ -35,10 +32,14 @@ public class ProductLgbks {
             TreeTableView<ProductLgbk> tableView = productLgbksTable.getTableView();
             CoreModule.getProductLgbkGroups().createFromLgbks(this);
             tableView.setRoot(CoreModule.getProductLgbkGroups().getLgbkTreeSet());
+        }
+    }
 
-//            tableView.getColumns().get(0).setSortType(TableColumn.SortType.DESCENDING);
-//            tableView.getColumns().get(1).setSortType(TableColumn.SortType.ASCENDING);
-//            tableView.getSortOrder().setAll(tableView.getColumns().get(0), tableView.getColumns().get(1));
+    public void addItems(ArrayList<ProductLgbk> items){
+        for (ProductLgbk productLgbk:items             ) {
+            if (db.putData(productLgbk)){
+                productLgbks.add(productLgbk);
+            }
         }
     }
 
@@ -46,7 +47,6 @@ public class ProductLgbks {
         if (db.deleteData(pl)) {
             productLgbks.remove(pl);
             CoreModule.getProductLgbkGroups().createFromLgbks(this);
-            productLgbksTable.getTableView().setRoot(CoreModule.getProductLgbkGroups().getLgbkTreeSet());
         }
     }
 
@@ -57,16 +57,6 @@ public class ProductLgbks {
 
         return false;
     }
-
-//    public ArrayList<ProductLgbk> getSortedProductLgbks(){
-//        HashSet<String> withLgbk = new HashSet<>();
-//        HashSet<String> withHierarchy = new HashSet<>();
-//
-//        for (ProductLgbk pl:productLgbks) {
-//            if (pl.getLgbk().trim().length() > 0) withLgbk.add(pl.)
-//        }
-//
-//    }
 
     public boolean hasDublicates(ProductLgbk pl) {
         for (ProductLgbk plgbk : productLgbks) {
@@ -79,58 +69,19 @@ public class ProductLgbks {
         return false;
     }
 
-
-    public ArrayList<ProductLgbk> getLostLgbkFromProducts(Products products) {
-        ArrayList<ProductLgbk> res = new ArrayList<>();
-
-        for (Product pr : products.getItems()) {
-            if (!pr.hasLgbkMapping()) {
-                ProductLgbk newPl = null;
-
-                if (pr.getLgbk().length() > 0) {
-                    newPl = new ProductLgbk(pr.getLgbk(), "", "", -1, false);
-                } else if (pr.getHierarchy().length() > 0) {
-                    newPl = new ProductLgbk("", pr.getHierarchy(), "", -1, false);
-                }
-
-                res.add(newPl);
-                addItem(newPl);
-            }
-        }
-
-        return res;
-    }
-
     public int getFamilyIdByLgbk(ProductLgbk pl) {
-//        System.out.println("founding using " + pl.getLgbk() + ", " + pl.getHierarchy());
+        LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(pl);
+        if (lgbkAndParent == null) return -1;
 
-        String lgbkP = pl.getLgbk();
-        String hierarchyL;
-
-        for (ProductLgbk plg : productLgbks) {
-//            System.out.println("----------------------------------------------------");
-//            System.out.println("analizing of " + plg.getLgbk() + ", " + plg.getHierarchy());
-
-            if (plg.getHierarchy().trim().length() == 0) hierarchyL = ".*";
-            else hierarchyL = plg.getHierarchy().replaceAll("\\*", ".*");
-//            System.out.println("changing to " + plg.getLgbk() + ", " + hierarchyL);
-
-            if (lgbkP.length() > 0 && plg.getLgbk().length() > 0) {
-//                System.out.println("using both values");
-//                System.out.println("comparing " + lgbkP + " vs " + plg.getLgbk() + " && " + pl.getHierarchy() + " vs " + hierarchyL);
-//                System.out.println("result = " + (lgbkP.matches(plg.getLgbk()) && pl.getHierarchy().matches(hierarchyL)));
-
-                if (lgbkP.matches(plg.getLgbk()) && pl.getHierarchy().matches(hierarchyL)) return plg.getFamilyId();
-            } else if (lgbkP.length() == 0 && plg.getLgbk().length() == 0) {
-//                System.out.println("using hierarchy value");
-//                System.out.println("comparing " + pl.getHierarchy() + " vs " + hierarchyL);
-//                System.out.println("result = " + (pl.getHierarchy().matches(hierarchyL)));
-
-                if (pl.getHierarchy().matches(hierarchyL)) return plg.getFamilyId();
+        if (lgbkAndParent.getLgbkItem() == null || lgbkAndParent.getLgbkItem().getFamilyId() == -1) {
+            if (lgbkAndParent.getLgbkParent() == null) {
+                return -1;
+            } else {
+                return lgbkAndParent.getLgbkParent().getFamilyId();
             }
+        } else {
+            return lgbkAndParent.getLgbkItem().getFamilyId();
         }
-
-        return 0;
     }
 
     public ProductLgbk getLgbkByValues(ProductLgbk pl) {

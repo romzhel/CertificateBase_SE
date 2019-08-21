@@ -7,18 +7,16 @@ import files.ExcelFile;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
-import javafx.util.Callback;
 import ui_windows.login_window.LoginWindow;
 import ui_windows.main_window.filter_window.FilterWindow;
 import ui_windows.options_window.OptionsWindow;
-import ui_windows.options_window.certificates_editor.CertificateVerification;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.user_editor.User;
 import ui_windows.productEditorWindow.ProductEditorWindow;
@@ -314,7 +312,7 @@ public class MainWindowsController implements Initializable {
 
                 MainWindow.setProgress(progress);
 
-                for (CertificateVerification cv : CoreModule.getCertificates().checkCertificates(pr)) {
+                for (CertificateVerificationItem cv : CoreModule.getCertificates().checkCertificates(pr)) {
                     if (cv.getStatus().startsWith("НЕ ОК")) {
                         result.add(pr);
                         break;
@@ -348,7 +346,7 @@ public class MainWindowsController implements Initializable {
 
                 MainWindow.setProgress(progress);
 
-                for (CertificateVerification cv : CoreModule.getCertificates().checkCertificates(pr)) {
+                for (CertificateVerificationItem cv : CoreModule.getCertificates().checkCertificates(pr)) {
                     Date certDate = Utils.getDate(cv.getExpirationDate());
                     Date now = new Date();
                     long diff = certDate.getTime() - now.getTime();

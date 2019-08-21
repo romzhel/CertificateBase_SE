@@ -65,8 +65,8 @@ public class Certificate {
 
         name = new SimpleStringProperty(Utils.getControlValue(root, "tfCertName"));
         expirationDate = new SimpleStringProperty(Utils.getControlValue(root, "dpDatePicker"));
-        countries = Countries.getShortNames(Utils.getControlValueFromLV(root, "lvCountries"));
-        norms = CoreModule.getRequirementTypes().getRequirementIdsLine(Utils.getControlValueFromLV(root, "lvNorms"));
+        countries = Countries.getShortNames(Utils.getALControlValueFromLV(root, "lvCountries"));
+        norms = CoreModule.getRequirementTypes().getReqIdsLineFromShortNamesAL(Utils.getALControlValueFromLV(root, "lvNorms"));
         fileName = Utils.getControlValue(root, "tfFileName");
         fullNameMatch = Utils.getControlValue(root, "ckbNameMatch") == "true" ? true : false;
         materialMatch = Utils.getControlValue(root, "ckbMaterialMatch") == "true" ? true : false;

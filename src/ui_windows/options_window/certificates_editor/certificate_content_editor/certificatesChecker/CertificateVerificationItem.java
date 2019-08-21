@@ -1,10 +1,12 @@
-package ui_windows.options_window.certificates_editor;
+package ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import ui_windows.main_window.Product;
+import ui_windows.options_window.certificates_editor.Certificate;
 
-public class CertificateVerification {
+public class CertificateVerificationItem {
+    public static final String ABSENT_TEXT = "НЕ ОК, отсутствует";
     private StringProperty norm;
     private StringProperty matchedPart;
     private StringProperty prodType;
@@ -14,8 +16,19 @@ public class CertificateVerification {
     private Certificate certificate;
     private Product product;
 
-    public CertificateVerification(String norm, String matchedPart,  String prodType, String file, String status,
-                                   String expDate, Certificate certificate, Product product) {
+    public CertificateVerificationItem(String norm) {
+        this.norm = new SimpleStringProperty(norm);
+        this.matchedPart = new SimpleStringProperty("");
+        this.prodType = new SimpleStringProperty("");
+        this.file = new SimpleStringProperty("");
+        this.status = new SimpleStringProperty(ABSENT_TEXT);
+        expirationDate = "";
+        this.certificate = null;
+        this.product = null;
+    }
+
+    public CertificateVerificationItem(String norm, String matchedPart, String prodType, String file, String status,
+                                       String expDate, Certificate certificate, Product product) {
         this.norm = new SimpleStringProperty(norm);
         this.matchedPart = new SimpleStringProperty(matchedPart);
         this.prodType = new SimpleStringProperty(prodType);

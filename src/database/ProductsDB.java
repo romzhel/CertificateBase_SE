@@ -18,14 +18,14 @@ public class ProductsDB implements Request {
                             "products (material, article, hierarchy, lgbk, family, end_of_service, dangerous, " +
                             "country, dchain, description_ru, description_en, price, archive, need_action, not_used, history, " +
                             "last_change_date, file_name, comments, replacement, type_id, change_codes, product_print," +
-                            "last_import_codes) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                            "last_import_codes, norms_list, norms_mode) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = CoreModule.getDataBase().getDbConnection().prepareStatement("UPDATE products " +
                     "SET article = ?, hierarchy = ?, lgbk = ?, family = ?, end_of_service = ?, dangerous = ?, country = ?, " +
                     "dchain = ?, description_ru = ?, description_en = ?, price = ?, archive = ?, need_action = ?, not_used = ?, history = ?," +
                     "last_change_date = ?, file_name = ?, comments = ?, replacement = ?, type_id = ?, change_codes = ?, " +
-                    "product_print = ?, last_import_codes = ? WHERE material = ?");
+                    "product_print = ?, last_import_codes = ?, norms_list = ?, norms_mode = ? WHERE material = ?");
             deleteData = CoreModule.getDataBase().getDbConnection().prepareStatement("DELETE FROM products " +
                     "WHERE id = ?");
         } catch (SQLException e) {
@@ -86,8 +86,10 @@ public class ProductsDB implements Request {
                         updateData.setString(++count, alpr.get(j).getChangecodes());
                         updateData.setString(++count, alpr.get(j).getProductForPrint());
                         updateData.setString(++count, alpr.get(j).getLastImportcodes());
-                        updateData.setString(++count, alpr.get(j).getMaterial());
+                        updateData.setString(++count, alpr.get(j).getNormsList().getStringLine());
+                        updateData.setInt(++count, alpr.get(j).getNormsMode());
 
+                        updateData.setString(++count, alpr.get(j).getMaterial());
                         updateData.addBatch();
                     }
                     MainWindow.setProgress((double) j / (double) alpr.size());
@@ -151,6 +153,8 @@ public class ProductsDB implements Request {
                         addData.setString(++count, alpr.get(j).getChangecodes());
                         addData.setString(++count, alpr.get(j).getProductForPrint());
                         addData.setString(++count, alpr.get(j).getLastImportcodes());
+                        addData.setString(++count, alpr.get(j).getNormsList().getStringLine());
+                        addData.setInt(++count, alpr.get(j).getNormsMode());
                         addData.addBatch();
                     }
 

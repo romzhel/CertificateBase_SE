@@ -12,7 +12,7 @@ import org.apache.poi.ss.usermodel.*;
 import ui_windows.main_window.Product;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.CertificateCheckingResult;
-import ui_windows.options_window.certificates_editor.CertificateVerification;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.request_certificates.RequestResult;
 import utils.Utils;
 
@@ -134,7 +134,7 @@ public class ExportToExcel {
             for (Product product : certCheckResult.getProblemProducts()) {
                 curProductwasDisplayed = false;
 
-                for (CertificateVerification certVer : certCheckResult.getProblemCv()) {
+                for (CertificateVerificationItem certVer : certCheckResult.getProblemCv()) {
 
                     if (certVer.getCertificate().equals(curCert) && certVer.getProduct().equals(product)){
 

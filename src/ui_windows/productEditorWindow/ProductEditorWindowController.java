@@ -2,25 +2,20 @@ package ui_windows.productEditorWindow;
 
 import core.CoreModule;
 import core.Dialogs;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import javafx.util.Callback;
-import ui_windows.options_window.certificates_editor.Certificate;
-import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
-import ui_windows.options_window.certificates_editor.CertificateVerification;
 import ui_windows.main_window.Product;
+import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
-import ui_windows.options_window.user_editor.User;
+import ui_windows.productEditorWindow.configNormsWindow.ConfigNormsWindow;
 import utils.AutoCompleteComboBoxListener;
 import utils.Utils;
 
@@ -31,12 +26,10 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import static ui_windows.options_window.profile_editor.SimpleRight.*;
-
 public class ProductEditorWindowController implements Initializable {
 
     @FXML
-    TableView<CertificateVerification> tvCertVerification;
+    TableView<CertificateVerificationItem> tvCertVerification;
 
     @FXML
     ComboBox<String> cbType;
@@ -55,6 +48,7 @@ public class ProductEditorWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ProductEditorWindowActions.setTableView(tvCertVerification);
         new AutoCompleteComboBoxListener<>(cbType, false);
 //        cbType.getItems().addAll(CoreModule.getProductTypes().getPreparedTypes());
 
@@ -62,15 +56,42 @@ public class ProductEditorWindowController implements Initializable {
         String[] titles = new String[]{"Регламент", "Соответствие", "Тип продукции", "Файл сертификата", "Актуальность"};
 
         for (int i = 0; i < colNames.length; i++) {
-            TableColumn<CertificateVerification, String> col = new TableColumn<>(titles[i]);
+            TableColumn<CertificateVerificationItem, String> col = new TableColumn<>(titles[i]);
             col.setCellValueFactory(new PropertyValueFactory<>(colNames[i]));
             col.setPrefWidth(200);
 
-            if (colNames[i].equals("file")) {
-                col.setCellFactory(new Callback<TableColumn<CertificateVerification, String>, TableCell<CertificateVerification, String>>() {
+            if (colNames[i].equals("norm")) {
+                col.setCellFactory(new Callback<TableColumn<CertificateVerificationItem, String>, TableCell<CertificateVerificationItem, String>>() {
                     @Override
-                    public TableCell<CertificateVerification, String> call(TableColumn<CertificateVerification, String> param) {
-                        return new TableCell<CertificateVerification, String>() {
+                    public TableCell<CertificateVerificationItem, String> call(TableColumn<CertificateVerificationItem, String> param) {
+                        return new TableCell<CertificateVerificationItem, String>() {
+
+                            @Override
+                            protected void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+
+                                if (!isEmpty()) {
+                                    setText(item);
+
+                                    CertificateVerificationItem cv = param.getTableView().getItems().get(getIndex());
+                                    if (cv.getCertificate() == null) {
+                                        setTextFill(Color.RED);
+                                        setStyle("-fx-font-weight: bold");
+                                    } else {
+                                        setTextFill(Color.BLACK);
+                                    }
+                                }
+                            }
+                        };
+                    }
+                });
+            }
+
+            if (colNames[i].equals("file")) {
+                col.setCellFactory(new Callback<TableColumn<CertificateVerificationItem, String>, TableCell<CertificateVerificationItem, String>>() {
+                    @Override
+                    public TableCell<CertificateVerificationItem, String> call(TableColumn<CertificateVerificationItem, String> param) {
+                        return new TableCell<CertificateVerificationItem, String>() {
 
                             @Override
                             protected void updateItem(String item, boolean empty) {
@@ -89,11 +110,67 @@ public class ProductEditorWindowController implements Initializable {
                 });
             }
 
+            if (colNames[i].equals("status")) {
+                col.setCellFactory(new Callback<TableColumn<CertificateVerificationItem, String>, TableCell<CertificateVerificationItem, String>>() {
+                    @Override
+                    public TableCell<CertificateVerificationItem, String> call(TableColumn<CertificateVerificationItem, String> param) {
+                        return new TableCell<CertificateVerificationItem, String>() {
+
+                            @Override
+                            protected void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+
+                                if (!isEmpty()) {
+                                    setText(item);
+
+                                    CertificateVerificationItem cv = param.getTableView().getItems().get(getIndex());
+                                    if (cv.getStatus().equals(CertificateVerificationItem.ABSENT_TEXT)) {
+                                        setTextFill(Color.RED);
+                                        setStyle("-fx-font-weight: bold");
+                                    } else {
+                                        setTextFill(Color.BLACK);
+                                    }
+                                }
+                            }
+                        };
+                    }
+                });
+            }
+
             tvCertVerification.getColumns().add(col);
         }
 
-        Product pr = ProductEditorWindowActions.getItem();
-        tvCertVerification.getItems().addAll(CoreModule.getCertificates().checkCertificates(pr));
+        Product pr = ProductEditorWindowActions.getEditedItem();
+
+        ProductEditorWindowActions.fillCertificateVerificationTable();
+        /*ArrayList<CertificateVerification> existingCerts = CoreModule.getCertificates().checkCertificates(pr);
+        tvCertVerification.getItems().addAll(existingCerts);
+
+//        HashSet<Integer> existingNorms = new HashSet<>();
+        for (CertificateVerification cv : existingCerts) {
+            existingNorms.addAll(CoreModule.getRequirementTypes().getReqTypesIdsALbyShortNamesEnum(cv.getNorm()));
+        }
+
+//        HashSet<Integer> needNorms = new HashSet<>();
+        ArrayList<Integer> productNorms = new ArrayList<>();
+        productNorms.addAll(pr.getNormsList().getIntegerItems());
+        if (pr.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
+            LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(pr.getLgbk(), pr.getHierarchy()));
+            needNorms.addAll(CoreModule.getProductLgbkGroups().getRootNode().getNormsList().getIntegerItems());
+            needNorms.addAll(lgbkAndParent.getLgbkParent().getNormsList().getIntegerItems());
+            needNorms.addAll(lgbkAndParent.getLgbkItem().getNormsList().getIntegerItems());
+        }
+        needNorms.removeAll(existingNorms);
+        productNorms.removeAll(existingNorms);
+
+        for (int normIndex : needNorms) {
+            tvCertVerification.getItems().add(new CertificateVerification(CoreModule.getRequirementTypes().getRequirementByID(normIndex).getShortName()));
+        }
+
+        for (int normIndex : productNorms) {
+            tvCertVerification.getItems().add(new CertificateVerification(CoreModule.getRequirementTypes().getRequirementByID(normIndex).getShortName()));
+        }*/
+
 
         tvCertVerification.setOnMouseClicked(event -> {//double click on product
             if (event.getButton().equals(MouseButton.PRIMARY)) {
@@ -124,11 +201,11 @@ public class ProductEditorWindowController implements Initializable {
     }
 
     public void apply() {
-        ProductEditorWindowActions.apply();
+        ProductEditorWindowActions.apply(((Stage) tvCertVerification.getScene().getWindow()));
     }
 
     public void cancel() {
-        ProductEditorWindow.getStage().close();
+        ((Stage) tvCertVerification.getScene().getWindow()).close();
     }
 
     public void actionSelectManualFile() {
@@ -152,7 +229,7 @@ public class ProductEditorWindowController implements Initializable {
     }
 
     public void getCertificateFile() {
-        CertificateVerification cv = tvCertVerification.getSelectionModel().getSelectedItem();
+        CertificateVerificationItem cv = tvCertVerification.getSelectionModel().getSelectedItem();
         if (cv == null) return;
 
         File file = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + cv.getFile());
@@ -163,10 +240,14 @@ public class ProductEditorWindowController implements Initializable {
 
     public void getAllCertificatesFiles() {
         ArrayList<File> files = new ArrayList<>();
-        for (CertificateVerification cv : tvCertVerification.getItems()) {
+        for (CertificateVerificationItem cv : tvCertVerification.getItems()) {
             File file = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + cv.getFile());
             if (file.exists()) files.add(file);
         }
         Utils.copyFilsToClipboard(files);
+    }
+
+    public void configNorms() {
+        new ConfigNormsWindow(ProductEditorWindow.getStage());
     }
 }

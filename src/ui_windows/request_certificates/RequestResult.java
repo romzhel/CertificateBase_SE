@@ -1,7 +1,6 @@
 package ui_windows.request_certificates;
 
 import ui_windows.main_window.Product;
-import ui_windows.options_window.certificates_editor.CertificateVerification;
 
 import java.io.File;
 import java.util.ArrayList;

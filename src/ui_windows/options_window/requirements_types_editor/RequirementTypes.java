@@ -50,17 +50,17 @@ public class RequirementTypes {
         return null;
     }
 
-    public int getRequirementIndexByID(int id) {
+/*    public int getRequirementIndexByID(int id) {
         for (RequirementType ct : requirementTypes) {
             if (ct.getId() == id) {
                 return requirementTypes.indexOf(ct);
             }
         }
         return -1;
-    }
+    }*/
 
     public ArrayList<String> getRequirementsList(String idLine) {
-        if (idLine == null) return null;
+        if (idLine == null || idLine.isEmpty()) return null;
 
         String[] ids = idLine.split("\\,");
         ArrayList<String> result = new ArrayList<>();
@@ -72,18 +72,18 @@ public class RequirementTypes {
         return result;
     }
 
-    public String getRequirementIdsLine(ArrayList<String> list) {
-        if (list == null) return "";
-        String result = list.size() > 0 ? String.valueOf(getRequirementByShortName(list.get(0)).getId()) : "";
+    public String getReqIdsLineFromShortNamesAL(ArrayList<String> list) {
+        if (list == null || list.size() == 0) return "";
 
+        String result = String.valueOf(getRequirementByShortName(list.get(0)).getId());
         for (int i = 1; i < list.size(); i++) {
-            result = result.concat(",").concat(String.valueOf(getRequirementByShortName(list.get(1)).getId()));
+            result = result.concat(",").concat(String.valueOf(getRequirementByShortName(list.get(i)).getId()));
         }
 
         return result;
     }
 
-    public ArrayList<String> getAllRequirementTypes() {
+    public ArrayList<String> getAllRequirementTypesShortNames() {
         ArrayList<String> temp = new ArrayList<>();
         for (RequirementType rt : requirementTypes) {
             temp.add(rt.getShortName());
@@ -92,7 +92,7 @@ public class RequirementTypes {
         return new ArrayList(new TreeSet(temp));
     }
 
-    public String getNormsShortNamesByIds(String ids){
+    public String getNormsShortNamesByIds(String ids) {
         String[] adArr = ids.split("\\,");
 
         String result = adArr.length > 0 ? getRequirementByID(Integer.parseInt(adArr[0])).getShortName() : "n/a";
@@ -103,4 +103,48 @@ public class RequirementTypes {
 
         return result;
     }
+
+    public ArrayList<Integer> getReqTypesIdsALbyShortNamesEnum(String shortNamesEnum) {
+        ArrayList<Integer> result = new ArrayList<>();
+        if (shortNamesEnum == null || shortNamesEnum.isEmpty()) return result;
+
+        String[] shortNames = shortNamesEnum.trim().split("\\,");
+
+        for (String shortName : shortNames) {
+            result.add(getRequirementByShortName(shortName.trim()).getId());
+        }
+
+        return result;
+    }
+
+    public ArrayList<Integer> getReqTypeIdsByShortNames(ArrayList<String> shortNames) {
+        ArrayList<Integer> idsList = new ArrayList<>();
+        if (shortNames == null || shortNames.size() == 0) return idsList;
+
+        RequirementType rt;
+        for (String shortName : shortNames) {
+            rt = getRequirementByShortName(shortName);
+            if (rt != null) {
+                idsList.add(rt.getId());
+            }
+        }
+        return idsList;
+    }
+
+    public ArrayList<String> getReqTypeShortNamesByIds(ArrayList<Integer> ids) {
+        ArrayList<String> shortNameList = new ArrayList<>();
+        if (ids == null || ids.size() == 0) return shortNameList;
+
+        RequirementType rt;
+        for (int id : ids) {
+            rt = getRequirementByID(id);
+            if (rt != null) {
+                shortNameList.add(rt.getShortName());
+            }
+        }
+
+        return shortNameList;
+    }
+
+
 }

@@ -2,14 +2,13 @@ package ui_windows.request_certificates;
 
 import core.CoreModule;
 import core.Dialogs;
-import files.ExcelFile;
 import files.ExportToExcel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import ui_windows.main_window.Product;
-import ui_windows.options_window.certificates_editor.CertificateVerification;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import utils.Utils;
 
 import java.awt.*;
@@ -18,7 +17,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 
@@ -57,10 +55,10 @@ public class CertificateRequestWindowController implements Initializable {
 
                     if (product != null) {
                         lineWasFound = true;
-                        ArrayList<CertificateVerification> cvs = CoreModule.getCertificates().checkCertificates(product);
+                        ArrayList<CertificateVerificationItem> cvs = CoreModule.getCertificates().checkCertificates(product);
 
                         HashSet<File> files = new HashSet<>();
-                        for (CertificateVerification cv : cvs) {
+                        for (CertificateVerificationItem cv : cvs) {
                             File certFile = new File(CoreModule.getFolders().getCertFolder() + "\\" + cv.getFile());
 
                             if (certFile.exists() && cv.getStatus().startsWith("OK")) {

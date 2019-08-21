@@ -74,11 +74,12 @@
                               </ContextMenu>
                            </contextMenu>
                         </TableView>
-                        <TreeTableView fx:id="tvLgbk" layoutX="40.0" layoutY="350.0" prefHeight="350.0" prefWidth="1100.0">
+                        <TreeTableView fx:id="tvLgbk" layoutX="41.0" layoutY="295.0" prefHeight="415.0" prefWidth="1107.0" stylesheets="@families_editor/treeTableView.css">
                             <columns>
                                 <TreeTableColumn prefWidth="149.0" text="LGBK" />
                                 <TreeTableColumn prefWidth="142.0" text="Иерархия" />
-                                <TreeTableColumn prefWidth="215.0" text="Описание" />
+                                <TreeTableColumn prefWidth="215.0" text="Описание (en)" />
+                              <TreeTableColumn prefWidth="215.0" text="Описание (ru)" />
                             </columns>
                            <contextMenu>
                               <ContextMenu>
