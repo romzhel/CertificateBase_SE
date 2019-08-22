@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import ui_windows.main_window.Product;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificatesChecker;
 import utils.Utils;
 
 import java.awt.*;
@@ -55,10 +56,12 @@ public class CertificateRequestWindowController implements Initializable {
 
                     if (product != null) {
                         lineWasFound = true;
-                        ArrayList<CertificateVerificationItem> cvs = CoreModule.getCertificates().checkCertificates(product);
+
+                        CertificatesChecker certificatesChecker = CoreModule.getCertificates().getCertificatesChecker();
+                        certificatesChecker.check(product);
 
                         HashSet<File> files = new HashSet<>();
-                        for (CertificateVerificationItem cv : cvs) {
+                        for (CertificateVerificationItem cv : certificatesChecker.getResultTableItems()) {
                             File certFile = new File(CoreModule.getFolders().getCertFolder() + "\\" + cv.getFile());
 
                             if (certFile.exists() && cv.getStatus().startsWith("OK")) {

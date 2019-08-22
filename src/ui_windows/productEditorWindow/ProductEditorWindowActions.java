@@ -73,36 +73,9 @@ public class ProductEditorWindowActions {
     }
 
     public static void fillCertificateVerificationTable(){
-        ArrayList<CertificateVerificationItem> existingCerts = CoreModule.getCertificates().checkCertificates(getEditedItem());
+        CoreModule.getCertificates().getCertificatesChecker().check(getEditedItem());
         tableView.getItems().clear();
-        tableView.getItems().addAll(existingCerts);
-
-//        HashSet<Integer> existingNorms = new HashSet<>();
-        for (CertificateVerificationItem cv : existingCerts) {
-            existingNorms.addAll(CoreModule.getRequirementTypes().getReqTypesIdsALbyShortNamesEnum(cv.getNorm()));
-        }
-
-//        HashSet<Integer> needNorms = new HashSet<>();
-        ArrayList<Integer> productNorms = new ArrayList<>();
-        productNorms.addAll(getEditedItem().getNormsList().getIntegerItems());
-        if (getEditedItem().getNormsMode() == NormsList.ADD_TO_GLOBAL) {
-            LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(
-                    new ProductLgbk(getEditedItem().getLgbk(), getEditedItem().getHierarchy()));
-            needNorms.addAll(CoreModule.getProductLgbkGroups().getRootNode().getNormsList().getIntegerItems());
-            needNorms.addAll(lgbkAndParent.getLgbkParent().getNormsList().getIntegerItems());
-            needNorms.addAll(lgbkAndParent.getLgbkItem().getNormsList().getIntegerItems());
-        }
-        needNorms.removeAll(existingNorms);
-        productNorms.removeAll(existingNorms);
-
-        for (int normIndex : needNorms) {
-            tableView.getItems().add(new CertificateVerificationItem(CoreModule.getRequirementTypes().getRequirementByID(normIndex).getShortName()));
-        }
-
-        for (int normIndex : productNorms) {
-            tableView.getItems().add(new CertificateVerificationItem(CoreModule.getRequirementTypes().getRequirementByID(normIndex).getShortName()));
-        }
-
+        tableView.getItems().addAll(CoreModule.getCertificates().getCertificatesChecker().getResultTableItems());
         tableView.refresh();
     }
 

@@ -12,6 +12,7 @@ import javafx.scene.input.MouseButton;
 import ui_windows.main_window.Product;
 import ui_windows.options_window.certificates_editor.*;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificatesChecker;
 import ui_windows.options_window.families_editor.FamiliesEditorWindow;
 import ui_windows.options_window.families_editor.ProductFamiliesTable;
 import ui_windows.options_window.families_editor.ProductFamily;
@@ -214,7 +215,7 @@ public class OptionsWindowController implements Initializable {
         if (deletedLgbk.getNodeType() == 0 || deletedLgbk.getNodeType() == 1) {
             Dialogs.showMessage("Удаление элемента", "Удаление корневого элемента и элементов групп не поддерживается");
         } else {
-            if (Dialogs.confirm("Удаление элемента", "Действительно желаете удалить элемент?")){
+            if (Dialogs.confirm("Удаление элемента", "Действительно желаете удалить элемент?")) {
                 CoreModule.getProductLgbks().removeItem(deletedLgbk);
                 deletedItem.getParent().getChildren().remove(deletedItem);
             }
@@ -311,9 +312,11 @@ public class OptionsWindowController implements Initializable {
             HashSet<Product> problemProducts = new HashSet<>();
             HashSet<File> files = new HashSet<>();
 
+            CertificatesChecker certificatesChecker = CoreModule.getCertificates().getCertificatesChecker();
             for (Product product : CoreModule.getProducts().getItems()) {
-                for (CertificateVerificationItem cv : CoreModule.getCertificates().checkCertificates(product)) {
-                    if (cv.getStatus().startsWith("НЕ ОК, нет страны")) {
+                certificatesChecker.check(product);
+                for (CertificateVerificationItem cv : certificatesChecker.getResultTableItems()) {
+                    if (cv.getStatus().startsWith(CertificatesChecker.NOT_OK) && cv.getStatus().contains(CertificatesChecker.BAD_COUNTRY)) {
                         problemCv.add(cv);
                         problemCertificates.add(cv.getCertificate());
                         problemProducts.add(cv.getProduct());

@@ -4,8 +4,6 @@ import core.CoreModule;
 import core.Dialogs;
 import database.ProductLgbksDB;
 import javafx.scene.control.TreeTableView;
-import ui_windows.main_window.Product;
-import ui_windows.main_window.Products;
 import ui_windows.options_window.families_editor.ProductFamily;
 
 import java.util.ArrayList;
@@ -31,7 +29,7 @@ public class ProductLgbks {
 
             TreeTableView<ProductLgbk> tableView = productLgbksTable.getTableView();
             CoreModule.getProductLgbkGroups().createFromLgbks(this);
-            tableView.setRoot(CoreModule.getProductLgbkGroups().getLgbkTreeSet());
+            tableView.setRoot(CoreModule.getProductLgbkGroups().getFullTreeSet());
         }
     }
 

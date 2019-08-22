@@ -91,8 +91,8 @@ public class ProductLgbk {
         ArrayList<String> allNorms = CoreModule.getRequirementTypes().getAllRequirementTypesShortNames();
         if (selectedNorms != null) allNorms.removeAll(selectedNorms);
 
-        Utils.setControlValue(root, "lvAllNorms", allNorms);
-        Utils.setControlValue(root, "lvSelectedNorms", selectedNorms);
+//        Utils.setControlValue(root, "lvAllNorms", allNorms);
+//        Utils.setControlValue(root, "lvSelectedNorms", selectedNorms);
     }
 
     public String getDescription(){

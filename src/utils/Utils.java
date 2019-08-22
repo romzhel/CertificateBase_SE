@@ -2,12 +2,12 @@ package utils;
 
 import core.Dialogs;
 import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.AnchorPane;
@@ -18,11 +18,12 @@ import ui_windows.options_window.requirements_types_editor.RequirementType;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 
 public class Utils {
@@ -267,8 +268,8 @@ public class Utils {
     public static String toEN(String value) {
         if (value == null) return "";
 
-        String[] inLetters = new String[]{"А","В","С","Е","Н","К","М","О","Р","Т","Х"};
-        String[] outLetters = new String[] {"A","B","C","E","H","K","M","O","P","T","X"};
+        String[] inLetters = new String[]{"А", "В", "С", "Е", "Н", "К", "М", "О", "Р", "Т", "Х"};
+        String[] outLetters = new String[]{"A", "B", "C", "E", "H", "K", "M", "O", "P", "T", "X"};
 
         int pos;
         String result = "";
@@ -416,7 +417,7 @@ public class Utils {
 
     }
 
-    public static String addTextWithCommas(String target, String text){
+    public static String addTextWithCommas(String target, String text) {
         if (text == null || text.isEmpty()) return target;
 
         if (target == null || target.isEmpty()) {
@@ -425,6 +426,20 @@ public class Utils {
         }
 
         return target.concat(",").concat(text);
+    }
+
+    public static ArrayList<Integer> getNumberALfromStringEnum(String numbersEnum) {
+        ArrayList<Integer> result = new ArrayList<>();
+        if (numbersEnum == null || numbersEnum.trim().isEmpty()) return result;
+
+        String[] numbers = numbersEnum.split("\\,");
+        for (String numberS : numbers) {
+            if (numberS.trim().matches("^\\d+$")) {
+                result.add(Integer.parseInt(numberS));
+            }
+        }
+
+        return result;
     }
 
 }

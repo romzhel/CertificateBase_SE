@@ -4,22 +4,20 @@ import core.CoreModule;
 import database.ProductLgbksDB;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TreeTableView;
-import javafx.scene.input.MouseButton;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import ui_windows.options_window.requirements_types_editor.RequirementTypesListViews;
 import utils.Utils;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.TreeSet;
 
 import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
 
 public class LgbkEditorWindowController implements Initializable {
+    private RequirementTypesListViews listViews;
 
     @FXML
     ComboBox<String> cbFamily;
@@ -35,21 +33,9 @@ public class LgbkEditorWindowController implements Initializable {
         cbFamily.getItems().add("");
         cbFamily.getItems().addAll(CoreModule.getProductFamilies().getFamiliesNames());
 
-        lvAllNorms.setOnMouseClicked(event -> {
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
-                if (event.getClickCount() == 2) {
-                    moveNorm();
-                }
-            }
-        });
-
-        lvSelectedNorms.setOnMouseClicked(event -> {
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
-                if (event.getClickCount() == 2) {
-                    removeNorm();
-                }
-            }
-        });
+        TreeTableView<ProductLgbk> plt = CoreModule.getProductLgbks().getProductLgbksTable().getTableView();
+        ProductLgbk pl = plt.getSelectionModel().getSelectedItem().getValue();
+        listViews = new RequirementTypesListViews(pl, lvAllNorms, lvSelectedNorms);
     }
 
     public void apply() {
@@ -93,38 +79,19 @@ public class LgbkEditorWindowController implements Initializable {
     }
 
     public void moveNorm() {
-        int selectedIndex = lvAllNorms.getSelectionModel().getSelectedIndex();
-        if (selectedIndex > -1) {
-            lvSelectedNorms.getItems().add(lvAllNorms.getItems().remove(selectedIndex));
-            sortLV(lvSelectedNorms);
-        }
+        listViews.moveNorm();
     }
 
     public void moveAllNorms() {
-        lvSelectedNorms.getItems().addAll(lvAllNorms.getItems());
-        sortLV(lvSelectedNorms);
-        lvAllNorms.getItems().clear();
+        listViews.moveAllNorms();
     }
 
     public void removeNorm() {
-        int selectedIndex = lvSelectedNorms.getSelectionModel().getSelectedIndex();
-        if (selectedIndex > -1) {
-            lvAllNorms.getItems().add(lvSelectedNorms.getItems().remove(selectedIndex));
-            sortLV(lvAllNorms);
-        }
+       listViews.removeNorm();
     }
 
     public void removeAllNorms() {
-        lvAllNorms.getItems().addAll(lvSelectedNorms.getItems());
-        sortLV(lvAllNorms);
-        lvSelectedNorms.getItems().clear();
+       listViews.removeAllNorms();
     }
-
-    private void sortLV(ListView<String> listView) {
-        TreeSet<String> sortedList = new TreeSet<>(listView.getItems());
-        listView.getItems().clear();
-        listView.getItems().addAll(sortedList);
-    }
-
 
 }

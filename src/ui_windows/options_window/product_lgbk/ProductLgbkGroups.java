@@ -27,6 +27,8 @@ public class ProductLgbkGroups {
             createFromProducts(CoreModule.getProducts());
             CoreModule.getProductLgbks().addItems(getLgbks());
         }
+
+        getFullTreeSet();
         return this;
     }
 
@@ -98,11 +100,11 @@ public class ProductLgbkGroups {
         CoreModule.getProductLgbks().addItems(newLgbks);
 
         if (newLgbks.size() > 0) {
-            CoreModule.getProductLgbks().getProductLgbksTable().getTableView().setRoot(getLgbkTreeSet());
+            CoreModule.getProductLgbks().getProductLgbksTable().getTableView().setRoot(getFullTreeSet());
         }
     }
 
-    public TreeItem<ProductLgbk> getLgbkTreeSet() {
+    public TreeItem<ProductLgbk> getFullTreeSet() {
         treeItemRoot = new TreeItem<>(rootNode);
 
         for (ProductLgbkGroups.ProductLgbkGroup lgbkGroup : lgbkGroups) {
@@ -172,6 +174,26 @@ public class ProductLgbkGroups {
         if (lgbkAndParent == null) return "";
 
         return lgbkAndParent.getLgbkParent().getDescription() + " / " + lgbkAndParent.getLgbkItem().getDescription();
+    }
+
+    public TreeItem<ProductLgbk> getTreeItem(ProductLgbk lookingForLgbk) {
+        if (treeItemRoot == null) return null;
+        if (treeItemRoot.getValue().equals(lookingForLgbk)) return treeItemRoot;
+
+        for (TreeItem<ProductLgbk> groupTreeItem : treeItemRoot.getChildren()) {
+            if (groupTreeItem.getValue().getId() == lookingForLgbk.getId()) return groupTreeItem;
+
+            if (groupTreeItem.getValue().getLgbk().equals(lookingForLgbk.getLgbk())) {
+                    for (TreeItem<ProductLgbk> subgroupTreeItem : groupTreeItem.getChildren()) {
+                        if (lookingForLgbk.getId() == subgroupTreeItem.getValue().getId() ||
+                                lookingForLgbk.getHierarchy().contains(subgroupTreeItem.getValue().getHierarchy().replaceAll("\\.", ""))) {
+                            return subgroupTreeItem;
+                        }
+                    }
+            }
+        }
+
+        return null;
     }
 
     public ProductLgbk getRootNode() {

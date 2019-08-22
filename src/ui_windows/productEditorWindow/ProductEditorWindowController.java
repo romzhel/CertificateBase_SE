@@ -49,6 +49,7 @@ public class ProductEditorWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ProductEditorWindowActions.setTableView(tvCertVerification);
+        ProductEditorWindowActions.fillCertificateVerificationTable();
         new AutoCompleteComboBoxListener<>(cbType, false);
 //        cbType.getItems().addAll(CoreModule.getProductTypes().getPreparedTypes());
 
@@ -140,38 +141,6 @@ public class ProductEditorWindowController implements Initializable {
             tvCertVerification.getColumns().add(col);
         }
 
-        Product pr = ProductEditorWindowActions.getEditedItem();
-
-        ProductEditorWindowActions.fillCertificateVerificationTable();
-        /*ArrayList<CertificateVerification> existingCerts = CoreModule.getCertificates().checkCertificates(pr);
-        tvCertVerification.getItems().addAll(existingCerts);
-
-//        HashSet<Integer> existingNorms = new HashSet<>();
-        for (CertificateVerification cv : existingCerts) {
-            existingNorms.addAll(CoreModule.getRequirementTypes().getReqTypesIdsALbyShortNamesEnum(cv.getNorm()));
-        }
-
-//        HashSet<Integer> needNorms = new HashSet<>();
-        ArrayList<Integer> productNorms = new ArrayList<>();
-        productNorms.addAll(pr.getNormsList().getIntegerItems());
-        if (pr.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
-            LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(pr.getLgbk(), pr.getHierarchy()));
-            needNorms.addAll(CoreModule.getProductLgbkGroups().getRootNode().getNormsList().getIntegerItems());
-            needNorms.addAll(lgbkAndParent.getLgbkParent().getNormsList().getIntegerItems());
-            needNorms.addAll(lgbkAndParent.getLgbkItem().getNormsList().getIntegerItems());
-        }
-        needNorms.removeAll(existingNorms);
-        productNorms.removeAll(existingNorms);
-
-        for (int normIndex : needNorms) {
-            tvCertVerification.getItems().add(new CertificateVerification(CoreModule.getRequirementTypes().getRequirementByID(normIndex).getShortName()));
-        }
-
-        for (int normIndex : productNorms) {
-            tvCertVerification.getItems().add(new CertificateVerification(CoreModule.getRequirementTypes().getRequirementByID(normIndex).getShortName()));
-        }*/
-
-
         tvCertVerification.setOnMouseClicked(event -> {//double click on product
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 2) {
@@ -191,6 +160,7 @@ public class ProductEditorWindowController implements Initializable {
         });
 
         cbxOrderable.setOnMouseClicked(event -> {
+            Product pr = ProductEditorWindowActions.getEditedItem();
             OrderAccessibility oa = CoreModule.getOrdersAccessibility().getOrderAccessibilityByStatusCode(pr.getDchain());
 
             boolean isOrderable = oa == null ? false : oa.isOrderable();

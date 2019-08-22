@@ -17,6 +17,7 @@ import ui_windows.login_window.LoginWindow;
 import ui_windows.main_window.filter_window.FilterWindow;
 import ui_windows.options_window.OptionsWindow;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificatesChecker;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.user_editor.User;
 import ui_windows.productEditorWindow.ProductEditorWindow;
@@ -290,7 +291,9 @@ public class MainWindowsController implements Initializable {
 
                 MainWindow.setProgress(progress);
 
-                if (CoreModule.getCertificates().checkCertificates(pr).size() == 0) result.add(pr);
+                CertificatesChecker certificatesChecker = CoreModule.getCertificates().getCertificatesChecker();
+                certificatesChecker.check(pr);
+                if (certificatesChecker.getResultTableItems().size() == 0) result.add(pr);
             }
 
             MainWindow.setProgress(0.0);
@@ -312,8 +315,10 @@ public class MainWindowsController implements Initializable {
 
                 MainWindow.setProgress(progress);
 
-                for (CertificateVerificationItem cv : CoreModule.getCertificates().checkCertificates(pr)) {
-                    if (cv.getStatus().startsWith("НЕ ОК")) {
+                CertificatesChecker certificatesChecker = CoreModule.getCertificates().getCertificatesChecker();
+                certificatesChecker.check(pr);
+                for (CertificateVerificationItem cv : certificatesChecker.getResultTableItems()) {
+                    if (cv.getStatus().startsWith(CertificatesChecker.NOT_OK)) {
                         result.add(pr);
                         break;
                     }
@@ -346,7 +351,9 @@ public class MainWindowsController implements Initializable {
 
                 MainWindow.setProgress(progress);
 
-                for (CertificateVerificationItem cv : CoreModule.getCertificates().checkCertificates(pr)) {
+                CertificatesChecker certificatesChecker = CoreModule.getCertificates().getCertificatesChecker();
+                certificatesChecker.check(pr);
+                for (CertificateVerificationItem cv : certificatesChecker.getResultTableItems()) {
                     Date certDate = Utils.getDate(cv.getExpirationDate());
                     Date now = new Date();
                     long diff = certDate.getTime() - now.getTime();

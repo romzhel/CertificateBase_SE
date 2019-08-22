@@ -15,10 +15,6 @@ public class NormsList {
         this.norms = norms;
     }
 
-    public NormsList(ListView<String> listView) {
-
-    }
-
     public NormsList(String normsId) {
         norms = new ArrayList<>();
 

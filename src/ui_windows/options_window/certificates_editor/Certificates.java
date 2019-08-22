@@ -133,4 +133,8 @@ public class Certificates {
 
         return result;
     }*/
+
+    public CertificatesChecker getCertificatesChecker() {
+        return certificatesChecker;
+    }
 }
