@@ -7,12 +7,14 @@ import files.ExcelFile;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
+import javafx.util.Callback;
 import ui_windows.login_window.LoginWindow;
 import ui_windows.main_window.filter_window.FilterWindow;
 import ui_windows.options_window.OptionsWindow;
@@ -34,7 +36,8 @@ import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
-import static ui_windows.Mode.*;
+import static ui_windows.Mode.ADD;
+import static ui_windows.Mode.EDIT;
 
 public class MainWindowsController implements Initializable {
     ProductsComparatorResult lastComparationResult;
@@ -133,13 +136,35 @@ public class MainWindowsController implements Initializable {
 
             } else if (cols[i] == "dchain") {
                 col.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getOrderableStatus()));
+                col.setCellFactory(new Callback<TableColumn<Product, String>, TableCell<Product, String>>() {
+                    @Override
+                    public TableCell<Product, String> call(TableColumn<Product, String> param) {
+                        return new TableCell<Product, String>() {
+                            @Override
+                            protected void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
 
-            } else if(cols[i] == "description") {
+                                if (!empty) {
+                                    setText(item);
+
+                                    CoreModule.getCertificates().getCertificatesChecker().check(param.getTableView().getItems().get(getIndex()));
+                                    getStyleClass().removeAll("itemStrikethroughRed", "itemStrikethroughBrown",
+                                            "itemStrikethroughGreen", "itemStrikethroughBlack");
+                                    getStyleClass().add(CoreModule.getCertificates().getCertificatesChecker().getCheckStatusResultStyle());
+                                    setTooltip(new Tooltip(CoreModule.getCertificates().getCertificatesChecker().getCheckStatusResult()));
+                                }
+                            }
+                        };
+                    }
+                });
+
+            } else if (cols[i] == "description") {
                 col.setCellValueFactory(param -> {
                     Product pr = param.getValue();
 
                     if (!pr.getDescriptionru().trim().isEmpty()) return new SimpleStringProperty(pr.getDescriptionru());
-                    else if (!pr.getDescriptionen().trim().isEmpty()) return  new SimpleStringProperty(pr.getDescriptionen());
+                    else if (!pr.getDescriptionen().trim().isEmpty())
+                        return new SimpleStringProperty(pr.getDescriptionen());
                     else return new SimpleStringProperty("");
                 });
             } else col.setCellValueFactory(new PropertyValueFactory<>(cols[i]));

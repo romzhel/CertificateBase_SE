@@ -1,0 +1,31 @@
+.itemStrikethroughRed {
+    -fx-text-fill: red;
+}
+
+.itemStrikethroughRed .text {
+    -fx-strikethrough: true;
+}
+
+.itemStrikethroughBrown {
+    -fx-text-fill: brown;
+}
+
+.itemStrikethroughBrown .text {
+    -fx-strikethrough: true;
+}
+
+.itemStrikethroughGreen {
+    -fx-text-fill: green;
+}
+
+.itemStrikethroughGreen .text {
+    -fx-strikethrough: false;
+}
+
+.itemStrikethroughBlack {
+    -fx-text-fill: black;
+}
+
+.itemStrikethroughBlack .text {
+    -fx-strikethrough: false;
+}

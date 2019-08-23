@@ -67,6 +67,7 @@ public class ConfigNormsWindowController implements Initializable {
         alp.add(editedProduct);
         new ProductsDB().updateData(alp);
         ProductEditorWindowActions.fillCertificateVerificationTable();
+        CoreModule.getProducts().getTableView().refresh();
         close();
     }
 

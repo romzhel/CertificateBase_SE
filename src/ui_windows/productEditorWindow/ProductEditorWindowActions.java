@@ -65,9 +65,9 @@ public class ProductEditorWindowActions {
 
                 new Thread(() -> new ProductsDB().updateData(new ArrayList<Product>(productsToUpdate))).start(); //update in DB
 
-                CoreModule.getProducts().getTableView().refresh();
             }
 
+            CoreModule.getProducts().getTableView().refresh();
             stage.close();
         }
     }

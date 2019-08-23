@@ -204,7 +204,8 @@ public class Product {
         Utils.setControlValue(root, "cbxNeedAction", isNeedaction());
         Utils.setControlValue(root, "cbxNotUsed", isNotused());
         Utils.setControlValue(root, "lHistory", getHistory());
-        Utils.setControlValue(root, "tfManHier", CoreModule.getProductLgbkGroups().getFullDescription(new ProductLgbk(getLgbk(), getHierarchy())));
+        Utils.setControlValue(root, "tfManHier", CoreModule.getProductLgbkGroups().getFullDescription(
+                new ProductLgbk(getLgbk(), getHierarchy())));
 
         String fileName = getFileName().isEmpty() ? getMaterial().replaceAll("[\\\\/:*?\"<>|]+", "") +
                 "_" + getArticle().replaceAll("[\\\\/:*?\"<>|]+", "") + ".pdf" : getFileName();

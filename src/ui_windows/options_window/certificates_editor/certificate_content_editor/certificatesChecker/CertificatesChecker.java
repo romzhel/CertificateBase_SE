@@ -4,7 +4,6 @@ import core.CoreModule;
 import ui_windows.main_window.Product;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
-import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import utils.Utils;
@@ -139,16 +138,29 @@ public class CertificatesChecker {
         } else if (certTotal > 0 && normsForCheckingCount == 0) {
             checkStatusResult = NO_NORMS;
         } else if (certTotal == certsOk && certsErr == 0) {
-             checkStatusResult = STATUS_OK;
-        } else if (certsOk > 0 && certsAbs > 0 && certsErr == 0){
+            checkStatusResult = STATUS_OK;
+        } else if (certsOk > 0 && certsAbs > 0 && certsErr == 0) {
             checkStatusResult = PART_OF_CERT;
         } else if (certsErr > 0) {
             checkStatusResult = CERT_WITH_ERR;
         } else if (certTotal == certsAbs) {
             checkStatusResult = NO_CERT;
         }
+    }
 
-        System.out.println(checkStatusResult.getText());
+    public String getCheckStatusResultStyle() {
+        switch (checkStatusResult) {
+            case NO_CERT:
+            case CERT_WITH_ERR:
+//                return "-fx-text-fill: red;";
+                return "itemStrikethroughRed";
+            case PART_OF_CERT:
+                return "itemStrikethroughBrown";
+            case STATUS_OK:
+                return "itemStrikethroughGreen";
+            default:
+                return "itemStrikethroughBlack";
+        }
     }
 
     public ArrayList<CertificateVerificationItem> getResultTableItems() {
@@ -165,5 +177,9 @@ public class CertificatesChecker {
 
     public HashSet<Integer> getProductNeededNorms() {
         return productNeededNorms;
+    }
+
+    public String getCheckStatusResult(){
+        return checkStatusResult.getText();
     }
 }

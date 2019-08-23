@@ -2,12 +2,17 @@ package ui_windows.productEditorWindow;
 
 import core.CoreModule;
 import core.Dialogs;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import ui_windows.main_window.Product;
@@ -46,10 +51,22 @@ public class ProductEditorWindowController implements Initializable {
     @FXML
     CheckBox cbxOrderable;
 
+    @FXML
+    TextField tfAccessibility;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ProductEditorWindowActions.setTableView(tvCertVerification);
+        tvCertVerification.setPlaceholder(new Text("Нет данных для отображения"));
+
+        tvCertVerification.itemsProperty().get().addListener((ListChangeListener<CertificateVerificationItem>) c -> {
+            tfAccessibility.getStyleClass().removeAll("itemStrikethroughRed", "itemStrikethroughBrown",
+                    "itemStrikethroughGreen", "itemStrikethroughBlack");
+            tfAccessibility.getStyleClass().add(CoreModule.getCertificates().getCertificatesChecker().getCheckStatusResultStyle());
+        });
+
         ProductEditorWindowActions.fillCertificateVerificationTable();
+
         new AutoCompleteComboBoxListener<>(cbType, false);
 //        cbType.getItems().addAll(CoreModule.getProductTypes().getPreparedTypes());
 

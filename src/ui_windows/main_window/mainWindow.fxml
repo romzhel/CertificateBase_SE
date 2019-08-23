@@ -53,7 +53,7 @@
                 </Menu>
             </menus>
         </MenuBar>
-        <TableView fx:id="tvTable" layoutX="26.0" layoutY="34.0" prefHeight="513.0" prefWidth="1180.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="30.0">
+        <TableView fx:id="tvTable" layoutX="26.0" layoutY="34.0" prefHeight="513.0" prefWidth="1180.0" stylesheets="@../../css/strikethrough.css" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="30.0">
             <contextMenu>
                 <ContextMenu>
                     <items>
