@@ -1,7 +1,6 @@
 package ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker;
 
 import core.CoreModule;
-import jdk.nashorn.internal.ir.IfNode;
 import ui_windows.main_window.Product;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
@@ -111,11 +110,8 @@ public class CertificatesChecker {
         HashSet<Integer> normsForChecking = new HashSet<>();
 
         productNeededNorms.addAll(product.getNormsList().getIntegerItems());
-        LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(
-                new ProductLgbk(product.getLgbk(), product.getHierarchy()));
-        globalNeededNorms.addAll(CoreModule.getProductLgbkGroups().getRootNode().getNormsList().getIntegerItems());
-        globalNeededNorms.addAll(lgbkAndParent.getLgbkParent().getNormsList().getIntegerItems());
-        globalNeededNorms.addAll(lgbkAndParent.getLgbkItem().getNormsList().getIntegerItems());
+        globalNeededNorms.addAll(CoreModule.getProductLgbkGroups().getGlobalNormIds(
+                new ProductLgbk(product.getLgbk(), product.getHierarchy())));
 
         if (product.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
             normsForChecking.addAll(globalNeededNorms);
@@ -127,6 +123,7 @@ public class CertificatesChecker {
         }
 
         normsForChecking.addAll(productNeededNorms);
+        int normsForCheckingCount = normsForChecking.size();
 
         normsForChecking.removeAll(satisfiedNorms);
         for (int normIndex : normsForChecking) {
@@ -139,7 +136,7 @@ public class CertificatesChecker {
 
         if (certTotal == 0) {
             checkStatusResult = NO_NORMS;
-        } else if (certTotal > 0 && productNeededNorms.size() == 0) {
+        } else if (certTotal > 0 && normsForCheckingCount == 0) {
             checkStatusResult = NO_NORMS;
         } else if (certTotal == certsOk && certsErr == 0) {
              checkStatusResult = STATUS_OK;

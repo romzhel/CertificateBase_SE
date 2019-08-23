@@ -95,13 +95,8 @@ public class RequirementTypesListViews {
 
         lvAllNorms.getItems().addAll(CoreModule.getRequirementTypes().getAllRequirementTypesShortNames());
 
-        TreeItem<ProductLgbk> selectedTreeItem = CoreModule.getProductLgbkGroups().getTreeItem(lgbk);
-        while (selectedTreeItem != null) {
-            selectedGlobalNorms.addAll(
-                    CoreModule.getRequirementTypes().getReqTypeShortNamesByIds(
-                            selectedTreeItem.getValue().getNormsList().getIntegerItems()));
-            selectedTreeItem = selectedTreeItem.getParent();
-        }
+        selectedGlobalNorms.addAll(CoreModule.getRequirementTypes().getReqTypeShortNamesByIds(
+                new ArrayList<>(CoreModule.getProductLgbkGroups().getGlobalNormIds(lgbk))));
 
         if (product == null || (product != null && product.getNormsMode() == NormsList.ADD_TO_GLOBAL)) {
             lvSelectedNorms.getItems().addAll(selectedGlobalNorms);

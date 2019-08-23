@@ -7,6 +7,7 @@ import ui_windows.main_window.Product;
 import ui_windows.main_window.Products;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -194,6 +195,18 @@ public class ProductLgbkGroups {
         }
 
         return null;
+    }
+
+    public HashSet<Integer> getGlobalNormIds(ProductLgbk productLgbk) {
+        HashSet<Integer> globalNorms = new HashSet<>();
+
+        TreeItem<ProductLgbk> selectedTreeItem = CoreModule.getProductLgbkGroups().getTreeItem(productLgbk);
+        while (selectedTreeItem != null) {
+            globalNorms.addAll(selectedTreeItem.getValue().getNormsList().getIntegerItems());
+            selectedTreeItem = selectedTreeItem.getParent();
+        }
+
+        return globalNorms;
     }
 
     public ProductLgbk getRootNode() {
