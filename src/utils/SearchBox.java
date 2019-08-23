@@ -18,6 +18,7 @@ public class SearchBox extends Region {
         setMinHeight(25);
         setPrefSize(450, 25);
         setMaxSize(Control.USE_PREF_SIZE, Control.USE_PREF_SIZE);
+
         clearButton = new Button();
         clearButton.setVisible(false);
         clearButton.setOnAction((ActionEvent actionEvent) -> {

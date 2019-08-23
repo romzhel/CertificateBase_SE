@@ -64,13 +64,15 @@ public class MainWindow extends Application {
 
             mainStage.setScene(scene);
             mainStage.setTitle("База по продукции и сертификатам");
-            mainStage.setResizable(false);
+            mainStage.setResizable(true);
             mainStage.setIconified(false);
 
             searchBox = new SearchBox();
             searchBox.setLayoutX(158);
-            searchBox.setLayoutY(597);
+            searchBox.setLayoutY(601);
             rootAnchorPane.getChildren().add(searchBox);
+            rootAnchorPane.setBottomAnchor(searchBox, 39.0);
+            rootAnchorPane.setLeftAnchor(searchBox, 158.0);
 
             searchBox.getTextBox().textProperty().addListener((observable, oldValue, newValue) ->
                     CoreModule.filter());
@@ -84,6 +86,8 @@ public class MainWindow extends Application {
             searchBox.getTextBox().requestFocus();
 
             mainStage.show();
+            mainStage.setMinHeight(mainStage.getHeight());
+            mainStage.setMinWidth(mainStage.getWidth());
 
 //            new AddActions().make();
 

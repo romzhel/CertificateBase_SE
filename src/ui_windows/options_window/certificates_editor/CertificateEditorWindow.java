@@ -28,7 +28,10 @@ public class CertificateEditorWindow extends OrdinalWindow {
 
         chekingOwnRights();
 
+        stage.setResizable(true);
         stage.show();
+        stage.setMinHeight(stage.getHeight());
+        stage.setMinWidth(stage.getWidth());
     }
 
     private void chekingOwnRights() {

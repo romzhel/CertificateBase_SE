@@ -21,7 +21,10 @@ public class OptionsWindow extends OrdinalWindow {
 
         applyProfile();
 
+        stage.setResizable(true);
         stage.show();
+        stage.setMinWidth(stage.getWidth());
+        stage.setMinHeight(stage.getHeight());
     }
 
 

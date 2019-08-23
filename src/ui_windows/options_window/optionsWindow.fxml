@@ -14,7 +14,7 @@
             <content>
               <AnchorPane fx:id="apCertificates" minHeight="0.0" minWidth="0.0" prefHeight="724.0" prefWidth="1171.0">
                      <children>
-                        <TableView fx:id="tvCertificateTypes" layoutX="35.0" layoutY="32.0" prefHeight="200.0" prefWidth="1109.0">
+                        <TableView fx:id="tvCertificateTypes" layoutX="35.0" layoutY="32.0" prefHeight="200.0" prefWidth="1109.0" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="32.0">
                            <columns>
                               <TableColumn prefWidth="177.0" text="Сокращенное название" />
                               <TableColumn prefWidth="892.0" text="Полное название" />
@@ -30,7 +30,7 @@
                               </ContextMenu>
                            </contextMenu>
                         </TableView>
-                        <TableView fx:id="tvCertificates" layoutX="35.0" layoutY="264.0" prefHeight="450.0" prefWidth="1109.0">
+                        <TableView fx:id="tvCertificates" layoutX="35.0" layoutY="264.0" prefHeight="450.0" prefWidth="1109.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="259.0">
                           <columns>
                             <TableColumn prefWidth="409.0" text="Название" />
                               <TableColumn prefWidth="111.0" text="Срок действия" />
@@ -58,7 +58,7 @@
             <content>
               <AnchorPane fx:id="apProductFamilies" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="tvFamilies" layoutX="40.0" layoutY="41.0" prefHeight="200.0" prefWidth="1108.0">
+                        <TableView fx:id="tvFamilies" layoutX="40.0" layoutY="41.0" prefHeight="200.0" prefWidth="1108.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="41.0">
                           <columns>
                             <TableColumn minWidth="0.0" prefWidth="343.0" text="Направление" />
                             <TableColumn minWidth="0.0" prefWidth="715.0" text="Ответственные" />
@@ -74,7 +74,7 @@
                               </ContextMenu>
                            </contextMenu>
                         </TableView>
-                        <TreeTableView fx:id="tvLgbk" layoutX="41.0" layoutY="295.0" prefHeight="415.0" prefWidth="1107.0" stylesheets="@families_editor/treeTableView.css">
+                        <TreeTableView fx:id="tvLgbk" layoutX="41.0" layoutY="295.0" prefHeight="415.0" prefWidth="1107.0" stylesheets="@families_editor/treeTableView.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="295.0">
                             <columns>
                                 <TreeTableColumn prefWidth="149.0" text="LGBK" />
                                 <TreeTableColumn prefWidth="142.0" text="Иерархия" />
@@ -102,7 +102,7 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="tvOrdersAccessibility" layoutX="23.0" layoutY="31.0" prefHeight="683.0" prefWidth="1129.0">
+                        <TableView fx:id="tvOrdersAccessibility" layoutX="23.0" layoutY="31.0" prefHeight="683.0" prefWidth="1129.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="23.0" AnchorPane.rightAnchor="19.0" AnchorPane.topAnchor="31.0">
                            <contextMenu>
                               <ContextMenu>
                                 <items>
@@ -122,7 +122,7 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="726.0" prefWidth="1200.0">
                      <children>
-                        <TableView fx:id="tvProfiles" layoutX="19.0" layoutY="38.0" prefHeight="276.0" prefWidth="1132.0">
+                        <TableView fx:id="tvProfiles" layoutX="19.0" layoutY="38.0" prefHeight="276.0" prefWidth="1132.0" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="38.0">
                            <contextMenu>
                               <ContextMenu>
                                 <items>
@@ -135,7 +135,7 @@
                               </ContextMenu>
                            </contextMenu>
                         </TableView>
-                        <TableView fx:id="tvUsers" layoutX="20.0" layoutY="369.0" prefHeight="343.0" prefWidth="1130.0">
+                        <TableView fx:id="tvUsers" layoutX="20.0" layoutY="369.0" prefHeight="343.0" prefWidth="1130.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="366.0">
                            <contextMenu>
                               <ContextMenu>
                                 <items>
