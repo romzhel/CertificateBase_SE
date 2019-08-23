@@ -82,25 +82,6 @@ public class ProductLgbks {
         }
     }
 
-    public ProductLgbk getLgbkByValues(ProductLgbk pl) {
-        String lgbkP = pl.getLgbk();
-        String hierarchyL;
-
-        for (ProductLgbk plg : productLgbks) {
-            if (plg.getHierarchy().trim().length() == 0) hierarchyL = ".*";
-            else hierarchyL = plg.getHierarchy().replaceAll("\\*", ".*");
-
-            if (lgbkP.length() > 0 && plg.getLgbk().length() > 0) {
-
-                if (lgbkP.matches(plg.getLgbk()) && pl.getHierarchy().matches(hierarchyL)) return plg;
-            } else if (lgbkP.length() == 0 && plg.getLgbk().length() == 0) {
-                if (pl.getHierarchy().matches(hierarchyL)) return plg;
-            }
-        }
-
-        return null;
-    }
-
     public ArrayList<ProductLgbk> getProductLgbks() {
         return productLgbks;
     }

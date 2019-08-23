@@ -1,17 +1,12 @@
 package ui_windows.main_window;
 
 import core.CoreModule;
-import core.Dialogs;
 import database.ProductsDB;
-import javafx.application.Platform;
 import javafx.scene.control.TableView;
-import ui_windows.main_window.filter_window.Filter;
-import ui_windows.main_window.filter_window.FilterWindow;
-import ui_windows.options_window.families_editor.ProductFamily;
+import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import utils.Utils;
 
-import java.nio.charset.CoderResult;
 import java.util.ArrayList;
 
 public class Products {
@@ -79,9 +74,22 @@ public class Products {
         ArrayList<Product> changedItems = new ArrayList<>();
 
         for (Product pr : productList) {
-            ProductLgbk pl = CoreModule.getProductLgbks().getLgbkByValues(new ProductLgbk(pr.getLgbk(), pr.getHierarchy()));
-            if (pl != null && pr.isNotused() != pl.isNotUsed()) {
-                pr.setNotused(pl.isNotUsed());
+            /*ProductLgbk pl = CoreModule.getProductLgbkGroups().getTreeItem(
+                    new ProductLgbk(pr.getLgbk(), pr.getHierarchy())).getValue();*/
+
+            LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(
+                    new ProductLgbk(pr.getLgbk(), pr.getHierarchy()));
+
+            boolean globalNotUsed = false;
+            if (lgbkAndParent != null) {
+                if ((lgbkAndParent.getLgbkItem() != null && lgbkAndParent.getLgbkItem().isNotUsed()) ||
+                        (lgbkAndParent.getLgbkParent() != null && lgbkAndParent.getLgbkParent().isNotUsed())) {
+                    globalNotUsed = true;
+                }
+            }
+
+            if (globalNotUsed != pr.isNotused()) {
+                pr.setNotused(globalNotUsed);
                 changedItems.add(pr);
             }
         }
@@ -155,7 +163,7 @@ public class Products {
         ArrayList<Product> changedItems = new ArrayList<>();
 
         for (Product product : products) {
-            if (!product.getLastImportcodes().isEmpty()){
+            if (!product.getLastImportcodes().isEmpty()) {
                 product.setLastImportcodes("");
                 changedItems.add(product);
             }

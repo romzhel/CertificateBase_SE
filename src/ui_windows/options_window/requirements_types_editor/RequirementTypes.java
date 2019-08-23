@@ -50,15 +50,6 @@ public class RequirementTypes {
         return null;
     }
 
-/*    public int getRequirementIndexByID(int id) {
-        for (RequirementType ct : requirementTypes) {
-            if (ct.getId() == id) {
-                return requirementTypes.indexOf(ct);
-            }
-        }
-        return -1;
-    }*/
-
     public ArrayList<String> getRequirementsList(String idLine) {
         if (idLine == null || idLine.isEmpty()) return null;
 
@@ -146,5 +137,14 @@ public class RequirementTypes {
         return shortNameList;
     }
 
+    public int getExNormId() {
+        for (RequirementType reqType : requirementTypes) {
+            if (reqType.getShortName().toUpperCase().endsWith("EX") ||
+                    reqType.getFullName().contains("взрывозащ")) {
+                return reqType.getId();
+            }
+        }
+        return -1;
+    }
 
 }

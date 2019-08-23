@@ -1,6 +1,7 @@
 package ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker;
 
 import core.CoreModule;
+import jdk.nashorn.internal.ir.IfNode;
 import ui_windows.main_window.Product;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
@@ -13,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 
+import static ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CheckStatusResult.*;
+
 public class CertificatesChecker {
     public final static String NOT_OK = "НЕ ОК";
     public final static String OK = "ОК";
@@ -22,6 +25,11 @@ public class CertificatesChecker {
     private ArrayList<Integer> satisfiedNorms;
     private HashSet<Integer> globalNeededNorms;
     private HashSet<Integer> productNeededNorms;
+    private CheckStatusResult checkStatusResult = NO_DATA;
+    private int certsOk;
+    private int certsErr;
+    private int certTotal;
+    private int certsAbs;
 
 
     public CertificatesChecker() {
@@ -32,9 +40,12 @@ public class CertificatesChecker {
     }
 
     public void check(Product product) {
+        certsOk = 0;
+        certsErr = 0;
+        certTotal = 0;
+        certsAbs = 0;
         checkExistingCertificates(product);
         checkNorms(product);
-
     }
 
     private void checkExistingCertificates(Product product) {
@@ -67,15 +78,20 @@ public class CertificatesChecker {
                         if (prod.matches(contentValue)) {
                             if ((new Date()).after(Utils.getDate(cert.getExpirationDate()))) {//expired
                                 status = NOT_OK + EXPIRED + cert.getExpirationDate();
+                                certsErr++;
                             }
 
                             if (product.getCountry().trim().length() > 0 && !cert.getCountries().toLowerCase().//no country
                                     contains(product.getCountry().toLowerCase())) {
                                 status = status.isEmpty() ? NOT_OK + BAD_COUNTRY + " (" + product.getCountry().toUpperCase() + ")"
                                         : status + BAD_COUNTRY + " (" + product.getCountry().toUpperCase() + ")";
+                                certsErr++;
                             }
 
-                            if (status.isEmpty()) status = OK + ", до " + cert.getExpirationDate();
+                            if (status.isEmpty()) {
+                                status = OK + ", до " + cert.getExpirationDate();
+                                certsOk++;
+                            }
 
                             satisfiedNorms.addAll(Utils.getNumberALfromStringEnum(cert.getNorms()));
                             String norms = CoreModule.getRequirementTypes().getNormsShortNamesByIds(cert.getNorms());
@@ -103,14 +119,39 @@ public class CertificatesChecker {
 
         if (product.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
             normsForChecking.addAll(globalNeededNorms);
+
+            if (product.getArticle().endsWith("-EX")) {
+                int normExId = CoreModule.getRequirementTypes().getExNormId();
+                if (normExId > 0) normsForChecking.add(normExId);
+            }
         }
+
         normsForChecking.addAll(productNeededNorms);
 
         normsForChecking.removeAll(satisfiedNorms);
         for (int normIndex : normsForChecking) {
             String shortName = CoreModule.getRequirementTypes().getRequirementByID(normIndex).getShortName();
             resultTableItems.add(new CertificateVerificationItem(shortName));
+            certsAbs++;
         }
+
+        certTotal = resultTableItems.size();
+
+        if (certTotal == 0) {
+            checkStatusResult = NO_NORMS;
+        } else if (certTotal > 0 && productNeededNorms.size() == 0) {
+            checkStatusResult = NO_NORMS;
+        } else if (certTotal == certsOk && certsErr == 0) {
+             checkStatusResult = STATUS_OK;
+        } else if (certsOk > 0 && certsAbs > 0 && certsErr == 0){
+            checkStatusResult = PART_OF_CERT;
+        } else if (certsErr > 0) {
+            checkStatusResult = CERT_WITH_ERR;
+        } else if (certTotal == certsAbs) {
+            checkStatusResult = NO_CERT;
+        }
+
+        System.out.println(checkStatusResult.getText());
     }
 
     public ArrayList<CertificateVerificationItem> getResultTableItems() {

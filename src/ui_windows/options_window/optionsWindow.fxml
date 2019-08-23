@@ -91,7 +91,7 @@
                                     <SeparatorMenuItem mnemonicParsing="false" />
                                     <MenuItem mnemonicParsing="false" onAction="#actionReCheckLgbkFromProducts" text="     Сверка     " />
                                     <SeparatorMenuItem mnemonicParsing="false" />
-                                    <MenuItem mnemonicParsing="false" onAction="#actionApplyChangedLgbkToProducts" text="     Применить     " />
+                                    <MenuItem disable="true" mnemonicParsing="false" onAction="#actionApplyChangedLgbkToProducts" text="     Применить     " />
                                 </items>
                               </ContextMenu>
                            </contextMenu></TreeTableView>

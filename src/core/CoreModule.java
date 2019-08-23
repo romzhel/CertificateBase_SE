@@ -1,29 +1,29 @@
 package core;
 
 import database.DataBase;
-import database.ProductsDB;
 import files.Folders;
 import javafx.application.Platform;
 import javafx.scene.control.TableView;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.Product;
+import ui_windows.main_window.ProductTypes;
+import ui_windows.main_window.Products;
 import ui_windows.main_window.filter_window.Filter;
-import ui_windows.options_window.certificates_editor.CertificatesTable;
 import ui_windows.options_window.certificates_editor.Certificates;
+import ui_windows.options_window.certificates_editor.CertificatesTable;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContent;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContentTable;
 import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
+import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.options_window.product_lgbk.ProductLgbks;
 import ui_windows.options_window.profile_editor.Profiles;
-import ui_windows.options_window.user_editor.Users;
 import ui_windows.options_window.requirements_types_editor.RequirementTypes;
 import ui_windows.options_window.requirements_types_editor.RequirementTypesTable;
-import ui_windows.main_window.ProductTypes;
-import ui_windows.main_window.Products;
+import ui_windows.options_window.user_editor.Users;
 import utils.Utils;
 
 import java.util.ArrayList;
@@ -99,7 +99,7 @@ public class CoreModule {
         boolean articleMatch = false;
         boolean materialMatch = false;
         boolean filterMatch = false;
-        ProductLgbk pl = null;
+        LgbkAndParent lgbkAndParent;
         ProductFamily pf = null;
         boolean familyMatch = false;
 
@@ -112,12 +112,18 @@ public class CoreModule {
                 if (p.getFamily() > 0) {
                     pf = CoreModule.getProductFamilies().getFamilyById(p.getFamily());
                 } else {
-                    pl = CoreModule.getProductLgbks().getLgbkByValues(new ProductLgbk(p.getLgbk(), p.getHierarchy()));
-                    if (pl != null) pf = CoreModule.getProductFamilies().getFamilyById(pl.getFamilyId());
+                    lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(p.getLgbk(), p.getHierarchy()));
+                    if (lgbkAndParent.getLgbkItem() != null && lgbkAndParent.getLgbkItem().getFamilyId() > 0) {
+                        pf = CoreModule.getProductFamilies().getFamilyById(lgbkAndParent.getLgbkItem().getFamilyId());
+                    } else if (lgbkAndParent.getLgbkParent() != null) {
+                        pf = CoreModule.getProductFamilies().getFamilyById(lgbkAndParent.getLgbkParent().getFamilyId());
+                    }
                 }
 
-                if (pl == null || pf == null) familyMatch = false;
-                else familyMatch = pf.equals(CoreModule.getFilter().getProductFamily());
+                familyMatch = pf == null ? false : pf.equals(CoreModule.getFilter().getProductFamily());
+
+                /*if (pf == null) familyMatch = false;
+                else familyMatch = pf.equals(CoreModule.getFilter().getProductFamily());*/
             } else {
                 familyMatch = true;
             }

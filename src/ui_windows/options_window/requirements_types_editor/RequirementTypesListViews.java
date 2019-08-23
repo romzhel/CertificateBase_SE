@@ -28,6 +28,7 @@ public class RequirementTypesListViews {
         this.lvSelectedNorms = lvSelectedNorms;
         product = null;
         lgbk = pl;
+        initListViews();
         display();
     }
 
@@ -36,6 +37,7 @@ public class RequirementTypesListViews {
         this.lvSelectedNorms = lvSelectedNorms;
         this.product = product;
         lgbk = new ProductLgbk(product.getLgbk(), product.getHierarchy());
+        initListViews();
         display();
     }
 
@@ -110,6 +112,10 @@ public class RequirementTypesListViews {
         lvSelectedNorms.getItems().addAll(CoreModule.getRequirementTypes().getReqTypeShortNamesByIds(productNormList));
         lvAllNorms.getItems().removeAll(lvSelectedNorms.getItems());
 
+        sortLV(lvSelectedNorms);
+    }
+
+    private void initListViews() {
         lvAllNorms.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 2) {
@@ -125,8 +131,6 @@ public class RequirementTypesListViews {
                 }
             }
         });
-
-        sortLV(lvSelectedNorms);
     }
 
 
@@ -167,7 +171,10 @@ public class RequirementTypesListViews {
     public NormsList getProductNormsListForSave(){
         ArrayList<String> onlyProduct = new ArrayList<>();
         onlyProduct.addAll(lvSelectedNorms.getItems());
-        onlyProduct.removeAll(selectedGlobalNorms);
+
+        if (product.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
+            onlyProduct.removeAll(selectedGlobalNorms);
+        }
 
         return new NormsList(CoreModule.getRequirementTypes().getReqTypeIdsByShortNames(onlyProduct));
     }

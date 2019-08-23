@@ -30,12 +30,12 @@ public class ProductLgbksTable {
 
         tableView.getColumns().add(col);
 
-        TreeTableColumn<ProductLgbk, Boolean> colB = new TreeTableColumn<>("Не используется");
+        /*TreeTableColumn<ProductLgbk, Boolean> colB = new TreeTableColumn<>("Не используется");
         colB.setCellValueFactory(param -> {
             return new SimpleBooleanProperty(param.getValue().getValue().isNotUsed());
         });
         colB.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(colB));
-        tableView.getColumns().add(colB);
+        tableView.getColumns().add(colB);*/
 
 
 //        tableView.  getItems().addAll(CoreModule.getProductLgbks().getProductLgbks());
