@@ -226,15 +226,6 @@ public class OptionsWindowController implements Initializable {
         CoreModule.getProductLgbkGroups().checkConsistency();
     }
 
-    public void actionApplyChangedLgbkToProducts() {
-//        new Thread(() -> {
-        CoreModule.getProducts().applyNotUsedFromLgbk();
-//            Platform.runLater(() -> Dialogs.showMessage("ok", "ok"));
-        System.out.println("ok");
-//        }).start();
-
-    }
-
     public void actionAddOrderAccessItem() {
         new OrdersAccessibilityEditorWindow(ADD);
     }

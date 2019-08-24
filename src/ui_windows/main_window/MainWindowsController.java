@@ -222,10 +222,6 @@ public class MainWindowsController implements Initializable {
 
                 ProductsDB request = new ProductsDB();
 
-                //applying not used property from Lgbk table for new and changed items
-                CoreModule.getProducts().getChangedNotUsedProductsFromLgbk(lastComparationResult.getChangedItems());
-                CoreModule.getProducts().getChangedNotUsedProductsFromLgbk(lastComparationResult.getNewItems());
-
                 request.putData(lastComparationResult.getNewItems());// save new items to db
                 request.updateData(new ArrayList<>(changedItemsForDB));//save changed items to db
 

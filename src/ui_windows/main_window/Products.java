@@ -63,42 +63,6 @@ public class Products {
         return false;
     }
 
-    public void applyNotUsedFromLgbk() {
-        ArrayList<Product> changedItems = getChangedNotUsedProductsFromLgbk(products);
-        CoreModule.filter();
-
-        new Thread(() -> db.updateData(changedItems)).start();
-    }
-
-    public ArrayList<Product> getChangedNotUsedProductsFromLgbk(ArrayList<Product> productList) {
-        ArrayList<Product> changedItems = new ArrayList<>();
-
-        for (Product pr : productList) {
-            /*ProductLgbk pl = CoreModule.getProductLgbkGroups().getTreeItem(
-                    new ProductLgbk(pr.getLgbk(), pr.getHierarchy())).getValue();*/
-
-            LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(
-                    new ProductLgbk(pr.getLgbk(), pr.getHierarchy()));
-
-            boolean globalNotUsed = false;
-            if (lgbkAndParent != null) {
-                if ((lgbkAndParent.getLgbkItem() != null && lgbkAndParent.getLgbkItem().isNotUsed()) ||
-                        (lgbkAndParent.getLgbkParent() != null && lgbkAndParent.getLgbkParent().isNotUsed())) {
-                    globalNotUsed = true;
-                }
-            }
-
-            if (globalNotUsed != pr.isNotused()) {
-                pr.setNotused(globalNotUsed);
-                changedItems.add(pr);
-            }
-        }
-
-        System.out.println("not used changed items " + changedItems.size());
-
-        return changedItems;
-    }
-
     public Product getSelectedItem() {
         int index = tableView.getSelectionModel().getSelectedIndex();
 

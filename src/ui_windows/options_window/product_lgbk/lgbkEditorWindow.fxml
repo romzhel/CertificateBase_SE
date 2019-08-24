@@ -12,8 +12,8 @@
       <Label layoutX="83.0" layoutY="61.0" text="Иерархия" />
       <Label layoutX="15.0" layoutY="101.0" prefHeight="17.0" prefWidth="137.0" text="Описание (английский)" />
       <Label layoutX="63.0" layoutY="179.0" text="Направление" />
-      <Label disable="true" layoutX="385.0" layoutY="41.0" text="Не используется" />
-      <CheckBox fx:id="ckbNotUsed" contentDisplay="GRAPHIC_ONLY" disable="true" layoutX="489.0" layoutY="41.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="10.0" text="CheckBox" />
+      <Label layoutX="385.0" layoutY="41.0" text="Не используется" />
+      <CheckBox fx:id="ckbNotUsed" contentDisplay="GRAPHIC_ONLY" layoutX="489.0" layoutY="41.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="10.0" text="CheckBox" />
       <ComboBox fx:id="cbFamily" layoutX="154.0" layoutY="175.0" prefHeight="25.0" prefWidth="364.0" />
       <TextField fx:id="tfDescriptionEn" layoutX="154.0" layoutY="97.0" prefHeight="25.0" prefWidth="364.0" />
       <TextField fx:id="tfLgbk" layoutX="154.0" layoutY="19.0" />

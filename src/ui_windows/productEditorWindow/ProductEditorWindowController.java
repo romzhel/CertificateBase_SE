@@ -20,6 +20,8 @@ import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
+import ui_windows.options_window.product_lgbk.LgbkAndParent;
+import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.productEditorWindow.configNormsWindow.ConfigNormsWindow;
 import utils.AutoCompleteComboBoxListener;
 import utils.Utils;
@@ -54,6 +56,9 @@ public class ProductEditorWindowController implements Initializable {
     @FXML
     TextField tfAccessibility;
 
+    @FXML
+    CheckBox cbxNotUsed;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ProductEditorWindowActions.setTableView(tvCertVerification);
@@ -69,6 +74,23 @@ public class ProductEditorWindowController implements Initializable {
 
         new AutoCompleteComboBoxListener<>(cbType, false);
 //        cbType.getItems().addAll(CoreModule.getProductTypes().getPreparedTypes());
+
+        Product editedProduct = CoreModule.getProducts().getTableView().getSelectionModel().getSelectedItem();
+        LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(
+                new ProductLgbk(editedProduct.getLgbk(), editedProduct.getHierarchy()));
+        boolean globalNotUsed = lgbkAndParent.getLgbkItem().isNotUsed() || lgbkAndParent.getLgbkParent().isNotUsed();
+
+        if (editedProduct.isNotused()) {
+//            cbxNotUsed.getStyleClass().removeAll("check-box");
+            cbxNotUsed.setSelected(true);
+        } else if (globalNotUsed) {
+//            cbxNotUsed.getStyleClass().removeAll("check-box");
+//            cbxNotUsed.getStyleClass().add("check-box");
+            cbxNotUsed.setSelected(true);
+        } else {
+//            cbxNotUsed.getStyleClass().removeAll("check-box");
+            cbxNotUsed.setSelected(false);
+        }
 
         String[] colNames = new String[]{"norm", "matchedPart", "prodType", "file", "status"};
         String[] titles = new String[]{"Регламент", "Соответствие", "Тип продукции", "Файл сертификата", "Актуальность"};

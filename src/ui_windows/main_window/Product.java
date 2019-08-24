@@ -3,6 +3,7 @@ package ui_windows.main_window;
 import core.CoreModule;
 import javafx.scene.paint.Color;
 import ui_windows.main_window.filter_window.Filter;
+import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.NormsList;
 import utils.ColumnsMapper;
 import javafx.beans.property.BooleanProperty;
@@ -202,7 +203,7 @@ public class Product {
         Utils.setControlValue(root, "cbxPrice", isPrice());
         Utils.setControlValue(root, "cbxArchive", isArchive());
         Utils.setControlValue(root, "cbxNeedAction", isNeedaction());
-        Utils.setControlValue(root, "cbxNotUsed", isNotused());
+//        Utils.setControlValue(root, "cbxNotUsed", isNotused());
         Utils.setControlValue(root, "lHistory", getHistory());
         Utils.setControlValue(root, "tfManHier", CoreModule.getProductLgbkGroups().getFullDescription(
                 new ProductLgbk(getLgbk(), getHierarchy())));
@@ -252,8 +253,11 @@ public class Product {
         boolean allRecords = (filter.getFilterSimpleByUIname("cbxAllRecords").isValue());
         boolean price = (filter.getFilterSimpleByUIname("cbxPrice").isValue() && isPrice());
         boolean archive = (filter.getFilterSimpleByUIname("cbxArchive").isValue() && isArchive());
-        boolean notUsed = (filter.getFilterSimpleByUIname("cbxNotUsed").isValue() && isNotused());
         boolean needAction = (filter.getFilterSimpleByUIname("cbxNeedAction").isValue());// && isNeedaction());
+
+        LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(getLgbk(), getHierarchy()));
+        boolean globalNotUsed = lgbkAndParent.getLgbkItem().isNotUsed() || lgbkAndParent.getLgbkParent().isNotUsed();
+        boolean notUsed = (filter.getFilterSimpleByUIname("cbxNotUsed").isValue() && (isNotused() || globalNotUsed));
 
         boolean matchChanges = false;
         if (needAction) {

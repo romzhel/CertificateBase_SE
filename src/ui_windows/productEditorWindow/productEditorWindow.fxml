@@ -22,7 +22,7 @@
       <Label alignment="CENTER_RIGHT" layoutX="8.0" layoutY="190.0" prefHeight="17.0" prefWidth="110.0" text="Тип" />
       <Label alignment="CENTER_RIGHT" layoutX="904.0" layoutY="246.0" prefHeight="17.0" prefWidth="61.0" text="Иерархия" />
       <CheckBox fx:id="cbxPrice" contentDisplay="CENTER" layoutX="526.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="76.0" text="Прайс   " />
-      <CheckBox fx:id="cbxArchive" contentDisplay="CENTER" layoutX="629.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="86.0" text="Архив   " />
+      <CheckBox fx:id="cbxArchive" contentDisplay="CENTER" layoutX="789.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="86.0" text="Архив   " />
       <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="418.0" prefHeight="17.0" prefWidth="110.0" text="Имя файла" />
       <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="477.0" prefHeight="17.0" prefWidth="110.0" text="Комментарии" />
       <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="449.0" prefHeight="17.0" prefWidth="110.0" text="Замена" />
@@ -86,7 +86,7 @@
       <TextArea fx:id="taComments" layoutX="124.0" layoutY="475.0" prefHeight="84.0" prefWidth="416.0" />
       <Button fx:id="btnApply" layoutX="220.0" layoutY="745.0" mnemonicParsing="false" onAction="#apply" prefWidth="150.0" text="Сохранить" />
       <Button layoutX="612.0" layoutY="745.0" mnemonicParsing="false" onAction="#cancel" prefWidth="150.0" text="Отмена" />
-      <CheckBox fx:id="cbxNotUsed" contentDisplay="CENTER" layoutX="754.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="127.0" text="Не используется   " />
+      <CheckBox fx:id="cbxNotUsed" contentDisplay="CENTER" layoutX="643.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="127.0" text="Не используется   " />
       <ComboBox fx:id="cbFamily" layoutX="124.0" layoutY="276.0" prefHeight="25.0" prefWidth="628.0" />
       <CheckBox fx:id="cbxOrderable" contentDisplay="GRAPHIC_ONLY" layoutX="124.0" layoutY="332.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="12.0" text="CheckBox" />
       <TextArea fx:id="taDescriptionEn" layoutX="124.0" layoutY="126.0" prefHeight="48.0" prefWidth="931.0" wrapText="true" />

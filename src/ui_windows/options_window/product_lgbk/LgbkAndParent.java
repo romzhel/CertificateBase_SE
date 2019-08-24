@@ -1,15 +1,14 @@
 package ui_windows.options_window.product_lgbk;
 
+import ui_windows.main_window.Product;
+
 public class LgbkAndParent {
-    private ProductLgbk lgbkItem;
+    private ProductLgbk lgbkRoot;
     private ProductLgbk lgbkParent;
+    private ProductLgbk lgbkItem;
 
-    public LgbkAndParent(ProductLgbk lgbkItem, ProductLgbk lgbkParent) {
-        this.lgbkItem = lgbkItem;
-        this.lgbkParent = lgbkParent;
-    }
-
-    public LgbkAndParent() {
+    public LgbkAndParent(ProductLgbk lgbkRoot) {
+        this.lgbkRoot = lgbkRoot;
     }
 
     public ProductLgbk getLgbkItem() {
@@ -26,5 +25,13 @@ public class LgbkAndParent {
 
     public void setLgbkParent(ProductLgbk lgbkParent) {
         this.lgbkParent = lgbkParent;
+    }
+
+    public ProductLgbk getLgbkRoot() {
+        return lgbkRoot;
+    }
+
+    public void setLgbkRoot(ProductLgbk lgbkRoot) {
+        this.lgbkRoot = lgbkRoot;
     }
 }

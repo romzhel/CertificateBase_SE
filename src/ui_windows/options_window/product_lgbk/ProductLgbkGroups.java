@@ -136,7 +136,7 @@ public class ProductLgbkGroups {
 
     public LgbkAndParent getLgbkAndParent(ProductLgbk lookingForLgbk) {
         ProductLgbkGroup lookingForGroup = new ProductLgbkGroup(lookingForLgbk);
-        LgbkAndParent result = new LgbkAndParent();
+        LgbkAndParent result = new LgbkAndParent(rootNode);
 
         if (lgbkGroups.contains(lookingForGroup)) {
             Iterator<ProductLgbkGroup> iterator = lgbkGroups.iterator();
