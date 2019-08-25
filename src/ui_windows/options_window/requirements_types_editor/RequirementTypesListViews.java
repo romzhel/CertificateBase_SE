@@ -8,7 +8,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseButton;
 import javafx.util.Callback;
-import ui_windows.main_window.Product;
+import ui_windows.product.Product;
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 

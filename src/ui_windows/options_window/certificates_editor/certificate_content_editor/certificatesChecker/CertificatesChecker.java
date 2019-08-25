@@ -1,7 +1,7 @@
 package ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker;
 
 import core.CoreModule;
-import ui_windows.main_window.Product;
+import ui_windows.product.Product;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.options_window.product_lgbk.NormsList;

@@ -1,7 +1,9 @@
-package utils;
+package utils.comparation;
 
-import ui_windows.main_window.Product;
-import ui_windows.main_window.Products;
+import ui_windows.product.Product;
+import ui_windows.product.Products;
+import utils.DoublesPreprocessor;
+import utils.Utils;
 
 public class ProductsComparator {
     ProductsComparatorResult result;
@@ -9,7 +11,7 @@ public class ProductsComparator {
     public ProductsComparator(Products prs1, Products prs2nt, String... exceptions) {
         result = new ProductsComparatorResult();
         Products prs2 = new Products();
-        prs2.setItems(new Preprocessor(prs2nt.getItems()).getTreatedItems());
+        prs2.setItems(new DoublesPreprocessor(prs2nt.getItems()).getTreatedItems());
 
         System.out.println("comparing: existing items \\ importing items : " + prs1.getItems().size() + " \\ " +
                 prs2.getItems().size());
@@ -23,24 +25,24 @@ public class ProductsComparator {
                 pr1t = pr1.getMaterial().replaceAll("\\-", "").replaceAll("BPZ:", "");
                 pr2t = pr2.getMaterial().replaceAll("\\-", "").replaceAll("BPZ:", "");
 
-                if (pr1t.equals("P55802-Y110-A100")){
-                    int i = 0;
-                    System.out.println("checking__________________________________________");
-                }
-
-
-
                 if (pr1t.equals(pr2t)) {//product exists
                     pr1.setLastChangeDate(Utils.getDateTime());//set last update time
 
 //                    pr1.setChangecodes("");
                     ObjectsComparator pc = new ObjectsComparator(pr1, pr2, true, exceptions);
+                    ObjectsComparatorResult ocr = pc.getResult();
 
-                    if (pc.getResult().length() > 0) {//product changed
+                    if (ocr.isNeedUpdateInDB()) {//product changed
                         result.getChangedItems().add(pr1);//add product to changed list
-                        System.out.println(pr1.getMaterial() + ", (" + pr1.getArticle() + ") changed" + pc.getResult());
+                        System.out.println(pr1.getMaterial() + ", (" + pr1.getArticle() + ") changed" + ocr.getHistoryComment());
 
-                        pr1.setHistory(pr1.getHistory().concat(Utils.getDateTime()).concat(pc.getResult().concat("\n")));
+                        if (!ocr.getHistoryComment().isEmpty()) {
+                            if (pr1.getHistory() != null && !pr1.getHistory().isEmpty()) {
+                                pr1.setHistory(pr1.getHistory().concat("|" + Utils.getDateTime()).concat(ocr.getHistoryComment()));
+                            } else {
+                                pr1.setHistory(pr1.getHistory().concat(Utils.getDateTime()).concat(ocr.getHistoryComment()));
+                            }
+                        }
                         pr1.setNeedaction(true);
                     }
 
@@ -61,7 +63,7 @@ public class ProductsComparator {
                 pr.setChangecodes("new");
                 pr.setLastImportcodes("new");
                 pr.setNeedaction(true);
-                pr.setHistory(pr.getHistory().concat(Utils.getDateTime().concat(", new\n")));// add back <<<<<<<
+                pr.setHistory(pr.getHistory().concat(Utils.getDateTime().concat(", new")));// add back <<<<<<<
                 pr.setLastChangeDate(Utils.getDateTime());
                 prs1.getItems().add(pr);
                 result.getNewItems().add(pr);

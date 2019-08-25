@@ -1,14 +1,16 @@
-package utils;
+package utils.comparation;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import ui_windows.main_window.Product;
+import javafx.beans.property.StringProperty;
+import ui_windows.product.Product;
+import utils.Utils;
 
 import java.lang.reflect.Field;
 
 public class ObjectsComparator {
-    private String result = "";
+    private ObjectsComparatorResult comparatorResult;
 
     public ObjectsComparator(Object obj1, Object obj2, boolean emptyTextProtection, String... exceptions) {
+        comparatorResult = new ObjectsComparatorResult();
         Field[] obj1Fields = obj1.getClass().getDeclaredFields();//fields of product1
         Field[] obj2Fields = obj2.getClass().getDeclaredFields();//fields of product2
         Object value1;
@@ -38,6 +40,10 @@ public class ObjectsComparator {
                     if (value1s.equals(value2s)) continue;
                 }
 
+                if (obj1Fields[i].getName().matches(".*price.*")){
+                    continue;
+                }
+
                 boolean notZero = true;//avoiding reset of Product type value to 0
                 if (value2 != null && value2.getClass().getName().endsWith("Integer")) {
                     notZero = ((Integer) value2) != 0;
@@ -56,11 +62,17 @@ public class ObjectsComparator {
                         obj2Fields[i].setAccessible(true);
                         obj1Fields[i].set(obj1, obj2Fields[i].get(obj2));//copy new value
 
-                        if (!obj1Fields[i].getName().toLowerCase().contains("description")) {//description changes
-                            result += obj1Fields[i].getName();
-                        } else {
-                            result += ", " + obj1Fields[i].getName() + ": " + (value1 == null ? "" : value1.toString()) +
-                                    " -> " + value2.toString();
+                        comparatorResult.setNeedUpdateInDB(true);
+
+                        if (value1 != null && isValueNoDefault(value1)) {
+                            String historyResult = comparatorResult.getHistoryComment();
+                            if (obj1Fields[i].getName().toLowerCase().contains("description")) {//description changes
+                                historyResult += ", " + obj1Fields[i].getName();
+                            } else {
+                                historyResult += ", " + obj1Fields[i].getName() + ": " + (value1 == null ? "" : value1.toString()) +
+                                        " -> " + value2.toString();
+                            }
+                            comparatorResult.setHistoryComment(historyResult);
                         }
 
                         if (obj1 instanceof Product) {
@@ -78,39 +90,44 @@ public class ObjectsComparator {
         }
     }
 
-    public String getResult() {
-        return result;
+    public ObjectsComparatorResult getResult() {
+        return comparatorResult;
     }
 
     private Object getProperty(Object object, Field field) {
         Object value = null;
-        String methodName = "";
+        String methodName = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
 
         try {
             if (field.getType().getName().endsWith("StringProperty")) {//check only property
 
-                methodName = "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+                methodName = "get" + methodName;
                 value = object.getClass().getMethod(methodName).invoke(object);
 
             } else if (field.getType().getName().endsWith("BooleanProperty")) {
 
-                methodName = "is" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+                methodName = "is" + methodName;
                 value = (Boolean) object.getClass().getMethod(methodName).invoke(object);
 //
             } else if (field.getType().getName().endsWith("String")) {
 
-                methodName = "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+                methodName = "get" + methodName;
                 value = (String) object.getClass().getMethod(methodName).invoke(object);
 
             } else if (field.getType().getName().endsWith("int")) {
 
-                methodName = "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+                methodName = "get" + methodName;
                 value = (Integer) object.getClass().getMethod(methodName).invoke(object);
 
             } else if (field.getType().getName().endsWith("boolean")) {
 
-                methodName = "is" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+                methodName = "is" + methodName;
                 value = (Boolean) object.getClass().getMethod(methodName).invoke(object);
+
+            } else if (field.getType().getName().endsWith("double")) {
+
+                methodName = "get" + methodName;
+                value = (Double) object.getClass().getMethod(methodName).invoke(object);
             }
 
         } catch (Exception e) {
@@ -119,5 +136,24 @@ public class ObjectsComparator {
 //        System.out.println("method " + methodName + " = " + value);
 
         return value;
+    }
+
+    private boolean isValueNoDefault(Object value) {
+        try {
+            if (value instanceof StringProperty) {
+                return ((StringProperty) value).getValue() != null && !((StringProperty) value).getValue().isEmpty();
+            } else if (value instanceof String) {
+                return value != null && !((String) value).isEmpty();
+            } else if (value instanceof Integer) {
+                return value != null && ((Integer) value).intValue() != 0;
+            } else if (value instanceof Double) {
+                return value != null && ((Double) value).doubleValue() != 0.0;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("value default checking exception: " + e.getMessage());
+            return false;
+        }
     }
 }

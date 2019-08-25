@@ -1,5 +1,6 @@
 package utils;
 
+import javax.rmi.CORBA.Util;
 import java.util.Arrays;
 
 public class ColumnsMapper {
@@ -17,6 +18,11 @@ public class ColumnsMapper {
     private String descriptionRu;
     private String descriptionEn;
     private String productPrint;
+    private String minOrder;
+    private String packetSize;
+    private String leadTime;
+    private String weight;
+    private String localPrice;
 
     public ColumnsMapper(RowData rowData) {
         properties = new String[]{
@@ -41,13 +47,21 @@ public class ColumnsMapper {
                 "prod.hier.",//18
                 "battery code",//19
                 "prod.nr.print",//20
-                "material description"};//21
+                "material description",//21
+                "llp fY2",//22
+                "minimum order quan",//23
+                "packsize",//24
+                "leadtime",//25
+                "вес",//26
+                "weight",//27
+        "Materialnummer"//28
+        };
         mapper = new int[properties.length];
         Arrays.fill(mapper, -1);
 
         for (int j = 0; j < rowData.getSize(); j++) {
             for (int i = 0; i < properties.length; i++) {
-                if (rowData.get(j) != null && rowData.get(j).toLowerCase().matches(".*(" + properties[i] + ").*")) {//found col with title
+                if (rowData.get(j) != null && rowData.get(j).toLowerCase().matches(".*(" + properties[i].toLowerCase() + ").*")) {//found col with title
                     if (mapper[i] < 0) {
                         mapper[i] = j;//pointer to col
                         break;
@@ -68,7 +82,7 @@ public class ColumnsMapper {
         marerial = Utils.toEN(new DoubleProperties().merge(
                 Utils.toEN(rowData.get(mapper[0]).replaceAll("\\,", ".")),
                 Utils.toEN(rowData.get(mapper[9]).replaceAll("\\,", ".")),
-                Utils.toEN(rowData.get(mapper[13]))));
+                Utils.toEN(rowData.get(mapper[13])), Utils.toEN(rowData.get(mapper[28]))));
 //        if (marerial == null || marerial.trim().isEmpty() || !marerial.matches("^.*\\d.*$")) return false;
         if (marerial == null || marerial.trim().isEmpty()) return false;
 
@@ -115,6 +129,12 @@ public class ColumnsMapper {
         boolean descriptionEnEmpty = descriptionEn == null || descriptionEn.trim().isEmpty();
 
         productPrint = Utils.toEN(rowData.get(mapper[20]).replaceAll("\\,", "."));
+
+        minOrder = Utils.toEN(rowData.get(mapper[23]));
+        packetSize = Utils.toEN(rowData.get(mapper[24]));
+        leadTime = Utils.toEN(rowData.get(mapper[25]));
+        weight = new DoubleProperties().merge(Utils.toEN(rowData.get(mapper[26])), Utils.toEN(rowData.get(mapper[27])));
+        localPrice = Utils.toEN(rowData.get(mapper[22]));
 
         if (articleEmpty && hierarchyEmpty && lgbkEmpty && validFromEmpty && endOfServiceEmpty && dangerousEmpty &&
                 cntryOfOriginEmpty && dchainEmpty && descriptionRuEmpty && descriptionEnEmpty) return false;
@@ -191,5 +211,25 @@ public class ColumnsMapper {
 
     public String getDescriptionEn() {
         return descriptionEn;
+    }
+
+    public String getMinOrder() {
+        return minOrder;
+    }
+
+    public String getPacketSize() {
+        return packetSize;
+    }
+
+    public String getLeadTime() {
+        return leadTime;
+    }
+
+    public String getWeight() {
+        return weight;
+    }
+
+    public String getLocalPrice() {
+        return localPrice;
     }
 }

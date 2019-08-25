@@ -169,15 +169,13 @@ public class Utils {
                     } else {
 //                        ((ComboBox) n).getSelectionModel().select(Integer.parseInt(value));
                         ((ComboBox) n).getSelectionModel().select(((ComboBox) n).getItems().indexOf(value));
-
-
                     }
 
                 } else if (n instanceof ListView) {
                     if (value != null && value.length() > 0) {
                         ((ListView) n).getItems().clear();
 
-                        ((ListView) n).getItems().addAll(value.split("\\n"));
+                        ((ListView) n).getItems().addAll(value.split("\\|"));
                     }
 
 

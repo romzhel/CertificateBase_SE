@@ -1,10 +1,9 @@
-package ui_windows.main_window;
+package ui_windows.product;
 
 import core.CoreModule;
 import database.ProductsDB;
 import javafx.scene.control.TableView;
-import ui_windows.options_window.product_lgbk.LgbkAndParent;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.main_window.MainWindow;
 import utils.Utils;
 
 import java.util.ArrayList;

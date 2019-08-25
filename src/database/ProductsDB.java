@@ -4,7 +4,7 @@ import core.CoreModule;
 import core.Dialogs;
 import javafx.application.Platform;
 import ui_windows.main_window.MainWindow;
-import ui_windows.main_window.Product;
+import ui_windows.product.Product;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,14 +18,15 @@ public class ProductsDB implements Request {
                             "products (material, article, hierarchy, lgbk, family, end_of_service, dangerous, " +
                             "country, dchain, description_ru, description_en, price, archive, need_action, not_used, history, " +
                             "last_change_date, file_name, comments, replacement, type_id, change_codes, product_print," +
-                            "last_import_codes, norms_list, norms_mode) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                            "last_import_codes, norms_list, norms_mode, min_order, packet_size, lead_time, weight, local_price) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = CoreModule.getDataBase().getDbConnection().prepareStatement("UPDATE products " +
                     "SET article = ?, hierarchy = ?, lgbk = ?, family = ?, end_of_service = ?, dangerous = ?, country = ?, " +
                     "dchain = ?, description_ru = ?, description_en = ?, price = ?, archive = ?, need_action = ?, not_used = ?, history = ?," +
                     "last_change_date = ?, file_name = ?, comments = ?, replacement = ?, type_id = ?, change_codes = ?, " +
-                    "product_print = ?, last_import_codes = ?, norms_list = ?, norms_mode = ? WHERE material = ?");
+                    "product_print = ?, last_import_codes = ?, norms_list = ?, norms_mode = ?, min_order = ?, packet_size = ?, " +
+                    "lead_time = ?, weight = ?, local_price = ? WHERE material = ?");
             deleteData = CoreModule.getDataBase().getDbConnection().prepareStatement("DELETE FROM products " +
                     "WHERE id = ?");
         } catch (SQLException e) {
@@ -88,6 +89,11 @@ public class ProductsDB implements Request {
                         updateData.setString(++count, alpr.get(j).getLastImportcodes());
                         updateData.setString(++count, alpr.get(j).getNormsList().getStringLine());
                         updateData.setInt(++count, alpr.get(j).getNormsMode());
+                        updateData.setInt(++count, alpr.get(j).getMinOrder());
+                        updateData.setInt(++count, alpr.get(j).getPacketSize());
+                        updateData.setInt(++count, alpr.get(j).getLeadTime());
+                        updateData.setDouble(++count, alpr.get(j).getWeight());
+                        updateData.setDouble(++count, alpr.get(j).getLocalPrice());
 
                         updateData.setString(++count, alpr.get(j).getMaterial());
                         updateData.addBatch();
@@ -155,6 +161,11 @@ public class ProductsDB implements Request {
                         addData.setString(++count, alpr.get(j).getLastImportcodes());
                         addData.setString(++count, alpr.get(j).getNormsList().getStringLine());
                         addData.setInt(++count, alpr.get(j).getNormsMode());
+                        addData.setInt(++count, alpr.get(j).getMinOrder());
+                        addData.setInt(++count, alpr.get(j).getPacketSize());
+                        addData.setInt(++count, alpr.get(j).getLeadTime());
+                        addData.setDouble(++count, alpr.get(j).getWeight());
+                        addData.setDouble(++count, alpr.get(j).getLocalPrice());
                         addData.addBatch();
                     }
 

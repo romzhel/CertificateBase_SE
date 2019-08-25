@@ -6,7 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import utils.ObjectsComparator;
+import utils.comparation.ObjectsComparator;
 import utils.Utils;
 
 import java.net.URL;
@@ -68,7 +68,7 @@ public class OrdersAccessibilityEditorWindowController implements Initializable 
             OrderAccessibility changedOa = new OrderAccessibility((AnchorPane) OrdersAccessibilityEditorWindow.getStage().getScene().getRoot());
 
             ObjectsComparator oc = new ObjectsComparator(oa, changedOa, false, "id");
-            if (oc.getResult().length() > 0) CoreModule.getOrdersAccessibility().updateItem(oa);
+            if (oc.getResult().isNeedUpdateInDB()) CoreModule.getOrdersAccessibility().updateItem(oa);
         }
         actionClose();
     }

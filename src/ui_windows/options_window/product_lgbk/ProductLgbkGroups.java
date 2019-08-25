@@ -2,9 +2,11 @@ package ui_windows.options_window.product_lgbk;
 
 import core.CoreModule;
 import core.Dialogs;
+import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
-import ui_windows.main_window.Product;
-import ui_windows.main_window.Products;
+import javafx.scene.control.TreeTableView;
+import ui_windows.product.Product;
+import ui_windows.product.Products;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -93,15 +95,20 @@ public class ProductLgbkGroups {
 
         String newNames = "";
         for (ProductLgbk plgbk : newLgbks) {
+            plgbk.setNormsList(new NormsList(new ArrayList<Integer>()));
             newNames = newNames.concat("\n" + plgbk.getLgbk() + ", " + plgbk.getHierarchy());
         }
 
-        Dialogs.showMessage("Проверка новых направлений", "Обнаружено новых направлений: " + newLgbks.size() + newNames);
+        final String newNamesF = newNames;
+        Platform.runLater(() -> Dialogs.showMessage("Проверка новых направлений",
+                "Обнаружено новых направлений: " + newLgbks.size() + newNamesF));
+
 
         CoreModule.getProductLgbks().addItems(newLgbks);
 
         if (newLgbks.size() > 0) {
-            CoreModule.getProductLgbks().getProductLgbksTable().getTableView().setRoot(getFullTreeSet());
+            TreeTableView<ProductLgbk> tableView = CoreModule.getProductLgbks().getProductLgbksTable().getTableView();
+            if (tableView != null) tableView.setRoot(getFullTreeSet());
         }
     }
 
@@ -185,12 +192,12 @@ public class ProductLgbkGroups {
             if (groupTreeItem.getValue().getId() == lookingForLgbk.getId()) return groupTreeItem;
 
             if (groupTreeItem.getValue().getLgbk().equals(lookingForLgbk.getLgbk())) {
-                    for (TreeItem<ProductLgbk> subgroupTreeItem : groupTreeItem.getChildren()) {
-                        if (lookingForLgbk.getId() == subgroupTreeItem.getValue().getId() ||
-                                lookingForLgbk.getHierarchy().contains(subgroupTreeItem.getValue().getHierarchy().replaceAll("\\.", ""))) {
-                            return subgroupTreeItem;
-                        }
+                for (TreeItem<ProductLgbk> subgroupTreeItem : groupTreeItem.getChildren()) {
+                    if (lookingForLgbk.getId() == subgroupTreeItem.getValue().getId() ||
+                            lookingForLgbk.getHierarchy().contains(subgroupTreeItem.getValue().getHierarchy().replaceAll("\\.", ""))) {
+                        return subgroupTreeItem;
                     }
+                }
             }
         }
 

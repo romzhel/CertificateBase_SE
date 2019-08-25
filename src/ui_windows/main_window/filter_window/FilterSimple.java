@@ -1,7 +1,5 @@
 package ui_windows.main_window.filter_window;
 
-import ui_windows.main_window.Product;
-
 public class FilterSimple {
     private String description;
     private String uiname;

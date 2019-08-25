@@ -3,7 +3,7 @@ package database;
 import core.CoreModule;
 import core.Dialogs;
 import ui_windows.main_window.MainWindow;
-import ui_windows.main_window.ProductType;
+import ui_windows.product.ProductType;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -1,24 +1,15 @@
 package files;
 
-import core.CoreModule;
 import core.Dialogs;
-import org.apache.poi.common.usermodel.HyperlinkType;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
-import ui_windows.request_certificates.RequestResult;
 import utils.ColumnsMapper;
 import utils.RowData;
 import org.apache.poi.ss.usermodel.*;
-import ui_windows.main_window.Product;
-import utils.Utils;
+import ui_windows.product.Product;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -134,12 +125,12 @@ public class ExcelFile {
     public static ArrayList<Product> getProductDataFromAllSheets() {
         ArrayList<Product> result = new ArrayList<>();
         String[] sheetNames = new String[]{"orderstat", "product information", "ru", "access", "intrusion", "video",
-                "gpl siemens branded eur", "maretial_description_en"};
+                "gpl siemens branded eur", "maretial_description_en", "LLP FY20"};
 
         for (int i = 0; i < book.getNumberOfSheets(); i++) {
             for (String sheetName : sheetNames) {
 
-                if (book.getSheetName(i).toLowerCase().matches("^" + sheetName + ".*$")) {
+                if (book.getSheetName(i).toLowerCase().matches("^" + sheetName.toLowerCase() + ".*$")) {
                     System.out.println("import from sheet: " + sheetName);
                     result.addAll(getProductDataFromSheet(i));
                     System.out.println("resulter = " + result.size());

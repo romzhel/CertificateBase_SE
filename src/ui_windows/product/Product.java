@@ -1,4 +1,4 @@
-package ui_windows.main_window;
+package ui_windows.product;
 
 import core.CoreModule;
 import javafx.scene.paint.Color;
@@ -17,7 +17,6 @@ import ui_windows.options_window.product_lgbk.ProductLgbk;
 import utils.Countries;
 import utils.Utils;
 
-import javax.rmi.CORBA.Util;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Product {
+    public static final String NO_DATA = "нет данных";
     private int id;
     private StringProperty material;
     private StringProperty productForPrint;
@@ -55,6 +55,11 @@ public class Product {
     private String replacement = "";
     private NormsList normsList;
     private int normsMode = NormsList.ADD_TO_GLOBAL;
+    private int minOrder;
+    private int packetSize;
+    private int leadTime;
+    private double weight;
+    private double localPrice;
 
     public Product() {}
 
@@ -107,6 +112,24 @@ public class Product {
         notused = new SimpleBooleanProperty(false);
         descriptionru = new SimpleStringProperty(mapper.getDescriptionRu());
         descriptionen = new SimpleStringProperty(mapper.getDescriptionEn());
+
+        normsList = new NormsList(new ArrayList<Integer>());
+
+        minOrder = (int) getDoubleFromString(mapper.getMinOrder());
+        packetSize = (int) getDoubleFromString(mapper.getPacketSize());
+        leadTime = (int) getDoubleFromString(mapper.getLeadTime());
+        weight = getDoubleFromString(mapper.getWeight());
+        localPrice = getDoubleFromString(mapper.getLocalPrice());
+    }
+
+    private double getDoubleFromString(String text) {
+        if (text == null || text.isEmpty()) return 0;
+        try {
+            return Double.parseDouble(text);
+        } catch (Exception e) {
+            System.out.println(article + ", bad double: " + text);
+            return 0.0;
+        }
     }
 
     public Product(ResultSet rs) throws SQLException {
@@ -141,26 +164,12 @@ public class Product {
 
         normsList = new NormsList(rs.getString("norms_list"));
         normsMode = rs.getInt("norms_mode");
-    }
 
-    public boolean hasLgbkMapping() {
-        String lgbkC;
-        String hierarchyC;
-
-        for (ProductLgbk pl : CoreModule.getProductLgbks().getProductLgbks()) {
-            lgbkC = pl.getLgbk().replaceAll("\\*", ".*");
-            hierarchyC = pl.getHierarchy().replaceAll("\\*", ".*");
-
-            if (getLgbk().trim().length() > 0) {//product has not empty lgbk
-                if (getLgbk().trim().matches(lgbkC)) {//lgbk matches
-                    if (hierarchyC.trim().length() == 0 || getHierarchy().matches(hierarchyC)) return true;
-                }
-            } else if (getLgbk().equals(lgbkC) && getHierarchy().matches(hierarchyC)) {
-                return true;
-            }
-        }
-
-        return false;
+        minOrder = rs.getInt("min_order");
+        packetSize = rs.getInt("packet_size");
+        leadTime = rs.getInt("lead_time");
+        weight = rs.getDouble("weight");
+        localPrice = rs.getDouble("local_price");
     }
 
     public String getOrderableStatus() {
@@ -227,6 +236,11 @@ public class Product {
         ArrayList<String> items = CoreModule.getProductFamilies().getFamiliesNames();//add all families and display value
         items.add(0, "");
         Utils.setControlValue(root, "cbFamily", items);
+        Utils.setControlValue(root, "tfMinOrder", minOrder == 0 ? NO_DATA : String.valueOf(minOrder));
+        Utils.setControlValue(root, "tfPacketSize", packetSize  == 0 ? NO_DATA : String.valueOf(packetSize));
+        Utils.setControlValue(root, "tfLeadTime", leadTime == 0 ? NO_DATA : String.valueOf(leadTime + 14));
+        Utils.setControlValue(root, "tfWeight", weight == 0 ? NO_DATA : String.valueOf(weight));
+        Utils.setControlValue(root, "tfLocalPrice", localPrice == 0 ? NO_DATA : String.format("%,.2f", localPrice));
 
         ProductFamily family;
         if (getFamily() > 0)//individual value
@@ -256,6 +270,13 @@ public class Product {
         boolean needAction = (filter.getFilterSimpleByUIname("cbxNeedAction").isValue());// && isNeedaction());
 
         LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(getLgbk(), getHierarchy()));
+
+        while (lgbkAndParent == null || lgbkAndParent.getLgbkParent() == null || lgbkAndParent.getLgbkItem() == null) {
+            System.out.println(article.getValue() + ", new lgbk/hieraarchy");
+            CoreModule.getProductLgbkGroups().checkConsistency();
+            lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(getLgbk(), getHierarchy()));
+        }
+
         boolean globalNotUsed = lgbkAndParent.getLgbkItem().isNotUsed() || lgbkAndParent.getLgbkParent().isNotUsed();
         boolean notUsed = (filter.getFilterSimpleByUIname("cbxNotUsed").isValue() && (isNotused() || globalNotUsed));
 
@@ -572,5 +593,30 @@ public class Product {
     public void setNormsMode(int normsMode) {
         this.normsMode = normsMode;
     }
+
+    public static String getNO_DATA() {
+        return NO_DATA;
+    }
+
+    public int getMinOrder() {
+        return minOrder;
+    }
+
+    public int getPacketSize() {
+        return packetSize;
+    }
+
+    public int getLeadTime() {
+        return leadTime;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public double getLocalPrice() {
+        return localPrice;
+    }
 }
+
 

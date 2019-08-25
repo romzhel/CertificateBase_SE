@@ -1,25 +1,19 @@
-package ui_windows.productEditorWindow.configNormsWindow;
+package ui_windows.product.productEditorWindow.configNormsWindow;
 
 import core.CoreModule;
 import database.ProductsDB;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import ui_windows.main_window.Product;
+import ui_windows.product.Product;
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.requirements_types_editor.RequirementTypesListViews;
-import ui_windows.productEditorWindow.ProductEditorWindowActions;
+import ui_windows.product.productEditorWindow.ProductEditorWindowActions;
 
-import java.beans.EventHandler;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.EventListener;
-import java.util.HashSet;
 import java.util.ResourceBundle;
 
 public class ConfigNormsWindowController implements Initializable {

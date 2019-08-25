@@ -1,16 +1,14 @@
-package ui_windows.productEditorWindow;
+package ui_windows.product.productEditorWindow;
 
 import core.CoreModule;
 import database.ProductsDB;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import ui_windows.main_window.Product;
+import ui_windows.product.Product;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
-import ui_windows.options_window.product_lgbk.LgbkAndParent;
-import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
-import utils.ObjectsComparator;
+import utils.comparation.ObjectsComparator;
 import utils.Utils;
 
 import java.util.ArrayList;
@@ -53,10 +51,17 @@ public class ProductEditorWindowActions {
                     "id", "article", "history", "lastchangedate", "dchain", "filename", "changecodes",
                     "productforprint", "lastimportcodes");
 
-            if (comparator.getResult().trim().length() > 0) {//was changed
-                pr.setHistory(pr.getHistory().concat(Utils.getDateTime()).concat(comparator.getResult()
-                       .concat(", ").concat(CoreModule.getUsers().getCurrentUser().getSurname()).concat("\n")));
-                System.out.println("result = " + comparator.getResult());
+            if (comparator.getResult().isNeedUpdateInDB()) {//was changed
+                String oldHistory = pr.getHistory().trim();
+                if (oldHistory.isEmpty()) {
+                    pr.setHistory(oldHistory.concat(Utils.getDateTime()).concat(comparator.getResult().getHistoryComment()
+                            .concat(", ").concat(CoreModule.getUsers().getCurrentUser().getSurname())));
+                } else {
+                    pr.setHistory(oldHistory.concat("|").concat(Utils.getDateTime()).concat(comparator.getResult().getHistoryComment()
+                            .concat(", ").concat(CoreModule.getUsers().getCurrentUser().getSurname())));
+                }
+
+                System.out.println("result = " + comparator.getResult().getHistoryComment());
 
                 if (productWasNeedAction) pr.setChangecodes("");
 
@@ -86,4 +91,6 @@ public class ProductEditorWindowActions {
     public static void setTableView(TableView<CertificateVerificationItem> tableView) {
         ProductEditorWindowActions.tableView = tableView;
     }
+
+
 }

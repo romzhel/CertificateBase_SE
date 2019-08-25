@@ -1,7 +1,8 @@
 package core;
 
+import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import database.ProductsDB;
-import ui_windows.main_window.Product;
+import ui_windows.product.Product;
 
 import java.util.ArrayList;
 
@@ -18,11 +19,28 @@ public class AddActions {
             //pr.setHistory(pr.getHistory().replaceAll("\\slgbk.+\\,", ""));
 
 //            if (pr.getLastImportcodes().equals("endofservicedchain")) {
-            pr.setLastImportcodes(pr.getLastImportcodes().replaceAll("\\,$", ""));
-            pr.setChangecodes(pr.getChangecodes().replaceAll("\\,$", ""));
+//            pr.setLastImportcodes(pr.getLastImportcodes().replaceAll("\\,$", ""));
+//            pr.setChangecodes(pr.getChangecodes().replaceAll("\\,$", ""));
 //            pr.setNeedaction(false);
-            cis.add(pr);
-//            }
+//            if (pr.getHistory().isEmpty()) {
+
+
+//            if (pr.getHistory().endsWith("\n")) System.out.println("\\n");
+
+//            pr.setHistory(pr.getHistory().replaceAll("\n", "|"));
+//            printOutSymbols(pr.getHistory());
+
+            if (pr.getHistory().endsWith("\r\n")) {
+                pr.setHistory(pr.getHistory().replaceAll("\r\n$", ""));
+                pr.setHistory(pr.getHistory().replaceAll("\r\n", "|"));
+                cis.add(pr);
+            }
+
+
+            /*pr.setHistory(pr.getHistory().replace("\n\n", "\n"));
+            if (!pr.getHistory().isEmpty()) System.out.println(pr.getHistory());*/
+
+
 
 //            if (pr.getDescriptionru().length() > 0) pr.setPrice(true);
 //            else pr.setPrice(false);
@@ -34,27 +52,17 @@ public class AddActions {
         }
         new ProductsDB().updateData(cis);
         System.out.println("OK");
+    }
 
-
-//        new ProductsDB().updateData(products.getItems());
-//        Dialogs.showMessage("all is OK", "all is OK");
-
-
-//        TreeSet<String> treeSet = new TreeSet<>(hashSet);
-//        TreeSet<String> treeSet2 = new TreeSet<>(hashSet2);
-//        ArrayList<String> res = new ArrayList<>(treeSet);
-//        ArrayList<String> res2 = new ArrayList<>(treeSet2);
-//
-//        for (String s : res) {
-//            productLgbks.addItem(new ProductLgbk(s, "", "", 0, false));
-//        }
-//
-//        for (String s : res2) {
-//            productLgbks.addItem(new ProductLgbk("", s, "", 0, false));
-//        }
-//
-//        System.out.println(Arrays.toString(res.toArray()));
-
-
+    private static void printOutSymbols(String text) {
+        for (char c : text.toCharArray()) {
+            if (c == 10) {
+                System.out.print("\\" + "n");
+            } if (c == 13){
+                System.out.print("\\" + "r");
+            } else {
+                System.out.print(c);
+            }
+        }
     }
 }

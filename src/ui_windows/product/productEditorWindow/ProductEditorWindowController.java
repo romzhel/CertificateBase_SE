@@ -1,11 +1,8 @@
-package ui_windows.productEditorWindow;
+package ui_windows.product.productEditorWindow;
 
 import core.CoreModule;
 import core.Dialogs;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -15,14 +12,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import ui_windows.main_window.Product;
+import ui_windows.options_window.profile_editor.Profile;
+import ui_windows.product.Product;
 import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
-import ui_windows.productEditorWindow.configNormsWindow.ConfigNormsWindow;
+import ui_windows.product.productEditorWindow.configNormsWindow.ConfigNormsWindow;
 import utils.AutoCompleteComboBoxListener;
 import utils.Utils;
 
@@ -59,10 +57,14 @@ public class ProductEditorWindowController implements Initializable {
     @FXML
     CheckBox cbxNotUsed;
 
+    @FXML
+    ContextMenu cmCertActions;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ProductEditorWindowActions.setTableView(tvCertVerification);
         tvCertVerification.setPlaceholder(new Text("Нет данных для отображения"));
+        cmCertActions.getItems().get(3).setDisable(CoreModule.getUsers().getCurrentUser().getProfile().getName().equals(Profile.COMMON_ACCESS));
 
         tvCertVerification.itemsProperty().get().addListener((ListChangeListener<CertificateVerificationItem>) c -> {
             tfAccessibility.getStyleClass().removeAll("itemStrikethroughRed", "itemStrikethroughBrown",

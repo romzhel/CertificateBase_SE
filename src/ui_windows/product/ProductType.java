@@ -1,4 +1,4 @@
-package ui_windows.main_window;
+package ui_windows.product;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

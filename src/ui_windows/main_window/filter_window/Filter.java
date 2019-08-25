@@ -1,7 +1,6 @@
 package ui_windows.main_window.filter_window;
 
 import javafx.scene.layout.AnchorPane;
-import ui_windows.main_window.Product;
 import ui_windows.options_window.families_editor.ProductFamily;
 import utils.Utils;
 

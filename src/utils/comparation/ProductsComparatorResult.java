@@ -1,6 +1,6 @@
-package utils;
+package utils.comparation;
 
-import ui_windows.main_window.Product;
+import ui_windows.product.Product;
 
 import java.util.ArrayList;
 

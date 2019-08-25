@@ -1,11 +1,11 @@
-package ui_windows.productEditorWindow;
+package ui_windows.product.productEditorWindow;
 
 import core.CoreModule;
 import javafx.stage.Modality;
 import ui_windows.OrdinalWindow;
 import ui_windows.Mode;
 import ui_windows.main_window.MainWindow;
-import ui_windows.main_window.Product;
+import ui_windows.product.Product;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.profile_editor.SimpleRight;
 import ui_windows.options_window.user_editor.User;

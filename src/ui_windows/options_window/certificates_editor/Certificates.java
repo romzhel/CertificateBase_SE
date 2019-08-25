@@ -4,13 +4,10 @@ import core.CoreModule;
 import core.Dialogs;
 import database.CertificatesDB;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
-import ui_windows.main_window.Product;
-import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificatesChecker;
 import utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Certificates {
     private CertificatesChecker certificatesChecker;

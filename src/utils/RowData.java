@@ -23,7 +23,13 @@ public class RowData {
                 case NUMERIC:
                     if (DateUtil.isCellDateFormatted(cell))
                         data[col] = new SimpleDateFormat("dd.MM.yyyy").format(cell.getDateCellValue());
-                    else data[col] = Long.toString((long)cell.getNumericCellValue());
+                    else {
+                        if (cell.toString().matches("^\\d+[\\,\\.]{1}[0]+$")){
+                            data[col] = Long.toString((long)cell.getNumericCellValue());
+                        } else if (cell.toString().matches("^\\d+[\\,\\.]{1}\\d+$")) {//double value
+                            data[col] = Double.toString(cell.getNumericCellValue());
+                        }
+                    }
                     break;
                 default:
             }

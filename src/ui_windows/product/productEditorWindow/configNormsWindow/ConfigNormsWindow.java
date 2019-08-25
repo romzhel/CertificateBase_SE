@@ -1,4 +1,4 @@
-package ui_windows.productEditorWindow.configNormsWindow;
+package ui_windows.product.productEditorWindow.configNormsWindow;
 
 import javafx.stage.Modality;
 import javafx.stage.Stage;

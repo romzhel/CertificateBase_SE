@@ -8,7 +8,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.MouseButton;
-import utils.ObjectsComparator;
+import utils.comparation.ObjectsComparator;
 import utils.Utils;
 
 
@@ -86,7 +86,7 @@ public class userEditorWindowController implements Initializable {
 
             ObjectsComparator oc = new ObjectsComparator(editedUser, newUser, false);
 
-            if (!editedUser.getProfile().equals(newUser.getProfile()) || !oc.getResult().isEmpty()) {
+            if (!editedUser.getProfile().equals(newUser.getProfile()) || oc.getResult().isNeedUpdateInDB()) {
                 editedUser.setProfile(newUser.getProfile());
                 CoreModule.getUsers().editItem(editedUser);
             }

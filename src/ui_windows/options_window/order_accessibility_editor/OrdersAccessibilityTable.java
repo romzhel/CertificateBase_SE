@@ -1,17 +1,11 @@
 package ui_windows.options_window.order_accessibility_editor;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import core.CoreModule;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Callback;
-import ui_windows.main_window.Product;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
 
 public class OrdersAccessibilityTable {
     private TableView<OrderAccessibility> tableView;

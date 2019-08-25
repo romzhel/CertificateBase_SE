@@ -7,7 +7,6 @@ import files.ExcelFile;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -22,10 +21,12 @@ import ui_windows.options_window.certificates_editor.certificate_content_editor.
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificatesChecker;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.user_editor.User;
-import ui_windows.productEditorWindow.ProductEditorWindow;
+import ui_windows.product.Product;
+import ui_windows.product.Products;
+import ui_windows.product.productEditorWindow.ProductEditorWindow;
 import ui_windows.request_certificates.CertificateRequestWindow;
-import utils.ProductsComparator;
-import utils.ProductsComparatorResult;
+import utils.comparation.ProductsComparator;
+import utils.comparation.ProductsComparatorResult;
 import utils.Utils;
 
 import java.net.URL;
@@ -212,7 +213,7 @@ public class MainWindowsController implements Initializable {
                 compProducts.setItems(ExcelFile.getProductDataFromAllSheets());//get new products from Excel file
 
                 ProductsComparator pc = new ProductsComparator(CoreModule.getProducts(), compProducts, "material", "price",
-                        "archive", "needaction", "notused");//compare new and existing products
+                        "archive", "needaction", "notused", "localprice");//compare new and existing products
                 lastComparationResult = pc.getResult();
                 changedItemsForDB.addAll(lastComparationResult.getChangedItems());
 

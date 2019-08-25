@@ -1,14 +1,14 @@
 package utils;
 
-import ui_windows.main_window.Product;
+import ui_windows.product.Product;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class Preprocessor {
+public class DoublesPreprocessor {
     private ArrayList<Product> result;
 
-    public Preprocessor(ArrayList<Product> items) {
+    public DoublesPreprocessor(ArrayList<Product> items) {
         System.out.println("preprocessing...");
 
         ArrayList<String> orderNumbersS = new ArrayList<>();

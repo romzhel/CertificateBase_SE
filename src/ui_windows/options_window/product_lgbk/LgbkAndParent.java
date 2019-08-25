@@ -1,7 +1,5 @@
 package ui_windows.options_window.product_lgbk;
 
-import ui_windows.main_window.Product;
-
 public class LgbkAndParent {
     private ProductLgbk lgbkRoot;
     private ProductLgbk lgbkParent;

@@ -2,7 +2,6 @@ package ui_windows.options_window.profile_editor;
 
 import database.ProfilesDB;
 import database.Request;
-import utils.ObjectsComparator;
 
 import java.util.ArrayList;
 import java.util.TreeSet;
