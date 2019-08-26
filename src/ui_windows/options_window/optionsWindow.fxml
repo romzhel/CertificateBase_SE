@@ -50,6 +50,8 @@
                               </ContextMenu>
                            </contextMenu>
                         </TableView>
+                        <Label layoutX="36.0" layoutY="14.0" text="Нормы/регламенты:" />
+                        <Label layoutX="36.0" layoutY="242.0" text="Сертификаты:" />
                      </children>
                   </AnchorPane>
             </content>
@@ -74,7 +76,7 @@
                               </ContextMenu>
                            </contextMenu>
                         </TableView>
-                        <TreeTableView fx:id="tvLgbk" layoutX="41.0" layoutY="295.0" prefHeight="415.0" prefWidth="1107.0" stylesheets="@families_editor/treeTableView.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="295.0">
+                        <TreeTableView fx:id="tvLgbk" layoutX="41.0" layoutY="277.0" prefHeight="433.0" prefWidth="1107.0" stylesheets="@families_editor/treeTableView.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="277.0">
                             <columns>
                                 <TreeTableColumn prefWidth="149.0" text="LGBK" />
                                 <TreeTableColumn prefWidth="142.0" text="Иерархия" />
@@ -93,6 +95,8 @@
                                 </items>
                               </ContextMenu>
                            </contextMenu></TreeTableView>
+                        <Label layoutX="40.0" layoutY="24.0" text="Продуктовые направления:" />
+                        <Label layoutX="41.0" layoutY="260.0" text="Иерархия оборудования:" />
                      </children></AnchorPane>
             </content>
           </Tab>
@@ -133,7 +137,7 @@
                               </ContextMenu>
                            </contextMenu>
                         </TableView>
-                        <TableView fx:id="tvUsers" layoutX="20.0" layoutY="369.0" prefHeight="343.0" prefWidth="1130.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="366.0">
+                        <TableView fx:id="tvUsers" layoutX="20.0" layoutY="350.0" prefHeight="359.0" prefWidth="1132.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="350.0">
                            <contextMenu>
                               <ContextMenu>
                                 <items>
@@ -145,6 +149,29 @@
                               </ContextMenu>
                            </contextMenu>
                         </TableView>
+                        <Label layoutX="19.0" layoutY="21.0" text="Права доступа:" />
+                        <Label layoutX="19.0" layoutY="332.0" text="Пользователи:" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab fx:id="tabPriceLists" text="   Прайс-листы   ">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="tvPriceLists" layoutX="29.0" layoutY="36.0" prefHeight="284.0" prefWidth="1107.0" AnchorPane.leftAnchor="29.0" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="35.0">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#actionAddPriceList" text="     Добавить     " />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionEditPriceList" text="     Редактировать     " />
+                                    <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem mnemonicParsing="false" onAction="#actionRemovePriceList" text="     Удалить     " />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu>
+                        </TableView>
+                        <Label layoutX="29.0" layoutY="17.0" text="Прайс-листы:" />
                      </children>
                   </AnchorPane>
               </content>

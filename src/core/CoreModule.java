@@ -5,6 +5,7 @@ import files.Folders;
 import javafx.application.Platform;
 import javafx.scene.control.TableView;
 import ui_windows.main_window.MainWindow;
+import ui_windows.options_window.price_lists_editor.PriceLists;
 import ui_windows.product.Product;
 import ui_windows.product.ProductTypes;
 import ui_windows.product.Products;
@@ -46,6 +47,7 @@ public class CoreModule {
     private static Users users;
     private static Folders folders;
     private static Filter filter;
+    private static PriceLists priceLists;
 
     private static ArrayList<Product> currentItems;
 
@@ -80,6 +82,7 @@ public class CoreModule {
         currentItems = products.getItems();
 
         productLgbkGroups = new ProductLgbkGroups().get();
+        priceLists = new PriceLists().getFromDB();
 
         if (users.getCurrentUser().getProfile().getName() == "Общий доступ") {
             if (!dataBase.disconnect()) System.out.println("fail of DB disconnecting");
@@ -241,5 +244,9 @@ public class CoreModule {
 
     public static ProductLgbkGroups getProductLgbkGroups() {
         return productLgbkGroups;
+    }
+
+    public static PriceLists getPriceLists() {
+        return priceLists;
     }
 }

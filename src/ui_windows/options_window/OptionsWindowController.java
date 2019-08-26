@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
-import ui_windows.product.Product;
 import ui_windows.options_window.certificates_editor.*;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificatesChecker;
@@ -19,6 +18,9 @@ import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibilityEditorWindow;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibilityTable;
+import ui_windows.options_window.price_lists_editor.PriceList;
+import ui_windows.options_window.price_lists_editor.PriceListEditorWindow;
+import ui_windows.options_window.price_lists_editor.PriceListsTable;
 import ui_windows.options_window.product_lgbk.LgbkEditorWindow;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.product_lgbk.ProductLgbksTable;
@@ -31,6 +33,7 @@ import ui_windows.options_window.requirements_types_editor.RequirementTypesTable
 import ui_windows.options_window.user_editor.User;
 import ui_windows.options_window.user_editor.UserEditorWindow;
 import ui_windows.options_window.user_editor.UsersTable;
+import ui_windows.product.Product;
 
 import java.awt.*;
 import java.io.File;
@@ -75,6 +78,9 @@ public class OptionsWindowController implements Initializable {
 
     @FXML
     ContextMenu cmCertificates;
+
+    @FXML
+    TableView<PriceList> tvPriceLists;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -145,6 +151,18 @@ public class OptionsWindowController implements Initializable {
                 }
             }
         });
+
+        //---------------------------------------price lists--------------------------------------------------------------
+        CoreModule.getPriceLists().setPriceListsTable(new PriceListsTable(tvPriceLists));
+
+        tvPriceLists.setOnMouseClicked(event -> {//double click on product
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                if (event.getClickCount() == 2) {
+                    actionEditPriceList();//open orderable editor window
+                }
+            }
+        });
+
     }
 
     public void actionAddCertificateType() {
@@ -340,6 +358,23 @@ public class OptionsWindowController implements Initializable {
                 System.out.println("Can't open created file");
             }
         }).start();
+
+
+    }
+
+    public void actionAddPriceList() {
+        new PriceListEditorWindow(ADD);
+    }
+
+    public void actionEditPriceList() {
+        new PriceListEditorWindow(EDIT);
+    }
+
+    public void actionRemovePriceList() {
+        PriceList priceList = tvPriceLists.getSelectionModel().getSelectedItem();
+        if (priceList != null) {
+            CoreModule.getPriceLists().deleteItem(priceList);
+        }
     }
 
 
