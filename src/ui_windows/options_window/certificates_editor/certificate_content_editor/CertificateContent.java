@@ -100,4 +100,6 @@ public class CertificateContent {
     public String toString() {
         return "content id=" + id + ", cert_id=" + certId + ", type=" + equipmentType.getValue() + ", name=" + equipmentName.getValue() + ", wasChanged=" + wasChanged;
     }
+
+
 }

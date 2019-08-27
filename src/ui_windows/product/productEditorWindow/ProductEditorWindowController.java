@@ -12,14 +12,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import ui_windows.options_window.profile_editor.Profile;
-import ui_windows.product.Product;
 import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.options_window.profile_editor.Profile;
+import ui_windows.product.Product;
 import ui_windows.product.productEditorWindow.configNormsWindow.ConfigNormsWindow;
 import utils.AutoCompleteComboBoxListener;
 import utils.Utils;
@@ -76,6 +76,14 @@ public class ProductEditorWindowController implements Initializable {
 
         new AutoCompleteComboBoxListener<>(cbType, false);
 //        cbType.getItems().addAll(CoreModule.getProductTypes().getPreparedTypes());
+
+        cbType.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty()) {
+                CoreModule.getCertificates().getCertificatesChecker().setTemporaryTypeId(CoreModule.getProductTypes().getIDbyType(newValue));
+                CoreModule.getCertificates().getCertificatesChecker().setUseTemporaryTypeId(true);
+                ProductEditorWindowActions.fillCertificateVerificationTable();
+            }
+        });
 
         Product editedProduct = CoreModule.getProducts().getTableView().getSelectionModel().getSelectedItem();
         LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(

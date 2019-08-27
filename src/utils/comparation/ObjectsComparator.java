@@ -45,7 +45,7 @@ public class ObjectsComparator {
                 }
 
                 boolean notZero = true;//avoiding reset of Product type value to 0
-                if (value2 != null && value2.getClass().getName().endsWith("Integer")) {
+                if (value2 != null && value2.getClass().getName().endsWith("Integer") && !obj1Fields[i].getName().matches(".*type_id.*")) {
                     notZero = ((Integer) value2) != 0;
                 }
 

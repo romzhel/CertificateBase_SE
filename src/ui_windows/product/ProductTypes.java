@@ -11,8 +11,9 @@ import java.util.HashSet;
 import java.util.TreeSet;
 
 public class ProductTypes {
-    Request request;
-    ArrayList<ProductType> productTypes;
+    public final static String NO_SELECTED = "не выбрано";
+    private Request request;
+    private ArrayList<ProductType> productTypes;
 
     public ProductTypes() {
         request = new ProductTypesDB();
@@ -56,11 +57,17 @@ public class ProductTypes {
 
     public ArrayList<String> getPreparedTypes() {
         ArrayList<String> types = new ArrayList<>();
+        types.add(NO_SELECTED);
+
+        HashSet<String> singleList = new HashSet<>();
         for (ProductType pt : productTypes) {
-            types.add(pt.getType());
+            singleList.add(pt.getType());
         }
 
-        return new ArrayList<>(new TreeSet<>(new HashSet<>(types)));
+        TreeSet<String> sortedList = new TreeSet<>(singleList);
+        types.addAll(sortedList);
+
+        return types;
     }
 
     public ObservableList<String> getObs() {
@@ -71,7 +78,7 @@ public class ProductTypes {
         for (ProductType pt : productTypes) {
             if (pt.getId() == id) return pt.getType();
         }
-        return "";
+        return NO_SELECTED;
     }
 
     public String getTnVedById(int id){

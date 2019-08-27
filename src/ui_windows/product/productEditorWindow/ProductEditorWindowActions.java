@@ -49,7 +49,7 @@ public class ProductEditorWindowActions {
 
             ObjectsComparator comparator = new ObjectsComparator(pr, changedProduct, false,
                     "id", "article", "history", "lastchangedate", "dchain", "filename", "changecodes",
-                    "productforprint", "lastimportcodes");
+                    "productforprint", "lastimportcodes", "minorder", "packetsize", "leadtime", "weight", "localprice");
 
             if (comparator.getResult().isNeedUpdateInDB()) {//was changed
                 String oldHistory = pr.getHistory().trim();
