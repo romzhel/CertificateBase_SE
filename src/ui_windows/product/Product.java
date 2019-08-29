@@ -617,6 +617,8 @@ public class Product {
     public double getLocalPrice() {
         return localPrice;
     }
+
+
 }
 
 

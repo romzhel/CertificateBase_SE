@@ -1,9 +1,6 @@
 package ui_windows.options_window.price_lists_editor;
 
-import core.CoreModule;
 import javafx.scene.layout.AnchorPane;
-import ui_windows.options_window.product_lgbk.LgbkAndParent;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
 import utils.Utils;
 
 import java.sql.ResultSet;
@@ -14,6 +11,7 @@ import java.util.Arrays;
 public class PriceList {
     private int id;
     private String name;
+    private String fileName;
     private ArrayList<String> lgbks;
 
     public PriceList(String type, ArrayList<String> lgbks) {
@@ -24,6 +22,7 @@ public class PriceList {
     public PriceList(ResultSet rs) throws SQLException {
         id = rs.getInt("id");
         name = rs.getString("name");
+        fileName = rs.getString("file_name");
 
         String valueFromDB = rs.getString("lgbks");
         String[] values;
@@ -39,11 +38,12 @@ public class PriceList {
         id = 0;
         name = Utils.getControlValue(root, "tfName");
         lgbks = Utils.getALControlValueFromLV(root, "lvSelected");
+        fileName = Utils.getControlValue(root, "tfFileName");
     }
 
     public void showInEditorWindow(AnchorPane root) {
         Utils.setControlValue(root, "tfName", name);
-//        Utils.setControlValue(root, "lvSelected", lgbks);
+        Utils.setControlValue(root, "tfFileName", fileName);
     }
 
     public String getLgbksAsString() {
@@ -79,5 +79,13 @@ public class PriceList {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

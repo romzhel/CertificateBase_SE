@@ -4,10 +4,7 @@ import core.CoreModule;
 import core.Dialogs;
 import javafx.application.Platform;
 import ui_windows.main_window.MainWindow;
-import ui_windows.options_window.certificates_editor.Certificate;
-import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.price_lists_editor.PriceList;
-import ui_windows.product.Product;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,9 +18,9 @@ public class PriceListsDB implements Request {
     public PriceListsDB() {
         try {
             addData = CoreModule.getDataBase().getDbConnection().prepareStatement("INSERT INTO " +
-                    "priceLists (name, lgbks) VALUES (?, ?);", Statement.RETURN_GENERATED_KEYS);
+                    "priceLists (name, file_name, lgbks) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
             updateData = CoreModule.getDataBase().getDbConnection().prepareStatement("UPDATE priceLists " +
-                    "SET name = ?, lgbks = ? WHERE id = ?");
+                    "SET name = ?, file_name = ?, lgbks = ? WHERE id = ?");
             deleteData = CoreModule.getDataBase().getDbConnection().prepareStatement("DELETE FROM priceLists " +
                     "WHERE id = ?");
         } catch (SQLException e) {
@@ -63,6 +60,7 @@ public class PriceListsDB implements Request {
                     for (j = i; j < (i + 500) && (j < alpl.size()); j++) {
                         count = 0;
                         addData.setString(++count, alpl.get(j).getName());
+                        addData.setString(++count, alpl.get(j).getFileName());
                         addData.setString(++count, alpl.get(j).getLgbksAsString());
                         addData.addBatch();
                     }
@@ -103,6 +101,7 @@ public class PriceListsDB implements Request {
                     for (j = i; j < (i + 500) && (j < alpl.size()); j++) {
                         count = 0;
                         updateData.setString(++count, alpl.get(j).getName());
+                        updateData.setString(++count, alpl.get(j).getFileName());
                         updateData.setString(++count, alpl.get(j).getLgbksAsString());
 
                         updateData.setInt(++count, alpl.get(j).getId());
@@ -158,7 +157,7 @@ public class PriceListsDB implements Request {
         return false;
     }
 
-    public void showErrorMessage(String messageText, String logText){
+    public void showErrorMessage(String messageText, String logText) {
         Dialogs.showMessage("Ошибка работы с базой данных", messageText);
         System.out.println(logText);
     }

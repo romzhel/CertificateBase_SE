@@ -1,6 +1,5 @@
 package utils;
 
-import javax.rmi.CORBA.Util;
 import java.util.Arrays;
 
 public class ColumnsMapper {
@@ -54,15 +53,22 @@ public class ColumnsMapper {
                 "leadtime",//25
                 "вес",//26
                 "weight",//27
-        "Materialnummer"//28
+                "Materialnummer"//28
         };
         mapper = new int[properties.length];
         Arrays.fill(mapper, -1);
 
+        String excelTitle;
+        String compTitles;
+
         for (int j = 0; j < rowData.getSize(); j++) {
             for (int i = 0; i < properties.length; i++) {
-                if (rowData.get(j) != null && rowData.get(j).toLowerCase().matches(".*(" + properties[i].toLowerCase() + ").*")) {//found col with title
-                    if (mapper[i] < 0) {
+                if (rowData.get(j) != null) {//found col with title
+
+                    excelTitle = rowData.get(j).toLowerCase();
+                    compTitles = properties[i].toLowerCase();
+
+                    if (excelTitle.matches(".*(" + compTitles + ").*") && mapper[i] < 0) {
                         mapper[i] = j;//pointer to col
                         break;
                     }
@@ -129,15 +135,23 @@ public class ColumnsMapper {
         boolean descriptionEnEmpty = descriptionEn == null || descriptionEn.trim().isEmpty();
 
         productPrint = Utils.toEN(rowData.get(mapper[20]).replaceAll("\\,", "."));
+        boolean productPrintEmpty = productPrint == null || productPrint.trim().isEmpty();
 
         minOrder = Utils.toEN(rowData.get(mapper[23]));
+        boolean minorderEmpty = minOrder == null || minOrder.trim().isEmpty();
+
         packetSize = Utils.toEN(rowData.get(mapper[24]));
+        boolean packetSizeEmpty = packetSize == null || packetSize.trim().isEmpty();
         leadTime = Utils.toEN(rowData.get(mapper[25]));
+        boolean leadTimeEmpty = leadTime == null || leadTime.trim().isEmpty();
         weight = new DoubleProperties().merge(Utils.toEN(rowData.get(mapper[26])), Utils.toEN(rowData.get(mapper[27])));
+        boolean weightEmpty = weight == null || weight.trim().isEmpty();
         localPrice = Utils.toEN(rowData.get(mapper[22]));
+        boolean localPriceEmpty = localPrice == null || localPrice.trim().isEmpty();
 
         if (articleEmpty && hierarchyEmpty && lgbkEmpty && validFromEmpty && endOfServiceEmpty && dangerousEmpty &&
-                cntryOfOriginEmpty && dchainEmpty && descriptionRuEmpty && descriptionEnEmpty) return false;
+                cntryOfOriginEmpty && dchainEmpty && descriptionRuEmpty && descriptionEnEmpty && productPrintEmpty &&
+                minorderEmpty && packetSizeEmpty && leadTimeEmpty && weightEmpty && localPriceEmpty) return false;
 
         return true;
     }

@@ -13,10 +13,12 @@ public class Folders {
     private File manualsFolder;
     private File tempFolder;
     private PathFile pathFile;
+    private String appFolder;
 
     public Folders() {
+        appFolder = System.getProperty("user.dir");
         File remoteBaseFile = new File("S:\\SBT\\FS\\Base\\certificateDB.db");
-        File localBaseFile = new File(System.getProperty("user.dir") + "\\certificateDB.db");
+        File localBaseFile = new File(appFolder + "\\certificateDB.db");
 
         if (remoteBaseFile.exists()) {
             dbFile = remoteBaseFile;
@@ -73,5 +75,9 @@ public class Folders {
 
     public File getTempFolder() {
         return tempFolder;
+    }
+
+    public String getAppFolder() {
+        return appFolder;
     }
 }

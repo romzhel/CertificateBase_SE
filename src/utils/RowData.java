@@ -24,7 +24,7 @@ public class RowData {
                     if (DateUtil.isCellDateFormatted(cell))
                         data[col] = new SimpleDateFormat("dd.MM.yyyy").format(cell.getDateCellValue());
                     else {
-                        if (cell.toString().matches("^\\d+[\\,\\.]{1}[0]+$")){
+                        if (cell.toString().matches("^\\d+[\\,\\.]{1}[0]+$") || cell.toString().matches("^\\d\\.\\d+E\\d$")){
                             data[col] = Long.toString((long)cell.getNumericCellValue());
                         } else if (cell.toString().matches("^\\d+[\\,\\.]{1}\\d+$")) {//double value
                             data[col] = Double.toString(cell.getNumericCellValue());

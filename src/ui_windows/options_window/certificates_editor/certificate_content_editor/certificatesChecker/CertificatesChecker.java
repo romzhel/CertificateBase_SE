@@ -97,8 +97,11 @@ public class CertificatesChecker {
                                     certsErr++;
                                 }
 
-                                if (product.getCountry().trim().length() > 0 && !cert.getCountries().toLowerCase().//no country
-                                        contains(product.getCountry().toLowerCase())) {
+                                boolean productHasCert = !product.getCountry().trim().isEmpty();
+                                boolean certCountryMatch = cert.getCountries().toLowerCase().contains(product.getCountry().toLowerCase());
+                                boolean certAllCountries = cert.getCountries().contains("--");
+
+                                if (!certAllCountries && productHasCert && !certCountryMatch) {//no country
                                     status = status.isEmpty() ? NOT_OK + BAD_COUNTRY + " (" + product.getCountry().toUpperCase() + ")"
                                             : status + BAD_COUNTRY + " (" + product.getCountry().toUpperCase() + ")";
                                     certsErr++;

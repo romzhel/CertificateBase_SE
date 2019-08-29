@@ -4,6 +4,7 @@ import core.CoreModule;
 import core.Dialogs;
 import database.ProductsDB;
 import files.ExcelFile;
+import files.ExportPriceListToExcel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -25,9 +26,9 @@ import ui_windows.product.Product;
 import ui_windows.product.Products;
 import ui_windows.product.productEditorWindow.ProductEditorWindow;
 import ui_windows.request_certificates.CertificateRequestWindow;
+import utils.Utils;
 import utils.comparation.ProductsComparator;
 import utils.comparation.ProductsComparatorResult;
-import utils.Utils;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -413,5 +414,9 @@ public class MainWindowsController implements Initializable {
     public void selectLastImportResult() {
         CoreModule.setCurrentItems(CoreModule.getProducts().getChangedPositions());
         CoreModule.filter();
+    }
+
+    public void exportPriceList() {
+        new ExportPriceListToExcel(CoreModule.getPriceLists().getItems().get(0));
     }
 }

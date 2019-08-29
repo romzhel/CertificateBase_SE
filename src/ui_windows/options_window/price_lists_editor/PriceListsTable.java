@@ -18,7 +18,11 @@ public class PriceListsTable {
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         nameCol.setPrefWidth(300);
 
-        tableView.getColumns().add(nameCol);
+        TableColumn<PriceList, String> fileNameCol = new TableColumn<>("Название файла");
+        fileNameCol.setCellValueFactory(new PropertyValueFactory<>("fileName"));
+        fileNameCol.setPrefWidth(300);
+
+        tableView.getColumns().addAll(nameCol, fileNameCol);
         tableView.getItems().addAll(CoreModule.getPriceLists().getItems());
     }
 

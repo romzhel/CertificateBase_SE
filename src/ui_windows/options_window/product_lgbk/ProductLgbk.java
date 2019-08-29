@@ -25,13 +25,13 @@ public class ProductLgbk {
     private int nodeType = -1;
 
 
-    public ProductLgbk(String lgbk, String hierarchy){
+    public ProductLgbk(String lgbk, String hierarchy) {
         this.lgbk = new SimpleStringProperty(lgbk);
         this.hierarchy = new SimpleStringProperty(hierarchy);
         nodeType = ITEM_NODE;
     }
 
-    public ProductLgbk(String lgbk, String hierarchy, int nodeType){
+    public ProductLgbk(String lgbk, String hierarchy, int nodeType) {
         this.lgbk = new SimpleStringProperty(lgbk);
         this.hierarchy = new SimpleStringProperty(hierarchy);
         this.nodeType = nodeType;
@@ -49,7 +49,7 @@ public class ProductLgbk {
         nodeType = ITEM_NODE;
     }
 
-    public ProductLgbk(ResultSet rs){
+    public ProductLgbk(ResultSet rs) {
         try {
             id = rs.getInt("id");
             lgbk = new SimpleStringProperty(rs.getString("lgbk"));
@@ -60,12 +60,12 @@ public class ProductLgbk {
             isNotUsed = rs.getBoolean("not_used");
             nodeType = rs.getInt("node_type");
             normsList = new NormsList(rs.getString("norms_list"));
-        } catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public ProductLgbk(AnchorPane root){
+    public ProductLgbk(AnchorPane root) {
         lgbk = new SimpleStringProperty(Utils.getControlValue(root, "tfLgbk"));
         hierarchy = new SimpleStringProperty(Utils.getControlValue(root, "tfHierarchy"));
         description_en = new SimpleStringProperty(Utils.getControlValue(root, "tfDescriptionEn"));
@@ -78,12 +78,13 @@ public class ProductLgbk {
         normsList = new NormsList(Utils.getControlValue(root, "lvSelectedNorms"));
     }
 
-    public void showInEditorWindow(AnchorPane root){
+    public void showInEditorWindow(AnchorPane root) {
         Utils.setControlValue(root, "tfLgbk", getLgbk());
         Utils.setControlValue(root, "tfHierarchy", getHierarchy());
         Utils.setControlValue(root, "tfDescriptionEn", getDescription_en());
         Utils.setControlValue(root, "tfDescriptionRu", getDescription_ru());
-        if (familyId >= 0) Utils.setControlValue(root, "cbFamily", CoreModule.getProductFamilies().getFamilyNameById(familyId));
+        if (familyId >= 0)
+            Utils.setControlValue(root, "cbFamily", CoreModule.getProductFamilies().getFamilyNameById(familyId));
         Utils.setControlValue(root, "ckbNotUsed", isNotUsed);
 
         String line = normsList.getStringLine();
@@ -95,15 +96,31 @@ public class ProductLgbk {
 //        Utils.setControlValue(root, "lvSelectedNorms", selectedNorms);
     }
 
-    public String getDescription(){
-        if (description_ru.getValue() == null || description_ru.getValue().isEmpty()){
-            if (description_en.getValue() == null || description_en.getValue().isEmpty()){
+    public String getDescription() {
+        if (description_ru.getValue() == null || description_ru.getValue().isEmpty()) {
+            if (description_en.getValue() == null || description_en.getValue().isEmpty()) {
                 return "";
             } else {
                 return description_en.getValue();
             }
         } else {
             return description_ru.getValue();
+        }
+    }
+
+    public String getDescriptionRuEn() {
+        return getDescription();
+    }
+
+    public String getDescriptionEnRu() {
+        if (description_en.getValue() == null || description_en.getValue().isEmpty()) {
+            if (description_ru.getValue() == null || description_ru.getValue().isEmpty()) {
+                return "";
+            } else {
+                return description_ru.getValue();
+            }
+        } else {
+            return description_en.getValue();
         }
     }
 

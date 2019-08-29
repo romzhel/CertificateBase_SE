@@ -14,6 +14,8 @@
                 <Menu fx:id="miFile" mnemonicParsing="false" text="   Файл   ">
                     <items>
                         <MenuItem fx:id="mniOpenNow" mnemonicParsing="false" onAction="#openNow" text="     Обновиться по выгрузке с NOW     " />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#exportPriceList" text="Unspecified Action" />
                     </items>
                 </Menu>
                 <Menu fx:id="miOptions" mnemonicParsing="false" text="   Настройки  ">

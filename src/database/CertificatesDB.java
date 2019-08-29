@@ -73,6 +73,7 @@ public class CertificatesDB implements Request {
                     if (rs.next()) {
                         cert.setId(rs.getInt(1));
                         System.out.println("new ID = " + rs.getInt(1));
+                        MainWindow.setProgress(0.0);
                         return true;
                     }
                 } else {
