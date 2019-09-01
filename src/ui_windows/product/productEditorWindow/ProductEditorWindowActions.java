@@ -2,13 +2,17 @@ package ui_windows.product.productEditorWindow;
 
 import core.CoreModule;
 import database.ProductsDB;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import ui_windows.product.Product;
+import ui_windows.main_window.file_import_window.ColumnsMapper2;
+import ui_windows.main_window.file_import_window.FileImportTableItem;
+import ui_windows.main_window.file_import_window.ObjectsComparator2;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
-import utils.comparation.ObjectsComparator;
+import ui_windows.product.Product;
 import utils.Utils;
 
 import java.util.ArrayList;
@@ -16,11 +20,12 @@ import java.util.HashSet;
 
 import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
+import static ui_windows.main_window.file_import_window.NamesMapping.DESC_ORDER_NUMBER;
 
 public class ProductEditorWindowActions {
-    private static TableView<CertificateVerificationItem> tableView;
     public static HashSet<Integer> existingNorms = new HashSet<>();
     public static HashSet<Integer> needNorms = new HashSet<>();
+    private static TableView<CertificateVerificationItem> tableView;
 
     public static Product getEditedItem() {
         int index = CoreModule.getProducts().getTableView().getSelectionModel().getSelectedIndex();
@@ -47,9 +52,26 @@ public class ProductEditorWindowActions {
 
             boolean productWasNeedAction = pr.isNeedaction() && !changedProduct.isNeedaction();
 
-            ObjectsComparator comparator = new ObjectsComparator(pr, changedProduct, false,
+            /*ObjectsComparator comparator = new ObjectsComparator(pr, changedProduct, false,
                     "id", "article", "history", "lastchangedate", "dchain", "filename", "changecodes",
-                    "productforprint", "lastimportcodes", "minorder", "packetsize", "leadtime", "weight", "localprice");
+                    "productforprint", "lastimportcodes", "minorder", "packetsize", "leadtime", "weight", "localprice");*/
+
+            ObservableList<FileImportTableItem> fiti = FXCollections.observableArrayList();
+            fiti.add(new FileImportTableItem("", DESC_ORDER_NUMBER, true, false, -1, false));
+            fiti.add(new FileImportTableItem("", "descriptionru", true, false, -1, false));
+            fiti.add(new FileImportTableItem("", "descriptionen", true, false, -1, false));
+            fiti.add(new FileImportTableItem("", "type_id", true, true, -1, false));
+            fiti.add(new FileImportTableItem("", "family", true, true, -1, false));
+            fiti.add(new FileImportTableItem("", "fileName", true, false, -1, false));
+            fiti.add(new FileImportTableItem("", "replacement", true, false, -1, false));
+            fiti.add(new FileImportTableItem("", "comments", true, false, -1, false));
+            fiti.add(new FileImportTableItem("", "price", true, true, -1, false));
+            fiti.add(new FileImportTableItem("", "archive", true, true, -1, false));
+            fiti.add(new FileImportTableItem("", "needaction", true, true, -1, false));
+            fiti.add(new FileImportTableItem("", "notused", true, true, -1, false));
+
+            ColumnsMapper2 mapper = new ColumnsMapper2();
+            ObjectsComparator2 comparator = new ObjectsComparator2(pr, changedProduct, false, mapper.getFieldsForImport(fiti));
 
             if (comparator.getResult().isNeedUpdateInDB()) {//was changed
                 String oldHistory = pr.getHistory().trim();
@@ -77,7 +99,7 @@ public class ProductEditorWindowActions {
         }
     }
 
-    public static void fillCertificateVerificationTable(){
+    public static void fillCertificateVerificationTable() {
         CoreModule.getCertificates().getCertificatesChecker().check(getEditedItem());
         tableView.getItems().clear();
         tableView.getItems().addAll(CoreModule.getCertificates().getCertificatesChecker().getResultTableItems());

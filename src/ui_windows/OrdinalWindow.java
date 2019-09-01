@@ -1,7 +1,6 @@
 package ui_windows;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
@@ -10,25 +9,26 @@ import ui_windows.options_window.profile_editor.SimpleRight;
 import utils.Utils;
 
 import java.io.IOException;
+
 import static ui_windows.options_window.profile_editor.SimpleRight.FULL;
 
 public class OrdinalWindow {
     protected static Stage stage;
     protected static Mode mode;
     protected static AnchorPane rootAnchorPane;
+    protected static FXMLLoader loader;
 
-    public OrdinalWindow(Stage parentStage, Modality modality, Mode mode, String resourceName, String title){
+    public OrdinalWindow(Stage parentStage, Modality modality, Mode mode, String resourceName, String title) {
         this.mode = mode;
-        Parent root = null;
+        loader = new FXMLLoader(getClass().getResource(resourceName));
         try {
-            root = FXMLLoader.load(getClass().getResource(resourceName));
-            rootAnchorPane = (AnchorPane) root;
+            rootAnchorPane = loader.load();
         } catch (IOException e) {
             System.out.println("error xml file loading " + resourceName + ", " + e.getMessage());
         }
 
         stage = new Stage();
-        stage.setScene(new Scene(root));
+        stage.setScene(new Scene(rootAnchorPane));
 
         stage.initOwner(parentStage);
         stage.initModality(modality);
@@ -36,16 +36,28 @@ public class OrdinalWindow {
         stage.setResizable(false);
     }
 
-    public void applyProfileSimple(SimpleRight sr){
+    public static Stage getStage() {
+        return stage;
+    }
+
+    public static Mode getMode() {
+        return mode;
+    }
+
+    public static AnchorPane getRootAnchorPane() {
+        return rootAnchorPane;
+    }
+
+    public static void close() {
+        stage.close();
+    }
+
+    public void applyProfileSimple(SimpleRight sr) {
         boolean editorRights = (sr != FULL);
         Utils.disableEditing(rootAnchorPane, editorRights);
     }
 
-    public static Stage getStage(){return stage;}
-
-    public static Mode getMode(){return mode;}
-
-    public static AnchorPane getRootAnchorPane(){return rootAnchorPane;}
-
-    public static void close(){stage.close();}
+    public static FXMLLoader getLoader() {
+        return loader;
+    }
 }

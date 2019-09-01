@@ -2,10 +2,13 @@ package ui_windows.product;
 
 import core.CoreModule;
 import javafx.scene.paint.Color;
+import ui_windows.main_window.file_import_window.ColumnsMapper2;
+import ui_windows.main_window.file_import_window.NamesMapping;
+import ui_windows.main_window.file_import_window.RowData;
 import ui_windows.main_window.filter_window.Filter;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.NormsList;
-import utils.ColumnsMapper;
+import ui_windows.main_window.file_import_window.ColumnsMapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -22,6 +25,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static ui_windows.main_window.file_import_window.NamesMapping.*;
 
 public class Product {
     public static final String NO_DATA = "нет данных";
@@ -68,13 +73,13 @@ public class Product {
         material = new SimpleStringProperty(Utils.getControlValue(root, "tfMaterial"));
         productForPrint = new SimpleStringProperty((Utils.getControlValue(root, "tfProductPrint")));
         article = new SimpleStringProperty(Utils.getControlValue(root, "tfArticle"));
-        hierarchy = new SimpleStringProperty(Utils.getControlValue(root, "tfHierarchy"));
-        lgbk = new SimpleStringProperty(Utils.getControlValue(root, "tfLgbk"));
+//        hierarchy = new SimpleStringProperty(Utils.getControlValue(root, "tfHierarchy"));
+//        lgbk = new SimpleStringProperty(Utils.getControlValue(root, "tfLgbk"));
         family = CoreModule.getProductFamilies().getFamilyIdByName(Utils.getControlValue(root, "cbFamily"));
-        endofservice = new SimpleStringProperty(Utils.getControlValue(root, "tfEndOfService"));
-        dangerous = new SimpleStringProperty(Utils.getControlValue(root, "tfDangerous"));
-        country = new SimpleStringProperty(Utils.getValueInBrackets(Utils.getControlValue(root, "tfCountry")));
-        dchain = new SimpleStringProperty(Utils.getValueInBrackets(Utils.getControlValue(root, "tfAccessibility")));
+//        endofservice = new SimpleStringProperty(Utils.getControlValue(root, "tfEndOfService"));
+//        dangerous = new SimpleStringProperty(Utils.getControlValue(root, "tfDangerous"));
+//        country = new SimpleStringProperty(Utils.getValueInBrackets(Utils.getControlValue(root, "tfCountry")));
+//        dchain = new SimpleStringProperty(Utils.getValueInBrackets(Utils.getControlValue(root, "tfAccessibility")));
         descriptionru = new SimpleStringProperty(Utils.getControlValue(root, "taDescription"));
         descriptionen = new SimpleStringProperty(Utils.getControlValue(root, "taDescriptionEn"));
         price = new SimpleBooleanProperty(Utils.getControlValue(root, "cbxPrice") == "true" ? true : false);
@@ -89,7 +94,7 @@ public class Product {
         history = Utils.getControlValue(root, "lHistory");
         lastChangeDate = "";
         //    private last
-        fileName = Utils.getControlValue(root, "tfFileName");
+//        fileName = Utils.getControlValue(root, "tfFileName");
         comments = Utils.getControlValue(root, "taComments");
         replacement = Utils.getControlValue(root, "tfReplacement");
     }
@@ -120,6 +125,37 @@ public class Product {
         leadTime = (int) getDoubleFromString(mapper.getLeadTime());
         weight = getDoubleFromString(mapper.getWeight());
         localPrice = getDoubleFromString(mapper.getLocalPrice());
+    }
+
+    public Product(RowData rowData, ColumnsMapper2 mapper) {
+        String cellValue;
+        id = 0;
+        material = new SimpleStringProperty(rowData.get(mapper.getFieldIndexByName(DESC_ORDER_NUMBER)).replaceAll("\\,", "."));
+        productForPrint = new SimpleStringProperty(rowData.get(mapper.getFieldIndexByName(DESC_ORDER_NUMBER_PRINT)).replaceAll("\\,", "."));
+        article = new SimpleStringProperty(rowData.get(mapper.getFieldIndexByName(DESC_ARTICLE)).replaceAll("\\,", "."));
+        hierarchy = new SimpleStringProperty(rowData.get(mapper.getFieldIndexByName(DESC_HIERARCHY)));
+        lgbk = new SimpleStringProperty(rowData.get(mapper.getFieldIndexByName(DESC_LGBK)));
+
+        cellValue = rowData.get(mapper.getFieldIndexByName(DESC_SERVICE_END)).replaceAll("\\,", ".");
+        endofservice = new SimpleStringProperty(cellValue.matches("00.00.0000") ? "" : cellValue);
+        dangerous = new SimpleStringProperty(rowData.get(mapper.getFieldIndexByName(DESC_LOGISTIC_LIMITATION)));
+        country = new SimpleStringProperty(rowData.get(mapper.getFieldIndexByName(DESC_COUNTRY)));
+        dchain = new SimpleStringProperty(rowData.get(mapper.getFieldIndexByName(DESC_DCHAIN)));
+
+        price = new SimpleBooleanProperty(false);
+        archive = new SimpleBooleanProperty(false);
+        needaction = new SimpleBooleanProperty(true);
+        notused = new SimpleBooleanProperty(false);
+        descriptionru = new SimpleStringProperty(rowData.get(mapper.getFieldIndexByName(DESC_DESCRIPTION_RU)));
+        descriptionen = new SimpleStringProperty(rowData.get(mapper.getFieldIndexByName(DESC_DESCRIPTION_EN)));
+
+        normsList = new NormsList(new ArrayList<Integer>());
+
+        minOrder = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByName(DESC_MIN_ORDER)));
+        packetSize = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByName(DESC_PACKSIZE)));
+        leadTime = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByName(DESC_LEADTIME)));
+        weight = getDoubleFromString(rowData.get(mapper.getFieldIndexByName(DESC_WEIGHT)));
+        localPrice = getDoubleFromString(rowData.get(mapper.getFieldIndexByName(DESC_LOCAL_PRICE)));
     }
 
     private double getDoubleFromString(String text) {

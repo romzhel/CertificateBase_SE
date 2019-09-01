@@ -1,6 +1,7 @@
 package utils.comparation;
 
 import javafx.beans.property.StringProperty;
+import ui_windows.main_window.file_import_window.ColumnsMapper2;
 import ui_windows.product.Product;
 import utils.Utils;
 

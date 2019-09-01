@@ -44,9 +44,9 @@ public class PriceListEditorWindowController implements Initializable {
 
             PriceList editedItem = CoreModule.getPriceLists().getPriceListsTable().getSelectedItem();
             PriceList changedItem = new PriceList(PriceListEditorWindow.getRootAnchorPane());
-//            editedItem.setName(changedItem.getName());
 
-            new ObjectsComparator(editedItem, changedItem, true);
+            editedItem.setName(changedItem.getName());
+            editedItem.setFileName(changedItem.getFileName());
             editedItem.getLgbks().clear();
             editedItem.getLgbks().addAll(lvSelected.getItems());
 

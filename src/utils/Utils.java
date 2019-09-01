@@ -440,4 +440,10 @@ public class Utils {
         return result;
     }
 
+    public static Node getFxControl(AnchorPane root, String id) {
+        for (Node n : root.getChildren()) {
+            if (n.getId().toLowerCase().equals(id.toLowerCase())) return n;
+        }
+        return null;
+    }
 }

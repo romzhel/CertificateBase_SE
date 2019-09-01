@@ -1,8 +1,8 @@
 package files;
 
 import core.Dialogs;
-import utils.ColumnsMapper;
-import utils.RowData;
+import ui_windows.main_window.file_import_window.ColumnsMapper;
+import ui_windows.main_window.file_import_window.RowData;
 import org.apache.poi.ss.usermodel.*;
 import ui_windows.product.Product;
 

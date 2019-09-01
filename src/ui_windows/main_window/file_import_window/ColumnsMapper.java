@@ -1,4 +1,7 @@
-package utils;
+package ui_windows.main_window.file_import_window;
+
+import utils.DoubleProperties;
+import utils.Utils;
 
 import java.util.Arrays;
 

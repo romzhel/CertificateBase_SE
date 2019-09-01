@@ -16,6 +16,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.util.Callback;
 import ui_windows.login_window.LoginWindow;
+import ui_windows.main_window.file_import_window.FileImport;
 import ui_windows.main_window.filter_window.FilterWindow;
 import ui_windows.options_window.OptionsWindow;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
@@ -42,7 +43,8 @@ import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
 
 public class MainWindowsController implements Initializable {
-    ProductsComparatorResult lastComparationResult;
+    private FileImport fileImport;
+//    ProductsComparatorResult lastComparationResult;
     boolean clearOldResult;
 
     @FXML
@@ -82,14 +84,13 @@ public class MainWindowsController implements Initializable {
     RadioMenuItem rmiDoubles;
 
     @FXML
-    RadioMenuItem rmiLastImportResult;
+    public RadioMenuItem rmiLastImportResult;
 
     @FXML
     Menu miReports;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        lastComparationResult = new ProductsComparatorResult();
 
         CoreModule.getProducts().setTableView(tvTable);
         MainWindow.setProgressBar(pbExecuted);
@@ -197,46 +198,7 @@ public class MainWindowsController implements Initializable {
 
 
     public void openNow() {
-        if (ExcelFile.open(Dialogs.selectNOWFile(MainWindow.getMainStage()))) {//open file
-
-            MainWindow.setProgress(-1);
-
-            clearOldResult = false;
-            if (Dialogs.confirm("Удаление информации о предыдущем импорте", "Желаете удалить информацию об " +
-                    "изменённых позициях во время предыдущего импорта?")) clearOldResult = true;
-
-            new Thread(() -> {
-
-                ArrayList<Product> resetedItems = clearOldResult == false ? new ArrayList<>() : CoreModule.getProducts().resetLastImportCodes();
-                HashSet<Product> changedItemsForDB = new HashSet<>(resetedItems);
-
-                Products compProducts = new Products();
-                compProducts.setItems(ExcelFile.getProductDataFromAllSheets());//get new products from Excel file
-
-                ProductsComparator pc = new ProductsComparator(CoreModule.getProducts(), compProducts, "material", "price",
-                        "archive", "needaction", "notused", "localprice");//compare new and existing products
-                lastComparationResult = pc.getResult();
-                changedItemsForDB.addAll(lastComparationResult.getChangedItems());
-
-                rmiLastImportResult.setSelected(true);
-
-                selectLastImportResult();
-
-                ProductsDB request = new ProductsDB();
-
-                request.putData(lastComparationResult.getNewItems());// save new items to db
-                request.updateData(new ArrayList<>(changedItemsForDB));//save changed items to db
-
-                System.out.println("writing to DB finished");
-
-                MainWindow.setProgress(0);
-
-                Platform.runLater(() -> Dialogs.showMessage("Результаты импорта", "Новых позиций: " +
-                        lastComparationResult.getNewItems().size() + "\nИзменённых позиций: " +
-                        lastComparationResult.getChangedItems().size()));
-
-            }).start();
-        }
+        fileImport = new FileImport();
     }
 
     public void openOptionsWindow() {
@@ -268,17 +230,17 @@ public class MainWindowsController implements Initializable {
     }
 
     public void displayNewItems() {
-        displayInTable(lastComparationResult.getNewItems());
+        displayInTable(fileImport.getLastComparationResult().getNewItems());
     }
 
     public void displayChangedItems() {
-        if (lastComparationResult.getChangedItems() != null)
-            displayInTable(lastComparationResult.getChangedItems());
+        if (fileImport.getLastComparationResult().getChangedItems() != null)
+            displayInTable(fileImport.getLastComparationResult().getChangedItems());
     }
 
     public void displayGoneItems() {
-        if (lastComparationResult.getGoneItems() != null)
-            displayInTable(lastComparationResult.getGoneItems());
+        if (fileImport.getLastComparationResult().getGoneItems() != null)
+            displayInTable(fileImport.getLastComparationResult().getGoneItems());
     }
 
     public void clearDisplay() {

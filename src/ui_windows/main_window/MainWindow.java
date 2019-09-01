@@ -32,6 +32,7 @@ public class MainWindow extends Application {
     private static MenuItem miOptions;
     private static Menu miReports;
     private static boolean initOk;
+    private static FXMLLoader fxmlLoader;
 
     private static SearchBox searchBox;
 
@@ -47,15 +48,17 @@ public class MainWindow extends Application {
         initOk = CoreModule.init();
 
         if (initOk) {
-            Parent root = null;
+//            Parent root = null;
+            fxmlLoader = new FXMLLoader(getClass().getResource("mainWindow.fxml"));
             try {
-                root = FXMLLoader.load(getClass().getResource("mainWindow.fxml"));
-                rootAnchorPane = (AnchorPane) root;
+//                root = fxmlLoader.load();
+                rootAnchorPane = fxmlLoader.load();
+//                rootAnchorPane = (AnchorPane) root;
             } catch (IOException e) {
                 System.out.println("error xml file loading: " + e.getMessage());
             }
 
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(rootAnchorPane);
 
             scene.setOnKeyPressed(event -> {
                 if (event.getCode().getName().equals("F12")) {
@@ -186,5 +189,9 @@ public class MainWindow extends Application {
 
     public static SearchBox getSearchBox() {
         return searchBox;
+    }
+
+    public static FXMLLoader getFxmlLoader() {
+        return fxmlLoader;
     }
 }
