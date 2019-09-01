@@ -91,7 +91,7 @@ public class ProductEditorWindowActions {
                 productsToUpdate.add(pr);
 
                 new Thread(() -> new ProductsDB().updateData(new ArrayList<Product>(productsToUpdate))).start(); //update in DB
-
+                CoreModule.filter();
             }
 
             CoreModule.getProducts().getTableView().refresh();

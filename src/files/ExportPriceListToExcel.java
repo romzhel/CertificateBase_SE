@@ -63,7 +63,7 @@ public class ExportPriceListToExcel {
             Dialogs.showMessage("Формирование файла прайс листа", e.getMessage());
             return false;
         }
-        
+
         try {
             FileInputStream fis = new FileInputStream(resultFile);
             excelDoc = WorkbookFactory.create(fis);

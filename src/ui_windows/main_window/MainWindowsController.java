@@ -200,8 +200,6 @@ public class MainWindowsController implements Initializable {
     }
 
     public void initPriceListMenu() {
-        System.out.println("init menu");
-
         mPriceList.getItems().clear();
         for (PriceList pl : CoreModule.getPriceLists().getItems()) {
             MenuItem mi = new MenuItem("     " + pl.getName() + "     ");

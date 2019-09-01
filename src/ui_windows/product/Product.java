@@ -308,13 +308,14 @@ public class Product {
         LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(getLgbk(), getHierarchy()));
 
         while (lgbkAndParent == null || lgbkAndParent.getLgbkParent() == null || lgbkAndParent.getLgbkItem() == null) {
-            System.out.println(article.getValue() + ", new lgbk/hieraarchy");
+            System.out.println(article.getValue() + ", new lgbk/hierarchy");
             CoreModule.getProductLgbkGroups().checkConsistency();
             lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(getLgbk(), getHierarchy()));
         }
 
         boolean globalNotUsed = lgbkAndParent.getLgbkItem().isNotUsed() || lgbkAndParent.getLgbkParent().isNotUsed();
-        boolean notUsed = (filter.getFilterSimpleByUIname("cbxNotUsed").isValue() && (isNotused() || globalNotUsed));
+        boolean summaryNotUsed = isNotused() || globalNotUsed;
+        boolean notUsed = filter.getFilterSimpleByUIname("cbxNotUsed").isValue() && summaryNotUsed;
 
         boolean matchChanges = false;
         if (needAction) {
@@ -329,9 +330,9 @@ public class Product {
                     matchChanges = true;
             }
 
-            if ((allRecords || price || archive || notUsed) && matchChanges) return true;
+            if ((allRecords || price && (!summaryNotUsed || notUsed) || archive || !price && notUsed) && matchChanges ) return true;
         } else {
-            if (allRecords || price || archive || notUsed) return true;
+            if (allRecords || price && (!summaryNotUsed || notUsed) || !price && notUsed || archive  ) return true;
         }
 
         return false;
