@@ -4,6 +4,7 @@ import core.CoreModule;
 import core.Dialogs;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
+import javafx.stage.Stage;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import ui_windows.main_window.MainWindow;
@@ -12,6 +13,7 @@ import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 import utils.Utils;
+import utils.waiting_window.WaitingWindow;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,10 +36,20 @@ public class ExportPriceListToExcel {
         this.priceList = priceList;
 
         if (loadTemplate()) {
+            new WaitingWindow(MainWindow.getMainStage());
+
             new Thread(() -> {
                 fillDoc();
                 saveToFile();
                 System.out.println("items in price: " + itemCount);
+
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        WaitingWindow.getStage().close();
+                    }
+                });
+
             }).start();
         }
     }
