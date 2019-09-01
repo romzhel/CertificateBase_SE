@@ -7,6 +7,7 @@ import javafx.scene.control.TreeTableView;
 import ui_windows.options_window.families_editor.ProductFamily;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 public class ProductLgbks {
     private ArrayList<ProductLgbk> productLgbks;
@@ -33,9 +34,9 @@ public class ProductLgbks {
         }
     }
 
-    public void addItems(ArrayList<ProductLgbk> items){
-        for (ProductLgbk productLgbk:items             ) {
-            if (db.putData(productLgbk)){
+    public void addItems(ArrayList<ProductLgbk> items) {
+        for (ProductLgbk productLgbk : items) {
+            if (db.putData(productLgbk)) {
                 productLgbks.add(productLgbk);
             }
         }
@@ -80,6 +81,49 @@ public class ProductLgbks {
         } else {
             return lgbkAndParent.getLgbkItem().getFamilyId();
         }
+    }
+
+    public ProductLgbk getByLgbkName(String lgbkName) {
+        for (ProductLgbk plgbk : productLgbks) {
+            if (plgbk.getLgbk().equals(lgbkName) && plgbk.getHierarchy().equals("Все")) {
+                return plgbk;
+            }
+        }
+        return null;
+    }
+
+    public ProductLgbk getByDescription(String lgbkDescription) {
+        for (ProductLgbk plgbk : productLgbks) {
+            if (plgbk.getDescription().equals(lgbkDescription) && plgbk.getHierarchy().equals("Все")) {
+                return plgbk;
+            }
+        }
+        return null;
+    }
+
+    public TreeSet<String> getLgbkDescALbyNamesAL(ArrayList<String> lgbkNames) {
+        TreeSet<String> result = new TreeSet<>();
+        ProductLgbk pl;
+        for (String lgbkName : lgbkNames) {
+            pl = getByLgbkName(lgbkName);
+            if (pl != null)
+                result.add("[" + pl.getLgbk() + "] " + pl.getDescription());
+        }
+        return result;
+    }
+
+    public TreeSet<String> getLgbkNameALbyDescsAL(ArrayList<String> lgbkDescs) {
+        TreeSet<String> result = new TreeSet<>();
+        ProductLgbk pl;
+        String lgbkName, desc;
+        for (String lgbkDesc : lgbkDescs) {
+            String[] parts = lgbkDesc.split("\\]");
+            lgbkName = parts[0].replaceAll("[\\[\\s]", "");
+            pl = getByLgbkName(lgbkName);
+
+            if (pl != null) result.add(pl.getLgbk());
+        }
+        return result;
     }
 
     public ArrayList<ProductLgbk> getProductLgbks() {

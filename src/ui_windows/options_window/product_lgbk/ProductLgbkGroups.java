@@ -216,11 +216,13 @@ public class ProductLgbkGroups {
         return globalNorms;
     }
 
-    public TreeSet<String> getGroupLgbkNames() {
+    public TreeSet<String> getGroupLgbkDescriptions() {
         TreeSet<String> result = new TreeSet<>();
+        String description;
         for (TreeItem<ProductLgbk> plgbk : treeItemRoot.getChildren()) {
-            if (plgbk.getValue() != null && !plgbk.getValue().getLgbk().trim().isEmpty()) {
-                result.add(plgbk.getValue().getLgbk());
+            description = plgbk.getValue().getDescription();
+            if (plgbk.getValue() != null && !plgbk.getValue().getLgbk().isEmpty()) {
+                result.add("[" + plgbk.getValue().getLgbk() + "] " + description);
             }
         }
         return result;

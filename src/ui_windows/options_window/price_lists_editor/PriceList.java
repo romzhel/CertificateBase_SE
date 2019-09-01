@@ -1,12 +1,15 @@
 package ui_windows.options_window.price_lists_editor;
 
+import core.CoreModule;
 import javafx.scene.layout.AnchorPane;
+import ui_windows.options_window.product_lgbk.ProductLgbk;
 import utils.Utils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.TreeSet;
 
 public class PriceList {
     private int id;
@@ -37,7 +40,10 @@ public class PriceList {
     public PriceList(AnchorPane root) {
         id = 0;
         name = Utils.getControlValue(root, "tfName");
-        lgbks = Utils.getALControlValueFromLV(root, "lvSelected");
+
+//        ArrayList<String> lgbkNames = new ArrayList<>();
+        ArrayList<String> lgbkDescriptions = Utils.getALControlValueFromLV(root, "lvSelected");
+        lgbks = new ArrayList<>(CoreModule.getProductLgbks().getLgbkNameALbyDescsAL(lgbkDescriptions));
         fileName = Utils.getControlValue(root, "tfFileName");
     }
 

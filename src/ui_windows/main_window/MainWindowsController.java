@@ -2,12 +2,12 @@ package ui_windows.main_window;
 
 import core.CoreModule;
 import core.Dialogs;
-import database.ProductsDB;
-import files.ExcelFile;
 import files.ExportPriceListToExcel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -21,21 +21,18 @@ import ui_windows.main_window.filter_window.FilterWindow;
 import ui_windows.options_window.OptionsWindow;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificatesChecker;
+import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.user_editor.User;
 import ui_windows.product.Product;
-import ui_windows.product.Products;
 import ui_windows.product.productEditorWindow.ProductEditorWindow;
 import ui_windows.request_certificates.CertificateRequestWindow;
 import utils.Utils;
-import utils.comparation.ProductsComparator;
-import utils.comparation.ProductsComparatorResult;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
@@ -43,8 +40,9 @@ import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
 
 public class MainWindowsController implements Initializable {
-    private FileImport fileImport;
-//    ProductsComparatorResult lastComparationResult;
+    @FXML
+    public RadioMenuItem rmiLastImportResult;
+    //    ProductsComparatorResult lastComparationResult;
     boolean clearOldResult;
 
     @FXML
@@ -63,7 +61,7 @@ public class MainWindowsController implements Initializable {
     MenuBar mnuBar;
 
     @FXML
-    MenuItem miFile;
+    Menu miFile;
 
     @FXML
     MenuItem miOptions;
@@ -84,10 +82,12 @@ public class MainWindowsController implements Initializable {
     RadioMenuItem rmiDoubles;
 
     @FXML
-    public RadioMenuItem rmiLastImportResult;
+    Menu miReports;
 
     @FXML
-    Menu miReports;
+    Menu mPriceList;
+
+    private FileImport fileImport;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -108,6 +108,9 @@ public class MainWindowsController implements Initializable {
         rmiLastImportResult.setToggleGroup(tg);
 
         rmiAllItems.setSelected(true);
+
+
+        initPriceListMenu();
 
         String[] cols = new String[]{"material", "article", "description", "family", "endofservice",
                 "country", "dchain"};
@@ -194,6 +197,21 @@ public class MainWindowsController implements Initializable {
         tvTable.setPlaceholder(new Label("Нет данных для отображения"));
 
         lbRecordCount.setText(Integer.toString(tvTable.getItems().size()));
+    }
+
+    public void initPriceListMenu() {
+        System.out.println("init menu");
+
+        mPriceList.getItems().clear();
+        for (PriceList pl : CoreModule.getPriceLists().getItems()) {
+            MenuItem mi = new MenuItem("     " + pl.getName() + "     ");
+            mPriceList.getItems().add(mi);
+
+            mi.setOnAction(event -> {
+                int index = mPriceList.getItems().indexOf(mi);
+                new ExportPriceListToExcel(CoreModule.getPriceLists().getItems().get(index));
+            });
+        }
     }
 
 
@@ -379,6 +397,6 @@ public class MainWindowsController implements Initializable {
     }
 
     public void exportPriceList() {
-        new ExportPriceListToExcel(CoreModule.getPriceLists().getItems().get(0));
+        new ExportPriceListToExcel(CoreModule.getPriceLists().getItems().get(3));
     }
 }

@@ -4,7 +4,9 @@ import core.CoreModule;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseButton;
 import ui_windows.Mode;
+import ui_windows.options_window.product_lgbk.ProductLgbk;
 
+import java.util.ArrayList;
 import java.util.TreeSet;
 
 public class TwinListViews {
@@ -22,10 +24,11 @@ public class TwinListViews {
     public void display() {
         lvAll.getItems().clear();
         lvSelected.getItems().clear();
-        lvAll.getItems().addAll(CoreModule.getProductLgbkGroups().getGroupLgbkNames());
+        lvAll.getItems().addAll(CoreModule.getProductLgbkGroups().getGroupLgbkDescriptions());
 
         if (PriceListEditorWindow.getMode() == Mode.EDIT) {
-            lvSelected.getItems().addAll(CoreModule.getPriceLists().getPriceListsTable().getSelectedItem().getLgbks());
+            ArrayList<String> plgbks = CoreModule.getPriceLists().getPriceListsTable().getSelectedItem().getLgbks();
+            lvSelected.getItems().addAll(CoreModule.getProductLgbks().getLgbkDescALbyNamesAL(plgbks));
             lvAll.getItems().removeAll(lvSelected.getItems());
             sortLV(lvSelected);
         }

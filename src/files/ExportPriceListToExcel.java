@@ -37,14 +37,15 @@ public class ExportPriceListToExcel {
             new Thread(() -> {
                 fillDoc();
                 saveToFile();
-                System.out.println("items un price: " + itemCount);
+                System.out.println("items in price: " + itemCount);
             }).start();
         }
     }
 
     private boolean loadTemplate() {
         templateFile = new File(CoreModule.getFolders().getAppFolder() + "\\" + TEMPLATE_FILE);
-        resultFile = new File(CoreModule.getFolders().getAppFolder() + "\\" + priceList.getFileName());
+        String targetFileName = priceList.getFileName().isEmpty() ? "PriceList" : priceList.getFileName();
+        resultFile = new File(CoreModule.getFolders().getAppFolder() + "\\" + targetFileName + ".xlsx");
 
         if (templateFile == null || !templateFile.exists()) {
             File dialogFile = Dialogs.selectNOWFile(MainWindow.getMainStage());
@@ -54,15 +55,15 @@ public class ExportPriceListToExcel {
             }
 
             templateFile = dialogFile;
-
-            try {
-                Files.copy(templateFile.toPath(), resultFile.toPath(), REPLACE_EXISTING);
-            } catch (Exception e) {
-                Dialogs.showMessage("Формирование файла прайс листа", e.getMessage());
-                return false;
-            }
         }
 
+        try {
+            Files.copy(templateFile.toPath(), resultFile.toPath(), REPLACE_EXISTING);
+        } catch (Exception e) {
+            Dialogs.showMessage("Формирование файла прайс листа", e.getMessage());
+            return false;
+        }
+        
         try {
             FileInputStream fis = new FileInputStream(resultFile);
             excelDoc = WorkbookFactory.create(fis);

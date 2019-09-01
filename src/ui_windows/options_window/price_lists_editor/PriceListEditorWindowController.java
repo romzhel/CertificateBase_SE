@@ -7,9 +7,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import ui_windows.Mode;
+import ui_windows.main_window.MainWindow;
+import ui_windows.main_window.MainWindowsController;
 import utils.comparation.ObjectsComparator;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class PriceListEditorWindowController implements Initializable {
@@ -31,8 +34,8 @@ public class PriceListEditorWindowController implements Initializable {
     }
 
     public void apply() {
-        if (tfFileName.getText() == null || !tfFileName.getText().matches(".+\\.xlsx")) {
-            Dialogs.showMessage("Сохранение настроек", "Имя файла должно соответстваовать шаблону *.xlsx");
+        if (tfFileName.getText() == null || tfFileName.getText().isEmpty()) {
+            Dialogs.showMessage("Сохранение настроек", "Имя файла не должно быть пустым.");
             return;
         }
 
@@ -48,7 +51,7 @@ public class PriceListEditorWindowController implements Initializable {
             editedItem.setName(changedItem.getName());
             editedItem.setFileName(changedItem.getFileName());
             editedItem.getLgbks().clear();
-            editedItem.getLgbks().addAll(lvSelected.getItems());
+            editedItem.getLgbks().addAll(CoreModule.getProductLgbks().getLgbkNameALbyDescsAL(new ArrayList<String>(lvSelected.getItems())));
 
             CoreModule.getPriceLists().editItem(editedItem);
         }
@@ -56,6 +59,7 @@ public class PriceListEditorWindowController implements Initializable {
         CoreModule.getPriceLists().getPriceListsTable().getTableView().refresh();
         close();
 
+        ((MainWindowsController) MainWindow.getFxmlLoader().getController()).initPriceListMenu();
     }
 
     public void close() {

@@ -15,7 +15,7 @@
                     <items>
                         <MenuItem fx:id="mniOpenNow" mnemonicParsing="false" onAction="#openNow" text="     Обновиться по выгрузке с NOW     " />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#exportPriceList" text="Unspecified Action" />
+                  <Menu fx:id="mPriceList" mnemonicParsing="false" text="     Сгенерировать прайс лист     " />
                     </items>
                 </Menu>
                 <Menu fx:id="miOptions" mnemonicParsing="false" text="   Настройки  ">

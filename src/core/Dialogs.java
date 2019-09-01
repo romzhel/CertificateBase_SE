@@ -52,7 +52,7 @@ public class Dialogs {
 
     public static File selectNOWFile(Stage stage) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Выберите файл с данными для импорта");
+        fileChooser.setTitle("Выберите файл");
         FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Файлы Excel",
                 "*.xls*");
         fileChooser.getExtensionFilters().addAll(filter);
