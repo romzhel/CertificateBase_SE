@@ -105,10 +105,13 @@ public class CoreModule {
         LgbkAndParent lgbkAndParent;
         ProductFamily pf = null;
         boolean familyMatch = false;
+        boolean descriptionMatch;
 
         for (Product p : currentItems) {
             articleMatch = p.getArticle().toUpperCase().matches("^(" + find.toUpperCase() + ").*");
             materialMatch = p.getMaterial().toUpperCase().matches("^(" + find.toUpperCase() + ").*");
+            descriptionMatch = p.getDescriptionru().toLowerCase().matches(".*(" + find.toLowerCase() + ").*") ||
+                    p.getDescriptionen().toLowerCase().matches(".*(" + find.toLowerCase() + ").*");
             filterMatch = p.matchFilter(CoreModule.getFilter());
 
             if (CoreModule.getFilter().getProductFamily() != null) {
@@ -131,7 +134,7 @@ public class CoreModule {
                 familyMatch = true;
             }
 
-            if (familyMatch && (filterMatch && (articleMatch || materialMatch))) result.add(p);
+            if (familyMatch && (filterMatch && (articleMatch || materialMatch || descriptionMatch))) result.add(p);
         }
 
         Platform.runLater(() -> {
