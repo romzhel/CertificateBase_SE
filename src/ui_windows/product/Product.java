@@ -655,7 +655,13 @@ public class Product {
         return localPrice;
     }
 
+    public int getPreparedLeadTime(){
+        return getLeadTime() > 0 ? getLeadTime() + 14 : 0;
+    }
 
+    public String getDescriptionRuEn(){
+        return getDescriptionru().isEmpty() ? getDescriptionen() : getDescriptionru();
+    }
 }
 
 

@@ -131,7 +131,9 @@ public class ExportPriceListToExcel {
                             hierarchyMatches = !hierarchyForComp.isEmpty() && product.getHierarchy().contains(hierarchyForComp);
 
                             if (product.isPrice() && lgbkMatches && hierarchyMatches) {
-                                productsToAdd.add(product);
+//                                if (product.getDchain().contains("28") || product.getDchain().contains("30")) {
+                                    productsToAdd.add(product);
+//                                }
                             }
                         }
 
@@ -162,8 +164,16 @@ public class ExportPriceListToExcel {
                                 cell.setCellValue(product.getDescriptionen());
                             }
 
-                            cell = row.createCell(3, CellType.NUMERIC);
-                            cell.setCellValue(product.getLocalPrice());
+                            boolean dchain2830 = product.getDchain().contains("28") || product.getDchain().contains("30");
+                            boolean licence = product.getLgbk().equals("H3FQ") || product.getLgbk().equals("H5ET");
+
+                            if (dchain2830 && !licence){
+                                cell = row.createCell(3, CellType.NUMERIC);
+                                cell.setCellValue(product.getLocalPrice());
+                            } else {
+                                cell = row.createCell(3, CellType.STRING);
+                                cell.setCellValue("По запросу");
+                            }
 
                             cell = row.createCell(4, CellType.NUMERIC);
                             cell.setCellValue(product.getLeadTime() > 0 ? product.getLeadTime() + 14 : 0);
@@ -177,10 +187,10 @@ public class ExportPriceListToExcel {
                             cell = row.createCell(7, CellType.NUMERIC);
                             cell.setCellValue(product.getWeight());
 
-                            CertificatesChecker cc = CoreModule.getCertificates().getCertificatesChecker();
+                            /*CertificatesChecker cc = CoreModule.getCertificates().getCertificatesChecker();
                             cc.check(product);
                             cell = row.createCell(8, CellType.STRING);
-                            cell.setCellValue(cc.getCheckStatusResult());
+                            cell.setCellValue(cc.getCheckStatusResult());*/
                         }
                         if (productsToAdd.size() > 0) row = excelSheet.createRow(rowIndex++);
                         itemCount += productsToAdd.size();

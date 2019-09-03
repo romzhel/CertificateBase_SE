@@ -92,57 +92,63 @@ public class CoreModule {
     }
 
     public static synchronized void filter() {
-        TableView<Product> tableView = CoreModule.getProducts().getTableView();
-        String find = MainWindow.getSearchBox().getText();
-        find = find.replaceAll("\\*", ".*");
-        find = find.replaceAll("\\.", "\\.");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                TableView<Product> tableView = CoreModule.getProducts().getTableView();
+                String find = MainWindow.getSearchBox().getText();
+                find = find.replaceAll("\\*", ".*");
+                find = find.replaceAll("\\.", "\\.");
 
-        ArrayList<Product> result = new ArrayList<>();
+                ArrayList<Product> result = new ArrayList<>();
 
-        boolean articleMatch = false;
-        boolean materialMatch = false;
-        boolean filterMatch = false;
-        LgbkAndParent lgbkAndParent;
-        ProductFamily pf = null;
-        boolean familyMatch = false;
-        boolean descriptionMatch;
+                boolean articleMatch = false;
+                boolean materialMatch = false;
+                boolean filterMatch = false;
+                LgbkAndParent lgbkAndParent;
+                ProductFamily pf = null;
+                boolean familyMatch = false;
+                boolean descriptionMatch = false;
 
-        for (Product p : currentItems) {
-            articleMatch = p.getArticle().toUpperCase().matches("^(" + find.toUpperCase() + ").*");
-            materialMatch = p.getMaterial().toUpperCase().matches("^(" + find.toUpperCase() + ").*");
-            descriptionMatch = p.getDescriptionru().toLowerCase().matches(".*(" + find.toLowerCase() + ").*") ||
-                    p.getDescriptionen().toLowerCase().matches(".*(" + find.toLowerCase() + ").*");
-            filterMatch = p.matchFilter(CoreModule.getFilter());
+                for (Product p : currentItems) {
+                    articleMatch = p.getArticle().toUpperCase().matches("^(" + find.toUpperCase() + ").*");
+                    materialMatch = p.getMaterial().toUpperCase().matches("^(" + find.toUpperCase() + ").*");
+                    descriptionMatch = p.getDescriptionru().toLowerCase().contains(find.toLowerCase()) /*||
+                    p.getDescriptionen().toLowerCase().matches(".*(" + find.toLowerCase() + ").*")*/;
+                    filterMatch = p.matchFilter(CoreModule.getFilter());
 
-            if (CoreModule.getFilter().getProductFamily() != null) {
-                if (p.getFamily() > 0) {
-                    pf = CoreModule.getProductFamilies().getFamilyById(p.getFamily());
-                } else {
-                    lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(p.getLgbk(), p.getHierarchy()));
-                    if (lgbkAndParent.getLgbkItem() != null && lgbkAndParent.getLgbkItem().getFamilyId() > 0) {
-                        pf = CoreModule.getProductFamilies().getFamilyById(lgbkAndParent.getLgbkItem().getFamilyId());
-                    } else if (lgbkAndParent.getLgbkParent() != null) {
-                        pf = CoreModule.getProductFamilies().getFamilyById(lgbkAndParent.getLgbkParent().getFamilyId());
-                    }
-                }
+                    if (CoreModule.getFilter().getProductFamily() != null) {
+                        if (p.getFamily() > 0) {
+                            pf = CoreModule.getProductFamilies().getFamilyById(p.getFamily());
+                        } else {
+                            lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(p.getLgbk(), p.getHierarchy()));
+                            if (lgbkAndParent.getLgbkItem() != null && lgbkAndParent.getLgbkItem().getFamilyId() > 0) {
+                                pf = CoreModule.getProductFamilies().getFamilyById(lgbkAndParent.getLgbkItem().getFamilyId());
+                            } else if (lgbkAndParent.getLgbkParent() != null) {
+                                pf = CoreModule.getProductFamilies().getFamilyById(lgbkAndParent.getLgbkParent().getFamilyId());
+                            }
+                        }
 
-                familyMatch = pf == null ? false : pf.equals(CoreModule.getFilter().getProductFamily());
+                        familyMatch = pf == null ? false : pf.equals(CoreModule.getFilter().getProductFamily());
 
                 /*if (pf == null) familyMatch = false;
                 else familyMatch = pf.equals(CoreModule.getFilter().getProductFamily());*/
-            } else {
-                familyMatch = true;
+                    } else {
+                        familyMatch = true;
+                    }
+
+                    if (familyMatch && (filterMatch && (articleMatch || materialMatch || descriptionMatch))) result.add(p);
+                }
+
+                Platform.runLater(() -> {
+                    tableView.getItems().clear();
+                    tableView.getItems().addAll(result);
+                    Utils.setControlValue(MainWindow.getRootAnchorPane(), "lbRecordCount", Integer.toString(tableView.getItems().size()));
+                    tableView.refresh();
+                });
             }
+        }).start();
 
-            if (familyMatch && (filterMatch && (articleMatch || materialMatch || descriptionMatch))) result.add(p);
-        }
-
-        Platform.runLater(() -> {
-            tableView.getItems().clear();
-            tableView.getItems().addAll(result);
-            Utils.setControlValue(MainWindow.getRootAnchorPane(), "lbRecordCount", Integer.toString(tableView.getItems().size()));
-            tableView.refresh();
-        });
     }
 
     public static DataBase getDataBase() {

@@ -131,7 +131,7 @@ public class ColumnsMapper2 {
     public String getProductFieldNameByName(String name) {
         if (name == null || name.isEmpty()) return "";
         for (String s : nameToField.keySet()) {
-            if (name.toLowerCase().matches(s.toLowerCase())) return nameToField.get(s);
+            if (name.toLowerCase().equals(s.toLowerCase())) return nameToField.get(s);
         }
         return "";
 

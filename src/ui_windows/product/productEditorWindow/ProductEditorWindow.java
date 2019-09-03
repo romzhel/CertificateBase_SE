@@ -1,6 +1,7 @@
 package ui_windows.product.productEditorWindow;
 
 import core.CoreModule;
+import javafx.collections.ObservableList;
 import javafx.stage.Modality;
 import ui_windows.OrdinalWindow;
 import ui_windows.Mode;
@@ -11,23 +12,52 @@ import ui_windows.options_window.profile_editor.SimpleRight;
 import ui_windows.options_window.user_editor.User;
 import utils.Utils;
 
+import java.util.ArrayList;
+
 import static ui_windows.Mode.*;
 import static ui_windows.options_window.profile_editor.SimpleRight.*;
 
 public class ProductEditorWindow extends OrdinalWindow {
 
-    public ProductEditorWindow(Mode editorMode){
+    public ProductEditorWindow(Mode editorMode, ObservableList<Product> selectedProducts){
         super(MainWindow.getMainStage(), Modality.APPLICATION_MODAL,
                 editorMode, "productEditorWindow.fxml", "");
 
-        Product product = ProductEditorWindowActions.getEditedItem();
-        String lastUpdate = product.getLastChangeDate() == null ? "нет данных" : product.getLastChangeDate();
-        stage.setTitle("Продукт " + product.getArticle() + " (посл. обновление: " + lastUpdate + ")");
+        ArrayList<Product> selectedItems = new ArrayList<>(selectedProducts);
+
+
 
         if (mode == ADD) {
 
         } else if (mode == EDIT) {//put data into fields
-            CoreModule.getProducts().getSelectedItem().displayInEditorWindow(rootAnchorPane);
+
+            if (selectedItems.size() == 1) {
+                Product product = selectedItems.get(0);
+                String lastUpdate = product.getLastChangeDate() == null ? "нет данных" : product.getLastChangeDate();
+                stage.setTitle("Продукт " + product.getArticle() + " (посл. обновление: " + lastUpdate + ")");
+
+                CoreModule.getProducts().getSelectedItem().displayInEditorWindow(rootAnchorPane);
+            } else if (selectedItems.size() > 1) {
+                stage.setTitle("Элементов выбрано: " + selectedItems.size());
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         } else if (mode == DELETE){
 
         }

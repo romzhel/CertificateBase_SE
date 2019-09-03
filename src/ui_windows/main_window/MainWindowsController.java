@@ -3,11 +3,10 @@ package ui_windows.main_window;
 import core.CoreModule;
 import core.Dialogs;
 import files.ExportPriceListToExcel;
+import files.ExportPriceListToExcel2;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -36,7 +35,6 @@ import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
-import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
 
 public class MainWindowsController implements Initializable {
@@ -47,9 +45,6 @@ public class MainWindowsController implements Initializable {
 
     @FXML
     TableView<Product> tvTable;
-
-    @FXML
-    TextField tfFilter;
 
     @FXML
     Label lbRecordCount;
@@ -109,9 +104,13 @@ public class MainWindowsController implements Initializable {
 
         rmiAllItems.setSelected(true);
 
-
         initPriceListMenu();
+        initTable();
 
+        lbRecordCount.setText(Integer.toString(tvTable.getItems().size()));
+    }
+
+    public void initTable() {
         String[] cols = new String[]{"material", "article", "description", "family", "endofservice",
                 "country", "dchain"};
         String[] titles = new String[]{"Заказной номер", "Артикул", "Описание", "Направление", "Окончание",
@@ -195,8 +194,7 @@ public class MainWindowsController implements Initializable {
             }
         });
         tvTable.setPlaceholder(new Label("Нет данных для отображения"));
-
-        lbRecordCount.setText(Integer.toString(tvTable.getItems().size()));
+        tvTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     public void initPriceListMenu() {
@@ -207,7 +205,7 @@ public class MainWindowsController implements Initializable {
 
             mi.setOnAction(event -> {
                 int index = mPriceList.getItems().indexOf(mi);
-                new ExportPriceListToExcel(CoreModule.getPriceLists().getItems().get(index));
+                new ExportPriceListToExcel2(CoreModule.getPriceLists().getItems().get(index));
             });
         }
     }
@@ -222,13 +220,13 @@ public class MainWindowsController implements Initializable {
     }
 
     public void addProduct() {
-        new ProductEditorWindow(ADD);
+
     }
 
     public void editProduct() {
         if (tvTable.getSelectionModel().getSelectedIndex() < 0) Dialogs.showMessage("Выбор строки",
                 "Нужно выбрать строку");
-        else new ProductEditorWindow(EDIT);
+        else new ProductEditorWindow(EDIT, tvTable.getSelectionModel().getSelectedItems());
     }
 
     public void deleteProduct() {
@@ -392,9 +390,5 @@ public class MainWindowsController implements Initializable {
     public void selectLastImportResult() {
         CoreModule.setCurrentItems(CoreModule.getProducts().getChangedPositions());
         CoreModule.filter();
-    }
-
-    public void exportPriceList() {
-        new ExportPriceListToExcel(CoreModule.getPriceLists().getItems().get(3));
     }
 }

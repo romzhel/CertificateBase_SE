@@ -16,8 +16,8 @@ public class Filter {
 
     public Filter() {
         filters = new ArrayList<>();
-        addItem(new FilterSimple("Все записи", "cbxAllRecords", "", true));
-        addItem(new FilterSimple("Только В Прайсе", "cbxPrice", "price", false));
+        addItem(new FilterSimple("Все записи", "cbxAllRecords", "", false));
+        addItem(new FilterSimple("Только В Прайсе", "cbxPrice", "price", true));
         addItem(new FilterSimple("Показывать В архиве", "cbxArchive", "archive", false));
         addItem(new FilterSimple("Показывать Не используется", "cbxNotUsed", "notUsed", false));
         addItem(new FilterSimple("Только изменения", "cbxNeedAction", "needAction", false));
