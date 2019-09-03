@@ -6,6 +6,7 @@ import javafx.stage.Modality;
 import ui_windows.OrdinalWindow;
 import ui_windows.Mode;
 import ui_windows.main_window.MainWindow;
+import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.profile_editor.SimpleRight;
@@ -25,8 +26,6 @@ public class ProductEditorWindow extends OrdinalWindow {
 
         ArrayList<Product> selectedItems = new ArrayList<>(selectedProducts);
 
-
-
         if (mode == ADD) {
 
         } else if (mode == EDIT) {//put data into fields
@@ -40,22 +39,8 @@ public class ProductEditorWindow extends OrdinalWindow {
             } else if (selectedItems.size() > 1) {
                 stage.setTitle("Элементов выбрано: " + selectedItems.size());
 
-
-
-
+                ((ProductEditorWindowController)loader.getController()).setMultiEditor(new MultiEditor(selectedProducts));
             }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         } else if (mode == DELETE){

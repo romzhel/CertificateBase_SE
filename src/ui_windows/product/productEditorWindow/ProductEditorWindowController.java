@@ -19,6 +19,7 @@ import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.profile_editor.Profile;
+import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
 import ui_windows.product.productEditorWindow.configNormsWindow.ConfigNormsWindow;
 import utils.AutoCompleteComboBoxListener;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class ProductEditorWindowController implements Initializable {
+    private MultiEditor multiEditor;
 
     @FXML
     TableView<CertificateVerificationItem> tvCertVerification;
@@ -52,10 +54,31 @@ public class ProductEditorWindowController implements Initializable {
     CheckBox cbxOrderable;
 
     @FXML
-    TextField tfAccessibility;
+    public TextField tfAccessibility;
 
     @FXML
-    CheckBox cbxNotUsed;
+    public CheckBox cbxNotUsed;
+
+    @FXML
+    public CheckBox cbxPrice;
+
+    @FXML
+    public CheckBox cbxArchive;
+
+    @FXML
+    public TextField tfLgbk;
+
+    @FXML
+    public TextField tfHierarchy;
+
+    @FXML
+    public TextField tfEndOfService;
+
+    @FXML
+    public TextField tfCountry;
+
+    @FXML
+    public TextArea taComments;
 
     @FXML
     ContextMenu cmCertActions;
@@ -220,7 +243,7 @@ public class ProductEditorWindowController implements Initializable {
     }
 
     public void apply() {
-        ProductEditorWindowActions.apply(((Stage) tvCertVerification.getScene().getWindow()));
+        ProductEditorWindowActions.apply(((Stage) tvCertVerification.getScene().getWindow()), multiEditor);
     }
 
     public void cancel() {
@@ -268,5 +291,13 @@ public class ProductEditorWindowController implements Initializable {
 
     public void configNorms() {
         new ConfigNormsWindow(ProductEditorWindow.getStage());
+    }
+
+    public MultiEditor getMultiEditor() {
+        return multiEditor;
+    }
+
+    public void setMultiEditor(MultiEditor multiEditor) {
+        this.multiEditor = multiEditor;
     }
 }

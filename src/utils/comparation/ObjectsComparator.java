@@ -10,6 +10,9 @@ import java.lang.reflect.Field;
 public class ObjectsComparator {
     private ObjectsComparatorResult comparatorResult;
 
+    public ObjectsComparator() {
+    }
+
     public ObjectsComparator(Object obj1, Object obj2, boolean emptyTextProtection, String... exceptions) {
         comparatorResult = new ObjectsComparatorResult();
         Field[] obj1Fields = obj1.getClass().getDeclaredFields();//fields of product1
@@ -95,7 +98,7 @@ public class ObjectsComparator {
         return comparatorResult;
     }
 
-    private Object getProperty(Object object, Field field) {
+    public Object getProperty(Object object, Field field) {
         Object value = null;
         String methodName = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
 
