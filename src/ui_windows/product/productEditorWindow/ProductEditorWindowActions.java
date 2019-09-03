@@ -17,19 +17,22 @@ import ui_windows.product.Product;
 import utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.TreeSet;
 
 import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
 import static ui_windows.main_window.file_import_window.NamesMapping.DESC_ORDER_NUMBER;
 
 public class ProductEditorWindowActions {
-    public static HashSet<Integer> existingNorms = new HashSet<>();
-    public static HashSet<Integer> needNorms = new HashSet<>();
+    //    public static HashSet<Integer> existingNorms = new HashSet<>();
+//    public static HashSet<Integer> needNorms = new HashSet<>();
     private static TableView<CertificateVerificationItem> tableView;
+    private static MultiEditor multiEditor;
 
     public static Product getEditedItem() {
-        int index = CoreModule.getProducts().getTableView().getSelectionModel().getSelectedIndex();
+        int index = CoreModule.getProducts().getTableView().getSelectionModel().getSelectedIndices().get(0);
 
         if (index > -1 && index < CoreModule.getProducts().getTableView().getItems().size()) {
             return CoreModule.getProducts().getTableView().getItems().get(index);
@@ -106,7 +109,11 @@ public class ProductEditorWindowActions {
     }
 
     public static void fillCertificateVerificationTable() {
-        CoreModule.getCertificates().getCertificatesChecker().check(getEditedItem());
+        if (multiEditor == null) {
+            CoreModule.getCertificates().getCertificatesChecker().check(getEditedItem());
+        } else {
+            CoreModule.getCertificates().getCertificatesChecker().check(multiEditor.getEditedItems());
+        }
         tableView.getItems().clear();
         tableView.getItems().addAll(CoreModule.getCertificates().getCertificatesChecker().getResultTableItems());
         tableView.refresh();
@@ -120,5 +127,7 @@ public class ProductEditorWindowActions {
         ProductEditorWindowActions.tableView = tableView;
     }
 
-
+    public static void setMultiEditor(MultiEditor multiEditor) {
+        ProductEditorWindowActions.multiEditor = multiEditor;
+    }
 }

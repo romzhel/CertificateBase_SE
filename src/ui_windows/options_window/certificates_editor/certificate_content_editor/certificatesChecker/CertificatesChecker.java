@@ -1,6 +1,7 @@
 package ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker;
 
 import core.CoreModule;
+import javafx.collections.ObservableList;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.options_window.product_lgbk.NormsList;
@@ -8,9 +9,7 @@ import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 import utils.Utils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
+import java.util.*;
 
 import static ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CheckStatusResult.*;
 
@@ -19,7 +18,7 @@ public class CertificatesChecker {
     public final static String OK = "ОК";
     public final static String EXPIRED = ", истек";
     public final static String BAD_COUNTRY = ", нет страны";
-    private ArrayList<CertificateVerificationItem> resultTableItems;
+    private TreeSet<CertificateVerificationItem> resultTableItems;
     private ArrayList<Integer> satisfiedNorms;
     private HashSet<Integer> globalNeededNorms;
     private HashSet<Integer> productNeededNorms;
@@ -33,24 +32,42 @@ public class CertificatesChecker {
 
 
     public CertificatesChecker() {
-        resultTableItems = new ArrayList<>();
+        resultTableItems = new TreeSet<>((o1, o2) -> {
+            String o1c = o1.getNorm().concat(o1.getMatchedPart()).concat(o1.getFile()).concat(o1.getStatus());
+            String o2c = o2.getNorm().concat(o2.getMatchedPart()).concat(o2.getFile()).concat(o2.getStatus());
+            return o1c.compareTo(o2c);
+        });
         satisfiedNorms = new ArrayList<>();
         globalNeededNorms = new HashSet<>();
         productNeededNorms = new HashSet<>();
     }
 
+    public void check(ObservableList<Product> products) {
+        clearData();
+        for (Product product : products) {
+            checkExistingCertificates(product);
+            checkNorms(product);
+        }
+    }
+
     public void check(Product product) {
-        certsOk = 0;
-        certsErr = 0;
-        certTotal = 0;
-        certsAbs = 0;
+        clearData();
         checkExistingCertificates(product);
         checkNorms(product);
     }
 
-    private void checkExistingCertificates(Product product) {
+    private void clearData(){
+        certsOk = 0;
+        certsErr = 0;
+        certTotal = 0;
+        certsAbs = 0;
         resultTableItems.clear();
         satisfiedNorms.clear();
+    }
+
+    private void checkExistingCertificates(Product product) {
+//        resultTableItems.clear();
+//        satisfiedNorms.clear();
         ArrayList<String> prodNames = new ArrayList<>();
 
         for (Certificate cert : CoreModule.getCertificates().getCertificates()) {//check all certificates
@@ -186,7 +203,7 @@ public class CertificatesChecker {
         }
     }
 
-    public ArrayList<CertificateVerificationItem> getResultTableItems() {
+    public TreeSet<CertificateVerificationItem> getResultTableItems() {
         return resultTableItems;
     }
 

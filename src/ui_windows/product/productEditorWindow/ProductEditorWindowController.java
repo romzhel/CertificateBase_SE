@@ -33,13 +33,13 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class ProductEditorWindowController implements Initializable {
-    private MultiEditor multiEditor;
+    private MultiEditor multiEditor = null;
 
     @FXML
     TableView<CertificateVerificationItem> tvCertVerification;
 
     @FXML
-    ComboBox<String> cbType;
+    public ComboBox<String> cbType;
 
     @FXML
     ComboBox<String> cbFamily;
@@ -85,8 +85,11 @@ public class ProductEditorWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        new ProductEditorWindowTable(tvCertVerification);
         ProductEditorWindowActions.setTableView(tvCertVerification);
-        tvCertVerification.setPlaceholder(new Text("Нет данных для отображения"));
+
+        cbType.getItems().addAll(CoreModule.getProductTypes().getPreparedTypes());
+
         cmCertActions.getItems().get(3).setDisable(CoreModule.getUsers().getCurrentUser().getProfile().getName().equals(Profile.COMMON_ACCESS));
 
         tvCertVerification.itemsProperty().get().addListener((ListChangeListener<CertificateVerificationItem>) c -> {
@@ -95,11 +98,11 @@ public class ProductEditorWindowController implements Initializable {
             tfAccessibility.getStyleClass().add(CoreModule.getCertificates().getCertificatesChecker().getCheckStatusResultStyle());
         });
 
-        ProductEditorWindowActions.fillCertificateVerificationTable();
 
         new AutoCompleteComboBoxListener<>(cbType, false);
 //        cbType.getItems().addAll(CoreModule.getProductTypes().getPreparedTypes());
 
+//        ProductEditorWindowActions.fillCertificateVerificationTable();
         cbType.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && !newValue.isEmpty()) {
                 CoreModule.getCertificates().getCertificatesChecker().setTemporaryTypeId(CoreModule.getProductTypes().getIDbyType(newValue));
@@ -125,105 +128,6 @@ public class ProductEditorWindowController implements Initializable {
             cbxNotUsed.setSelected(false);
         }
 
-        String[] colNames = new String[]{"norm", "matchedPart", "prodType", "file", "status"};
-        String[] titles = new String[]{"Регламент", "Соответствие", "Тип продукции", "Файл сертификата", "Актуальность"};
-
-        for (int i = 0; i < colNames.length; i++) {
-            TableColumn<CertificateVerificationItem, String> col = new TableColumn<>(titles[i]);
-            col.setCellValueFactory(new PropertyValueFactory<>(colNames[i]));
-            col.setPrefWidth(200);
-
-            if (colNames[i].equals("norm")) {
-                col.setCellFactory(new Callback<TableColumn<CertificateVerificationItem, String>, TableCell<CertificateVerificationItem, String>>() {
-                    @Override
-                    public TableCell<CertificateVerificationItem, String> call(TableColumn<CertificateVerificationItem, String> param) {
-                        return new TableCell<CertificateVerificationItem, String>() {
-
-                            @Override
-                            protected void updateItem(String item, boolean empty) {
-                                super.updateItem(item, empty);
-
-                                if (!isEmpty()) {
-                                    setText(item);
-
-                                    CertificateVerificationItem cv = param.getTableView().getItems().get(getIndex());
-                                    if (cv.getCertificate() == null) {
-                                        setTextFill(Color.RED);
-                                        setStyle("-fx-font-weight: bold");
-                                    } else {
-                                        setTextFill(Color.BLACK);
-                                    }
-                                }
-                            }
-                        };
-                    }
-                });
-            }
-
-            if (colNames[i].equals("file")) {
-                col.setCellFactory(new Callback<TableColumn<CertificateVerificationItem, String>, TableCell<CertificateVerificationItem, String>>() {
-                    @Override
-                    public TableCell<CertificateVerificationItem, String> call(TableColumn<CertificateVerificationItem, String> param) {
-                        return new TableCell<CertificateVerificationItem, String>() {
-
-                            @Override
-                            protected void updateItem(String item, boolean empty) {
-                                super.updateItem(item, empty);
-
-                                if (!isEmpty()) {
-                                    setText(item);
-
-                                    File file = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + item);
-                                    if (file.exists()) setTextFill(Color.GREEN);
-                                    else setTextFill(Color.RED);
-                                }
-                            }
-                        };
-                    }
-                });
-            }
-
-            if (colNames[i].equals("status")) {
-                col.setCellFactory(new Callback<TableColumn<CertificateVerificationItem, String>, TableCell<CertificateVerificationItem, String>>() {
-                    @Override
-                    public TableCell<CertificateVerificationItem, String> call(TableColumn<CertificateVerificationItem, String> param) {
-                        return new TableCell<CertificateVerificationItem, String>() {
-
-                            @Override
-                            protected void updateItem(String item, boolean empty) {
-                                super.updateItem(item, empty);
-
-                                if (!isEmpty()) {
-                                    setText(item);
-
-                                    CertificateVerificationItem cv = param.getTableView().getItems().get(getIndex());
-                                    if (cv.getStatus().equals(CertificateVerificationItem.ABSENT_TEXT)) {
-                                        setTextFill(Color.RED);
-                                        setStyle("-fx-font-weight: bold");
-                                    } else {
-                                        setTextFill(Color.BLACK);
-                                    }
-                                }
-                            }
-                        };
-                    }
-                });
-            }
-
-            tvCertVerification.getColumns().add(col);
-        }
-
-        tvCertVerification.setOnMouseClicked(event -> {//double click on product
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
-                if (event.getClickCount() == 2) {
-                    File file = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" +
-                            tvCertVerification.getSelectionModel().getSelectedItem().getFile());
-
-                    Utils.openFile(file);
-                }
-            }
-        });
-
         cbFamily.setOnAction(event -> {
             ProductFamily pf = CoreModule.getProductFamilies().getFamilyByName(cbFamily.getValue());
 
@@ -244,9 +148,13 @@ public class ProductEditorWindowController implements Initializable {
 
     public void apply() {
         ProductEditorWindowActions.apply(((Stage) tvCertVerification.getScene().getWindow()), multiEditor);
+        ProductEditorWindowActions.setMultiEditor(null);
+        multiEditor = null;
     }
 
     public void cancel() {
+        ProductEditorWindowActions.setMultiEditor(null);
+        multiEditor = null;
         ((Stage) tvCertVerification.getScene().getWindow()).close();
     }
 
@@ -290,7 +198,7 @@ public class ProductEditorWindowController implements Initializable {
     }
 
     public void configNorms() {
-        new ConfigNormsWindow(ProductEditorWindow.getStage());
+        new ConfigNormsWindow(ProductEditorWindow.getStage(), multiEditor);
     }
 
     public MultiEditor getMultiEditor() {

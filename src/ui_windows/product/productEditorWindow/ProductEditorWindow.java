@@ -24,28 +24,32 @@ public class ProductEditorWindow extends OrdinalWindow {
         super(MainWindow.getMainStage(), Modality.APPLICATION_MODAL,
                 editorMode, "productEditorWindow.fxml", "");
 
-        ArrayList<Product> selectedItems = new ArrayList<>(selectedProducts);
+//        ArrayList<Product> selectedItems = new ArrayList<>(selectedProducts);
 
         if (mode == ADD) {
 
         } else if (mode == EDIT) {//put data into fields
 
-            if (selectedItems.size() == 1) {
-                Product product = selectedItems.get(0);
+            if (selectedProducts.size() == 1) {
+                Product product = selectedProducts.get(0);
                 String lastUpdate = product.getLastChangeDate() == null ? "нет данных" : product.getLastChangeDate();
                 stage.setTitle("Продукт " + product.getArticle() + " (посл. обновление: " + lastUpdate + ")");
 
                 CoreModule.getProducts().getSelectedItem().displayInEditorWindow(rootAnchorPane);
-            } else if (selectedItems.size() > 1) {
-                stage.setTitle("Элементов выбрано: " + selectedItems.size());
+            } else if (selectedProducts.size() > 1) {
+                stage.setTitle("Элементов выбрано: " + selectedProducts.size());
 
-                ((ProductEditorWindowController)loader.getController()).setMultiEditor(new MultiEditor(selectedProducts));
+                MultiEditor multiEditor = new MultiEditor(selectedProducts);
+                ((ProductEditorWindowController)loader.getController()).setMultiEditor(multiEditor);
+                ProductEditorWindowActions.setMultiEditor(multiEditor);
             }
 
 
         } else if (mode == DELETE){
 
         }
+
+        ProductEditorWindowActions.fillCertificateVerificationTable();
 
         applyProfileSimple(CoreModule.getUsers().getCurrentUser().getProfile().getProducts());
 

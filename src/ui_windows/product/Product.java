@@ -266,7 +266,7 @@ public class Product {
         Utils.setControlValue(root, "taComments", getComments());
         Utils.setControlValue(root, "tfReplacement", getReplacement());
 
-        Utils.setControlValue(root, "cbType", CoreModule.getProductTypes().getPreparedTypes());
+//        Utils.setControlValue(root, "cbType", CoreModule.getProductTypes().getPreparedTypes());
         Utils.setControlValue(root, "cbType", CoreModule.getProductTypes().getTypeById(getType_id()));
 
         ArrayList<String> items = CoreModule.getProductFamilies().getFamiliesNames();//add all families and display value

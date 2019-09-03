@@ -1,10 +1,11 @@
 package ui_windows.product;
 
+import core.CoreModule;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Control;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import ui_windows.product.productEditorWindow.ProductEditorWindow;
@@ -12,7 +13,6 @@ import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 import utils.Countries;
 import utils.comparation.ObjectsComparator;
 
-import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -25,15 +25,17 @@ public class MultiEditor {
         ProductEditorWindowController pewc = ProductEditorWindow.getLoader().getController();
         fieldsAndControls = new ArrayList<>();
 
-        compare("price", pewc.cbxPrice);
-        compare("notused", pewc.cbxNotUsed);
-        compare("archive", pewc.cbxArchive);
-        compare("lgbk", pewc.tfLgbk);
-        compare("hierarchy", pewc.tfHierarchy);
-        compare("dchain", pewc.tfAccessibility);
-        compare("endofservice", pewc.tfEndOfService);
-        compare("country", pewc.tfCountry);
-        compare("comments", pewc.taComments);
+//        compare("price", pewc.cbxPrice);
+//        compare("notused", pewc.cbxNotUsed);
+//        compare("archive", pewc.cbxArchive);
+//        compare("lgbk", pewc.tfLgbk);
+//        compare("hierarchy", pewc.tfHierarchy);
+//        compare("dchain", pewc.tfAccessibility);
+//        compare("endofservice", pewc.tfEndOfService);
+//        compare("country", pewc.tfCountry);
+//        compare("comments", pewc.taComments);
+        compare("type_id", pewc.cbType);
+
     }
 
     public boolean compare(String fieldName, Node control) {
@@ -86,6 +88,16 @@ public class MultiEditor {
                     control.setDisable(true);
                 }
             }
+        } else if (field.getType().getName().toLowerCase().contains("int")) {
+            if (control instanceof ComboBox) {
+                if (field.getName().equals("type_id")) {
+                    if (compRes) {
+                        ((ComboBox<String>) control).getEditor().setText(CoreModule.getProductTypes().getTypeById((int) tempValue));
+                    } else {
+                        control.setDisable(true);
+                    }
+                }
+            }
         }
         return compRes;
     }
@@ -95,21 +107,30 @@ public class MultiEditor {
             for (FieldsAndControls fac : fieldsAndControls) {
                 if (fac.isCanBeSaved()) {
                     for (Product product : editedItems) {
-                        if (fac.getField().getType().getName().toLowerCase().contains("boolean")){
+                        if (fac.getField().getType().getName().toLowerCase().contains("boolean")) {
                             fac.getField().set(product, new SimpleBooleanProperty(((CheckBox) fac.getControl()).isSelected()));
-                        } else if (fac.getField().getType().getName().toLowerCase().contains("String")){
+                        } else if (fac.getField().getType().getName().toLowerCase().contains("String")) {
                             if (fac.getControl() instanceof TextField) {
                                 fac.getField().set(product, ((TextField) fac.getControl()).getText());
                             } else if (fac.getControl() instanceof TextArea) {
                                 fac.getField().set(product, ((TextArea) fac.getControl()).getText());
+                            }
+                        } else if (fac.getField().getType().getName().toLowerCase().contains("int")) {
+                            if (fac.getControl() instanceof ComboBox) {
+                                fac.getField().set(product, CoreModule.getProductTypes().getIDbyType(
+                                        ((ComboBox) fac.getControl()).getEditor().getText()));
                             }
                         }
                     }
                 }
             }
         } catch (IllegalAccessException e) {
-            System.out.println(e.getMessage());;
+            System.out.println(e.getMessage());
         }
+    }
+
+    public ObservableList<Product> getEditedItems() {
+        return editedItems;
     }
 
     private class FieldsAndControls {
@@ -134,9 +155,5 @@ public class MultiEditor {
         public boolean isCanBeSaved() {
             return canBeSaved;
         }
-    }
-
-    public ObservableList<Product> getEditedItems() {
-        return editedItems;
     }
 }

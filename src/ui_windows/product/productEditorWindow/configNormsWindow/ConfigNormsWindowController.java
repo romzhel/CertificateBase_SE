@@ -6,10 +6,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
-import ui_windows.product.Product;
-import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.requirements_types_editor.RequirementTypesListViews;
+import ui_windows.product.MultiEditor;
+import ui_windows.product.Product;
+import ui_windows.product.productEditorWindow.ProductEditorWindow;
 import ui_windows.product.productEditorWindow.ProductEditorWindowActions;
 
 import java.net.URL;
@@ -17,24 +17,21 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class ConfigNormsWindowController implements Initializable {
-    private RequirementTypesListViews requirementTypesListViews;
-    private Product editedProduct;
-
     @FXML
     ListView<String> lvAllNorms;
-
     @FXML
     ListView<String> lvSelectedNorms;
-
     @FXML
     RadioButton rbAddToGlobal;
-
     @FXML
     RadioButton rbInsteadGlobal;
+    private RequirementTypesListViews requirementTypesListViews;
+    //    private Product editedProduct;
+    private MultiEditor multiEditor;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ToggleGroup group = new ToggleGroup();
+        /*ToggleGroup group = new ToggleGroup();
         rbAddToGlobal.setToggleGroup(group);
         rbInsteadGlobal.setToggleGroup(group);
 
@@ -51,14 +48,18 @@ public class ConfigNormsWindowController implements Initializable {
         group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             editedProduct.setNormsMode(rbAddToGlobal.isSelected() ? NormsList.ADD_TO_GLOBAL : NormsList.INSTEAD_GLOBAL);
             requirementTypesListViews.display();
-        });
+        });*/
     }
 
     public void apply() {
-        editedProduct.setNormsList(requirementTypesListViews.getProductNormsListForSave());
-
         ArrayList<Product> alp = new ArrayList<>();
-        alp.add(editedProduct);
+        if (multiEditor == null) {
+            Product editedProduct = ProductEditorWindowActions.getEditedItem();
+            editedProduct.setNormsList(requirementTypesListViews.getProductNormsListForSave());
+            alp.add(editedProduct);
+        } else {
+
+        }
         new ProductsDB().updateData(alp);
         ProductEditorWindowActions.fillCertificateVerificationTable();
         CoreModule.getProducts().getTableView().refresh();
@@ -85,5 +86,51 @@ public class ConfigNormsWindowController implements Initializable {
         requirementTypesListViews.removeAllNorms();
     }
 
+    public MultiEditor getMultiEditor() {
+        return multiEditor;
+    }
 
+    public void setMultiEditor(MultiEditor multiEditor) {
+        this.multiEditor = multiEditor;
+    }
+
+    public RequirementTypesListViews getRequirementTypesListViews() {
+        return requirementTypesListViews;
+    }
+
+    public void setRequirementTypesListViews(RequirementTypesListViews requirementTypesListViews) {
+        this.requirementTypesListViews = requirementTypesListViews;
+    }
+
+    public ListView<String> getLvAllNorms() {
+        return lvAllNorms;
+    }
+
+    public void setLvAllNorms(ListView<String> lvAllNorms) {
+        this.lvAllNorms = lvAllNorms;
+    }
+
+    public ListView<String> getLvSelectedNorms() {
+        return lvSelectedNorms;
+    }
+
+    public void setLvSelectedNorms(ListView<String> lvSelectedNorms) {
+        this.lvSelectedNorms = lvSelectedNorms;
+    }
+
+    public RadioButton getRbAddToGlobal() {
+        return rbAddToGlobal;
+    }
+
+    public void setRbAddToGlobal(RadioButton rbAddToGlobal) {
+        this.rbAddToGlobal = rbAddToGlobal;
+    }
+
+    public RadioButton getRbInsteadGlobal() {
+        return rbInsteadGlobal;
+    }
+
+    public void setRbInsteadGlobal(RadioButton rbInsteadGlobal) {
+        this.rbInsteadGlobal = rbInsteadGlobal;
+    }
 }
