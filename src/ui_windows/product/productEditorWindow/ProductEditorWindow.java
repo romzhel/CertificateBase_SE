@@ -29,6 +29,8 @@ public class ProductEditorWindow extends OrdinalWindow {
 
 //        ArrayList<Product> selectedItems = new ArrayList<>(selectedProducts);
 
+        rootAnchorPane = ((ProductEditorWindowController)loader.getController()).apRoot;
+
         if (mode == ADD) {
 
         } else if (mode == EDIT) {//put data into fields

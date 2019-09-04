@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -82,6 +83,9 @@ public class ProductEditorWindowController implements Initializable {
 
     @FXML
     ContextMenu cmCertActions;
+
+    @FXML
+    public AnchorPane apRoot;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

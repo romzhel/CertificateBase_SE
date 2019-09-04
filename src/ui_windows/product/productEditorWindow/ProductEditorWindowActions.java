@@ -39,7 +39,9 @@ public class ProductEditorWindowActions {
     }
 
     public static void apply(Stage stage, MultiEditor multiEditor) {
-        AnchorPane root = (AnchorPane) stage.getScene().getRoot();
+//        AnchorPane root = (AnchorPane) stage.getScene().getRoot();
+        AnchorPane root = ProductEditorWindow.getRootAnchorPane();
+
         Product pr;
         ArrayList<Product> productsToUpdate = new ArrayList<>();
 
@@ -57,10 +59,6 @@ public class ProductEditorWindowActions {
 
                 boolean productWasNeedAction = pr.isNeedaction() && !changedProduct.isNeedaction();
 
-            /*ObjectsComparator comparator = new ObjectsComparator(pr, changedProduct, false,
-                    "id", "article", "history", "lastchangedate", "dchain", "filename", "changecodes",
-                    "productforprint", "lastimportcodes", "minorder", "packetsize", "leadtime", "weight", "localprice");*/
-
                 ObservableList<FileImportTableItem> fiti = FXCollections.observableArrayList();
                 fiti.add(new FileImportTableItem("", DESC_ORDER_NUMBER, true, false, -1, false));
                 fiti.add(new FileImportTableItem("", "descriptionru", true, false, -1, false));
@@ -77,7 +75,6 @@ public class ProductEditorWindowActions {
 
                 ColumnsMapper2 mapper = new ColumnsMapper2();
                 ObjectsComparator2 comparator = new ObjectsComparator2(pr, changedProduct, false, mapper.getFieldsForImport(fiti));
-
 
                 if (comparator.getResult().isNeedUpdateInDB()) {//was changed
                     String oldHistory = pr.getHistory().trim();
@@ -99,11 +96,14 @@ public class ProductEditorWindowActions {
                 multiEditor.save();
                 productsToUpdate.addAll(multiEditor.getEditedItems());
             }
-            new Thread(() -> new ProductsDB().updateData(new ArrayList<Product>(productsToUpdate))).start(); //update in DB
-            CoreModule.filter();
+//            new Thread(() -> new ProductsDB().updateData(new ArrayList<Product>(productsToUpdate))).start(); //update in DB
+            boolean saveToDbResult = new ProductsDB().updateData(new ArrayList<Product>(productsToUpdate)); //update in DB
 
-            CoreModule.getProducts().getTableView().refresh();
-            stage.close();
+            if (saveToDbResult){
+                CoreModule.filter();
+                CoreModule.getProducts().getTableView().refresh();
+                stage.close();
+            }
         }
     }
 
@@ -111,6 +111,7 @@ public class ProductEditorWindowActions {
         if (multiEditor == null) {
             CoreModule.getCertificates().getCertificatesChecker().check(getEditedItem());
         } else {
+            CoreModule.getCertificates().getCertificatesChecker().setUseTemporaryTypeId(true);
             CoreModule.getCertificates().getCertificatesChecker().check(multiEditor.getEditedItems());
         }
         tableView.getItems().clear();

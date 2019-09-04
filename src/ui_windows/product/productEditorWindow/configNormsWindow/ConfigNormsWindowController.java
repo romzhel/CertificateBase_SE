@@ -64,13 +64,18 @@ public class ConfigNormsWindowController implements Initializable {
             alp.addAll(multiEditor.getEditedItems());
         }
 
+        boolean saveToDbResult = true;
         if (alp.size() > 0) {
-            new Thread(() -> new ProductsDB().updateData(alp)).start();
+//            new Thread(() -> new ProductsDB().updateData(alp)).start();
+            saveToDbResult = new ProductsDB().updateData(alp);
         }
 
-        ProductEditorWindowActions.fillCertificateVerificationTable();
-        CoreModule.getProducts().getTableView().refresh();
-        close();
+        if (saveToDbResult) {
+
+            ProductEditorWindowActions.fillCertificateVerificationTable();
+            CoreModule.getProducts().getTableView().refresh();
+            close();
+        }
     }
 
     public void close() {

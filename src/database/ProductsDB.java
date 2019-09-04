@@ -56,8 +56,12 @@ public class ProductsDB implements Request {
         if (object instanceof ArrayList) {
             ArrayList<Product> alpr = (ArrayList<Product>) object;
 
+            long ts = System.currentTimeMillis();
+
             MainWindow.setProgress(0.01);
+
             try {
+
                 int count = 0;
                 for (int i = 0; i < alpr.size(); i = i + 500) {
 
@@ -99,7 +103,11 @@ public class ProductsDB implements Request {
                         updateData.addBatch();
                     }
                     MainWindow.setProgress((double) j / (double) alpr.size());
+
+                    connection.setAutoCommit(false);
                     int[] result = updateData.executeBatch();
+                    connection.commit();
+                    connection.setAutoCommit(true);
 
                     for (int res : result) {
                         if (res != 1) {
@@ -109,12 +117,20 @@ public class ProductsDB implements Request {
                         }
                     }
                 }
-
+                System.out.println(String.valueOf(System.currentTimeMillis() - ts));
                 MainWindow.setProgress(0.0);
                 return true;
 
             } catch (SQLException e) {
+//                try {
+//                    connection.rollback();
+//                    connection.setAutoCommit(true);
+//                } catch (SQLException ex) {
+//                    System.out.println(e.getMessage());
+//                }
+                Dialogs.showMessage("BD error", e.getMessage());
                 System.out.println("exception of updating to product BD, " + e.getMessage());
+                return false;
             }
 
         }
@@ -170,8 +186,10 @@ public class ProductsDB implements Request {
                     }
 
                     MainWindow.setProgress((double) j / (double) alpr.size());
-
+                    connection.setAutoCommit(false);
                     int[] result = addData.executeBatch();
+                    connection.commit();
+                    connection.setAutoCommit(true);
                     for (int res : result) {
                         if (res != 1) {
                             Dialogs.showMessage("Запись данных в БД", "Данные не были добавлены в БД");
@@ -184,7 +202,9 @@ public class ProductsDB implements Request {
                 return true;
 
             } catch (SQLException e) {
+                Dialogs.showMessage("BD error", e.getMessage());
                 System.out.println("exception of adding to product BD, " + e.getMessage() + ", " + alpr.get(--j).toString());
+                return false;
             }
 
         }
