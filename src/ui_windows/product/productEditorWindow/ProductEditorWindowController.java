@@ -88,7 +88,7 @@ public class ProductEditorWindowController implements Initializable {
         new ProductEditorWindowTable(tvCertVerification);
         ProductEditorWindowActions.setTableView(tvCertVerification);
 
-        cbType.getItems().addAll(CoreModule.getProductTypes().getPreparedTypes());
+//        cbType.getItems().addAll(CoreModule.getProductTypes().getPreparedTypes());//moved to fill cert verif table
 
         cmCertActions.getItems().get(3).setDisable(CoreModule.getUsers().getCurrentUser().getProfile().getName().equals(Profile.COMMON_ACCESS));
 

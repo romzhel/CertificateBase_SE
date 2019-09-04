@@ -6,14 +6,17 @@ import javafx.stage.Modality;
 import ui_windows.OrdinalWindow;
 import ui_windows.Mode;
 import ui_windows.main_window.MainWindow;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.profile_editor.SimpleRight;
 import ui_windows.options_window.user_editor.User;
+import ui_windows.product.ProductTypes;
 import utils.Utils;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 import static ui_windows.Mode.*;
 import static ui_windows.options_window.profile_editor.SimpleRight.*;
@@ -50,10 +53,24 @@ public class ProductEditorWindow extends OrdinalWindow {
         }
 
         ProductEditorWindowActions.fillCertificateVerificationTable();
+        fillProductTypesCombo();
 
         applyProfileSimple(CoreModule.getUsers().getCurrentUser().getProfile().getProducts());
 
         stage.show();
+    }
+
+    public static void fillProductTypesCombo() {
+        ProductEditorWindowController pewc = ProductEditorWindow.getLoader().getController();
+        pewc.cbType.getItems().clear();
+        pewc.cbType.getItems().add(ProductTypes.NO_SELECTED);
+        TreeSet<String> prodTypeNames = new TreeSet<>();
+        for (CertificateVerificationItem cvi : pewc.tvCertVerification.getItems()) {
+            if (cvi != null && !cvi.getProdType().isEmpty()) {
+                prodTypeNames.add(cvi.getProdType());
+            }
+        }
+        pewc.cbType.getItems().addAll(prodTypeNames);
     }
 
     @Override

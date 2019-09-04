@@ -14,11 +14,10 @@ import ui_windows.options_window.certificates_editor.certificate_content_editor.
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
+import ui_windows.product.ProductTypes;
 import utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.TreeSet;
 
 import static ui_windows.Mode.ADD;
