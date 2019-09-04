@@ -56,4 +56,13 @@ public class NormsList {
 
         return stringLine;
     }
+
+    @Override
+    public String toString() {
+        String result = "";
+        for (int normId:norms       ) {
+            result = result.concat(String.valueOf(normId).concat(","));
+        }
+        return result.replaceAll("\\,$", "");
+    }
 }

@@ -17,30 +17,30 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class MultiEditor {
+    private ObjectsComparator objectsComparator;
     private ObservableList<Product> editedItems;
     private ArrayList<FieldsAndControls> fieldsAndControls;
 
     public MultiEditor(ObservableList<Product> editedItems) {
         this.editedItems = editedItems;
+        objectsComparator = new ObjectsComparator();
         ProductEditorWindowController pewc = ProductEditorWindow.getLoader().getController();
         fieldsAndControls = new ArrayList<>();
 
-//        compare("price", pewc.cbxPrice);
-//        compare("notused", pewc.cbxNotUsed);
-//        compare("archive", pewc.cbxArchive);
-//        compare("lgbk", pewc.tfLgbk);
-//        compare("hierarchy", pewc.tfHierarchy);
-//        compare("dchain", pewc.tfAccessibility);
-//        compare("endofservice", pewc.tfEndOfService);
-//        compare("country", pewc.tfCountry);
-//        compare("comments", pewc.taComments);
+        compare("price", pewc.cbxPrice);
+        compare("notused", pewc.cbxNotUsed);
+        compare("archive", pewc.cbxArchive);
+        compare("lgbk", pewc.tfLgbk);
+        compare("hierarchy", pewc.tfHierarchy);
+        compare("dchain", pewc.tfAccessibility);
+        compare("endofservice", pewc.tfEndOfService);
+        compare("country", pewc.tfCountry);
+        compare("comments", pewc.taComments);
         compare("type_id", pewc.cbType);
 
     }
 
     public boolean compare(String fieldName, Node control) {
-        ObjectsComparator objectsComparator = new ObjectsComparator();
-
         Field field = null;
         Object tempValue = null;
         boolean compRes = true;
@@ -133,7 +133,21 @@ public class MultiEditor {
         return editedItems;
     }
 
-    private class FieldsAndControls {
+    public FieldsAndControls getFieldAndControl(Node node) {
+        for (FieldsAndControls fac : fieldsAndControls) {
+            if (fac.getControl() == node) return fac;
+        }
+        return null;
+    }
+
+    public FieldsAndControls getFieldAndControl(String fieldName){
+        for (FieldsAndControls fac : fieldsAndControls) {
+            if (fac.getField().getName().equals(fieldName)) return fac;
+        }
+        return null;
+    }
+
+    public class FieldsAndControls {
         private Field field;
         private Node control;
         private boolean canBeSaved;

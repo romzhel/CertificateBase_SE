@@ -4,7 +4,6 @@ import core.CoreModule;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseButton;
 import ui_windows.Mode;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
 
 import java.util.ArrayList;
 import java.util.TreeSet;

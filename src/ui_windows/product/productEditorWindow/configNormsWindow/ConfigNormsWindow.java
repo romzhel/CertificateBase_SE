@@ -40,7 +40,28 @@ public class ConfigNormsWindow extends OrdinalWindow {
                 requirementTypesListViews.display();
             });
         } else {
+            multiEditor.compare("normsMode", cnwc.rbInsteadGlobal);
+            multiEditor.compare("normsList", cnwc.lvSelectedNorms);
 
+            if (multiEditor.getFieldAndControl("normsMode").isCanBeSaved() &&
+                    multiEditor.getEditedItems().get(0).getNormsMode() == NormsList.ADD_TO_GLOBAL) {
+                cnwc.rbAddToGlobal.setSelected(true);
+            } else {
+                cnwc.rbInsteadGlobal.setSelected(true);
+            }
+            /*MultiEditor.FieldsAndControls fac = multiEditor.getFieldAndControl(cnwc.rbInsteadGlobal);
+            cnwc.rbInsteadGlobal.setSelected(true);
+            cnwc.rbInsteadGlobal.setDisable(true);*/
+
+            requirementTypesListViews = new RequirementTypesListViews(multiEditor, cnwc.lvAllNorms, cnwc.lvSelectedNorms);
+            cnwc.setRequirementTypesListViews(requirementTypesListViews);
+
+            group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+                for (Product prod : multiEditor.getEditedItems()) {
+                    prod.setNormsMode(cnwc.rbAddToGlobal.isSelected() ? NormsList.ADD_TO_GLOBAL : NormsList.INSTEAD_GLOBAL);
+                }
+                requirementTypesListViews.display();
+            });
         }
 
         stage.show();

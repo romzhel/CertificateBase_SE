@@ -48,12 +48,14 @@ public class CertificatesChecker {
             checkExistingCertificates(product);
             checkNorms(product);
         }
+        useTemporaryTypeId = false;
     }
 
     public void check(Product product) {
         clearData();
         checkExistingCertificates(product);
         checkNorms(product);
+        useTemporaryTypeId = false;
     }
 
     private void clearData(){
@@ -66,8 +68,6 @@ public class CertificatesChecker {
     }
 
     private void checkExistingCertificates(Product product) {
-//        resultTableItems.clear();
-//        satisfiedNorms.clear();
         ArrayList<String> prodNames = new ArrayList<>();
 
         for (Certificate cert : CoreModule.getCertificates().getCertificates()) {//check all certificates
@@ -139,7 +139,6 @@ public class CertificatesChecker {
                 }
             }
         }
-        useTemporaryTypeId = false;
     }
 
     private void checkNorms(Product product) {

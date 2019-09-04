@@ -9,7 +9,6 @@ import javafx.scene.control.RadioButton;
 import ui_windows.options_window.requirements_types_editor.RequirementTypesListViews;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
-import ui_windows.product.productEditorWindow.ProductEditorWindow;
 import ui_windows.product.productEditorWindow.ProductEditorWindowActions;
 
 import java.net.URL;
@@ -58,9 +57,15 @@ public class ConfigNormsWindowController implements Initializable {
             editedProduct.setNormsList(requirementTypesListViews.getProductNormsListForSave());
             alp.add(editedProduct);
         } else {
+            for (Product product : multiEditor.getEditedItems()) {
+                product.setNormsList(requirementTypesListViews.getProductNormsListForSave());
+            }
 
+            alp.addAll(multiEditor.getEditedItems());
         }
-        new ProductsDB().updateData(alp);
+
+        if (alp.size() > 0) new ProductsDB().updateData(alp);
+
         ProductEditorWindowActions.fillCertificateVerificationTable();
         CoreModule.getProducts().getTableView().refresh();
         close();

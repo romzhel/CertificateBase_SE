@@ -2,6 +2,7 @@ package utils.comparation;
 
 import javafx.beans.property.StringProperty;
 import ui_windows.main_window.file_import_window.ColumnsMapper2;
+import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.product.Product;
 import utils.Utils;
 
@@ -132,6 +133,13 @@ public class ObjectsComparator {
 
                 methodName = "get" + methodName;
                 value = (Double) object.getClass().getMethod(methodName).invoke(object);
+
+            } else if (field.getType().getName().toLowerCase().contains("normslist")) {//for norm editor only
+
+                methodName = "get" + methodName;
+                NormsList tempValue = (NormsList) object.getClass().getMethod(methodName).invoke(object);
+                value = tempValue.toString();
+
             }
 
         } catch (Exception e) {
