@@ -25,7 +25,7 @@ public class ProductEditorWindow extends OrdinalWindow {
 
     public ProductEditorWindow(Mode editorMode, ObservableList<Product> selectedProducts){
         super(MainWindow.getMainStage(), Modality.APPLICATION_MODAL,
-                editorMode, "productEditorWindow.fxml", "");
+                editorMode, "productEditorWindow3.fxml", "");
 
 //        ArrayList<Product> selectedItems = new ArrayList<>(selectedProducts);
 
@@ -57,6 +57,7 @@ public class ProductEditorWindow extends OrdinalWindow {
 
         applyProfileSimple(CoreModule.getUsers().getCurrentUser().getProfile().getProducts());
 
+        stage.setResizable(true);
         stage.show();
     }
 

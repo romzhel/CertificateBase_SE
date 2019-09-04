@@ -64,7 +64,9 @@ public class ConfigNormsWindowController implements Initializable {
             alp.addAll(multiEditor.getEditedItems());
         }
 
-        if (alp.size() > 0) new ProductsDB().updateData(alp);
+        if (alp.size() > 0) {
+            new Thread(() -> new ProductsDB().updateData(alp)).start();
+        }
 
         ProductEditorWindowActions.fillCertificateVerificationTable();
         CoreModule.getProducts().getTableView().refresh();
