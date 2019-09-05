@@ -1,158 +1,124 @@
 package database;
 
-import core.CoreModule;
-import core.Dialogs;
-import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.main_window.MainWindow;
+import ui_windows.options_window.certificates_editor.Certificate;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class CertificatesDB implements Request {
-    PreparedStatement addData, updateData, deleteData;
+public class CertificatesDB extends DbRequest {
 
-    public CertificatesDB(){
+    public CertificatesDB() {
+        super();
         try {
-            addData = CoreModule.getDataBase().getDbConnection().prepareStatement("INSERT INTO " +
+            addData = connection.prepareStatement("INSERT INTO " +
                             "certificates (name, expiration_date, countries, file_name, norms, name_match, " +
                             "material_match, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
-            updateData = CoreModule.getDataBase().getDbConnection().prepareStatement("UPDATE certificates " +
+            updateData = connection.prepareStatement("UPDATE certificates " +
                     "SET name = ?, expiration_date = ?, countries = ?, file_name = ?, norms = ?, name_match = ?," +
                     "material_match = ?, user_id = ? WHERE id = ?");
-            deleteData = CoreModule.getDataBase().getDbConnection().prepareStatement("DELETE FROM certificates " +
+            deleteData = connection.prepareStatement("DELETE FROM certificates " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            showErrorMessage(e.getMessage(), "prepared statements exception: " + e.getMessage() + "\n" + e.getStackTrace());
+            logAndMessage("prepared statements exception: " + e.getMessage());
+            finalActions();
         }
     }
 
-    @Override
     public ArrayList<Certificate> getData() {
         ArrayList<Certificate> certificates = new ArrayList<>();
         try {
-            ResultSet rs = CoreModule.getDataBase().getData("SELECT * FROM certificates");
+            ResultSet rs = connection.prepareStatement("SELECT * FROM certificates").executeQuery();
 
             while (rs.next()) {
                 certificates.add(new Certificate(rs));
             }
-
         } catch (SQLException e) {
-            showErrorMessage(e.getMessage(), "SQL exception cert types: " + e.getMessage() + "\n" + e.getStackTrace());
+            logAndMessage("SQL exception cert types: " + e.getMessage());
         }
-
         return certificates;
     }
 
+    public boolean putData(Certificate cert) {
+        try {
+            addData.setString(1, cert.getName());
+            addData.setString(2, cert.getExpirationDate());
+            addData.setString(3, cert.getCountries());
+            addData.setString(4, cert.getFileName());
+            addData.setString(5, cert.getNorms());
+            addData.setBoolean(6, cert.isFullNameMatch());
+            addData.setBoolean(7, cert.isMaterialMatch());
+            addData.setInt(8, cert.getUserId());
 
+            MainWindow.setProgress(1.0);
 
-    @Override
-    public boolean putData(Object object) {
-        if (object instanceof Certificate) {
-            Certificate cert = (Certificate) object;
-            try {
-                addData.setString(1, cert.getName());
-                addData.setString(2, cert.getExpirationDate());
-                addData.setString(3, cert.getCountries());
-                addData.setString(4, cert.getFileName());
-                addData.setString(5, cert.getNorms());
-                addData.setBoolean(6, cert.isFullNameMatch());
-                addData.setBoolean(7, cert.isMaterialMatch());
-                addData.setInt(8, cert.getUserId());
+            if (addData.executeUpdate() > 0) {//successful
+                ResultSet rs = addData.getGeneratedKeys();
 
-                MainWindow.setProgress(1.0);
-
-                if (addData.executeUpdate() > 0) {//successful
-                    ResultSet rs = addData.getGeneratedKeys();
-
-                    MainWindow.setProgress(1.0);
-
-                    if (rs.next()) {
-                        cert.setId(rs.getInt(1));
-                        System.out.println("new ID = " + rs.getInt(1));
-                        MainWindow.setProgress(0.0);
-                        return true;
-                    }
-                } else {
-                    Dialogs.showMessage("Ошибка БД", "Ошибка работы с БД");
-                }
-
-            } catch (SQLException e) {
-                System.out.println();
-                showErrorMessage(e.getMessage(), "exception of writing to BD: " + e.getMessage() + "\n" + e.getStackTrace());
-            }
-
-        }
-        return false;
-    }
-
-    @Override
-    public boolean updateData(Object object) {
-        if (object instanceof Certificate) {
-            Certificate cert = (Certificate) object;
-
-            System.out.println("updating of " + cert.getName());
-            try {
-                updateData.setString(1, cert.getName());
-                updateData.setString(2, cert.getExpirationDate());
-                updateData.setString(3, cert.getCountries());
-                updateData.setString(4, cert.getFileName());
-                updateData.setString(5, cert.getNorms());
-                updateData.setBoolean(6, cert.isFullNameMatch());
-                updateData.setBoolean(7, cert.isMaterialMatch());
-                updateData.setInt(8, cert.getUserId());
-                updateData.setInt(9, cert.getId());
-
-                MainWindow.setProgress(1.0);
-
-                if (updateData.executeUpdate() > 0) {//successful
-                    MainWindow.setProgress(0.0);
+                if (rs.next()) {
+                    cert.setId(rs.getInt(1));
+//                        System.out.println("new ID = " + rs.getInt(1));
+                    finalActions();
                     return true;
-                } else {
-                    Dialogs.showMessage("Ошибка БД", "Ошибка работы с БД");
                 }
-
-            } catch (SQLException e) {
-                showErrorMessage(e.getMessage(), "exception of writing to BD: " + e.getMessage() + "\n" + e.getStackTrace());
+            } else {
+                logAndMessage("Certificate DB insert error");
             }
 
-            MainWindow.setProgress(0.0);
-
+        } catch (SQLException e) {
+            logAndMessage("Certificate BD inserting error " + e.getMessage());
         }
+        finalActions();
         return false;
     }
 
-    @Override
-    public boolean deleteData(Object object) {
-        if (object instanceof Certificate) {
-            Certificate cert = (Certificate) object;
+    public boolean updateData(Certificate cert) {
+        try {
+            updateData.setString(1, cert.getName());
+            updateData.setString(2, cert.getExpirationDate());
+            updateData.setString(3, cert.getCountries());
+            updateData.setString(4, cert.getFileName());
+            updateData.setString(5, cert.getNorms());
+            updateData.setBoolean(6, cert.isFullNameMatch());
+            updateData.setBoolean(7, cert.isMaterialMatch());
+            updateData.setInt(8, cert.getUserId());
+            updateData.setInt(9, cert.getId());
 
-            try {
-                deleteData.setInt(1, cert.getId());
+            MainWindow.setProgress(1.0);
 
-                MainWindow.setProgress(1.0);
-
-                if (deleteData.executeUpdate() > 0) {//successful
-                    MainWindow.setProgress(0.0);
-                    return true;
-                } else {
-                    Dialogs.showMessage("Ошибка БД", "Ошибка работы с БД");
-                }
-
-            } catch (SQLException e) {
-                System.out.println();
-                showErrorMessage(e.getMessage(), "exception of writing to BD: " + e.getMessage() + "\n" + e.getStackTrace());
+            if (updateData.executeUpdate() > 0) {//successful
+                finalActions();
+                return true;
+            } else {
+                logAndMessage("Certificate BD updating error ");
             }
+
+        } catch (SQLException e) {
+            logAndMessage("Certificate BD updating error " + e.getMessage());
         }
-        MainWindow.setProgress(0.0);
+        finalActions();
         return false;
     }
 
-    public void showErrorMessage(String messageText, String logText){
-        Dialogs.showMessage("Ошибка работы с базой данных", messageText);
-        System.out.println(logText);
+    public boolean deleteData(Certificate cert) {
+        try {
+            deleteData.setInt(1, cert.getId());
+
+            MainWindow.setProgress(1.0);
+
+            if (deleteData.executeUpdate() > 0) {//successful
+                finalActions();
+                return true;
+            } else {
+                logAndMessage("Certificate BD deleting error");
+            }
+        } catch (SQLException e) {
+            logAndMessage("Certificate BD deleting error " + e.getMessage());
+        }
+        finalActions();
+        return false;
     }
 }

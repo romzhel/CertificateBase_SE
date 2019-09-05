@@ -17,7 +17,7 @@ public class Folders {
 
     public Folders() {
         appFolder = System.getProperty("user.dir");
-        File remoteBaseFile = new File("S:\\SBT\\FS\\Base\\certificateDBtest.db");//--------------
+        File remoteBaseFile = new File("S:\\SBT\\FS\\Base\\certificateDB.db");
         File localBaseFile = new File(appFolder + "\\certificateDB.db");
 
         if (remoteBaseFile.exists()) {

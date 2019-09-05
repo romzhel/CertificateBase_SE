@@ -1,137 +1,108 @@
 package database;
 
-import core.CoreModule;
-import core.Dialogs;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.requirements_types_editor.RequirementType;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class RequirementTypesDB implements Request {
-    PreparedStatement addData, updateData, deleteData;
+public class RequirementTypesDB extends DbRequest {
 
     public RequirementTypesDB() {
+        super();
         try {
-            addData = CoreModule.getDataBase().getDbConnection().prepareStatement("INSERT INTO " +
+            addData = connection.prepareStatement("INSERT INTO " +
                             "requirementTypes (req_short_name, req_full_name) VALUES (?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
-            updateData = CoreModule.getDataBase().getDbConnection().prepareStatement("UPDATE requirementTypes " +
+            updateData = connection.prepareStatement("UPDATE requirementTypes " +
                     "SET req_short_name = ?, req_full_name = ? WHERE id = ?");
-            deleteData = CoreModule.getDataBase().getDbConnection().prepareStatement("DELETE FROM requirementTypes " +
+            deleteData = connection.prepareStatement("DELETE FROM requirementTypes " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            System.out.println("add data prepared statement exception, " + e.getMessage());
+            logAndMessage("add data prepared statement exception, " + e.getMessage());
+            finalActions();
         }
     }
 
-    @Override
     public ArrayList getData() {
         ArrayList<RequirementType> requirementTypes = new ArrayList<>();
         try {
-            ResultSet rs = CoreModule.getDataBase().getData("SELECT * FROM requirementTypes");
+            ResultSet rs = connection.prepareStatement("SELECT * FROM requirementTypes").executeQuery();
 
             while (rs.next()) {
                 requirementTypes.add(new RequirementType(rs));
             }
-
         } catch (SQLException e) {
-            System.out.println("SQL exception cert types, " + e.getMessage());
+            logAndMessage("SQL exception cert types, " + e.getMessage());
         }
-
         return requirementTypes;
     }
 
-    @Override
-    public boolean putData(Object object) {
-        if (object instanceof RequirementType) {
-            RequirementType ct = (RequirementType) object;
-            try {
-                addData.setString(1, ct.getShortName());
-                addData.setString(2, ct.getFullName());
+    public boolean putData(RequirementType ct) {
+        try {
+            addData.setString(1, ct.getShortName());
+            addData.setString(2, ct.getFullName());
 
-                MainWindow.setProgress(1.0);
+            MainWindow.setProgress(1.0);
 
-                if (addData.executeUpdate() > 0) {//successful
-                    ResultSet rs = addData.getGeneratedKeys();
+            if (addData.executeUpdate() > 0) {//successful
+                ResultSet rs = addData.getGeneratedKeys();
 
-                    MainWindow.setProgress(0.0);
-
-                    if (rs.next()) {
-                        ct.setId(rs.getInt(1));
-                        System.out.println("new ID = " + rs.getInt(1));
-                        return true;
-                    }
-                } else {
-                    Dialogs.showMessage("Ошибка БД", "Ошибка работы с БД");
+                if (rs.next()) {
+                    ct.setId(rs.getInt(1));
+//                        System.out.println("new ID = " + rs.getInt(1));
+                    finalActions();
+                    return true;
                 }
-
-            } catch (SQLException e) {
-                System.out.println("exception of writing to BD");
+            } else {
+                logAndMessage("SQL exception inserting cert types");
             }
-
+        } catch (SQLException e) {
+            logAndMessage("SQL exception inserting cert types");
         }
-        MainWindow.setProgress(0.0);
-
+        finalActions();
         return false;
     }
 
-    @Override
-    public boolean updateData(Object object) {
-        if (object instanceof RequirementType) {
-            RequirementType ct = (RequirementType) object;
+    public boolean updateData(RequirementType ct) {
+        try {
+            updateData.setString(1, ct.getShortName());
+            updateData.setString(2, ct.getFullName());
+            updateData.setInt(3, ct.getId());
 
-            System.out.println("updating of " + ct.getFullName());
-            try {
-                updateData.setString(1, ct.getShortName());
-                updateData.setString(2, ct.getFullName());
-                updateData.setInt(3, ct.getId());
+            MainWindow.setProgress(1.0);
 
-                MainWindow.setProgress(1.0);
-
-                if (updateData.executeUpdate() > 0) {//successful
-                    MainWindow.setProgress(0.0);
-                    return true;
-                } else {
-                    Dialogs.showMessage("Ошибка БД", "Ошибка работы с БД");
-                }
-
-            } catch (SQLException e) {
-                System.out.println("exception of writing to BD");
+            if (updateData.executeUpdate() > 0) {//successful
+                finalActions();
+                return true;
+            } else {
+                logAndMessage("SQL exception updating cert types");
             }
-
+        } catch (SQLException e) {
+            logAndMessage("SQL exception updating cert types " + e.getMessage());
         }
-        MainWindow.setProgress(0.0);
-
+        finalActions();
         return false;
     }
 
-    @Override
-    public boolean deleteData(Object object) {
-        if (object instanceof RequirementType) {
-            RequirementType ct = (RequirementType) object;
+    public boolean deleteData(RequirementType ct) {
+        try {
+            deleteData.setInt(1, ct.getId());
 
-            try {
-                deleteData.setInt(1, ct.getId());
+            MainWindow.setProgress(1.0);
 
-                MainWindow.setProgress(1.0);
-
-                if (deleteData.executeUpdate() > 0) {//successful
-                    MainWindow.setProgress(0.0);
-                    return true;
-                } else {
-                    Dialogs.showMessage("Ошибка БД", "Ошибка работы с БД");
-                }
-
-            } catch (SQLException e) {
-                System.out.println("exception of writing to BD");
+            if (deleteData.executeUpdate() > 0) {//successful
+                finalActions();
+                return true;
+            } else {
+                logAndMessage("SQL exception inserting cert types");
             }
+        } catch (SQLException e) {
+            logAndMessage("SQL exception deleting cert types");
         }
-        MainWindow.setProgress(0.0);
-
+        finalActions();
         return false;
     }
 }

@@ -8,15 +8,13 @@ import java.util.TreeSet;
 public class ProductFamilies {
     private ProductFamiliesTable productFamiliesTable;
     private ArrayList<ProductFamily> productFamilies;
-    private ProductFamiliesDB db;
 
     public ProductFamilies() {
         productFamilies = new ArrayList<>();
-        db = new ProductFamiliesDB();
     }
 
     public ProductFamilies getFromDB() {
-        productFamilies = db.getData();
+        productFamilies = new ProductFamiliesDB().getData();
         return this;
     }
 
@@ -36,16 +34,8 @@ public class ProductFamilies {
         this.productFamilies = productFamilies;
     }
 
-    public ProductFamiliesDB getDb() {
-        return db;
-    }
-
-    public void setDb(ProductFamiliesDB db) {
-        this.db = db;
-    }
-
     public void addItem(ProductFamily pf) {
-        if (db.putData(pf)) {
+        if (new ProductFamiliesDB().putData(pf)) {
             productFamilies.add(pf);
             productFamiliesTable.getTableView().getItems().add(pf);
         }
@@ -60,7 +50,7 @@ public class ProductFamilies {
     }
 
     public void removeItem(ProductFamily pf) {
-        if (db.deleteData(pf)) {
+        if (new ProductFamiliesDB().deleteData(pf)) {
             productFamilies.remove(pf);
             productFamiliesTable.getTableView().getItems().remove(pf);
         }

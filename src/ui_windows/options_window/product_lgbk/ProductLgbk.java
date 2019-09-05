@@ -28,6 +28,7 @@ public class ProductLgbk {
     public ProductLgbk(String lgbk, String hierarchy) {
         this.lgbk = new SimpleStringProperty(lgbk);
         this.hierarchy = new SimpleStringProperty(hierarchy);
+        normsList = new NormsList("");
         nodeType = ITEM_NODE;
     }
 
@@ -35,6 +36,7 @@ public class ProductLgbk {
         this.lgbk = new SimpleStringProperty(lgbk);
         this.hierarchy = new SimpleStringProperty(hierarchy);
         this.nodeType = nodeType;
+        normsList = new NormsList("");
     }
 
     public ProductLgbk(String lgbk, String hierarchy, String description_en, String description_ru, int familyId,
@@ -46,6 +48,7 @@ public class ProductLgbk {
         this.description_ru = new SimpleStringProperty(description_ru);
         this.familyId = familyId;
         this.isNotUsed = isNotUsed;
+        normsList = new NormsList("");
         nodeType = ITEM_NODE;
     }
 

@@ -1,25 +1,21 @@
 package ui_windows.options_window.user_editor;
 
-import database.Request;
 import database.UsersDB;
-import netscape.security.UserTarget;
 import utils.Utils;
 
 import java.util.ArrayList;
 
 public class Users {
-    private Request db;
     private ArrayList<User> users;
     private UsersTable table;
     private User currentUser;
 
     public Users() {
-        db = new UsersDB();
         users = new ArrayList<>();
     }
 
     public Users getFromDB() {
-        users = db.getData();
+        users =  new UsersDB().getData();
         return this;
     }
 
@@ -40,7 +36,7 @@ public class Users {
     }
 
     public void addItem(User user) {
-        if (db.putData(user)) {
+        if (new UsersDB().putData(user)) {
             users.add(user);
             table.getTableView().getItems().add(user);
             table.getTableView().refresh();
@@ -48,13 +44,13 @@ public class Users {
     }
 
     public void editItem(User user) {
-        if (db.updateData(user)) {
+        if (new UsersDB().updateData(user)) {
             table.getTableView().refresh();
         }
     }
 
     public void removeItem(User user) {
-        if (db.deleteData(user)) {
+        if (new UsersDB().deleteData(user)) {
             users.remove(user);
             table.getTableView().getItems().remove(user);
             table.getTableView().refresh();

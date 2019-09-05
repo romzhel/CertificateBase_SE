@@ -14,20 +14,18 @@ import java.util.TreeSet;
 public class ProductLgbks {
     private ArrayList<ProductLgbk> productLgbks;
     private ProductLgbksTable productLgbksTable;
-    private ProductLgbksDB db;
 
     public ProductLgbks() {
-        productLgbks = new ArrayList<>();
-        db = new ProductLgbksDB();
+//        productLgbks = new ArrayList<>();
     }
 
     public ProductLgbks getFromDB() {
-        productLgbks = db.getData();
+        productLgbks = new ProductLgbksDB().getData();
         return this;
     }
 
     public void addItem(ProductLgbk productLgbk) {
-        if (db.putData(productLgbk)) {
+        if (new ProductLgbksDB().putData(productLgbk)) {
             productLgbks.add(productLgbk);
 
             TreeTableView<ProductLgbk> tableView = productLgbksTable.getTableView();
@@ -38,14 +36,14 @@ public class ProductLgbks {
 
     public void addItems(ArrayList<ProductLgbk> items) {
         for (ProductLgbk productLgbk : items) {
-            if (db.putData(productLgbk)) {
+            if (new ProductLgbksDB().putData(productLgbk)) {
                 productLgbks.add(productLgbk);
             }
         }
     }
 
     public void removeItem(ProductLgbk pl) {
-        if (db.deleteData(pl)) {
+        if (new ProductLgbksDB().deleteData(pl)) {
             productLgbks.remove(pl);
             CoreModule.getProductLgbkGroups().createFromLgbks(this);
         }

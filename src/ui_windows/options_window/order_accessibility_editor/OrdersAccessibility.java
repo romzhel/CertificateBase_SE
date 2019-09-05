@@ -1,38 +1,35 @@
 package ui_windows.options_window.order_accessibility_editor;
 
 import database.AccessibilityDB;
-import database.Request;
 
 import java.util.ArrayList;
 
 public class OrdersAccessibility {
-    private Request db;
     private ArrayList<OrderAccessibility> ordersAccessibility;
     private OrdersAccessibilityTable table;
 
     public OrdersAccessibility() {
-        db = new AccessibilityDB();
         ordersAccessibility = new ArrayList<>();
     }
 
     public OrdersAccessibility getFromDB() {
-        ordersAccessibility = db.getData();
+        ordersAccessibility = new AccessibilityDB().getData();
         return this;
     }
 
     public void addItem(OrderAccessibility oa) {
-        if (db.putData(oa)) {
+        if (new AccessibilityDB().putData(oa)) {
             ordersAccessibility.add(oa);
             table.getTableView().getItems().add(oa);
         }
     }
 
     public void updateItem(OrderAccessibility oa) {
-        db.updateData(oa);
+        new AccessibilityDB().updateData(oa);
     }
 
     public void removeItem(OrderAccessibility oa) {
-        if (db.deleteData(oa)) {
+        if (new AccessibilityDB().deleteData(oa)) {
             ordersAccessibility.remove(oa);
             table.getTableView().getItems().remove(oa);
         }

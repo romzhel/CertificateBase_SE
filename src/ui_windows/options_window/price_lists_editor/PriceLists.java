@@ -7,15 +7,14 @@ import java.util.ArrayList;
 
 public class PriceLists {
     private ArrayList<PriceList> items;
-    private PriceListsDB priceListsDB;
     private PriceListsTable priceListsTable;
 
     public PriceLists() {
-        priceListsDB = new PriceListsDB();
+
     }
 
     public PriceLists getFromDB() {
-        items = priceListsDB.getData();
+        items = new PriceListsDB().getData();
         return this;
     }
 
@@ -30,24 +29,20 @@ public class PriceLists {
             return;
         }
 
-        ArrayList<PriceList> itemsToSave = new ArrayList<>();
-        itemsToSave.add(priceList);
-        if (priceListsDB.putData(itemsToSave)) {
-            items.addAll(itemsToSave);
-            priceListsTable.getTableView().getItems().addAll(itemsToSave);
+        if (new PriceListsDB().putData(priceList)) {
+            items.add(priceList);
+            priceListsTable.getTableView().getItems().add(priceList);
         }
     }
 
     public void editItem(PriceList priceList){
-        ArrayList<PriceList> itemsToUpdate = new ArrayList<>();
-        itemsToUpdate.add(priceList);
-        if (priceListsDB.updateData(itemsToUpdate)) {
+        if (new PriceListsDB().updateData(priceList)) {
 
         }
     }
 
     public void deleteItem(PriceList priceList){
-        if (priceListsDB.deleteData(priceList)) {
+        if (new PriceListsDB().deleteData(priceList)) {
             items.remove(priceList);
             priceListsTable.getTableView().getItems().remove(priceList);
         }
@@ -71,9 +66,5 @@ public class PriceLists {
 
     public void setItems(ArrayList<PriceList> items) {
         this.items = items;
-    }
-
-    public void setPriceListsDB(PriceListsDB priceListsDB) {
-        this.priceListsDB = priceListsDB;
     }
 }

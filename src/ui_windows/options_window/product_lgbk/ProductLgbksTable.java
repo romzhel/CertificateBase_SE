@@ -3,10 +3,13 @@ package ui_windows.options_window.product_lgbk;
 import core.CoreModule;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
+
+import java.util.TreeSet;
 
 public class ProductLgbksTable {
     private TreeTableView<ProductLgbk> tableView;

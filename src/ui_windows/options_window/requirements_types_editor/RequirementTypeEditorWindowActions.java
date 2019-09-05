@@ -10,7 +10,6 @@ import utils.Utils;
 import static ui_windows.Mode.*;
 
 public class RequirementTypeEditorWindowActions {
-    private static RequirementTypesDB db = new RequirementTypesDB();
 
     public static void apply() {
         AnchorPane root = RequirementTypeEditorWindow.getRootAnchorPane();
@@ -24,7 +23,7 @@ public class RequirementTypeEditorWindowActions {
                         Utils.getControlValue(root, "taFullName"));
 
                 if (!CoreModule.getRequirementTypes().hasDoubles(ct)) {//check duplicates
-                    if (db.putData(ct)) {//write to DB
+                    if (new RequirementTypesDB().putData(ct)) {//write to DB
                         CoreModule.getRequirementTypes().getItems().add(ct);//add item to arrayList
                         CoreModule.getRequirementTypesTable().addItem(ct);//add record to table
                         close();
@@ -41,7 +40,7 @@ public class RequirementTypeEditorWindowActions {
                 ct.setFullName(Utils.getControlValue(root, "taFullName"));
 
                 if (!CoreModule.getRequirementTypes().hasDoubles(ct)) {//check duplicates
-                    if (db.updateData(ct)) {//write to DB
+                    if (new RequirementTypesDB().updateData(ct)) {//write to DB
                         Platform.runLater(() -> CoreModule.getRequirementTypesTable().getTableView().refresh());//refresh table
                         close();
                     }
@@ -77,7 +76,7 @@ public class RequirementTypeEditorWindowActions {
         if (ct != null) {
             if (!CoreModule.getCertificates().isNormUsed(ct.getId())) {
                 if (Dialogs.confirm("Удаление записи", "Действительно желаете удалить запись?")) {
-                    if (db.deleteData(ct)) CoreModule.getRequirementTypes().remove(ct);
+                    if (new RequirementTypesDB().deleteData(ct)) CoreModule.getRequirementTypes().remove(ct);
                 }
             }
 

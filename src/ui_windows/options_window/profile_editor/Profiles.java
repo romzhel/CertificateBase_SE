@@ -1,7 +1,6 @@
 package ui_windows.options_window.profile_editor;
 
 import database.ProfilesDB;
-import database.Request;
 
 import java.util.ArrayList;
 import java.util.TreeSet;
@@ -9,27 +8,25 @@ import java.util.TreeSet;
 public class Profiles {
     private ArrayList<Profile> profiles;
     private ProfilesTable table;
-    private Request db;
 
     public Profiles() {
-        db = new ProfilesDB();
-        profiles = new ArrayList<>();
+//        profiles = new ArrayList<>();
     }
 
     public Profiles getFromDB() {
-        profiles = db.getData();
+        profiles = new ProfilesDB().getData();
         return this;
     }
 
     public void addItem(Profile prof) {
-        if (db.putData(prof)) {
+        if (new ProfilesDB().putData(prof)) {
             prof.setNewItem(false);
             profiles.add(prof);
         }
     }
 
     public void removeItem(Profile prof) {
-        if (db.deleteData(prof)) {
+        if (new ProfilesDB().deleteData(prof)) {
             profiles.remove(prof);
             table.getTableView().getItems().remove(prof);
             table.getTableView().refresh();

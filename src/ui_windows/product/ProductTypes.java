@@ -1,7 +1,6 @@
 package ui_windows.product;
 
 import database.ProductTypesDB;
-import database.Request;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
@@ -12,16 +11,14 @@ import java.util.TreeSet;
 
 public class ProductTypes {
     public final static String NO_SELECTED = "не выбрано";
-    private Request request;
     private ArrayList<ProductType> productTypes;
 
     public ProductTypes() {
-        request = new ProductTypesDB();
 //        productTypes = new ArrayList<>();
     }
 
     public ProductTypes getFromDB() {
-        productTypes = request.getData();
+        productTypes = new ProductTypesDB().getData();
         return this;
     }
 
@@ -31,7 +28,7 @@ public class ProductTypes {
         }
 
         ProductType pt = new ProductType(0, cc.getEquipmentType(), cc.getTnved());//create new one
-        if (request.putData(pt)) {
+        if (new ProductTypesDB().putData(pt)) {
             addItem(pt);
         }
 

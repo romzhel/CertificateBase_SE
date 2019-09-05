@@ -1,164 +1,111 @@
 package database;
 
-import core.CoreModule;
-import core.Dialogs;
-import javafx.application.Platform;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class PriceListsDB implements Request {
-    PreparedStatement addData, updateData, deleteData;
+public class PriceListsDB extends DbRequest {
 
     public PriceListsDB() {
+        super();
         try {
-            addData = CoreModule.getDataBase().getDbConnection().prepareStatement("INSERT INTO " +
+            addData = connection.prepareStatement("INSERT INTO " +
                     "priceLists (name, file_name, lgbks) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
-            updateData = CoreModule.getDataBase().getDbConnection().prepareStatement("UPDATE priceLists " +
+            updateData = connection.prepareStatement("UPDATE priceLists " +
                     "SET name = ?, file_name = ?, lgbks = ? WHERE id = ?");
-            deleteData = CoreModule.getDataBase().getDbConnection().prepareStatement("DELETE FROM priceLists " +
+            deleteData = connection.prepareStatement("DELETE FROM priceLists " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            System.out.println("priceLists prepared statements exception " + e.getMessage());
+            logAndMessage("priceLists prepared statements exception " + e.getMessage());
+            finalActions();
         }
     }
 
-    @Override
     public ArrayList getData() {
         ArrayList<PriceList> priceLists = new ArrayList<>();
         try {
-            ResultSet rs = CoreModule.getDataBase().getData("SELECT * FROM priceLists");
+            ResultSet rs = connection.prepareStatement("SELECT * FROM priceLists").executeQuery();
 
             while (rs.next()) {
                 priceLists.add(new PriceList(rs));
             }
 
         } catch (SQLException e) {
-            System.out.println("SQL exception product families get data");
+            logAndMessage("SQL exception product families get data");
         }
-
         return priceLists;
     }
 
-    @Override
-    public boolean putData(Object object) {
-        if (object instanceof ArrayList) {
-            ArrayList<PriceList> alpl = (ArrayList<PriceList>) object;
+    public boolean putData(PriceList pl) {
+        try {
+            addData.setString(1, pl.getName());
+            addData.setString(2, pl.getFileName());
+            addData.setString(3, pl.getLgbksAsString());
 
-            MainWindow.setProgress(0.01);
+            MainWindow.setProgress(1.0);
 
-            int j = 0;
-            try {
-                int count = 0;
-                for (int i = 0; i < alpl.size(); i = i + 500) {
+            if (addData.executeUpdate() > 0) {//successful
+                ResultSet rs = addData.getGeneratedKeys();
 
-                    for (j = i; j < (i + 500) && (j < alpl.size()); j++) {
-                        count = 0;
-                        addData.setString(++count, alpl.get(j).getName());
-                        addData.setString(++count, alpl.get(j).getFileName());
-                        addData.setString(++count, alpl.get(j).getLgbksAsString());
-                        addData.addBatch();
-                    }
-
-                    MainWindow.setProgress((double) j / (double) alpl.size());
-
-                    int[] result = addData.executeBatch();
-                    for (int res : result) {
-                        if (res != 1) {
-                            Dialogs.showMessage("Запись данных в БД", "Данные не были добавлены в БД");
-                            return false;
-                        }
-                    }
-                }
-
-                MainWindow.setProgress(0.0);
-                return true;
-
-            } catch (SQLException e) {
-                System.out.println("exception of adding to priceList BD, " + e.getMessage() + ", " + alpl.get(--j).toString());
-            }
-
-        }
-        return false;
-    }
-
-    @Override
-    public boolean updateData(Object object) {
-        if (object instanceof ArrayList) {
-            ArrayList<PriceList> alpl = (ArrayList<PriceList>) object;
-
-            MainWindow.setProgress(0.01);
-            try {
-                int count = 0;
-                for (int i = 0; i < alpl.size(); i = i + 500) {
-
-                    int j;
-                    for (j = i; j < (i + 500) && (j < alpl.size()); j++) {
-                        count = 0;
-                        updateData.setString(++count, alpl.get(j).getName());
-                        updateData.setString(++count, alpl.get(j).getFileName());
-                        updateData.setString(++count, alpl.get(j).getLgbksAsString());
-
-                        updateData.setInt(++count, alpl.get(j).getId());
-                        updateData.addBatch();
-                    }
-                    MainWindow.setProgress((double) j / (double) alpl.size());
-                    int[] result = updateData.executeBatch();
-
-                    for (int res : result) {
-                        if (res != 1) {
-                            Platform.runLater(() -> Dialogs.showMessage("Запись данных в БД", "Данные не были обновлены в БД, " +
-                                    "ответ: " + res));
-                            return false;
-                        }
-                    }
-                }
-
-                MainWindow.setProgress(0.0);
-                return true;
-
-            } catch (SQLException e) {
-                System.out.println("exception of updating to priceList BD, " + e.getMessage());
-            }
-
-        }
-        return false;
-    }
-
-    @Override
-    public boolean deleteData(Object object) {
-        if (object instanceof PriceList) {
-            PriceList pl = (PriceList) object;
-
-            try {
-                deleteData.setInt(1, pl.getId());
-
-                MainWindow.setProgress(1.0);
-
-                if (deleteData.executeUpdate() > 0) {//successful
-                    MainWindow.setProgress(0.0);
+                if (rs.next()) {
+                    pl.setId(rs.getInt(1));
+//                        System.out.println("new ID = " + rs.getInt(1));
+                    finalActions();
                     return true;
-                } else {
-                    Dialogs.showMessage("Ошибка БД", "Ошибка работы с БД");
                 }
-
-            } catch (SQLException e) {
-                System.out.println();
-                showErrorMessage(e.getMessage(), "exception of deleting from BD: " + e.getMessage() + "\n" +
-                        e.getStackTrace());
+            } else {
+                logAndMessage("PriceList DB insert error");
             }
+        } catch (SQLException e) {
+            logAndMessage("exception of adding to priceList BD, " + e.getMessage());
         }
-        MainWindow.setProgress(0.0);
+        finalActions();
         return false;
     }
 
-    public void showErrorMessage(String messageText, String logText) {
-        Dialogs.showMessage("Ошибка работы с базой данных", messageText);
-        System.out.println(logText);
+    public boolean updateData(PriceList pl) {
+        try {
+            MainWindow.setProgress(1.0);
+
+            updateData.setString(1, pl.getName());
+            updateData.setString(2, pl.getFileName());
+            updateData.setString(3, pl.getLgbksAsString());
+
+            updateData.setInt(4, pl.getId());
+
+            if (updateData.executeUpdate() > 0) {//successful
+                finalActions();
+                return true;
+            } else {
+                logAndMessage("PriceList BD updating error ");
+            }
+        } catch (SQLException e) {
+            logAndMessage("exception of updating to priceList BD, " + e.getMessage());
+        }
+        finalActions();
+        return false;
+    }
+
+    public boolean deleteData(PriceList pl) {
+        try {
+            deleteData.setInt(1, pl.getId());
+
+            MainWindow.setProgress(1.0);
+
+            if (deleteData.executeUpdate() > 0) {//successful
+                finalActions();
+                return true;
+            } else {
+                logAndMessage("PriceList BD delete error ");
+            }
+        } catch (SQLException e) {
+            logAndMessage("exception of deleting from BD: " + e.getMessage());
+        }
+        finalActions();
+        return false;
     }
 }
