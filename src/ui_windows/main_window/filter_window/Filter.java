@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Filter {
+    public static final String ALL_RECORDS = "--- Все ---";
     private ArrayList<FilterSimple> filters;
     private ProductFamily productFamily;
+    private String lgbk;
     private String changeCodes[];
     private String changeTexts[];
     private String changeCode = "";
@@ -22,6 +24,7 @@ public class Filter {
         addItem(new FilterSimple("Показывать Не используется", "cbxNotUsed", "notUsed", false));
         addItem(new FilterSimple("Только изменения", "cbxNeedAction", "needAction", false));
         productFamily = null;
+        lgbk = ALL_RECORDS;
 
         changeCodes = new String[]{"", "new", "dchain", "country", "article", "hierarchy, lgbk", "endofservice", "dangerous"};
         changeTexts = new String[]{"--- Любое ---", "Новая позиция", "Доступность для заказа", "Страна", "Артикул", "Иерархия",
@@ -83,5 +86,13 @@ public class Filter {
 
     public void setChangeCode(String changeText) {
         changeCode = getChangeCodeByText(changeText);
+    }
+
+    public String getLgbk() {
+        return lgbk;
+    }
+
+    public void setLgbk(String lgbk) {
+        this.lgbk = lgbk;
     }
 }

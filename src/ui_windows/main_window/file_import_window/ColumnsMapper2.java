@@ -32,6 +32,7 @@ public class ColumnsMapper2 {
                 {"article", DESC_ARTICLE},
                 {"Artikeltyp", DESC_ARTICLE},
                 {"марка", DESC_ARTICLE},
+                {"артикул", DESC_ARTICLE},
                 {"hierarchy", DESC_HIERARCHY},
                 {"prod.hier.", DESC_HIERARCHY},
                 {"gbk", DESC_LGBK},

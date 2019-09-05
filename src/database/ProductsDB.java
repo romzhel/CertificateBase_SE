@@ -3,6 +3,7 @@ package database;
 import core.CoreModule;
 import core.Dialogs;
 import javafx.application.Platform;
+import org.sqlite.SQLiteConfig;
 import ui_windows.main_window.MainWindow;
 import ui_windows.product.Product;
 
@@ -10,24 +11,26 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class ProductsDB implements Request {
-    PreparedStatement addData, updateData, deleteData;
+    private PreparedStatement addData, updateData, deleteData;
+    private Connection connection;
 
     public ProductsDB() {
+        connection = CoreModule.getDataBase().reconnect();
         try {
-            addData = CoreModule.getDataBase().getDbConnection().prepareStatement("INSERT INTO " +
+            addData = connection.prepareStatement("INSERT INTO " +
                             "products (material, article, hierarchy, lgbk, family, end_of_service, dangerous, " +
                             "country, dchain, description_ru, description_en, price, archive, need_action, not_used, history, " +
                             "last_change_date, file_name, comments, replacement, type_id, change_codes, product_print," +
                             "last_import_codes, norms_list, norms_mode, min_order, packet_size, lead_time, weight, local_price) " +
                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
-            updateData = CoreModule.getDataBase().getDbConnection().prepareStatement("UPDATE products " +
+            updateData = connection.prepareStatement("UPDATE products " +
                     "SET article = ?, hierarchy = ?, lgbk = ?, family = ?, end_of_service = ?, dangerous = ?, country = ?, " +
                     "dchain = ?, description_ru = ?, description_en = ?, price = ?, archive = ?, need_action = ?, not_used = ?, history = ?," +
                     "last_change_date = ?, file_name = ?, comments = ?, replacement = ?, type_id = ?, change_codes = ?, " +
                     "product_print = ?, last_import_codes = ?, norms_list = ?, norms_mode = ?, min_order = ?, packet_size = ?, " +
                     "lead_time = ?, weight = ?, local_price = ? WHERE material = ?");
-            deleteData = CoreModule.getDataBase().getDbConnection().prepareStatement("DELETE FROM products " +
+            deleteData = connection.prepareStatement("DELETE FROM products " +
                     "WHERE id = ?");
         } catch (SQLException e) {
             System.out.println("products prepared statements exception: " + e.getMessage());
@@ -57,6 +60,7 @@ public class ProductsDB implements Request {
             ArrayList<Product> alpr = (ArrayList<Product>) object;
 
             long ts = System.currentTimeMillis();
+            long ts1 = 0, ts2 = 0;
 
             MainWindow.setProgress(0.01);
 
@@ -106,8 +110,12 @@ public class ProductsDB implements Request {
 
                     connection.setAutoCommit(false);
                     int[] result = updateData.executeBatch();
+
+                    ts1 = System.currentTimeMillis();
+
                     connection.commit();
-                    connection.setAutoCommit(true);
+
+                    ts2 = System.currentTimeMillis();
 
                     for (int res : result) {
                         if (res != 1) {
@@ -117,20 +125,30 @@ public class ProductsDB implements Request {
                         }
                     }
                 }
-                System.out.println(String.valueOf(System.currentTimeMillis() - ts));
-                MainWindow.setProgress(0.0);
-                return true;
+
 
             } catch (SQLException e) {
-//                try {
-//                    connection.rollback();
-//                    connection.setAutoCommit(true);
-//                } catch (SQLException ex) {
-//                    System.out.println(e.getMessage());
-//                }
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    System.out.println(e.getMessage());
+                }
                 Dialogs.showMessage("BD error", e.getMessage());
                 System.out.println("exception of updating to product BD, " + e.getMessage());
                 return false;
+            } finally {
+                try {
+                    connection.setAutoCommit(true);
+                    CoreModule.getDataBase().disconnect();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+
+                System.out.println(String.valueOf(System.currentTimeMillis() - ts) + ": " + String.valueOf(ts1 - ts) + ", " +
+                        String.valueOf(ts2 - ts1) + ", " + String.valueOf(System.currentTimeMillis() - ts2));
+
+                MainWindow.setProgress(0.0);
+                return true;
             }
 
         }
@@ -189,7 +207,7 @@ public class ProductsDB implements Request {
                     connection.setAutoCommit(false);
                     int[] result = addData.executeBatch();
                     connection.commit();
-                    connection.setAutoCommit(true);
+
                     for (int res : result) {
                         if (res != 1) {
                             Dialogs.showMessage("Запись данных в БД", "Данные не были добавлены в БД");
@@ -202,9 +220,21 @@ public class ProductsDB implements Request {
                 return true;
 
             } catch (SQLException e) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    System.out.println(e.getMessage());
+                }
                 Dialogs.showMessage("BD error", e.getMessage());
-                System.out.println("exception of adding to product BD, " + e.getMessage() + ", " + alpr.get(--j).toString());
+                System.out.println("exception of putting to product BD, " + e.getMessage());
                 return false;
+            } finally {
+                try {
+                    connection.setAutoCommit(true);
+                    CoreModule.getDataBase().disconnect();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
             }
 
         }

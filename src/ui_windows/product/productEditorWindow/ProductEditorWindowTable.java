@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificatesChecker;
 import utils.Utils;
 
 import java.io.File;
@@ -39,8 +40,11 @@ public class ProductEditorWindowTable {
                                     setText(item);
 
                                     CertificateVerificationItem cv = param.getTableView().getItems().get(getIndex());
-                                    if (cv.getCertificate() == null) {
+                                    if (cv.getCertificate() == null && !cv.getNorm().equals(CertificatesChecker.CERT_NO_NEEDED)) {
                                         setTextFill(Color.RED);
+                                        setStyle("-fx-font-weight: bold");
+                                    } else if (cv.getNorm().equals(CertificatesChecker.CERT_NO_NEEDED)) {
+                                        setTextFill(Color.GREEN);
                                         setStyle("-fx-font-weight: bold");
                                     } else {
                                         setTextFill(Color.BLACK);
@@ -91,6 +95,9 @@ public class ProductEditorWindowTable {
                                     CertificateVerificationItem cv = param.getTableView().getItems().get(getIndex());
                                     if (cv.getStatus().equals(CertificateVerificationItem.ABSENT_TEXT)) {
                                         setTextFill(Color.RED);
+                                        setStyle("-fx-font-weight: bold");
+                                    } else if (cv.getNorm().equals(CertificatesChecker.CERT_NO_NEEDED)) {
+                                        setTextFill(Color.GREEN);
                                         setStyle("-fx-font-weight: bold");
                                     } else {
                                         setTextFill(Color.BLACK);

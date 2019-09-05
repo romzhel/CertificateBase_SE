@@ -3,8 +3,10 @@ package ui_windows.options_window.product_lgbk;
 import core.CoreModule;
 import core.Dialogs;
 import database.ProductLgbksDB;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TreeTableView;
 import ui_windows.options_window.families_editor.ProductFamily;
+import ui_windows.product.Product;
 
 import java.util.ArrayList;
 import java.util.TreeSet;
@@ -122,6 +124,14 @@ public class ProductLgbks {
             pl = getByLgbkName(lgbkName);
 
             if (pl != null) result.add(pl.getLgbk());
+        }
+        return result;
+    }
+
+    public TreeSet<String> getLgbkNamesFromTable(ArrayList<Product> tableItems) {
+        TreeSet<String> result = new TreeSet<>();
+        for (Product product : tableItems) {
+            result.add("[" + product.getLgbk() + "] " + getByLgbkName(product.getLgbk()).getDescriptionRuEn());
         }
         return result;
     }

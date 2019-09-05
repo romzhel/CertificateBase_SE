@@ -304,6 +304,7 @@ public class Product {
         boolean price = (filter.getFilterSimpleByUIname("cbxPrice").isValue() && isPrice());
         boolean archive = (filter.getFilterSimpleByUIname("cbxArchive").isValue() && isArchive());
         boolean needAction = (filter.getFilterSimpleByUIname("cbxNeedAction").isValue());// && isNeedaction());
+        boolean lgbk = filter.getLgbk().equals(Filter.ALL_RECORDS) ? true : filter.getLgbk().equals(getLgbk());
 
         LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(getLgbk(), getHierarchy()));
 
@@ -330,9 +331,9 @@ public class Product {
                     matchChanges = true;
             }
 
-            if ((allRecords || price && (!summaryNotUsed || notUsed) || archive || !price && notUsed) && matchChanges ) return true;
+            if ((allRecords || price && (!summaryNotUsed || notUsed) || archive || !price && notUsed) && matchChanges && lgbk) return true;
         } else {
-            if (allRecords || price && (!summaryNotUsed || notUsed) || !price && notUsed || archive  ) return true;
+            if ((allRecords || price && (!summaryNotUsed || notUsed) || !price && notUsed || archive) && lgbk  ) return true;
         }
 
         return false;

@@ -9,12 +9,10 @@ import utils.Utils;
 import java.util.ArrayList;
 
 public class Products {
-    private ProductsDB db;
     private ArrayList<Product> products;
     private TableView<Product> tableView;
 
     public Products() {
-        db = new ProductsDB();
         products = new ArrayList<>();
     }
 
@@ -43,7 +41,7 @@ public class Products {
     }
 
     public Products getFromDB() {
-        products = db.getData();
+        products = new ProductsDB().getData();
         return this;
     }
 
@@ -144,4 +142,12 @@ public class Products {
 
         return result;
     }
+
+/*    public ProductsDB getDb() {
+        return db;
+    }*/
+
+/*    public void setDb(ProductsDB db) {
+        this.db = db;
+    }*/
 }

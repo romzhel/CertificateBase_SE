@@ -2,6 +2,7 @@ package ui_windows.options_window.certificates_editor.certificate_content_editor
 
 import core.CoreModule;
 import javafx.collections.ObservableList;
+import javafx.scene.paint.Color;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.options_window.product_lgbk.NormsList;
@@ -18,6 +19,7 @@ public class CertificatesChecker {
     public final static String OK = "ОК";
     public final static String EXPIRED = ", истек";
     public final static String BAD_COUNTRY = ", нет страны";
+    public final static String CERT_NO_NEEDED = "Сертификаты не требуются";
     private TreeSet<CertificateVerificationItem> resultTableItems;
     private ArrayList<Integer> satisfiedNorms;
     private HashSet<Integer> globalNeededNorms;
@@ -163,20 +165,27 @@ public class CertificatesChecker {
         normsForChecking.addAll(productNeededNorms);
         int normsForCheckingCount = normsForChecking.size();
 
+        boolean certNotNeeded = false;
+
         normsForChecking.removeAll(satisfiedNorms);
         for (int normIndex : normsForChecking) {
             String shortName = CoreModule.getRequirementTypes().getRequirementByID(normIndex).getShortName();
-            resultTableItems.add(new CertificateVerificationItem(shortName));
+            CertificateVerificationItem cvi = new CertificateVerificationItem(shortName);
+            if (shortName.equals(CERT_NO_NEEDED)) {
+                cvi.setStatus(OK);
+                certNotNeeded = true;
+            }
+            resultTableItems.add(cvi);
             certsAbs++;
         }
 
         certTotal = resultTableItems.size();
 
         if (certTotal == 0) {
-            checkStatusResult = NO_NORMS;
+            checkStatusResult = NO_NORMS_DEFINED;
         } else if (certTotal > 0 && normsForCheckingCount == 0) {
-            checkStatusResult = NO_NORMS;
-        } else if (certTotal == certsOk && certsErr == 0) {
+            checkStatusResult = NO_NORMS_DEFINED;
+        } else if (certTotal == certsOk && certsErr == 0 || certNotNeeded) {
             checkStatusResult = STATUS_OK;
         } else if (certsOk > 0 && certsAbs > 0 && certsErr == 0) {
             checkStatusResult = PART_OF_CERT;

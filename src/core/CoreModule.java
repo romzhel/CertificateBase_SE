@@ -5,11 +5,9 @@ import files.Folders;
 import javafx.application.Platform;
 import javafx.scene.control.TableView;
 import ui_windows.main_window.MainWindow;
-import ui_windows.options_window.price_lists_editor.PriceLists;
-import ui_windows.product.Product;
-import ui_windows.product.ProductTypes;
-import ui_windows.product.Products;
 import ui_windows.main_window.filter_window.Filter;
+import ui_windows.main_window.filter_window.FilterWindow;
+import ui_windows.main_window.filter_window.FilterWindowController;
 import ui_windows.options_window.certificates_editor.Certificates;
 import ui_windows.options_window.certificates_editor.CertificatesTable;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContent;
@@ -17,6 +15,7 @@ import ui_windows.options_window.certificates_editor.certificate_content_editor.
 import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
+import ui_windows.options_window.price_lists_editor.PriceLists;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
@@ -25,6 +24,9 @@ import ui_windows.options_window.profile_editor.Profiles;
 import ui_windows.options_window.requirements_types_editor.RequirementTypes;
 import ui_windows.options_window.requirements_types_editor.RequirementTypesTable;
 import ui_windows.options_window.user_editor.Users;
+import ui_windows.product.Product;
+import ui_windows.product.ProductTypes;
+import ui_windows.product.Products;
 import utils.Utils;
 
 import java.util.ArrayList;
@@ -84,9 +86,9 @@ public class CoreModule {
         productLgbkGroups = new ProductLgbkGroups().get();
         priceLists = new PriceLists().getFromDB();
 
-        if (users.getCurrentUser().getProfile().getName() == "Общий доступ") {
+//        if (users.getCurrentUser().getProfile().getName() == "Общий доступ") {
             if (!dataBase.disconnect()) System.out.println("fail of DB disconnecting");
-        }
+//        }
 
         return true;
     }
@@ -137,7 +139,8 @@ public class CoreModule {
                         familyMatch = true;
                     }
 
-                    if (familyMatch && (filterMatch && (articleMatch || materialMatch || descriptionMatch))) result.add(p);
+                    if (familyMatch && (filterMatch && (articleMatch || materialMatch || descriptionMatch)))
+                        result.add(p);
                 }
 
                 Platform.runLater(() -> {
@@ -150,6 +153,8 @@ public class CoreModule {
         }).start();
 
     }
+
+
 
     public static DataBase getDataBase() {
         return dataBase;

@@ -43,7 +43,7 @@ public class LoginWindowController implements Initializable {
             MainWindow.applyProfile(newProfile);
 
             if (!newProfile.getName().equals(Profile.COMMON_ACCESS)) {
-                if (!CoreModule.getDataBase().reconnect()) System.out.println("fail of DB reconnecting");
+                if (CoreModule.getDataBase().reconnect() == null) System.out.println("fail of DB reconnecting");
             } else {
                 if (!CoreModule.getDataBase().disconnect()) System.out.println("fail of DB disconnecting");
             }
