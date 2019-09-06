@@ -42,7 +42,6 @@ public class ExportPriceListToExcel2 {
             new Thread(() -> {
                 fillDoc();
                 saveToFile();
-                System.out.println("items in price: " + itemCount);
 
                 Platform.runLater(() -> MainWindow.setProgress(0.0));
             }).start();
@@ -94,7 +93,10 @@ public class ExportPriceListToExcel2 {
         priceService = new Structure();
 
         for (Product product : CoreModule.getProducts().getItems()) {
-            boolean isInPrice = product.isPrice() && !product.isNotused();
+
+            LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
+            boolean globalNotUsed = lap == null ? true : lap.getLgbkItem().isNotUsed() || lap.getLgbkParent().isNotUsed();
+            boolean isInPrice = product.isPrice() && !product.isNotused() && !globalNotUsed;
             boolean hasDchain = product.getDchain().equals("28") || product.getDchain().equals("30") ||
                     (product.getDchain().isEmpty() && isSpProduct(product));
 
@@ -109,7 +111,7 @@ public class ExportPriceListToExcel2 {
         priceRuEn.export(excelDoc.getSheetAt(1), 1);
         priceService.export(excelDoc.getSheetAt(2), 1);
 
-        System.out.println(priceRuEn.getSize() + " / " + priceService.getSize());
+        System.out.println("price items: " + priceRuEn.getSize() + " / " + priceService.getSize());
 
     }
 
@@ -198,7 +200,6 @@ public class ExportPriceListToExcel2 {
                     group.addProduct(product);
                     return;
                 }
-
             }
             HierarchyGroup newGroup = new HierarchyGroup(product.getHierarchy());
             newGroup.addProduct(product);
@@ -285,21 +286,29 @@ public class ExportPriceListToExcel2 {
             Cell cell;
 
             if (!space) rowIndex++;
-            row = sheet.createRow(rowIndex++);
-            cell = row.createCell(0, CellType.STRING);
 
             LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(
                     new ProductLgbk(lgroupName, name));
 
             if (lap != null && lap.getLgbkItem() != null && lap.getLgbkParent() != null) {
-                cell.setCellValue(CoreModule.getProductLgbks().getByLgbkName(lgroupName).getDescriptionRuEn() + " / " + lap.getLgbkItem().getDescriptionRuEn());
+//                cell.setCellValue(CoreModule.getProductLgbks().getByLgbkName(lgroupName).getDescriptionRuEn() + " / " + lap.getLgbkItem().getDescriptionRuEn());
+
+                String enText = CoreModule.getProductLgbks().getByLgbkName(lgroupName).getDescriptionEnRu() + " / " +
+                        lap.getLgbkItem().getDescriptionEnRu();
+                String ruText = CoreModule.getProductLgbks().getByLgbkName(lgroupName).getDescriptionRuEn() + " / " +
+                        lap.getLgbkItem().getDescriptionRuEn();
+                String printText;
 
                 if (sheet.getSheetName().toLowerCase().contains("en")) {
-                    cell.setCellValue(CoreModule.getProductLgbks().getByLgbkName(lgroupName).getDescriptionEnRu() + " / " +
-                            lap.getLgbkItem().getDescriptionEnRu());
+                    printText = enText;
                 } else {
-                    cell.setCellValue(CoreModule.getProductLgbks().getByLgbkName(lgroupName).getDescriptionRuEn() + " / " +
-                            lap.getLgbkItem().getDescriptionRuEn());
+                    printText = ruText;
+                }
+
+                if (!printText.isEmpty()) {
+                    row = sheet.createRow(rowIndex++);
+                    cell = row.createCell(0, CellType.STRING);
+                    cell.setCellValue(printText);
                 }
             }
 
@@ -325,9 +334,10 @@ public class ExportPriceListToExcel2 {
 
                 boolean dchain2830 = product.getDchain().contains("28") || product.getDchain().contains("30");
                 boolean licence = product.getLgbk().equals("H3FQ") || product.getLgbk().equals("H5ET");
-                boolean sp = product.getDchain().isEmpty() && CoreModule.getProductFamilies().getFamilyNameById(product.getFamily()).equals("SP");
+                boolean sp = isSpProduct(product);
+                boolean priceEmpty = product.getLocalPrice() == 0.0;
 
-                if (!licence && dchain2830 || sp) {
+                if (!licence && dchain2830 && !sp && !priceEmpty) {
                     cell = row.createCell(3, CellType.NUMERIC);
                     cell.setCellValue(product.getLocalPrice());
                 } else {
@@ -365,7 +375,8 @@ public class ExportPriceListToExcel2 {
 
     private boolean isSpProduct(Product product) {
         int id = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
-        return id == 24;
+        boolean productFamId = product.getFamily() == 24;
+        return id == 24 || productFamId;
     }
 
 

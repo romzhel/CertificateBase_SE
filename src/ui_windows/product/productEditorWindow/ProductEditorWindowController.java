@@ -5,8 +5,12 @@ import core.Dialogs;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -87,6 +91,9 @@ public class ProductEditorWindowController implements Initializable {
     @FXML
     public AnchorPane apRoot;
 
+    @FXML
+    public TextArea taDescription;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         new ProductEditorWindowTable(tvCertVerification);
@@ -101,7 +108,6 @@ public class ProductEditorWindowController implements Initializable {
                     "itemStrikethroughGreen", "itemStrikethroughBlack");
             tfAccessibility.getStyleClass().add(CoreModule.getCertificates().getCertificatesChecker().getCheckStatusResultStyle());
         });
-
 
         new AutoCompleteComboBoxListener<>(cbType, false);
 //        cbType.getItems().addAll(CoreModule.getProductTypes().getPreparedTypes());

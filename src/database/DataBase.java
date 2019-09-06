@@ -24,6 +24,8 @@ public class DataBase {
             dbConnection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getPath(), config.toProperties());
             dataBaseFile = dbFile;
 
+
+
             System.out.println("DB connected");
             if (firstStart) System.out.println(getDbJournalingMode());
             return true;

@@ -1,7 +1,9 @@
 package ui_windows.product;
 
+import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import core.CoreModule;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -37,7 +39,7 @@ public class MultiEditor {
         compare("country", pewc.tfCountry);
         compare("comments", pewc.taComments);
         compare("type_id", pewc.cbType);
-
+        compare("descriptionru", pewc.taDescription);
     }
 
     public boolean compare(String fieldName, Node control) {
@@ -103,17 +105,26 @@ public class MultiEditor {
     }
 
     public void save() {
+        System.out.println();
         try {
             for (FieldsAndControls fac : fieldsAndControls) {
                 if (fac.isCanBeSaved()) {
                     for (Product product : editedItems) {
                         if (fac.getField().getType().getName().toLowerCase().contains("boolean")) {
                             fac.getField().set(product, new SimpleBooleanProperty(((CheckBox) fac.getControl()).isSelected()));
-                        } else if (fac.getField().getType().getName().toLowerCase().contains("String")) {
-                            if (fac.getControl() instanceof TextField) {
-                                fac.getField().set(product, ((TextField) fac.getControl()).getText());
-                            } else if (fac.getControl() instanceof TextArea) {
-                                fac.getField().set(product, ((TextArea) fac.getControl()).getText());
+                        } else if (fac.getField().getType().getName().toLowerCase().contains("string")) {
+                            if (fac.getField().getType().getName().toLowerCase().contains("stringproperty")) {
+                                if (fac.getControl() instanceof TextField) {
+                                    fac.getField().set(product, new SimpleStringProperty(((TextField) fac.getControl()).getText()));
+                                } else if (fac.getControl() instanceof TextArea) {
+                                    fac.getField().set(product, new SimpleStringProperty(((TextArea) fac.getControl()).getText()));
+                                }
+                            } else {
+                                if (fac.getControl() instanceof TextField) {
+                                    fac.getField().set(product, ((TextField) fac.getControl()).getText());
+                                } else if (fac.getControl() instanceof TextArea) {
+                                    fac.getField().set(product, ((TextArea) fac.getControl()).getText());
+                                }
                             }
                         } else if (fac.getField().getType().getName().toLowerCase().contains("int")) {
                             if (fac.getControl() instanceof ComboBox) {

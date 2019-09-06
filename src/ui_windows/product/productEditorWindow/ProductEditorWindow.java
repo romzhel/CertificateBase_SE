@@ -2,20 +2,25 @@ package ui_windows.product.productEditorWindow;
 
 import core.CoreModule;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Modality;
-import ui_windows.OrdinalWindow;
 import ui_windows.Mode;
+import ui_windows.OrdinalWindow;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
-import ui_windows.product.MultiEditor;
-import ui_windows.product.Product;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.profile_editor.SimpleRight;
 import ui_windows.options_window.user_editor.User;
+import ui_windows.product.MultiEditor;
+import ui_windows.product.Product;
 import ui_windows.product.ProductTypes;
 import utils.Utils;
 
-import java.util.ArrayList;
 import java.util.TreeSet;
 
 import static ui_windows.Mode.*;
@@ -23,13 +28,13 @@ import static ui_windows.options_window.profile_editor.SimpleRight.*;
 
 public class ProductEditorWindow extends OrdinalWindow {
 
-    public ProductEditorWindow(Mode editorMode, ObservableList<Product> selectedProducts){
+    public ProductEditorWindow(Mode editorMode, ObservableList<Product> selectedProducts) {
         super(MainWindow.getMainStage(), Modality.APPLICATION_MODAL,
                 editorMode, "productEditorWindow3.fxml", "");
 
 //        ArrayList<Product> selectedItems = new ArrayList<>(selectedProducts);
 
-        rootAnchorPane = ((ProductEditorWindowController)loader.getController()).apRoot;
+        rootAnchorPane = ((ProductEditorWindowController) loader.getController()).apRoot;
 
         if (mode == ADD) {
 
@@ -45,12 +50,12 @@ public class ProductEditorWindow extends OrdinalWindow {
                 stage.setTitle("Элементов выбрано: " + selectedProducts.size());
 
                 MultiEditor multiEditor = new MultiEditor(selectedProducts);
-                ((ProductEditorWindowController)loader.getController()).setMultiEditor(multiEditor);
+                ((ProductEditorWindowController) loader.getController()).setMultiEditor(multiEditor);
                 ProductEditorWindowActions.setMultiEditor(multiEditor);
             }
 
 
-        } else if (mode == DELETE){
+        } else if (mode == DELETE) {
 
         }
 
@@ -77,7 +82,7 @@ public class ProductEditorWindow extends OrdinalWindow {
     }
 
     @Override
-    public void applyProfileSimple(SimpleRight sr){
+    public void applyProfileSimple(SimpleRight sr) {
         Product prd = CoreModule.getProducts().getSelectedItem();
         User user = CoreModule.getUsers().getCurrentUser();
 
@@ -94,5 +99,24 @@ public class ProductEditorWindow extends OrdinalWindow {
         boolean adminRights = (sr == FULL);
 
         if ((profileRights || !familyOfUser) && !adminRights) Utils.disableMenuItemsButton(rootAnchorPane, "btnApply");
+        else setSaveAccelerator();
+    }
+
+    private void setSaveAccelerator() {
+        Scene scene = stage.getScene();
+        if (scene == null) {
+            System.out.println("scene == null");
+            throw new IllegalArgumentException("setSaveAccelerator must be called when a button is attached to a scene");
+        }
+
+        scene.getAccelerators().put(
+                new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
+                new Runnable() {
+                    @FXML
+                    public void run() {
+                        ((ProductEditorWindowController) loader.getController()).apply();
+                    }
+                }
+        );
     }
 }
