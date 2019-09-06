@@ -39,6 +39,8 @@ public class ColumnsMapper2 {
                 {"orig", DESC_COUNTRY},
                 {"material descriptio", DESC_DESCRIPTION_RU},
                 {"описание", DESC_DESCRIPTION_RU},
+                {"description_ru", DESC_DESCRIPTION_RU},
+                {"description_en", DESC_DESCRIPTION_EN},
                 {"battery code", DESC_LOGISTIC_LIMITATION},
                 {"dangerous", DESC_LOGISTIC_LIMITATION},
 //                {"valid from", DESC_VALID_FROM},

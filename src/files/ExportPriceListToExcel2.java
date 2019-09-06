@@ -11,7 +11,6 @@ import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
-import ui_windows.product.productEditorWindow.ProductEditorWindow;
 import utils.Utils;
 
 import java.io.File;
@@ -52,23 +51,29 @@ public class ExportPriceListToExcel2 {
 
     private boolean loadTemplate() {
         templateFile = new File(CoreModule.getFolders().getAppFolder() + "\\" + TEMPLATE_FILE);
-        String targetFileName = priceList.getFileName().isEmpty() ? "PriceList" : priceList.getFileName();
-        resultFile = new File(CoreModule.getFolders().getAppFolder() + "\\" + targetFileName + ".xlsx");
-
         if (templateFile == null || !templateFile.exists()) {
-            File dialogFile = Dialogs.selectNOWFile(MainWindow.getMainStage());
+            File dialogFile = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор файла шаблона",
+                    Dialogs.EXCEL_FILES, null);
             if (dialogFile == null || !dialogFile.exists()) {
                 Dialogs.showMessage("Формирование прайс листа", "Не найден файл шаблона.");
                 return false;
             }
-
             templateFile = dialogFile;
+        }
+
+        String targetFileName = priceList.getFileName().isEmpty() ? "PriceList" : priceList.getFileName();
+        resultFile = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор места сохранения",
+                Dialogs.EXCEL_FILES, targetFileName + ".xlsx");
+        if (resultFile == null) {
+            Dialogs.showMessage("Выбор места сохранения", "Операция отменена, так как не было выбрано " +
+                    "место сохранения");
+            return false;
         }
 
         try {
             Files.copy(templateFile.toPath(), resultFile.toPath(), REPLACE_EXISTING);
         } catch (Exception e) {
-            Dialogs.showMessage("Формирование файла прайс листа", e.getMessage());
+            Dialogs.showMessage("Ошибка копирования шаблона", "Ошибка копирования файла шаблона: " + e.getMessage());
             return false;
         }
 
@@ -121,6 +126,7 @@ public class ExportPriceListToExcel2 {
                 }
             });
         } catch (IOException e) {
+            Dialogs.showMessage("Формирование прайс-листа", "Произошла ошибка " + e.getMessage());
             System.out.println(e.getMessage());
         }
     }

@@ -14,6 +14,9 @@ import java.io.File;
 import java.util.Optional;
 
 public class Dialogs {
+    public static final FileChooser.ExtensionFilter EXCEL_FILES = new FileChooser.ExtensionFilter("Файлы Excel", "*.xls*");
+    public static final FileChooser.ExtensionFilter ALL_FILES = new FileChooser.ExtensionFilter("Все файлы", "*.*");
+    public static final FileChooser.ExtensionFilter DATABASE_FILES = new FileChooser.ExtensionFilter("База данных","certificateDB.db");
 
     public static String textInput(String title, String text, String defaultValue) {
         TextInputDialog dialog = new TextInputDialog();
@@ -61,17 +64,28 @@ public class Dialogs {
         return file;
     }
 
-    public static String selectFolder(Stage stage) {
+    public File selectAnyFile(Stage stage, String windowTitle, FileChooser.ExtensionFilter fileFilter, String fileName){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(windowTitle);
+        if (fileFilter != null) fileChooser.getExtensionFilters().add(fileFilter);
+        fileChooser.setInitialFileName(fileName);
+
+        return fileName == null ? fileChooser.showOpenDialog(stage) : fileChooser.showSaveDialog(stage);
+    }
+
+    public static File selectFolder(Stage stage) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Выберите папку");
         File file = directoryChooser.showDialog(stage) ;//Указываем текущую сцену
 
         if (file == null) return null;
 
-        String parts[] = file.getAbsolutePath().split("\\\\");
+//        String parts[] = file.getAbsolutePath().split("\\\\");
 
-        return parts[parts.length - 1];
+//        return parts[parts.length - 1];
+        return file;
     }
+
 
     public static void showMessage(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

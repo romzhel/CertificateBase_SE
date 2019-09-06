@@ -54,10 +54,8 @@ public class FileImport {
                 mwc.selectLastImportResult();
             }
 
-            ProductsDB request = new ProductsDB();
-
-            request.putData(lastComparationResult.getNewItems());// save new items to db
-            request.updateData(new ArrayList<>(changedItemsForDB));//save changed items to db
+            if (lastComparationResult.getNewItems().size() > 0) new ProductsDB().putData(lastComparationResult.getNewItems());// save new items to db
+            if (changedItemsForDB.size() > 0) new ProductsDB().updateData(new ArrayList<>(changedItemsForDB));//save changed items to db
 
             System.out.println("writing to DB finished");
 

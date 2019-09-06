@@ -31,7 +31,7 @@ public class RequirementTypeEditorWindowController implements Initializable {
     }
 
     public void selectFolder(){
-        RequirementTypeEditorWindowActions.selectFolder();
+//        RequirementTypeEditorWindowActions.selectFolder();
     }
 
 

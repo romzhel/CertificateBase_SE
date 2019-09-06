@@ -35,7 +35,7 @@ public class Folders {
             if (dbFile == null) {
                 Dialogs.showMessage("Подключение к базе данных", "Файл базы данных не был найден. Как это " +
                         "сообщение будет закрыто откроется диалог открытия файла. Местонахождение файла:\n\n" +
-                        "SBT.RU: \\ SBT \\ FS \\ Base");
+                        "SBT.RU:\\SBT\\FS\\Base\\");
                 dbFile = Dialogs.selectDBFile(MainWindow.getMainStage());
 
                 //create new path file

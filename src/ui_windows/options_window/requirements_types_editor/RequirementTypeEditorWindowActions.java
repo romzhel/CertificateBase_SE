@@ -54,11 +54,11 @@ public class RequirementTypeEditorWindowActions {
     }
 
     public static void selectFolder() {
-        String folderName = Dialogs.selectFolder(RequirementTypeEditorWindow.getStage());
+       /* String folderName = Dialogs.selectFolder(RequirementTypeEditorWindow.getStage());
         if (folderName != null) {
             Utils.setControlValue((AnchorPane) RequirementTypeEditorWindow.getStage().getScene().getRoot(),
                     "tfFolderName", folderName);
-        }
+        }*/
     }
 
     public static void displayData() {
