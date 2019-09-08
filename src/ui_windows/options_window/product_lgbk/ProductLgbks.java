@@ -126,12 +126,8 @@ public class ProductLgbks {
         return result;
     }
 
-    public TreeSet<String> getLgbkNamesFromTable(ArrayList<Product> tableItems) {
-        TreeSet<String> result = new TreeSet<>();
-        for (Product product : tableItems) {
-            result.add("[" + product.getLgbk() + "] " + getByLgbkName(product.getLgbk()).getDescriptionRuEn());
-        }
-        return result;
+    public String getLgbkCombineText (Product product) {
+        return "[" + product.getLgbk() + "] " + getByLgbkName(product.getLgbk()).getDescriptionRuEn();
     }
 
     public ArrayList<ProductLgbk> getProductLgbks() {
