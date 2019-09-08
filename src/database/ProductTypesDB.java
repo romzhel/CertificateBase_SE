@@ -53,7 +53,6 @@ public class ProductTypesDB extends DbRequest {
                 if (rs.next()) {
                     pt.setId(rs.getInt(1));
 //                        System.out.println("new product type ID = " + rs.getInt(1));
-                    finalActions();
                     return true;
                 }
             } else {
@@ -61,8 +60,9 @@ public class ProductTypesDB extends DbRequest {
             }
         } catch (SQLException e) {
             logAndMessage("exception of writing product type to BD");
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -83,14 +83,14 @@ public class ProductTypesDB extends DbRequest {
 
             for (int res : results) {
                 if (res > 0) {
-                    finalActions();
                     return true;//
                 }
             }
         } catch (SQLException e) {
             logAndMessage("exception of removing product type(s) from DB");
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 }

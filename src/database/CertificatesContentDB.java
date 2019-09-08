@@ -56,7 +56,6 @@ public class CertificatesContentDB extends DbRequest {
 
                 if (rs.next()) {
                     content.setId(rs.getInt(1));
-                    finalActions();
                     return true;
                 }
             } else {
@@ -65,8 +64,9 @@ public class CertificatesContentDB extends DbRequest {
 
         } catch (SQLException e) {
             logAndMessage("exception of writing content to BD: " + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -79,15 +79,15 @@ public class CertificatesContentDB extends DbRequest {
             MainWindow.setProgress(1.0);
 
             if (updateData.executeUpdate() > 0) {//successful
-                finalActions();
                 return true;
             } else {
                 logAndMessage("CertificateContent DB update error");
             }
         } catch (SQLException e) {
             logAndMessage("exception of updating content in BD: " + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -103,15 +103,15 @@ public class CertificatesContentDB extends DbRequest {
             int results[] = deleteData.executeBatch();
 
             for (int res : results) {
-                if (res > 0) {
-                    finalActions();
-                    return true;//error
+                if (res == 0) {
+                    return false;//error
                 }
             }
         } catch (SQLException e) {
             logAndMessage("exception of removing content from DB: " + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
-        return false;
+        return true;
     }
 }

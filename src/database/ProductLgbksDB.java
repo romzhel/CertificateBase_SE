@@ -62,7 +62,6 @@ public class ProductLgbksDB extends DbRequest {
                 if (rs.next()) {
                     pl.setId(rs.getInt(1));
 //                        System.out.println("new product lgbk ID = " + rs.getInt(1));
-                    finalActions();
                     return true;
                 }
             } else {
@@ -70,8 +69,9 @@ public class ProductLgbksDB extends DbRequest {
             }
         } catch (SQLException e) {
             logAndMessage("exception of writing to BD (lgbk)");
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -94,15 +94,15 @@ public class ProductLgbksDB extends DbRequest {
             int result = updateData.executeUpdate();
 
             if (result > 0) {//successful
-                finalActions();
                 return true;
             } else {
                 logAndMessage("Ошибка обновления LGBK в БД");
             }
         } catch (SQLException e) {
             logAndMessage("exception of updating lgbk in BD " + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -115,14 +115,14 @@ public class ProductLgbksDB extends DbRequest {
 
             for (int res : results) {
                 if (res > 0) {
-                    finalActions();
                     return true;//
                 }
             }
         } catch (SQLException e) {
             logAndMessage("exception of removing lgbk from DB");
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 }

@@ -97,7 +97,7 @@ public class ProductEditorWindowActions {
                 productsToUpdate.addAll(multiEditor.getEditedItems());
             }
 //            new Thread(() -> new ProductsDB().updateData(new ArrayList<Product>(productsToUpdate))).start(); //update in DB
-            boolean saveToDbResult = new ProductsDB().updateData(new ArrayList<Product>(productsToUpdate)); //update in DB
+            boolean saveToDbResult = new ProductsDB().updateData(productsToUpdate); //update in DB
 
             if (saveToDbResult){
                 CoreModule.filter();

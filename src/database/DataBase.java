@@ -38,14 +38,15 @@ public class DataBase {
 
     public boolean disconnect() {
         try {
-            dbConnection.close();
-            System.out.println("DB disconnected");
+            if (!dbConnection.isClosed()) {
+                dbConnection.close();
+                System.out.println("DB disconnected");
+            }
             return true;
         } catch (SQLException e2) {
             System.out.println("error of DB closing " + e2.getMessage());
+            return false;
         }
-
-        return false;
     }
 
     public Connection reconnect() {

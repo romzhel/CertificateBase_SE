@@ -61,7 +61,6 @@ public class CertificatesDB extends DbRequest {
                 if (rs.next()) {
                     cert.setId(rs.getInt(1));
 //                        System.out.println("new ID = " + rs.getInt(1));
-                    finalActions();
                     return true;
                 }
             } else {
@@ -70,8 +69,9 @@ public class CertificatesDB extends DbRequest {
 
         } catch (SQLException e) {
             logAndMessage("Certificate BD inserting error " + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -90,7 +90,6 @@ public class CertificatesDB extends DbRequest {
             MainWindow.setProgress(1.0);
 
             if (updateData.executeUpdate() > 0) {//successful
-                finalActions();
                 return true;
             } else {
                 logAndMessage("Certificate BD updating error ");
@@ -98,8 +97,9 @@ public class CertificatesDB extends DbRequest {
 
         } catch (SQLException e) {
             logAndMessage("Certificate BD updating error " + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -110,15 +110,15 @@ public class CertificatesDB extends DbRequest {
             MainWindow.setProgress(1.0);
 
             if (deleteData.executeUpdate() > 0) {//successful
-                finalActions();
                 return true;
             } else {
                 logAndMessage("Certificate BD deleting error");
             }
         } catch (SQLException e) {
             logAndMessage("Certificate BD deleting error " + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 }

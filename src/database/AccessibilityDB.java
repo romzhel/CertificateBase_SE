@@ -64,7 +64,6 @@ public class AccessibilityDB extends DbRequest {
                 if (rs.next()) {
                     oa.setId(rs.getInt(1));
 //                        System.out.println("new order accebility ID = " + rs.getInt(1));
-                    finalActions();
                     return true;
                 }
             } else {
@@ -73,8 +72,9 @@ public class AccessibilityDB extends DbRequest {
 
         } catch (SQLException e) {
             logAndMessage("exception of order accessibility writing to BD" + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -93,7 +93,6 @@ public class AccessibilityDB extends DbRequest {
             updateData.setInt(9, oa.getId());
 
             if (updateData.executeUpdate() > 0) {//successful
-                finalActions();
                 return true;
             } else {
                 logAndMessage("OrderAccessibility DB update error");
@@ -101,8 +100,9 @@ public class AccessibilityDB extends DbRequest {
 
         } catch (SQLException e) {
             logAndMessage("exception of order accessibility writing to BD" + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -113,7 +113,6 @@ public class AccessibilityDB extends DbRequest {
             deleteData.setInt(1, oa.getId());
 
             if (deleteData.executeUpdate() > 0) {//successful
-                finalActions();
                 return true;
             } else {
                 logAndMessage("OrderAccessibility DB delete error");
@@ -121,8 +120,9 @@ public class AccessibilityDB extends DbRequest {
 
         } catch (SQLException e) {
             logAndMessage("exception of order accessibility deleting in BD" + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 }

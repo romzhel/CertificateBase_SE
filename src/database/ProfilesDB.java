@@ -59,7 +59,6 @@ public class ProfilesDB extends DbRequest {
 
                 if (rs.next()) {
                     prof.setId(rs.getInt(1));
-                    finalActions();
                     return true;
                 }
             } else {
@@ -68,8 +67,9 @@ public class ProfilesDB extends DbRequest {
 
         } catch (SQLException e) {
             logAndMessage("profile inserting into DB error");
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -87,15 +87,15 @@ public class ProfilesDB extends DbRequest {
             MainWindow.setProgress(1.0);
 
             if (updateData.executeUpdate() > 0) {//successful
-                finalActions();
                 return true;
             } else {
                 logAndMessage("profile updating in DB error");
             }
         } catch (SQLException e) {
             logAndMessage("profile updating in DB error");
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -110,14 +110,14 @@ public class ProfilesDB extends DbRequest {
 
             for (int res : results) {
                 if (res > 0) {
-                    finalActions();
                     return true;//success
                 }
             }
         } catch (SQLException e) {
             logAndMessage("exception of removing product type(s) from DB");
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 }

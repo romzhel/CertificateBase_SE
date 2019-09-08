@@ -53,7 +53,6 @@ public class RequirementTypesDB extends DbRequest {
                 if (rs.next()) {
                     ct.setId(rs.getInt(1));
 //                        System.out.println("new ID = " + rs.getInt(1));
-                    finalActions();
                     return true;
                 }
             } else {
@@ -61,8 +60,9 @@ public class RequirementTypesDB extends DbRequest {
             }
         } catch (SQLException e) {
             logAndMessage("SQL exception inserting cert types");
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -75,15 +75,15 @@ public class RequirementTypesDB extends DbRequest {
             MainWindow.setProgress(1.0);
 
             if (updateData.executeUpdate() > 0) {//successful
-                finalActions();
                 return true;
             } else {
                 logAndMessage("SQL exception updating cert types");
             }
         } catch (SQLException e) {
             logAndMessage("SQL exception updating cert types " + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -94,15 +94,15 @@ public class RequirementTypesDB extends DbRequest {
             MainWindow.setProgress(1.0);
 
             if (deleteData.executeUpdate() > 0) {//successful
-                finalActions();
                 return true;
             } else {
                 logAndMessage("SQL exception inserting cert types");
             }
         } catch (SQLException e) {
             logAndMessage("SQL exception deleting cert types");
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 }

@@ -54,7 +54,6 @@ public class PriceListsDB extends DbRequest {
                 if (rs.next()) {
                     pl.setId(rs.getInt(1));
 //                        System.out.println("new ID = " + rs.getInt(1));
-                    finalActions();
                     return true;
                 }
             } else {
@@ -62,8 +61,9 @@ public class PriceListsDB extends DbRequest {
             }
         } catch (SQLException e) {
             logAndMessage("exception of adding to priceList BD, " + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -78,15 +78,15 @@ public class PriceListsDB extends DbRequest {
             updateData.setInt(4, pl.getId());
 
             if (updateData.executeUpdate() > 0) {//successful
-                finalActions();
                 return true;
             } else {
                 logAndMessage("PriceList BD updating error ");
             }
         } catch (SQLException e) {
             logAndMessage("exception of updating to priceList BD, " + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -97,15 +97,15 @@ public class PriceListsDB extends DbRequest {
             MainWindow.setProgress(1.0);
 
             if (deleteData.executeUpdate() > 0) {//successful
-                finalActions();
                 return true;
             } else {
                 logAndMessage("PriceList BD delete error ");
             }
         } catch (SQLException e) {
             logAndMessage("exception of deleting from BD: " + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 }

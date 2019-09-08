@@ -60,7 +60,6 @@ public class UsersDB extends DbRequest {
                 if (rs.next()) {
                     user.setId(rs.getInt(1));
 //                        System.out.println("new order accebility ID = " + rs.getInt(1));
-                    finalActions();
                     return true;
                 }
             } else {
@@ -68,9 +67,10 @@ public class UsersDB extends DbRequest {
             }
         } catch (SQLException e) {
             logAndMessage("SQL exception users inserting " + e.getMessage());
+        } finally {
+            finalActions();
         }
 
-        finalActions();
         return false;
     }
 
@@ -87,15 +87,15 @@ public class UsersDB extends DbRequest {
             updateData.setInt(7, user.getId());
 
             if (updateData.executeUpdate() > 0) {//successful
-                finalActions();
                 return true;
             } else {
                 logAndMessage("SQL exception users updating ");
             }
         } catch (SQLException e) {
             logAndMessage("SQL exception users updating " + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -106,15 +106,15 @@ public class UsersDB extends DbRequest {
             deleteData.setInt(1, user.getId());
 
             if (deleteData.executeUpdate() > 0) {//successful
-                finalActions();
                 return true;
             } else {
                 logAndMessage("SQL exception users deleting ");
             }
         } catch (SQLException e) {
             logAndMessage("SQL exception users updating " + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 }

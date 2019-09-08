@@ -51,7 +51,6 @@ public class ProductFamiliesDB extends DbRequest {
 
                 if (rs.next()) {
                     pf.setId(rs.getInt(1));
-                    finalActions();
                     return true;
                 }
             } else {
@@ -59,8 +58,9 @@ public class ProductFamiliesDB extends DbRequest {
             }
         } catch (SQLException e) {
             logAndMessage("exception of inserting to BD (family)");
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -73,15 +73,15 @@ public class ProductFamiliesDB extends DbRequest {
             MainWindow.setProgress(1.0);
 
             if (updateData.executeUpdate() > 0) {//successful
-                finalActions();
                 return true;
             } else {
                 logAndMessage("exception of updating family in BD");
             }
         } catch (SQLException e) {
             logAndMessage("exception of updating family in BD");
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 
@@ -96,14 +96,14 @@ public class ProductFamiliesDB extends DbRequest {
 
             for (int res : results) {
                 if (res > 0) {
-                    finalActions();
                     return true;//
                 }
             }
         } catch (SQLException e) {
             logAndMessage("exception of removing family from DB " + e.getMessage());
+        } finally {
+            finalActions();
         }
-        finalActions();
         return false;
     }
 }

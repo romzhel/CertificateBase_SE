@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProductsDB extends DbRequest {
 
@@ -49,7 +50,7 @@ public class ProductsDB extends DbRequest {
         return products;
     }
 
-    public boolean updateData(ArrayList<Product> alpr) {
+    public boolean updateData(List<Product> alpr) {
         long ts = System.currentTimeMillis();//test
 
         MainWindow.setProgress(0.01);
@@ -116,8 +117,9 @@ public class ProductsDB extends DbRequest {
                 logAndMessage("Ошибка отката неудачного обновления продуктов в БД");
             }
             return false;
+        } finally {
+            finalActions();
         }
-        finalActions();
 
         System.out.println(String.valueOf(System.currentTimeMillis() - ts));//test
         return true;
@@ -187,10 +189,10 @@ public class ProductsDB extends DbRequest {
                 System.out.println(e.getMessage());
             }
             return false;
+        } finally {
+            finalActions();
         }
-        finalActions();
         return true;
-
     }
 
     public boolean deleteData(Object object) {
