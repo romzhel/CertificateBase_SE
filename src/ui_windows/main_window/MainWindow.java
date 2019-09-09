@@ -22,7 +22,7 @@ import java.io.IOException;
 import static ui_windows.options_window.profile_editor.SimpleRight.*;
 
 public class MainWindow extends Application {
-    private String version = "1.0.8.3 от 08.09.2019";
+    private String version = "1.0.8.4 от 08.09.2019";
     private static Stage mainStage;
     private static AnchorPane rootAnchorPane;
     private static ProgressBar progressBar;

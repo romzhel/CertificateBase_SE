@@ -74,8 +74,6 @@ public class FilterWindowController implements Initializable {
                 }
             });
         });
-
-
     }
 
     public void initFamilySelector() {

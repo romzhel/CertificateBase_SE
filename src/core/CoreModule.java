@@ -3,6 +3,8 @@ package core;
 import database.DataBase;
 import files.Folders;
 import javafx.application.Platform;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.filter_window.Filter;
@@ -28,6 +30,7 @@ import ui_windows.product.Products;
 import utils.Utils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 public class CoreModule {
@@ -146,8 +149,10 @@ public class CoreModule {
 
             Platform.runLater(() -> {
                 if (tableRenewedListener != null) tableRenewedListener.getLgbksForItems(accessibleLgbks);
+
                 tableView.getItems().clear();
                 tableView.getItems().addAll(result);
+                tableView.sort();
                 Utils.setControlValue(MainWindow.getRootAnchorPane(), "lbRecordCount", Integer.toString(tableView.getItems().size()));
                 tableView.refresh();
             });

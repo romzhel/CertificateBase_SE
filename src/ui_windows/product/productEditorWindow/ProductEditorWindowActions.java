@@ -4,6 +4,7 @@ import core.CoreModule;
 import database.ProductsDB;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -18,6 +19,7 @@ import ui_windows.product.ProductTypes;
 import utils.Utils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 import static ui_windows.Mode.ADD;
@@ -101,7 +103,6 @@ public class ProductEditorWindowActions {
 
             if (saveToDbResult){
                 CoreModule.filter();
-                CoreModule.getProducts().getTableView().refresh();
                 stage.close();
             }
         }
