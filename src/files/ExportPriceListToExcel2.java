@@ -93,23 +93,22 @@ public class ExportPriceListToExcel2 {
         priceService = new Structure();
 
         for (Product product : CoreModule.getProducts().getItems()) {
+            String status = product.getDchain();
 
             LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
             boolean globalNotUsed = lap == null ? true : lap.getLgbkItem().isNotUsed() || lap.getLgbkParent().isNotUsed();
-            boolean isInPrice = product.isPrice() && !product.isNotused() && !globalNotUsed;
-            boolean hasDchain = product.getDchain().equals("28") || product.getDchain().equals("30") ||
-                    (product.getDchain().isEmpty() && isSpProduct(product));
+            boolean isInPrice = product.isPrice() && !product.isNotused() && !globalNotUsed && !isNewProduct(product);
 
-            if (isInPrice && hasDchain) {
+            if (isInPrice && isPricePosition(product)) {
                 priceRuEn.addProduct(product);
-            } else if (isInPrice) {
+            } else if (isInPrice && isServicePosition(product)) {
                 priceService.addProduct(product);
             }
         }
 
-        priceRuEn.export(excelDoc.getSheetAt(0), 1);
-        priceRuEn.export(excelDoc.getSheetAt(1), 1);
-        priceService.export(excelDoc.getSheetAt(2), 1);
+        priceRuEn.export(excelDoc.getSheetAt(0), 2);
+//        priceRuEn.export(excelDoc.getSheetAt(1), 1);
+        priceService.export(excelDoc.getSheetAt(1), 2);
 
         System.out.println("price items: " + priceRuEn.getSize() + " / " + priceService.getSize());
 
@@ -291,8 +290,6 @@ public class ExportPriceListToExcel2 {
                     new ProductLgbk(lgroupName, name));
 
             if (lap != null && lap.getLgbkItem() != null && lap.getLgbkParent() != null) {
-//                cell.setCellValue(CoreModule.getProductLgbks().getByLgbkName(lgroupName).getDescriptionRuEn() + " / " + lap.getLgbkItem().getDescriptionRuEn());
-
                 String enText = CoreModule.getProductLgbks().getByLgbkName(lgroupName).getDescriptionEnRu() + " / " +
                         lap.getLgbkItem().getDescriptionEnRu();
                 String ruText = CoreModule.getProductLgbks().getByLgbkName(lgroupName).getDescriptionRuEn() + " / " +
@@ -332,14 +329,15 @@ public class ExportPriceListToExcel2 {
                     cell.setCellValue(product.getDescriptionRuEn());
                 }
 
-                boolean dchain2830 = product.getDchain().contains("28") || product.getDchain().contains("30");
                 boolean licence = product.getLgbk().equals("H3FQ") || product.getLgbk().equals("H5ET");
-                boolean sp = isSpProduct(product);
                 boolean priceEmpty = product.getLocalPrice() == 0.0;
 
-                if (!licence && dchain2830 && !sp && !priceEmpty) {
+                if (isPricePosition(product) && !licence && !isSpProduct(product) && !priceEmpty) {
                     cell = row.createCell(colIndex++, CellType.NUMERIC);
                     cell.setCellValue(product.getLocalPrice());
+                } else if (isServicePosition(product) && !licence && !isSpProduct(product) && !priceEmpty) {//service positions
+                    cell = row.createCell(colIndex++, CellType.NUMERIC);
+                    cell.setCellValue(product.getLocalPrice() * 0.7);
                 } else {
                     cell = row.createCell(colIndex++, CellType.STRING);
 
@@ -350,7 +348,7 @@ public class ExportPriceListToExcel2 {
                     }
                 }
 
-                if (sheet.getSheetName().length() < 5) {
+                if (!sheet.getSheetName().toLowerCase().contains("сервисные")) {
                     cell = row.createCell(colIndex++, CellType.NUMERIC);
                     cell.setCellValue(product.getPreparedLeadTime());
                 }
@@ -367,7 +365,10 @@ public class ExportPriceListToExcel2 {
                 /*CertificatesChecker cc = CoreModule.getCertificates().getCertificatesChecker();
                 cc.check(product);
                 cell = row.createCell(colIndex++, CellType.STRING);
-                cell.setCellValue(cc.getCheckStatusResult());*/
+                cell.setCellValue(cc.getCheckStatusResult());
+
+                cell = row.createCell(colIndex++, CellType.STRING);
+                cell.setCellValue(product.getDchain());*/
             }
             return rowIndex;
         }
@@ -379,5 +380,27 @@ public class ExportPriceListToExcel2 {
         return id == 24 || productFamId;
     }
 
+    private boolean isEvacProduct(Product product) {
+        int id = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
+        boolean productFamId = product.getFamily() == 28;
+        return id == 28 || productFamId;
+    }
+
+    private boolean isNewProduct(Product product) {
+        String status = product.getDchain();
+        return status.equals("0") || status.equals("20") || status.equals("22") || status.equals("23") || status.equals("24");
+    }
+
+    private boolean isPricePosition(Product product) {
+        String status = product.getDchain();
+        return status.equals("28") || status.equals("30") || (status.isEmpty() && isSpProduct(product));
+//                /*|| isEvacProduct(product)*/);//эвакуация
+    }
+
+    private boolean isServicePosition(Product product) {
+        String status = product.getDchain();
+        return status.equals("36") || status.equals("52") || status.equals("56") ||status.equals("58") ||
+                status.equals("60") || status.equals("61") || status.equals("62");
+    }
 
 }
