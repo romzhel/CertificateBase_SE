@@ -314,18 +314,18 @@ public class ExportPriceListToExcel2 {
 
             for (Product product : products) {
                 row = sheet.createRow(rowIndex++);
-
-                cell = row.createCell(0, CellType.STRING);
+                int colIndex = 0;
+                cell = row.createCell(colIndex++, CellType.STRING);
                 if (!product.getProductForPrint().isEmpty()) {
                     cell.setCellValue(product.getProductForPrint());
                 } else {
                     cell.setCellValue(product.getMaterial());
                 }
 
-                cell = row.createCell(1, CellType.STRING);
+                cell = row.createCell(colIndex++, CellType.STRING);
                 cell.setCellValue(product.getArticle());
 
-                cell = row.createCell(2, CellType.STRING);
+                cell = row.createCell(colIndex++, CellType.STRING);
                 if (sheet.getSheetName().toLowerCase().contains("en")) {
                     cell.setCellValue(product.getDescriptionen());
                 } else {
@@ -338,10 +338,10 @@ public class ExportPriceListToExcel2 {
                 boolean priceEmpty = product.getLocalPrice() == 0.0;
 
                 if (!licence && dchain2830 && !sp && !priceEmpty) {
-                    cell = row.createCell(3, CellType.NUMERIC);
+                    cell = row.createCell(colIndex++, CellType.NUMERIC);
                     cell.setCellValue(product.getLocalPrice());
                 } else {
-                    cell = row.createCell(3, CellType.STRING);
+                    cell = row.createCell(colIndex++, CellType.STRING);
 
                     if (sheet.getSheetName().toLowerCase().contains("en")) {
                         cell.setCellValue("By request");
@@ -351,23 +351,23 @@ public class ExportPriceListToExcel2 {
                 }
 
                 if (sheet.getSheetName().length() < 5) {
-                    cell = row.createCell(4, CellType.NUMERIC);
+                    cell = row.createCell(colIndex++, CellType.NUMERIC);
                     cell.setCellValue(product.getPreparedLeadTime());
                 }
 
-                cell = row.createCell(5, CellType.NUMERIC);
+                cell = row.createCell(colIndex++, CellType.NUMERIC);
                 cell.setCellValue(product.getMinOrder());
 
-                cell = row.createCell(6, CellType.STRING);
+                cell = row.createCell(colIndex++, CellType.STRING);
                 cell.setCellValue(product.getLgbk()/*.concat("-").concat(product.getHierarchy())*/);
 
-                cell = row.createCell(7, CellType.NUMERIC);
+                cell = row.createCell(colIndex++, CellType.NUMERIC);
                 cell.setCellValue(product.getWeight());
 
-                CertificatesChecker cc = CoreModule.getCertificates().getCertificatesChecker();
+                /*CertificatesChecker cc = CoreModule.getCertificates().getCertificatesChecker();
                 cc.check(product);
-                cell = row.createCell(8, CellType.STRING);
-                cell.setCellValue(cc.getCheckStatusResult());
+                cell = row.createCell(colIndex++, CellType.STRING);
+                cell.setCellValue(cc.getCheckStatusResult());*/
             }
             return rowIndex;
         }
