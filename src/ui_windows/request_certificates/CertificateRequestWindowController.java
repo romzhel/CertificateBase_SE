@@ -121,12 +121,12 @@ public class CertificateRequestWindowController implements Initializable {
         if (excelFile == null) {
             Dialogs.showMessage("Ошибка создания файла Excel", "Не удалось создать файл Excel, тем не " +
                     "менее файлы сертификатов помещены в буфер обмена");
-            Utils.copyFilsToClipboard(new ArrayList<>(allFiles));
+            Utils.copyFilesToClipboard(new ArrayList<>(allFiles));
             return;
         }
 
         allFiles.add(excelFile);
-        Utils.copyFilsToClipboard(new ArrayList<>(allFiles));
+        Utils.copyFilesToClipboard(new ArrayList<>(allFiles));
 
         try {
             Desktop.getDesktop().open(excelFile);

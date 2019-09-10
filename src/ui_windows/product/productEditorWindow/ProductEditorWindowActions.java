@@ -4,23 +4,19 @@ import core.CoreModule;
 import database.ProductsDB;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import ui_windows.main_window.file_import_window.ColumnsMapper2;
+import ui_windows.main_window.file_import_window.ColumnsMapper;
 import ui_windows.main_window.file_import_window.FileImportTableItem;
 import ui_windows.main_window.file_import_window.ObjectsComparator2;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
-import ui_windows.product.ProductTypes;
 import utils.Utils;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
 
 import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
@@ -75,7 +71,7 @@ public class ProductEditorWindowActions {
                 fiti.add(new FileImportTableItem("", "needaction", true, true, -1, false));
                 fiti.add(new FileImportTableItem("", "notused", true, true, -1, false));
 
-                ColumnsMapper2 mapper = new ColumnsMapper2();
+                ColumnsMapper mapper = new ColumnsMapper();
                 ObjectsComparator2 comparator = new ObjectsComparator2(pr, changedProduct, false, mapper.getFieldsForImport(fiti));
 
                 if (comparator.getResult().isNeedUpdateInDB()) {//was changed

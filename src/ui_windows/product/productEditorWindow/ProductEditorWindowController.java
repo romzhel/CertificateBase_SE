@@ -5,18 +5,10 @@ import core.Dialogs;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.families_editor.ProductFamily;
@@ -195,7 +187,7 @@ public class ProductEditorWindowController implements Initializable {
         File file = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + cv.getFile());
         ArrayList<File> files = new ArrayList<>();
         if (file.exists()) files.add(file);
-        Utils.copyFilsToClipboard(files);
+        Utils.copyFilesToClipboard(files);
     }
 
     public void getAllCertificatesFiles() {
@@ -204,7 +196,7 @@ public class ProductEditorWindowController implements Initializable {
             File file = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + cv.getFile());
             if (file.exists()) files.add(file);
         }
-        Utils.copyFilsToClipboard(files);
+        Utils.copyFilesToClipboard(files);
     }
 
     public void configNorms() {

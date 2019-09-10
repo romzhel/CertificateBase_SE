@@ -14,17 +14,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ExcelFile2 {
+public class ExcelFile {
     private File file;
     private Workbook book;
     private Sheet currentSheet;
     private RowData currentSheetTitles;
     private DataSize sheetDataSize;
     private int curRow;
-    private ColumnsMapper2 mapper;
+    private ColumnsMapper mapper;
 
-    public ExcelFile2() {
-        mapper = new ColumnsMapper2();
+    public ExcelFile() {
+        mapper = new ColumnsMapper();
     }
 
     public boolean open(File fileForOpening) {
@@ -160,7 +160,7 @@ public class ExcelFile2 {
         file = null;
     }
 
-    public ColumnsMapper2 getMapper() {
+    public ColumnsMapper getMapper() {
         return mapper;
     }
 }

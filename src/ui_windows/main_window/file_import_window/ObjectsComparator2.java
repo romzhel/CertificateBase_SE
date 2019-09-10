@@ -12,12 +12,12 @@ import static ui_windows.main_window.file_import_window.NamesMapping.FIELD_ORDER
 public class ObjectsComparator2 {
     private ObjectsComparatorResult comparatorResult;
 
-    public ObjectsComparator2(Object obj1, Object obj2, boolean emptyTextProtection, ColumnsMapper2.FieldForImport... fieldsForImport) {
+    public ObjectsComparator2(Object obj1, Object obj2, boolean emptyTextProtection, ColumnsMapper.FieldForImport... fieldsForImport) {
         comparatorResult = new ObjectsComparatorResult();
         Object value1;
         Object value2;
         try {
-            for (ColumnsMapper2.FieldForImport field : fieldsForImport) {
+            for (ColumnsMapper.FieldForImport field : fieldsForImport) {
 
                 if (field.getField().getName().toLowerCase().equals(FIELD_ORDER_NUMBER.toLowerCase())) continue;
 

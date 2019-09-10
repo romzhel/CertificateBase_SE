@@ -1,6 +1,5 @@
 package ui_windows.product;
 
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import core.CoreModule;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -34,9 +33,9 @@ public class MultiEditor {
         compare("archive", pewc.cbxArchive);
         compare("lgbk", pewc.tfLgbk);
         compare("hierarchy", pewc.tfHierarchy);
-        compare("dchain", pewc.tfAccessibility);
+//        compare("dchain", pewc.tfAccessibility);//пишется в базу с расшифровкой, НЕ ВКЛЮЧАТЬ
         compare("endofservice", pewc.tfEndOfService);
-        compare("country", pewc.tfCountry);
+//        compare("country", pewc.tfCountry); //пишется в базу с расшифровкой, НЕ ВКЛЮЧАТЬ
         compare("comments", pewc.taComments);
         compare("type_id", pewc.cbType);
         compare("descriptionru", pewc.taDescription);
@@ -151,7 +150,7 @@ public class MultiEditor {
         return null;
     }
 
-    public FieldsAndControls getFieldAndControl(String fieldName){
+    public FieldsAndControls getFieldAndControl(String fieldName) {
         for (FieldsAndControls fac : fieldsAndControls) {
             if (fac.getField().getName().equals(fieldName)) return fac;
         }

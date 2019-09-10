@@ -3,12 +3,9 @@ package ui_windows.main_window;
 import core.CoreModule;
 import core.Dialogs;
 import files.ExportPriceListToExcel;
-import files.ExportPriceListToExcel2;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -88,13 +85,6 @@ public class MainWindowsController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        tvTable.setOnSort(new EventHandler<SortEvent<TableView<Product>>>() {
-            @Override
-            public void handle(SortEvent<TableView<Product>> event) {
-                ObservableList<TableColumn<Product,?>> sortedRules = tvTable.getSortOrder();
-            }
-        });
-
         CoreModule.getProducts().setTableView(tvTable);
         MainWindow.setProgressBar(pbExecuted);
 
@@ -213,7 +203,7 @@ public class MainWindowsController implements Initializable {
 
             mi.setOnAction(event -> {
                 int index = mPriceList.getItems().indexOf(mi);
-                new ExportPriceListToExcel2(CoreModule.getPriceLists().getItems().get(index));
+                new ExportPriceListToExcel(CoreModule.getPriceLists().getItems().get(index));
             });
         }
     }

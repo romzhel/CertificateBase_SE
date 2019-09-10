@@ -303,7 +303,8 @@ public class Utils {
     }
 
     public static String getValueInBrackets(String line) {
-        if (line.length() > 0) return line.substring(line.indexOf('(') + 1, line.indexOf(')'));
+        if (line == null || line.isEmpty()) return "";
+        if (line.contains("(") ) return line.substring(line.indexOf('(') + 1, line.indexOf(')'));
         else return "";
     }
 
@@ -387,7 +388,7 @@ public class Utils {
         }
     }
 
-    public static void copyFilsToClipboard(ArrayList<File> files) {
+    public static void copyFilesToClipboard(ArrayList<File> files) {
         Clipboard clipboard = Clipboard.getSystemClipboard();
 
         HashSet<File> resFiles = new HashSet<>(files);

@@ -1,21 +1,19 @@
 package ui_windows.product;
 
 import core.CoreModule;
-import javafx.scene.paint.Color;
-import ui_windows.main_window.file_import_window.ColumnsMapper2;
-import ui_windows.main_window.file_import_window.NamesMapping;
-import ui_windows.main_window.file_import_window.RowData;
-import ui_windows.main_window.filter_window.Filter;
-import ui_windows.options_window.product_lgbk.LgbkAndParent;
-import ui_windows.options_window.product_lgbk.NormsList;
-import ui_windows.main_window.file_import_window.ColumnsMapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import ui_windows.main_window.file_import_window.ColumnsMapper;
+import ui_windows.main_window.file_import_window.RowData;
+import ui_windows.main_window.filter_window.Filter;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
+import ui_windows.options_window.product_lgbk.LgbkAndParent;
+import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import utils.Countries;
 import utils.Utils;
@@ -66,7 +64,8 @@ public class Product {
     private double weight;
     private double localPrice;
 
-    public Product() {}
+    public Product() {
+    }
 
     public Product(AnchorPane root) {
         id = 0;
@@ -99,35 +98,7 @@ public class Product {
         replacement = Utils.getControlValue(root, "tfReplacement");
     }
 
-    public Product(ColumnsMapper mapper) {
-        id = 0;
-        material = new SimpleStringProperty(mapper.getMarerial());
-        productForPrint = new SimpleStringProperty(mapper.getProductPrint());
-        article = new SimpleStringProperty(mapper.getArticle());
-        hierarchy = new SimpleStringProperty(mapper.getHierarchy());
-        lgbk = new SimpleStringProperty(mapper.getLgbk());
-        endofservice = new SimpleStringProperty(mapper.getEndOfService());
-        dangerous = new SimpleStringProperty(mapper.getDangerous());
-        country = new SimpleStringProperty(mapper.getCntryOfOrigin());
-        dchain = new SimpleStringProperty(mapper.getDchain());
-
-        price = new SimpleBooleanProperty(false);
-        archive = new SimpleBooleanProperty(false);
-        needaction = new SimpleBooleanProperty(true);
-        notused = new SimpleBooleanProperty(false);
-        descriptionru = new SimpleStringProperty(mapper.getDescriptionRu());
-        descriptionen = new SimpleStringProperty(mapper.getDescriptionEn());
-
-        normsList = new NormsList(new ArrayList<Integer>());
-
-        minOrder = (int) getDoubleFromString(mapper.getMinOrder());
-        packetSize = (int) getDoubleFromString(mapper.getPacketSize());
-        leadTime = (int) getDoubleFromString(mapper.getLeadTime());
-        weight = getDoubleFromString(mapper.getWeight());
-        localPrice = getDoubleFromString(mapper.getLocalPrice());
-    }
-
-    public Product(RowData rowData, ColumnsMapper2 mapper) {
+    public Product(RowData rowData, ColumnsMapper mapper) {
         String cellValue;
         id = 0;
         material = new SimpleStringProperty(rowData.get(mapper.getFieldIndexByName(DESC_ORDER_NUMBER)).replaceAll("\\,", "."));
@@ -273,7 +244,7 @@ public class Product {
         items.add(0, "");
         Utils.setControlValue(root, "cbFamily", items);
         Utils.setControlValue(root, "tfMinOrder", minOrder == 0 ? NO_DATA : String.valueOf(minOrder));
-        Utils.setControlValue(root, "tfPacketSize", packetSize  == 0 ? NO_DATA : String.valueOf(packetSize));
+        Utils.setControlValue(root, "tfPacketSize", packetSize == 0 ? NO_DATA : String.valueOf(packetSize));
         Utils.setControlValue(root, "tfLeadTime", leadTime == 0 ? NO_DATA : String.valueOf(leadTime + 14));
         Utils.setControlValue(root, "tfWeight", weight == 0 ? NO_DATA : String.valueOf(weight));
         Utils.setControlValue(root, "tfLocalPrice", localPrice == 0 ? NO_DATA : String.format("%,.2f", localPrice));
@@ -331,9 +302,11 @@ public class Product {
                     matchChanges = true;
             }
 
-            if ((allRecords || price && (!summaryNotUsed || notUsed) || archive || !price && notUsed) && matchChanges && lgbk) return true;
+            if ((allRecords || price && (!summaryNotUsed || notUsed) || archive || !price && notUsed) && matchChanges && lgbk)
+                return true;
         } else {
-            if ((allRecords || price && (!summaryNotUsed || notUsed) || !price && notUsed || archive) && lgbk  ) return true;
+            if ((allRecords || price && (!summaryNotUsed || notUsed) || !price && notUsed || archive) && lgbk)
+                return true;
         }
 
         return false;
@@ -612,8 +585,8 @@ public class Product {
         this.descriptionen.set(descriptionen);
     }
 
-    private String nullToEmpty(String text){
-        return text == null? "" : text;
+    private String nullToEmpty(String text) {
+        return text == null ? "" : text;
     }
 
     public NormsList getNormsList() {
@@ -656,11 +629,11 @@ public class Product {
         return localPrice;
     }
 
-    public int getPreparedLeadTime(){
+    public int getPreparedLeadTime() {
         return getLeadTime() > 0 ? getLeadTime() + 14 : 0;
     }
 
-    public String getDescriptionRuEn(){
+    public String getDescriptionRuEn() {
         return getDescriptionru().isEmpty() ? getDescriptionen() : getDescriptionru();
     }
 }

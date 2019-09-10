@@ -16,12 +16,12 @@ import java.util.HashSet;
 
 public class FileImport {
     private FileImportWindowController controller;
-    private ExcelFile2 excelFile;
+    private ExcelFile excelFile;
     //    private ColumnsMapper2 mapper;
     private ProductsComparatorResult lastComparationResult;
 
     public FileImport() {
-        excelFile = new ExcelFile2();
+        excelFile = new ExcelFile();
         if (excelFile.open(Dialogs.selectNOWFile(MainWindow.getMainStage()))) {//open file
             new FileImportWindow(this);
             controller.cbSheetNames.getItems().addAll(excelFile.getSheetNames());
@@ -34,7 +34,7 @@ public class FileImport {
 
 
         new Thread(() -> {
-            ColumnsMapper2.FieldForImport[] ffis = excelFile.getMapper().getFieldsForImport(controller.tvFields.getItems());
+            ColumnsMapper.FieldForImport[] ffis = excelFile.getMapper().getFieldsForImport(controller.tvFields.getItems());
 
             ArrayList<Product> resetedItems = controller.cbxDelPrevStat.isSelected() == false ? new ArrayList<>() : CoreModule.getProducts().resetLastImportCodes();
             HashSet<Product> changedItemsForDB = new HashSet<>(resetedItems);
@@ -116,11 +116,11 @@ public class FileImport {
         this.controller = controller;
     }
 
-    public ExcelFile2 getExcelFile() {
+    public ExcelFile getExcelFile() {
         return excelFile;
     }
 
-    public void setExcelFile(ExcelFile2 excelFile) {
+    public void setExcelFile(ExcelFile excelFile) {
         this.excelFile = excelFile;
     }
 

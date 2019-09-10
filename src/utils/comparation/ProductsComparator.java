@@ -1,18 +1,16 @@
 package utils.comparation;
 
-import ui_windows.main_window.file_import_window.ColumnsMapper2;
+import ui_windows.main_window.file_import_window.ColumnsMapper;
 import ui_windows.main_window.file_import_window.ObjectsComparator2;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
 import utils.DoublesPreprocessor;
 import utils.Utils;
 
-import java.util.ArrayList;
-
 public class ProductsComparator {
     ProductsComparatorResult result;
 
-    public ProductsComparator(Products prs1, Products prs2nt, ColumnsMapper2.FieldForImport... fieldsForUpdate) {
+    public ProductsComparator(Products prs1, Products prs2nt, ColumnsMapper.FieldForImport... fieldsForUpdate) {
         result = new ProductsComparatorResult();
         Products prs2 = new Products();
         prs2.setItems(new DoublesPreprocessor(prs2nt.getItems()).getTreatedItems());
