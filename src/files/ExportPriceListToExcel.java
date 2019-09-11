@@ -6,7 +6,6 @@ import javafx.application.Platform;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import ui_windows.main_window.MainWindow;
-import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificatesChecker;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
@@ -312,17 +311,17 @@ public class ExportPriceListToExcel {
             for (Product product : products) {
                 row = sheet.createRow(rowIndex++);
                 int colIndex = 0;
-                cell = row.createCell(colIndex++, CellType.STRING);
+                cell = row.createCell(colIndex++, CellType.STRING); //material
                 if (!product.getProductForPrint().isEmpty()) {
                     cell.setCellValue(product.getProductForPrint());
                 } else {
                     cell.setCellValue(product.getMaterial());
                 }
 
-                cell = row.createCell(colIndex++, CellType.STRING);
+                cell = row.createCell(colIndex++, CellType.STRING); //article
                 cell.setCellValue(product.getArticle());
 
-                cell = row.createCell(colIndex++, CellType.STRING);
+                cell = row.createCell(colIndex++, CellType.STRING); //description
                 if (sheet.getSheetName().toLowerCase().contains("en")) {
                     cell.setCellValue(product.getDescriptionen());
                 } else {
@@ -332,10 +331,10 @@ public class ExportPriceListToExcel {
                 boolean licence = product.getLgbk().equals("H3FQ") || product.getLgbk().equals("H5ET");
                 boolean priceEmpty = product.getLocalPrice() == 0.0;
 
-                if (isPricePosition(product) && !licence && !isSpProduct(product) && !priceEmpty) {
+                if (isPricePosition(product) && !priceEmpty) {
                     cell = row.createCell(colIndex++, CellType.NUMERIC);
                     cell.setCellValue(product.getLocalPrice());
-                } else if (isServicePosition(product) && !licence && !isSpProduct(product) && !priceEmpty) {//service positions
+                } else if (isServicePosition(product) && !priceEmpty) {//service positions
                     cell = row.createCell(colIndex++, CellType.NUMERIC);
                     cell.setCellValue(product.getLocalPrice() * 0.7);
                 } else {
@@ -399,7 +398,7 @@ public class ExportPriceListToExcel {
 
     private boolean isServicePosition(Product product) {
         String status = product.getDchain();
-        return status.equals("36") || status.equals("52") || status.equals("56") ||status.equals("58") ||
+        return status.equals("36") || status.equals("52") || status.equals("56") || status.equals("58") ||
                 status.equals("60") || status.equals("61") || status.equals("62");
     }
 
