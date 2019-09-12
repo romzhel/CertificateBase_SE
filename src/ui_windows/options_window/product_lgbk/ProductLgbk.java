@@ -90,6 +90,8 @@ public class ProductLgbk {
             Utils.setControlValue(root, "cbFamily", CoreModule.getProductFamilies().getFamilyNameById(familyId));
         Utils.setControlValue(root, "ckbNotUsed", isNotUsed);
 
+        ((LgbkEditorWindowController) LgbkEditorWindow.getLoader().getController()).ckbNotUsed.setDisable(nodeType == ROOT_NODE);
+
         String line = normsList.getStringLine();
         ArrayList<String> selectedNorms = CoreModule.getRequirementTypes().getRequirementsList(line);
         ArrayList<String> allNorms = CoreModule.getRequirementTypes().getAllRequirementTypesShortNames();

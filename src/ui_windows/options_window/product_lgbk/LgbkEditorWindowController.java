@@ -28,6 +28,9 @@ public class LgbkEditorWindowController implements Initializable {
     @FXML
     ListView<String> lvSelectedNorms;
 
+    @FXML
+    public CheckBox ckbNotUsed;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         cbFamily.getItems().add("");
