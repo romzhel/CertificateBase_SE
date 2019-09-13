@@ -24,8 +24,15 @@ public class ProductsComparator {
         for (Product pr1 : prs1.getItems()) {//go throw all the existing items
 
             for (Product pr2 : prs2.getItems()) {//go throw all the updating item
+                if (pr2.getMaterial().contains("GBI")) {
+                    System.out.println();
+                }
                 pr1t = pr1.getMaterial().replaceAll("\\-", "").replaceAll("BPZ:", "").replaceAll("\\:", "");
                 pr2t = pr2.getMaterial().replaceAll("\\-", "").replaceAll("BPZ:", "").replaceAll("\\:", "");
+
+                if (pr2t.matches("^0+\\d+$")) {
+                    pr2t = pr2t.replaceAll("^0+", "");
+                }
 
                 if (pr1t.equals(pr2t)) {//product exists
                     pr1.setLastChangeDate(Utils.getDateTime());//set last update time
