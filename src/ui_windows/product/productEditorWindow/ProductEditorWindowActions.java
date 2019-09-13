@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import ui_windows.main_window.file_import_window.ColumnsMapper;
 import ui_windows.main_window.file_import_window.FileImportTableItem;
 import ui_windows.main_window.file_import_window.ObjectsComparator2;
-import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
+import ui_windows.options_window.certificates_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;

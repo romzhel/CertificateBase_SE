@@ -1,7 +1,7 @@
 package ui_windows.options_window.certificates_editor;
 
 import ui_windows.product.Product;
-import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
+import ui_windows.options_window.certificates_editor.certificatesChecker.CertificateVerificationItem;
 
 import java.io.File;
 import java.util.ArrayList;

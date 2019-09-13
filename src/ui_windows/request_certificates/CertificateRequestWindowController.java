@@ -8,8 +8,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import ui_windows.product.Product;
-import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
-import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificatesChecker;
+import ui_windows.options_window.certificates_editor.certificatesChecker.CertificateVerificationItem;
+import ui_windows.options_window.certificates_editor.certificatesChecker.CertificatesChecker;
 import utils.Utils;
 
 import java.awt.*;

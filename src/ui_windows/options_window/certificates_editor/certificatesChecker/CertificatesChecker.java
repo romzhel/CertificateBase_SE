@@ -1,8 +1,7 @@
-package ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker;
+package ui_windows.options_window.certificates_editor.certificatesChecker;
 
 import core.CoreModule;
 import javafx.collections.ObservableList;
-import javafx.scene.paint.Color;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.options_window.product_lgbk.NormsList;
@@ -12,7 +11,7 @@ import utils.Utils;
 
 import java.util.*;
 
-import static ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CheckStatusResult.*;
+import static ui_windows.options_window.certificates_editor.certificatesChecker.CheckStatusResult.*;
 
 public class CertificatesChecker {
     public final static String NOT_OK = "НЕ ОК";
@@ -183,7 +182,7 @@ public class CertificatesChecker {
 
         if (certTotal == 0) {
             checkStatusResult = NO_NORMS_DEFINED;
-        } else if (certTotal > 0 && normsForCheckingCount == 0) {
+        } else if (certTotal > 0 && normsForCheckingCount == 0 && certsErr == 0) {
             checkStatusResult = NO_NORMS_DEFINED;
         } else if (certTotal == certsOk && certsErr == 0 || certNotNeeded) {
             checkStatusResult = STATUS_OK;

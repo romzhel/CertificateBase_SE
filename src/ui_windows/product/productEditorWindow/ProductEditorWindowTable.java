@@ -9,8 +9,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
-import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
-import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificatesChecker;
+import ui_windows.options_window.certificates_editor.certificatesChecker.CertificateVerificationItem;
+import ui_windows.options_window.certificates_editor.certificatesChecker.CertificatesChecker;
 import utils.Utils;
 
 import java.io.File;

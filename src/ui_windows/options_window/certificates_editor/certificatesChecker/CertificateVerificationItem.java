@@ -1,4 +1,4 @@
-package ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker;
+package ui_windows.options_window.certificates_editor.certificatesChecker;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

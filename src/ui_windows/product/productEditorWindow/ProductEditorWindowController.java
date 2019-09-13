@@ -10,7 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
-import ui_windows.options_window.certificates_editor.certificate_content_editor.certificatesChecker.CertificateVerificationItem;
+import ui_windows.options_window.certificates_editor.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
