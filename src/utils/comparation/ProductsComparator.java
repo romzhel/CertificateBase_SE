@@ -24,8 +24,8 @@ public class ProductsComparator {
         for (Product pr1 : prs1.getItems()) {//go throw all the existing items
 
             for (Product pr2 : prs2.getItems()) {//go throw all the updating item
-                pr1t = pr1.getMaterial().replaceAll("\\-", "").replaceAll("BPZ:", "");
-                pr2t = pr2.getMaterial().replaceAll("\\-", "").replaceAll("BPZ:", "");
+                pr1t = pr1.getMaterial().replaceAll("\\-", "").replaceAll("BPZ:", "").replaceAll("\\:", "");
+                pr2t = pr2.getMaterial().replaceAll("\\-", "").replaceAll("BPZ:", "").replaceAll("\\:", "");
 
                 if (pr1t.equals(pr2t)) {//product exists
                     pr1.setLastChangeDate(Utils.getDateTime());//set last update time
