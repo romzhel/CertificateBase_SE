@@ -3,8 +3,10 @@ package files;
 import core.CoreModule;
 import core.Dialogs;
 import javafx.application.Platform;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.xssf.usermodel.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
@@ -24,13 +26,19 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class ExportPriceListToExcel {
     public static final String TEMPLATE_FILE = "PL.xlsx";
+    public static final int INITIAL_ROW = 2;
     private PriceList priceList;
-    private Workbook excelDoc;
+    private XSSFWorkbook excelDoc;
     private File templateFile;
     private File resultFile;
     private int itemCount;
     private Structure priceRuEn;
     private Structure priceService;
+    private XSSFCellStyle CELL_ALIGN_LEFT;
+    private XSSFCellStyle CELL_ALIGN_LEFT_BOLD;
+    private XSSFCellStyle CELL_ALIGN_RIGHT;
+    private XSSFCellStyle CELL_ALIGN_CENTER;
+    private XSSFCellStyle CELL_CURRENCY_FORMAT;
 
     public ExportPriceListToExcel(PriceList priceList) {
         this.priceList = priceList;
@@ -77,9 +85,9 @@ public class ExportPriceListToExcel {
 
         try {
             FileInputStream fis = new FileInputStream(resultFile);
-            excelDoc = WorkbookFactory.create(fis);
+            excelDoc = new XSSFWorkbook(fis);
             fis.close();
-        } catch (IOException | InvalidFormatException e) {
+        } catch (IOException e) {
             System.out.println(e.getMessage());
             return false;
         }
@@ -92,7 +100,6 @@ public class ExportPriceListToExcel {
         priceService = new Structure();
 
         for (Product product : CoreModule.getProducts().getItems()) {
-            String status = product.getDchain();
 
             LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
             boolean globalNotUsed = lap == null ? true : lap.getLgbkItem().isNotUsed() || lap.getLgbkParent().isNotUsed();
@@ -105,12 +112,46 @@ public class ExportPriceListToExcel {
             }
         }
 
-        priceRuEn.export(excelDoc.getSheetAt(0), 2);
-//        priceRuEn.export(excelDoc.getSheetAt(1), 1);
-        priceService.export(excelDoc.getSheetAt(1), 2);
+        initCellStyles();
+
+        fillSheet(0, priceRuEn);
+        fillSheet(1, priceService);
 
         System.out.println("price items: " + priceRuEn.getSize() + " / " + priceService.getSize());
+    }
 
+    private void fillSheet(int sheetIndex, Structure price) {
+        XSSFSheet sheet = excelDoc.getSheetAt(sheetIndex);
+        XSSFTable table = sheet.getTables().get(0);
+        CTTable cttable = table.getCTTable();
+
+        int lastRow = price.export(excelDoc.getSheetAt(sheetIndex), INITIAL_ROW);
+        char lastColumnLetter = table.getCellReferences().getLastCell().formatAsString().charAt(0);
+        cttable.setRef(table.getCellReferences().getFirstCell().formatAsString() + ":" + lastColumnLetter + String.valueOf(lastRow));
+    }
+
+    private void initCellStyles() {
+        CELL_ALIGN_LEFT = excelDoc.createCellStyle();
+        CELL_ALIGN_LEFT.setAlignment(HorizontalAlignment.LEFT);
+
+        CELL_ALIGN_LEFT_BOLD = excelDoc.createCellStyle();
+        CELL_ALIGN_LEFT_BOLD.setAlignment(HorizontalAlignment.LEFT);
+        XSSFFont font = excelDoc.createFont();
+        font.setBold(true);
+        font.setColor(XSSFFont.DEFAULT_FONT_COLOR);
+        font.setFontName(XSSFFont.DEFAULT_FONT_NAME);
+        font.setFontHeight(8);
+        CELL_ALIGN_LEFT_BOLD.setFont(font);
+
+        CELL_ALIGN_RIGHT = excelDoc.createCellStyle();
+        CELL_ALIGN_RIGHT.setAlignment(HorizontalAlignment.RIGHT);
+
+        CELL_ALIGN_CENTER = excelDoc.createCellStyle();
+        CELL_ALIGN_CENTER.setAlignment(HorizontalAlignment.CENTER);
+
+        CELL_CURRENCY_FORMAT = excelDoc.createCellStyle();
+        XSSFDataFormat dataFormat = excelDoc.createDataFormat();
+        CELL_CURRENCY_FORMAT.setDataFormat(dataFormat.getFormat("# ##0.00\\ [$€-x-euro1];[Red]# ##0.00\\ [$€-x-euro1]"));
     }
 
     private void saveToFile() {
@@ -169,7 +210,7 @@ public class ExportPriceListToExcel {
             return lgbkGroups;
         }
 
-        public int export(Sheet sheet, int rowIndex) {
+        public int export(XSSFSheet sheet, int rowIndex) {
             for (LgbkGroup lgroup : lgbkGroups) {
                 rowIndex = lgroup.print(sheet, rowIndex);
             }
@@ -216,17 +257,18 @@ public class ExportPriceListToExcel {
             return result;
         }
 
-        public int print(Sheet sheet, int rowIndex) {
+        public int print(XSSFSheet sheet, int rowIndex) {
             boolean isInPriceList = priceList.getLgbks().indexOf(name) != -1;
             boolean isEmpty = name.isEmpty() || getSize() == 0;
             if (!isInPriceList || isEmpty) return rowIndex;
 
-            Row row;
-            Cell cell;
+            XSSFRow row;
+            XSSFCell cell;
 
             rowIndex++;
             row = sheet.createRow(rowIndex++);
             cell = row.createCell(0, CellType.STRING);
+            cell.setCellStyle(CELL_ALIGN_LEFT_BOLD);
 
             ProductLgbk pl = CoreModule.getProductLgbks().getByLgbkName(name);
 
@@ -278,12 +320,16 @@ public class ExportPriceListToExcel {
             return products;
         }
 
-        public int export(Sheet sheet, int rowIndex, String lgroupName, boolean space) {
+        public int export(XSSFSheet sheet, int rowIndex, String lgroupName, boolean space) {
             if (name.isEmpty() || getSize() == 0) return rowIndex;
-            Row row;
-            Cell cell;
+            int firstRowForGroup = rowIndex;
+            XSSFRow row;
+            XSSFCell cell;
 
-            if (!space) rowIndex++;
+            if (!space) {
+                rowIndex++;
+                firstRowForGroup++;
+            }
 
             LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(
                     new ProductLgbk(lgroupName, name));
@@ -304,14 +350,18 @@ public class ExportPriceListToExcel {
                 if (!printText.isEmpty()) {
                     row = sheet.createRow(rowIndex++);
                     cell = row.createCell(0, CellType.STRING);
+                    cell.setCellStyle(CELL_ALIGN_LEFT_BOLD);
                     cell.setCellValue(printText);
                 }
+            } else {
+                firstRowForGroup--;
             }
 
             for (Product product : products) {
                 row = sheet.createRow(rowIndex++);
                 int colIndex = 0;
                 cell = row.createCell(colIndex++, CellType.STRING); //material
+                cell.setCellStyle(CELL_ALIGN_LEFT);
                 if (!product.getProductForPrint().isEmpty()) {
                     cell.setCellValue(product.getProductForPrint());
                 } else {
@@ -320,25 +370,30 @@ public class ExportPriceListToExcel {
 
                 cell = row.createCell(colIndex++, CellType.STRING); //article
                 cell.setCellValue(product.getArticle());
+                cell.setCellStyle(CELL_ALIGN_LEFT);
 
                 cell = row.createCell(colIndex++, CellType.STRING); //description
+                cell.setCellStyle(CELL_ALIGN_LEFT);
                 if (sheet.getSheetName().toLowerCase().contains("en")) {
                     cell.setCellValue(product.getDescriptionen());
                 } else {
                     cell.setCellValue(product.getDescriptionRuEn());
                 }
 
-                boolean licence = product.getLgbk().equals("H3FQ") || product.getLgbk().equals("H5ET");
+//                boolean licence = product.getLgbk().equals("H3FQ") || product.getLgbk().equals("H5ET");
                 boolean priceEmpty = product.getLocalPrice() == 0.0;
 
                 if (isPricePosition(product) && !priceEmpty) {
                     cell = row.createCell(colIndex++, CellType.NUMERIC);
+                    cell.setCellStyle(CELL_CURRENCY_FORMAT);
                     cell.setCellValue(product.getLocalPrice());
                 } else if (isServicePosition(product) && !priceEmpty) {//service positions
                     cell = row.createCell(colIndex++, CellType.NUMERIC);
+                    cell.setCellStyle(CELL_CURRENCY_FORMAT);
                     cell.setCellValue(product.getLocalPrice() * 0.7);
                 } else {
                     cell = row.createCell(colIndex++, CellType.STRING);
+                    cell.setCellStyle(CELL_ALIGN_RIGHT);
 
                     if (sheet.getSheetName().toLowerCase().contains("en")) {
                         cell.setCellValue("By request");
@@ -350,16 +405,21 @@ public class ExportPriceListToExcel {
                 if (!sheet.getSheetName().toLowerCase().contains("сервисные")) {
                     cell = row.createCell(colIndex++, CellType.NUMERIC);
                     cell.setCellValue(product.getPreparedLeadTime());
+                    cell.setCellStyle(CELL_ALIGN_CENTER);
                 }
 
                 cell = row.createCell(colIndex++, CellType.NUMERIC);
+                cell.setCellStyle(CELL_ALIGN_CENTER);
                 cell.setCellValue(product.getMinOrder());
 
                 cell = row.createCell(colIndex++, CellType.STRING);
+                cell.setCellStyle(CELL_ALIGN_CENTER);
                 cell.setCellValue(product.getLgbk()/*.concat("-").concat(product.getHierarchy())*/);
 
                 cell = row.createCell(colIndex++, CellType.NUMERIC);
+                cell.setCellStyle(CELL_ALIGN_RIGHT);
                 cell.setCellValue(product.getWeight());
+//                cellAlignRight(cell);
 
                 /*CertificatesChecker cc = CoreModule.getCertificates().getCertificatesChecker();
                 cc.check(product);
@@ -368,7 +428,10 @@ public class ExportPriceListToExcel {
 
                 cell = row.createCell(colIndex++, CellType.STRING);
                 cell.setCellValue(product.getDchain());*/
+
             }
+            sheet.groupRow(firstRowForGroup + 1, rowIndex - 1);
+//            sheet.setRowGroupCollapsed(rowIndex - 1, true);
             return rowIndex;
         }
     }
