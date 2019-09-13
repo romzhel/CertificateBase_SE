@@ -36,12 +36,12 @@ public class FilterWindowController implements Initializable {
     @FXML
     ComboBox<String> cbHier;
 
-    private String lastLgbk = ALL_RECORDS;
+    private String prevLgbk = ALL_RECORDS;
     private ListChangeListener<Product> changeListener;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        cbLgbk.setVisibleRowCount(10);
 
         initMainSelection();
         initFamilySelector();
@@ -50,26 +50,20 @@ public class FilterWindowController implements Initializable {
     }
 
     public void initLgbkSelector() {
-        cbLgbk.setVisibleRowCount(10);
+
         CoreModule.setTableRenewedListener(lgbks -> {
-            String prevLgbk = cbLgbk.getValue();
             cbLgbk.getItems().clear();
             cbLgbk.getItems().add(ALL_RECORDS);
             cbLgbk.getItems().addAll(lgbks);
 
-            if (cbLgbk.getItems().indexOf(prevLgbk) >= 0) {
-                cbLgbk.setOnAction(null);
-                cbLgbk.setValue(prevLgbk);
-            } else if (cbLgbk.getItems().size() == 2){
-                cbLgbk.getSelectionModel().select(1);
-            } else {
-                cbLgbk.setValue(ALL_RECORDS);
-            }
+            cbLgbk.setOnAction(null);
+            cbLgbk.setValue(prevLgbk);
 
             cbLgbk.setOnAction(event -> {
                 if (cbLgbk.getValue() != null) {
                     if (cbLgbk.getValue().equals(ALL_RECORDS)) CoreModule.getFilter().setLgbk(cbLgbk.getValue());
                     else CoreModule.getFilter().setLgbk(cbLgbk.getValue().split("\\]")[0].replaceAll("[\\[\\s]", ""));
+                    prevLgbk = cbLgbk.getValue();
                     applyFilter();
                 }
             });
