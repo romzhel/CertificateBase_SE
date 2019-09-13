@@ -56,7 +56,7 @@ public class ExportPriceListToExcel {
     }
 
     private boolean loadTemplate() {
-        templateFile = new File(CoreModule.getFolders().getAppFolder() + "\\" + TEMPLATE_FILE);
+        templateFile = new File(CoreModule.getFolders().getDbFile().getParent() + "\\" + TEMPLATE_FILE);
         if (templateFile == null || !templateFile.exists()) {
             File dialogFile = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор файла шаблона",
                     Dialogs.EXCEL_FILES, null);
@@ -167,8 +167,9 @@ public class ExportPriceListToExcel {
                 }
             });
         } catch (IOException e) {
-            Dialogs.showMessage("Формирование прайс-листа", "Произошла ошибка " + e.getMessage());
-            System.out.println(e.getMessage());
+            Platform.runLater(() -> {
+                Dialogs.showMessage("Формирование прайс-листа", "Произошла ошибка " + e.getMessage());
+            });
         }
     }
 
@@ -266,6 +267,7 @@ public class ExportPriceListToExcel {
             XSSFCell cell;
 
             rowIndex++;
+            int firstRowForGroup = rowIndex;
             row = sheet.createRow(rowIndex++);
             cell = row.createCell(0, CellType.STRING);
             cell.setCellStyle(CELL_ALIGN_LEFT_BOLD);
@@ -281,6 +283,8 @@ public class ExportPriceListToExcel {
             for (HierarchyGroup hgroup : hierarchyGroups) {
                 rowIndex = hgroup.export(sheet, rowIndex, name, hierarchyGroups.first().equals(hgroup));
             }
+
+            sheet.groupRow(firstRowForGroup + 1, rowIndex);
 
             return rowIndex;
         }
