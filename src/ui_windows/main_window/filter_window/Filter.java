@@ -15,6 +15,7 @@ public class Filter {
     private String changeCodes[];
     private String changeTexts[];
     private String changeCode = "";
+    private String prevLgbkFilterValue = ALL_RECORDS;
 
     public Filter() {
         filters = new ArrayList<>();
@@ -94,5 +95,13 @@ public class Filter {
 
     public void setLgbk(String lgbk) {
         this.lgbk = lgbk;
+    }
+
+    public String getPrevLgbkFilterValue() {
+        return prevLgbkFilterValue;
+    }
+
+    public void setPrevLgbkFilterValue(String prevLgbkFilterValue) {
+        this.prevLgbkFilterValue = prevLgbkFilterValue;
     }
 }

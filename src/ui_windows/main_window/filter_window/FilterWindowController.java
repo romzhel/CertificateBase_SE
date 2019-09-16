@@ -36,7 +36,6 @@ public class FilterWindowController implements Initializable {
     @FXML
     ComboBox<String> cbHier;
 
-    private String prevLgbk = ALL_RECORDS;
     private ListChangeListener<Product> changeListener;
 
     @Override
@@ -57,13 +56,13 @@ public class FilterWindowController implements Initializable {
             cbLgbk.getItems().addAll(lgbks);
 
             cbLgbk.setOnAction(null);
-            cbLgbk.setValue(prevLgbk);
+            cbLgbk.setValue(CoreModule.getFilter().getPrevLgbkFilterValue());
 
             cbLgbk.setOnAction(event -> {
                 if (cbLgbk.getValue() != null) {
                     if (cbLgbk.getValue().equals(ALL_RECORDS)) CoreModule.getFilter().setLgbk(cbLgbk.getValue());
                     else CoreModule.getFilter().setLgbk(cbLgbk.getValue().split("\\]")[0].replaceAll("[\\[\\s]", ""));
-                    prevLgbk = cbLgbk.getValue();
+                    CoreModule.getFilter().setPrevLgbkFilterValue(cbLgbk.getValue());
                     applyFilter();
                 }
             });
