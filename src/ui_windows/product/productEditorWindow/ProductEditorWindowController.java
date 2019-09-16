@@ -149,7 +149,7 @@ public class ProductEditorWindowController implements Initializable {
     }
 
     public void apply() {
-        ProductEditorWindowActions.apply(((Stage) tvCertVerification.getScene().getWindow()), multiEditor);
+        ProductEditorWindowActions.apply(apRoot, multiEditor);
         ProductEditorWindowActions.setMultiEditor(null);
         multiEditor = null;
     }

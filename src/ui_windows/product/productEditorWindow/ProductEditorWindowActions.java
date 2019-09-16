@@ -36,10 +36,7 @@ public class ProductEditorWindowActions {
         } else return null;
     }
 
-    public static void apply(Stage stage, MultiEditor multiEditor) {
-//        AnchorPane root = (AnchorPane) stage.getScene().getRoot();
-        AnchorPane root = ProductEditorWindow.getRootAnchorPane();
-
+    public static void apply(AnchorPane root, MultiEditor multiEditor) {
         Product pr;
         ArrayList<Product> productsToUpdate = new ArrayList<>();
 
@@ -97,9 +94,9 @@ public class ProductEditorWindowActions {
 //            new Thread(() -> new ProductsDB().updateData(new ArrayList<Product>(productsToUpdate))).start(); //update in DB
             boolean saveToDbResult = new ProductsDB().updateData(productsToUpdate); //update in DB
 
-            if (saveToDbResult){
+            if (saveToDbResult) {
                 CoreModule.filter();
-                stage.close();
+                ((Stage) root.getScene().getWindow()).close();
             }
         }
     }
