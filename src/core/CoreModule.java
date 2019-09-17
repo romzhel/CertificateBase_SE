@@ -101,7 +101,7 @@ public class CoreModule {
             TableView<Product> tableView = CoreModule.getProducts().getTableView();
             String find = MainWindow.getSearchBox().getText();
             find = find.replaceAll("\\*", ".*");
-            find = find.replaceAll("\\.", "\\.");
+            find = find.replaceAll("\\.", ".");
 
             ArrayList<Product> result = new ArrayList<>();
             TreeSet<String> accessibleLgbks = new TreeSet<>();

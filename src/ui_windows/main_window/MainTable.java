@@ -9,9 +9,12 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.util.Callback;
+import org.apache.commons.collections4.comparators.ComparatorChain;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 import ui_windows.product.productEditorWindow.ProductEditorWindow;
+
+import java.util.Comparator;
 
 import static ui_windows.Mode.EDIT;
 
@@ -61,16 +64,21 @@ public class MainTable {
                                 if (!empty) {
                                     setText(item);
 
-                                    CoreModule.getCertificates().getCertificatesChecker().check(param.getTableView().getItems().get(getIndex()));
+                                    Product product = param.getTableView().getItems().get(getIndex());
+
+                                    CoreModule.getCertificates().getCertificatesChecker().check(product);
                                     getStyleClass().removeAll("itemStrikethroughRed", "itemStrikethroughBrown",
                                             "itemStrikethroughGreen", "itemStrikethroughBlack");
-                                    getStyleClass().add(CoreModule.getCertificates().getCertificatesChecker().getCheckStatusResultStyle());
+
+                                    String style = CoreModule.getCertificates().getCertificatesChecker().getCheckStatusResultStyle();
+                                    getStyleClass().add(style);
                                     setTooltip(new Tooltip(CoreModule.getCertificates().getCertificatesChecker().getCheckStatusResult()));
                                 }
                             }
                         };
                     }
                 });
+                col.setComparator(new ComparatorChain<>());
 
             } else if (cols[i] == "description") {
                 col.setCellValueFactory(param -> {

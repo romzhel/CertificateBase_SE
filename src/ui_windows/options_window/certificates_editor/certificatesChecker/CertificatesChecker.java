@@ -78,11 +78,11 @@ public class CertificatesChecker {
             if (cert.isMaterialMatch()) prodNames.add(Utils.toEN(product.getMaterial()).toUpperCase());
 
             int contentTypeId;
-            Certificate certificate;
+//            Certificate certificate;
             for (CertificateContent content : cert.getContent()) {//check all content
                 contentTypeId = CoreModule.getProductTypes().getIDbyType(content.getEquipmentType());
-                certificate = CoreModule.getCertificates().getCertificateByID(content.getCertId());
-                boolean fullNameMatch = certificate.isFullNameMatch();
+//                certificate = CoreModule.getCertificates().getCertificateByID(content.getCertId());
+                boolean fullNameMatch = cert.isFullNameMatch();
 
                 boolean productTypeNotDefined = product.getType_id() == 0;
                 boolean productTypeMatches = product.getType_id() > 0 && product.getType_id() == contentTypeId;
@@ -167,12 +167,16 @@ public class CertificatesChecker {
         boolean certNotNeeded = false;
 
         normsForChecking.removeAll(satisfiedNorms);
+        if (satisfiedNorms.contains(1)) normsForChecking.remove(9);//НВО СС заменяет НВО ДС
+
         for (int normIndex : normsForChecking) {
             String shortName = CoreModule.getRequirementTypes().getRequirementByID(normIndex).getShortName();
             CertificateVerificationItem cvi = new CertificateVerificationItem(shortName);
             if (shortName.equals(CERT_NO_NEEDED)) {
                 cvi.setStatus(OK);
                 certNotNeeded = true;
+            } else {
+                certsErr++;
             }
             resultTableItems.add(cvi);
             certsAbs++;
@@ -180,18 +184,14 @@ public class CertificatesChecker {
 
         certTotal = resultTableItems.size();
 
-        if (certTotal == 0) {
-            checkStatusResult = NO_NORMS_DEFINED;
-        } else if (certTotal > 0 && normsForCheckingCount == 0 && certsErr == 0) {
-            checkStatusResult = NO_NORMS_DEFINED;
-        } else if (certTotal == certsOk && certsErr == 0 || certNotNeeded) {
+        if (certNotNeeded) {
             checkStatusResult = STATUS_OK;
-        } else if (certsOk > 0 && certsAbs > 0 && certsErr == 0) {
-            checkStatusResult = PART_OF_CERT;
         } else if (certsErr > 0) {
             checkStatusResult = CERT_WITH_ERR;
-        } else if (certTotal == certsAbs) {
-            checkStatusResult = NO_CERT;
+        } else if (normsForCheckingCount > 0) {
+            checkStatusResult = STATUS_OK;
+        } else {
+            checkStatusResult = NO_DATA;
         }
     }
 
@@ -199,7 +199,6 @@ public class CertificatesChecker {
         switch (checkStatusResult) {
             case NO_CERT:
             case CERT_WITH_ERR:
-//                return "-fx-text-fill: red;";
                 return "itemStrikethroughRed";
             case PART_OF_CERT:
                 return "itemStrikethroughBrown";

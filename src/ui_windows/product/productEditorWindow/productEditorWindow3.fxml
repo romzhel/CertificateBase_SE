@@ -90,7 +90,7 @@
                         <TextArea fx:id="taComments" layoutX="124.0" layoutY="475.0" prefHeight="84.0" prefWidth="416.0" />
                         <Button fx:id="btnApply" layoutX="220.0" layoutY="745.0" mnemonicParsing="false" onAction="#apply" prefWidth="150.0" text="Сохранить" />
                         <Button layoutX="612.0" layoutY="745.0" mnemonicParsing="false" onAction="#cancel" prefWidth="150.0" text="Закрыть" />
-                        <CheckBox fx:id="cbxNotUsed" contentDisplay="CENTER" layoutX="643.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="127.0" text="Не используется   " />
+                        <CheckBox fx:id="cbxNotUsed" contentDisplay="CENTER" layoutX="643.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="127.0" stylesheets="@../../../css/checkboxes_styles.css" text="Не используется   " />
                         <ComboBox fx:id="cbFamily" layoutX="124.0" layoutY="246.0" prefHeight="25.0" prefWidth="628.0" />
                         <CheckBox fx:id="cbxOrderable" contentDisplay="GRAPHIC_ONLY" layoutX="124.0" layoutY="299.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="12.0" text="CheckBox" />
                         <TextArea fx:id="taDescriptionEn" layoutX="124.0" layoutY="116.0" prefHeight="40.0" prefWidth="931.0" wrapText="true" />

@@ -389,21 +389,24 @@ public class Utils {
     }
 
     public static void copyFilesToClipboard(ArrayList<File> files) {
-        Clipboard clipboard = Clipboard.getSystemClipboard();
+        if (files.size() > 0) {
+            Clipboard clipboard = Clipboard.getSystemClipboard();
 
-        HashSet<File> resFiles = new HashSet<>(files);
-        ArrayList<File> filesForCopy = new ArrayList<>(resFiles);
+            HashSet<File> resFiles = new HashSet<>(files);
+            ArrayList<File> filesForCopy = new ArrayList<>(resFiles);
 
-        ClipboardContent cc = new ClipboardContent();
-        cc.putFiles(filesForCopy);
-        clipboard.setContent(cc);
-        String filesName = "";
-        for (File file : filesForCopy) {
-            filesName += " - " + file.getName() + "\n";
+            ClipboardContent cc = new ClipboardContent();
+            cc.putFiles(filesForCopy);
+            clipboard.setContent(cc);
+            String filesName = "";
+            for (File file : filesForCopy) {
+                filesName += " - " + file.getName() + "\n";
+            }
+            Dialogs.showMessage("Буфер обмена", "Следующие файлы были вставлены в буфер обмена:\n" + filesName);
+        } else {
+            Dialogs.showMessage("Буфер обмена", "Нет подходящих файлов для копирования в буфер обмена.");
         }
-        Dialogs.showMessage("Буфер обмена", "Следующие файлы были вставлены в буфер обмена:\n" + filesName);
     }
-
 
     public static void deleteFolder(Path pathForDeleting) throws IOException {
         Files.walk(pathForDeleting)

@@ -1,0 +1,31 @@
+.global .box {
+    -fx-background-color: white;
+    -fx-border-color:red;
+    -fx-border-radius:3px;
+}
+
+.global:selected .mark {
+    -fx-background-color: red;
+}
+
+.global:selected .box {
+    -fx-background-color: white;
+    -fx-border-color:red;
+    -fx-border-radius:3px;
+}
+
+.both .box {
+    -fx-background-color: yellow;
+    -fx-border-color:red;
+    -fx-border-radius:3px;
+}
+
+.both:selected .mark {
+    -fx-background-color: red;
+}
+
+.both:selected .box {
+    -fx-background-color: yellow;
+    -fx-border-color:red;
+    -fx-border-radius:3px;
+}

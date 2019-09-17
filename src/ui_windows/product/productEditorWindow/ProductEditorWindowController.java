@@ -118,15 +118,16 @@ public class ProductEditorWindowController implements Initializable {
                 new ProductLgbk(editedProduct.getLgbk(), editedProduct.getHierarchy()));
         boolean globalNotUsed = lgbkAndParent.getLgbkItem().isNotUsed() || lgbkAndParent.getLgbkParent().isNotUsed();
 
-        if (editedProduct.isNotused()) {
-//            cbxNotUsed.getStyleClass().removeAll("check-box");
+        cbxNotUsed.getStyleClass().removeAll("global", "both");
+        if (editedProduct.isNotused() && globalNotUsed) {
             cbxNotUsed.setSelected(true);
+            cbxNotUsed.getStyleClass().add("both");
         } else if (globalNotUsed) {
-//            cbxNotUsed.getStyleClass().removeAll("check-box");
-//            cbxNotUsed.getStyleClass().add("check-box");
+            cbxNotUsed.setSelected(true);
+            cbxNotUsed.getStyleClass().add("global");
+        } else if (editedProduct.isNotused()) {
             cbxNotUsed.setSelected(true);
         } else {
-//            cbxNotUsed.getStyleClass().removeAll("check-box");
             cbxNotUsed.setSelected(false);
         }
 
@@ -193,8 +194,10 @@ public class ProductEditorWindowController implements Initializable {
     public void getAllCertificatesFiles() {
         ArrayList<File> files = new ArrayList<>();
         for (CertificateVerificationItem cv : tvCertVerification.getItems()) {
-            File file = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + cv.getFile());
-            if (file.exists()) files.add(file);
+            if (cv.getFile() != null && !cv.getFile().isEmpty()) {
+                File file = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + cv.getFile());
+                if (file.exists()) files.add(file);
+            }
         }
         Utils.copyFilesToClipboard(files);
     }
