@@ -14,6 +14,7 @@ public class Folders {
     private File tempFolder;
     private PathFile pathFile;
     private String appFolder;
+    private File dbBackupFolder;
 
     public Folders() {
         appFolder = System.getProperty("user.dir");
@@ -48,6 +49,7 @@ public class Folders {
         if (dbFile != null && dbFile.exists()) {
             certFolder = new File(dbFile.getParent() + "\\_certs");
             manualsFolder = new File(dbFile.getParent() + "\\_manuals");
+            dbBackupFolder = new File(dbFile.getParent() + "\\_db_backups");
 //            tempFolder = new File(System.getProperty("user.dir") + "\\_temp");
 
             try {
@@ -79,5 +81,9 @@ public class Folders {
 
     public String getAppFolder() {
         return appFolder;
+    }
+
+    public File getDbBackupFolder() {
+        return dbBackupFolder;
     }
 }

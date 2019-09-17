@@ -51,7 +51,11 @@ public class DataBase {
 
     public Connection reconnect() {
         try {
-            if (dbConnection.isClosed()) connect(dataBaseFile);
+            if (dbConnection.isClosed()) {
+                connect(dataBaseFile);
+
+                new DbBackuper();
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
