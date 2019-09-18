@@ -27,22 +27,6 @@ public class Certificate {
     private boolean materialMatch;
     private int userId;
 
-//    public Certificate() {
-//        content = new ArrayList<>();
-//    }
-
-//    public Certificate(int id, String name, String expirationDate,
-//                       String countries, String norms, String fileName,
-//                       ArrayList<CertificateContent> content) {
-//        this.id = id;
-//        this.name = new SimpleStringProperty(name);
-//        this.expirationDate = new SimpleStringProperty(expirationDate);
-//        this.countries = countries;
-//        this.norms = norms;
-//        this.fileName = fileName;
-//        this.content = content;
-//    }
-
     public Certificate(ResultSet rs) {
         try {
             id = rs.getInt("id");

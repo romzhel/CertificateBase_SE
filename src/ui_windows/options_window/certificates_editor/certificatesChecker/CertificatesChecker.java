@@ -75,10 +75,9 @@ public class CertificatesChecker {
         ArrayList<String> prodNames = new ArrayList<>();
 
         int results = 0;
-        boolean isHardMode = true;
-        int cycle = 0;
+        boolean isHardMode = false /*true*/;
 
-        do {
+//        do {
             for (Certificate cert : CoreModule.getCertificates().getCertificates()) {//check all certificates
 
                 prodNames.clear();//forming comparing product values (article / material)
@@ -95,6 +94,7 @@ public class CertificatesChecker {
                     boolean productTypeMatches = product.getType_id() > 0 && product.getType_id() == contentTypeId;
                     boolean changedProductTypeMatch = temporaryTypeId > 0 && temporaryTypeId == contentTypeId;
                     boolean changedProductTypeNotDefined = temporaryTypeId == 0;
+                    boolean typeNotDefined = productTypeNotDefined || changedProductTypeNotDefined;
 
                     boolean usualWay = !useTemporaryTypeId && (productTypeNotDefined || productTypeMatches);
                     boolean temporaryWay = useTemporaryTypeId && (changedProductTypeNotDefined || changedProductTypeMatch);
@@ -107,7 +107,7 @@ public class CertificatesChecker {
                                 String contentValue = getContentValueForComparing(cert, contentName);
 
                                 if (prod.matches(contentValue) /*&& product.getMaterial().equals("AVS16.290/109") && contentValue.contains("AVS")*/) {
-                                    if (isHardMode && !isMatchEquipTypeName(product, content)) continue;
+                                    if (typeNotDefined && isHardMode && !isMatchEquipTypeName(product, content)) continue;
 
                                     results++;
                                     String status = getStatusString(product, cert);
@@ -123,11 +123,10 @@ public class CertificatesChecker {
                 }
             }
 
-            if (results == 0) {
-                isHardMode = !isHardMode;
-                cycle++;
-            }
-        } while (results == 0 && !isHardMode);
+//            if (results == 0) {
+//                isHardMode = !isHardMode;
+//            }
+//        } while (results == 0 && !isHardMode);
     }
 
     private String getStatusString(Product product, Certificate cert) {
@@ -209,6 +208,7 @@ public class CertificatesChecker {
 
         normsForChecking.removeAll(satisfiedNorms);
         if (satisfiedNorms.contains(1)) normsForChecking.remove(9);//НВО СС заменяет НВО ДС
+        if (satisfiedNorms.contains(3)) normsForChecking.remove(11);//ЭМС СС заменяет ЭМС ДС
 
         for (int normIndex : normsForChecking) {
             String shortName = CoreModule.getRequirementTypes().getRequirementByID(normIndex).getShortName();

@@ -78,59 +78,6 @@ public class Certificates {
         return null;
     }
 
-    /*public ArrayList<CertificateVerificationItem> checkCertificates(Product product) {
-        ArrayList<CertificateVerificationItem> result = new ArrayList<>();
-        ArrayList<String> prodNames = new ArrayList<>();
-
-        for (Certificate cert : certificates) {//check all certificates
-
-            prodNames.clear();//forming comparing product values (article / material)
-            prodNames.add(Utils.toEN(product.getArticle()).toUpperCase());
-            if (cert.isMaterialMatch()) prodNames.add(Utils.toEN(product.getMaterial()).toUpperCase());
-
-            for (CertificateContent content : cert.getContent()) {//check all content
-
-                for (String contentName : Utils.stringToList(content.getEquipmentName())) {//check all content names
-
-                    for (String prod : prodNames) {//compare product article / material with certificate content
-
-                        String status = "";
-                        String contentValue = "";
-
-                        if (contentName.matches(".+[x]{2,}.*")) {
-                            contentValue = contentName.replaceAll("[x]{2,}", ".*").trim().toUpperCase();
-                        } else if (!cert.isFullNameMatch()) {
-                            contentValue = contentName.trim().toUpperCase() + "\\s*\\d+.*";
-                        } else contentValue = contentName.trim().toUpperCase();
-
-                        contentValue = contentValue.replaceAll("\\(","\\\\(")
-                                .replaceAll("\\)","\\\\)");
-
-                        if (prod.matches(contentValue)) {
-                            if ((new Date()).after(Utils.getDate(cert.getExpirationDate()))) {//expired
-                                status = "НЕ ОК, истек " + cert.getExpirationDate();
-                            }
-
-                            if (product.getCountry().trim().length() > 0 && !cert.getCountries().toLowerCase().//no country
-                                        contains(product.getCountry().toLowerCase())) {
-                                status = status == "" ? "НЕ ОК, нет страны (" + product.getCountry().toUpperCase() + ")"
-                                        : status + ", нет страны (" + product.getCountry().toUpperCase() + ")";
-                            }
-
-                            if (status == "") status = "OK, до " + cert.getExpirationDate();
-
-                            String norms = CoreModule.getRequirementTypes().getNormsShortNamesByIds(cert.getNorms());
-                            result.add(new CertificateVerificationItem(norms, contentName, content.getEquipmentType(),
-                                    cert.getFileName(), status, cert.getExpirationDate(), cert, product));
-                        }
-                    }
-                }
-            }
-        }
-
-        return result;
-    }*/
-
     public CertificatesChecker getCertificatesChecker() {
         return certificatesChecker;
     }

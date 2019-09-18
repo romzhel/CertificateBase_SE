@@ -53,23 +53,4 @@ public class CertificatesContent {
             CoreModule.getProductTypes().delete(item.getEquipmentType());
         }
     }
-
-//    public CertificateVerification checkCertificates(Product product) {
-//        String article = product.getArticle();
-//
-//        for (CertificateContent cc : content) {
-//            if (cc.getEquipmentType().toLowerCase().contains(article.toLowerCase())){//full match
-//                Certificate cert = CoreModule.getCertificates().getCertificateByID(cc.getCertId());
-//                String norms = CoreModule.getRequirementTypes().getNormsShortNamesByIds(cert.getNorms());
-//
-//
-//
-//
-//            }
-//
-//
-//
-//
-//        }
-//    }
 }
