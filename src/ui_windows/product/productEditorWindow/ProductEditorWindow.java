@@ -29,7 +29,7 @@ public class ProductEditorWindow extends OrdinalWindow {
 
     public ProductEditorWindow(Mode editorMode, ObservableList<Product> selectedProducts) {
         super(MainWindow.getMainStage(), Modality.APPLICATION_MODAL,
-                editorMode, "productEditorWindow3.fxml", "");
+                editorMode, "productEditorWindow.fxml", "");
 
 //        ArrayList<Product> selectedItems = new ArrayList<>(selectedProducts);
 
