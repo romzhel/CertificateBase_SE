@@ -4,33 +4,20 @@ import core.CoreModule;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContentActions;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContentTable;
 import utils.AutoCompleteComboBoxListener;
-import utils.Utils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static ui_windows.options_window.profile_editor.SimpleRight.FULL;
-
 public class CertificateEditorWindowController implements Initializable {
+    private CertificatesContentTable certificatesContentTable;
 
     @FXML
     TableView<CertificateContent> tvContent;
-
-    @FXML
-    TableColumn<CertificateContent, String> tcType;
-
-    @FXML
-    TableColumn<CertificateContent, String> tcNames;
-
-    @FXML
-    TableColumn<CertificateContent, String> tсTnVed;
 
     @FXML
     ComboBox<String> cbCountrySelect;
@@ -46,46 +33,9 @@ public class CertificateEditorWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        CoreModule.setCertificatesContentTable(new CertificatesContentTable(tvContent));
+        certificatesContentTable = new CertificatesContentTable(tvContent);
+        CoreModule.setCertificatesContentTable(certificatesContentTable);
         tvContent.setPlaceholder(new Label("Нет данных для отображения"));
-
-        tcType.setCellValueFactory(new PropertyValueFactory<>("equipmentType"));
-        tcType.setCellFactory(TextFieldTableCell.forTableColumn());
-        tcType.setEditable(true);
-
-        tсTnVed.setCellValueFactory(new PropertyValueFactory<>("tnved"));
-        tсTnVed.setCellFactory(TextFieldTableCell.forTableColumn());
-        tсTnVed.setEditable(true);
-
-        tcNames.setCellValueFactory(new PropertyValueFactory<>("equipmentName"));
-        tcNames.setCellFactory(TextFieldTableCell.forTableColumn());
-
-        tcType.setOnEditCommit(event -> {//product type was changed
-            CertificateContent cc = event.getRowValue();
-
-            if (!event.getNewValue().matches(event.getOldValue())) {//changes were made
-                cc.setEquipmentType(event.getNewValue());
-                cc.setWasChanged(true);
-            }
-        });
-
-        tсTnVed.setOnEditCommit(event -> {
-            CertificateContent cc = event.getRowValue();
-
-            if (!event.getNewValue().matches(event.getOldValue())) {//changes were made
-                cc.setTnved(event.getNewValue());
-                cc.setWasChanged(true);
-            }
-        });
-
-        tcNames.setOnEditCommit(event -> {
-            CertificateContent cc = event.getRowValue();
-
-            if (!event.getNewValue().matches(event.getOldValue())) {//changes were made
-                cc.setEquipmentName(event.getNewValue());
-                cc.setWasChanged(true);
-            }
-        });
 
         lvNorms.setOnKeyReleased(event -> {
             if (event.getCode()== KeyCode.DELETE) {
@@ -126,12 +76,12 @@ public class CertificateEditorWindowController implements Initializable {
     }
 
     public void addItem() {
-        tvContent.setEditable(true);
-        CertificateContentActions.addItem();
+        CertificateContentActions.addItem(certificatesContentTable);
     }
 
     public void editItem() {
-        CoreModule.getCertificatesContentTable().getTableView().setEditable(true);
+        certificatesContentTable.setEditModeActive(true);
+        certificatesContentTable.setEditMode(tvContent.getSelectionModel().getSelectedIndex());
     }
 
     public void deleteItem() {

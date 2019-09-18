@@ -9,11 +9,11 @@ import java.util.ArrayList;
 
 public class CertificateContentActions {
 
-    public static void addItem() {
-        CoreModule.getCertificatesContentTable().getTableView().getItems().
-                add(new CertificateContent(0, 0, "введите значение", "введите значение", "введите значение"));
+    public static void addItem(CertificatesContentTable certificatesContentTable) {
+        CertificateContent newItem = new CertificateContent(0, 0, "введите значение", "введите значение", "введите значение");
+        CoreModule.getCertificatesContentTable().getTableView().getItems().add(newItem);
+        certificatesContentTable.setEditMode(CoreModule.getCertificatesContentTable().getTableView().getItems().indexOf(newItem));
     }
-
 
     public static void saveContent(Certificate cert) {
         for (CertificateContent cc : CoreModule.getCertificatesContentTable().getTableView().getItems()) {

@@ -21,11 +21,6 @@
       <Button fx:id="btnCancel" layoutX="652.0" layoutY="705.0" mnemonicParsing="false" onAction="#cancel" prefHeight="25.0" prefWidth="150.0" text="Отмена" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="251.0" />
       <Button fx:id="btnFolderSelect" layoutX="567.0" layoutY="263.0" mnemonicParsing="false" onAction="#selectFolder" prefHeight="25.0" prefWidth="64.0" text="Обзор" AnchorPane.leftAnchor="567.0" AnchorPane.topAnchor="263.0" />
       <TableView fx:id="tvContent" layoutX="9.0" layoutY="301.0" prefHeight="385.0" prefWidth="1003.0" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="41.0" AnchorPane.topAnchor="301.0">
-        <columns>
-          <TableColumn fx:id="tcType" prefWidth="404.0" text="Тип оборудования" />
-            <TableColumn fx:id="tсTnVed" minWidth="0.0" prefWidth="105.0" text="ТН ВЭД" />
-          <TableColumn fx:id="tcNames" minWidth="0.0" prefWidth="572.0" text="Наименование" />
-        </columns>
          <contextMenu>
             <ContextMenu fx:id="cmCertificateContent">
               <items>
