@@ -36,6 +36,7 @@ import ui_windows.options_window.user_editor.User;
 import ui_windows.options_window.user_editor.UserEditorWindow;
 import ui_windows.options_window.user_editor.UsersTable;
 import ui_windows.product.Product;
+import utils.Utils;
 
 import java.awt.*;
 import java.io.File;
@@ -164,7 +165,6 @@ public class OptionsWindowController implements Initializable {
                 }
             }
         });
-
     }
 
     public void actionAddCertificateType() {
@@ -191,6 +191,12 @@ public class OptionsWindowController implements Initializable {
         CertificateEditorWindowActions.deleteData();
     }
 
+    public void actionOpenCertificateFile() {
+        File certFile = new File(CoreModule.getFolders().getCertFolder() + "\\" +
+                tvCertificates.getSelectionModel().getSelectedItem().getFileName());
+        Utils.openFile(certFile);
+    }
+
     public void actionAddFamily() {
         new FamiliesEditorWindow(ADD);
     }
@@ -203,7 +209,6 @@ public class OptionsWindowController implements Initializable {
         TableView<ProductFamily> pft = CoreModule.getProductFamilies().getProductFamiliesTable().getTableView();
         int index = pft.getSelectionModel().getSelectedIndex();
         ProductFamily pf = pft.getItems().get(index);
-
 
         if (CoreModule.getProductLgbks().isFamilyUsed(pf)) Dialogs.showMessage("Удаление элемента",
                 "Элемент не может быть удалён, так как используется");
@@ -287,8 +292,6 @@ public class OptionsWindowController implements Initializable {
             } else {
                 new ProfilesDB().updateData(editedProfile);
             }
-
-
         }
     }
 
