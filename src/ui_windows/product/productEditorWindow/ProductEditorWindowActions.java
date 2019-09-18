@@ -11,6 +11,7 @@ import ui_windows.main_window.file_import_window.ColumnsMapper;
 import ui_windows.main_window.file_import_window.FileImportTableItem;
 import ui_windows.main_window.file_import_window.ObjectsComparator2;
 import ui_windows.options_window.certificates_editor.certificatesChecker.CertificateVerificationItem;
+import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
@@ -23,8 +24,6 @@ import static ui_windows.Mode.EDIT;
 import static ui_windows.main_window.file_import_window.NamesMapping.DESC_ORDER_NUMBER;
 
 public class ProductEditorWindowActions {
-    //    public static HashSet<Integer> existingNorms = new HashSet<>();
-//    public static HashSet<Integer> needNorms = new HashSet<>();
     private static TableView<CertificateVerificationItem> tableView;
     private static MultiEditor multiEditor;
 
@@ -66,7 +65,13 @@ public class ProductEditorWindowActions {
                 fiti.add(new FileImportTableItem("", "price", true, true, -1, false));
                 fiti.add(new FileImportTableItem("", "archive", true, true, -1, false));
                 fiti.add(new FileImportTableItem("", "needaction", true, true, -1, false));
-                fiti.add(new FileImportTableItem("", "notused", true, true, -1, false));
+
+
+                LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(pr.getLgbk(), pr.getHierarchy()));
+                boolean globalDisabled = lap.getLgbkItem().isNotUsed() || lap.getLgbkParent().isNotUsed();
+                if (!globalDisabled) {
+                    fiti.add(new FileImportTableItem("", "notused", true, true, -1, false));
+                }
 
                 ColumnsMapper mapper = new ColumnsMapper();
                 ObjectsComparator2 comparator = new ObjectsComparator2(pr, changedProduct, false, mapper.getFieldsForImport(fiti));
