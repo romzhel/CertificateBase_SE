@@ -9,7 +9,10 @@ import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 import utils.Utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.TreeSet;
 
 import static ui_windows.options_window.certificates_editor.certificatesChecker.CheckStatusResult.*;
 
@@ -59,7 +62,7 @@ public class CertificatesChecker {
         useTemporaryTypeId = false;
     }
 
-    private void clearData(){
+    private void clearData() {
         certsOk = 0;
         certsErr = 0;
         certTotal = 0;
@@ -71,75 +74,113 @@ public class CertificatesChecker {
     private void checkExistingCertificates(Product product) {
         ArrayList<String> prodNames = new ArrayList<>();
 
-        for (Certificate cert : CoreModule.getCertificates().getCertificates()) {//check all certificates
+        int results = 0;
+        boolean isHardMode = true;
+        int cycle = 0;
 
-            prodNames.clear();//forming comparing product values (article / material)
-            prodNames.add(Utils.toEN(product.getArticle()).toUpperCase());
-            if (cert.isMaterialMatch()) prodNames.add(Utils.toEN(product.getMaterial()).toUpperCase());
+        do {
+            for (Certificate cert : CoreModule.getCertificates().getCertificates()) {//check all certificates
 
-            int contentTypeId;
-//            Certificate certificate;
-            for (CertificateContent content : cert.getContent()) {//check all content
-                contentTypeId = CoreModule.getProductTypes().getIDbyType(content.getEquipmentType());
-//                certificate = CoreModule.getCertificates().getCertificateByID(content.getCertId());
-                boolean fullNameMatch = cert.isFullNameMatch();
+                prodNames.clear();//forming comparing product values (article / material)
+                prodNames.add(Utils.toEN(product.getArticle()).toUpperCase());
+                if (cert.isMaterialMatch()) prodNames.add(Utils.toEN(product.getMaterial()).toUpperCase());
 
-                boolean productTypeNotDefined = product.getType_id() == 0;
-                boolean productTypeMatches = product.getType_id() > 0 && product.getType_id() == contentTypeId;
-                boolean changedProductTypeMatch = temporaryTypeId > 0 && temporaryTypeId == contentTypeId;
-                boolean changedProductTypeNotDefined = temporaryTypeId == 0;
+                int contentTypeId;
 
-                boolean usualWay = !useTemporaryTypeId && (productTypeNotDefined || productTypeMatches);
-                boolean temporaryWay = useTemporaryTypeId && (changedProductTypeNotDefined || changedProductTypeMatch);
+                for (CertificateContent content : cert.getContent()) {//check all content
+                    contentTypeId = CoreModule.getProductTypes().getIDbyType(content.getEquipmentType());
 
-                if (fullNameMatch || usualWay || temporaryWay) {
+                    boolean fullNameMatch = cert.isFullNameMatch();
+                    boolean productTypeNotDefined = product.getType_id() == 0;
+                    boolean productTypeMatches = product.getType_id() > 0 && product.getType_id() == contentTypeId;
+                    boolean changedProductTypeMatch = temporaryTypeId > 0 && temporaryTypeId == contentTypeId;
+                    boolean changedProductTypeNotDefined = temporaryTypeId == 0;
 
-                    for (String contentName : Utils.stringToList(content.getEquipmentName())) {//check all content names
-                        for (String prod : prodNames) {//compare product article / material with certificate content
+                    boolean usualWay = !useTemporaryTypeId && (productTypeNotDefined || productTypeMatches);
+                    boolean temporaryWay = useTemporaryTypeId && (changedProductTypeNotDefined || changedProductTypeMatch);
 
-                            String status = "";
-                            String contentValue = "";
+                    if (fullNameMatch || usualWay || temporaryWay) {
+                        for (String contentName : Utils.stringToList(content.getEquipmentName())) {//check all content names
 
-                            if (contentName.matches(".+[x]{2,}.*")) {
-                                contentValue = contentName.replaceAll("[x]{2,}", ".*").trim().toUpperCase();
-                            } else if (!cert.isFullNameMatch()) {
-                                contentValue = contentName.trim().toUpperCase() + "\\s*\\d+.*";
-                            } else contentValue = contentName.trim().toUpperCase();
+                            for (String prod : prodNames) {//compare product article / material with certificate content
 
-                            contentValue = contentValue.replaceAll("\\(", "\\\\(")
-                                    .replaceAll("\\)", "\\\\)");
+                                String contentValue = getContentValueForComparing(cert, contentName);
 
-                            if (prod.matches(contentValue)) {
-                                if ((new Date()).after(Utils.getDate(cert.getExpirationDate()))) {//expired
-                                    status = NOT_OK + EXPIRED + cert.getExpirationDate();
-                                    certsErr++;
+                                if (prod.matches(contentValue) /*&& product.getMaterial().equals("AVS16.290/109") && contentValue.contains("AVS")*/) {
+                                    if (isHardMode && !isMatchEquipTypeName(product, content)) continue;
+
+                                    results++;
+                                    String status = getStatusString(product, cert);
+
+                                    satisfiedNorms.addAll(Utils.getNumberALfromStringEnum(cert.getNorms()));
+                                    String norms = CoreModule.getRequirementTypes().getNormsShortNamesByIds(cert.getNorms());
+                                    resultTableItems.add(new CertificateVerificationItem(norms, contentName, content.getEquipmentType(),
+                                            cert.getFileName(), status, cert.getExpirationDate(), cert, product));
                                 }
-
-                                boolean productHasCert = !product.getCountry().trim().isEmpty();
-                                boolean certCountryMatch = cert.getCountries().toLowerCase().contains(product.getCountry().toLowerCase());
-                                boolean certAllCountries = cert.getCountries().contains("--");
-
-                                if (!certAllCountries && productHasCert && !certCountryMatch) {//no country
-                                    status = status.isEmpty() ? NOT_OK + BAD_COUNTRY + " (" + product.getCountry().toUpperCase() + ")"
-                                            : status + BAD_COUNTRY + " (" + product.getCountry().toUpperCase() + ")";
-                                    certsErr++;
-                                }
-
-                                if (status.isEmpty()) {
-                                    status = OK + ", до " + cert.getExpirationDate();
-                                    certsOk++;
-                                }
-
-                                satisfiedNorms.addAll(Utils.getNumberALfromStringEnum(cert.getNorms()));
-                                String norms = CoreModule.getRequirementTypes().getNormsShortNamesByIds(cert.getNorms());
-                                resultTableItems.add(new CertificateVerificationItem(norms, contentName, content.getEquipmentType(),
-                                        cert.getFileName(), status, cert.getExpirationDate(), cert, product));
                             }
                         }
                     }
                 }
             }
+
+            if (results == 0) {
+                isHardMode = !isHardMode;
+                cycle++;
+            }
+        } while (results == 0 && !isHardMode);
+    }
+
+    private String getStatusString(Product product, Certificate cert) {
+        String status = "";
+        if ((new Date()).after(Utils.getDate(cert.getExpirationDate()))) {//expired
+            status = NOT_OK + EXPIRED + cert.getExpirationDate();
+            certsErr++;
         }
+
+        boolean productHasCert = !product.getCountry().trim().isEmpty();
+        boolean certCountryMatch = cert.getCountries().toLowerCase().contains(product.getCountry().toLowerCase());
+        boolean certAllCountries = cert.getCountries().contains("--");
+
+        if (!certAllCountries && productHasCert && !certCountryMatch) {//no country
+            status = status.isEmpty() ? NOT_OK + BAD_COUNTRY + " (" + product.getCountry().toUpperCase() + ")"
+                    : status + BAD_COUNTRY + " (" + product.getCountry().toUpperCase() + ")";
+            certsErr++;
+        }
+
+        if (status.isEmpty()) {
+            status = OK + ", до " + cert.getExpirationDate();
+            certsOk++;
+        }
+        return status;
+    }
+
+    private boolean isMatchEquipTypeName(Product product, CertificateContent content) {
+        String[] productDescriptionParts = product.getDescriptionru().split("\\s");
+        for (String partOfDesc : productDescriptionParts) {
+            String searchPart;
+            if (partOfDesc.length() > 3) {
+                searchPart = partOfDesc.substring(0, 3/*partOfDesc.length() - 1).toLowerCase()*/).toLowerCase();
+
+                if (content.getEquipmentType().toLowerCase().contains(searchPart)) {
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
+    private String getContentValueForComparing(Certificate cert, String contentName) {
+        String contentValue;
+        if (contentName.matches(".+[x]{2,}.*")) {
+            contentValue = contentName.replaceAll("[x]{2,}", ".*").trim().toUpperCase();
+        } else if (!cert.isFullNameMatch()) {
+            contentValue = contentName.trim().toUpperCase() + "\\s*\\d+.*";
+        } else contentValue = contentName.trim().toUpperCase();
+
+        contentValue = contentValue.replaceAll("\\(", "\\\\(")
+                .replaceAll("\\)", "\\\\)");
+        return contentValue;
     }
 
     private void checkNorms(Product product) {
