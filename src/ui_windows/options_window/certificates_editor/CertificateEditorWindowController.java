@@ -3,7 +3,9 @@ package ui_windows.options_window.certificates_editor;
 import core.CoreModule;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContentActions;
@@ -35,21 +37,20 @@ public class CertificateEditorWindowController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         certificatesContentTable = new CertificatesContentTable(tvContent);
         CoreModule.setCertificatesContentTable(certificatesContentTable);
-        tvContent.setPlaceholder(new Label("Нет данных для отображения"));
 
         lvNorms.setOnKeyReleased(event -> {
-            if (event.getCode()== KeyCode.DELETE) {
+            if (event.getCode() == KeyCode.DELETE) {
                 int index = lvNorms.getSelectionModel().getSelectedIndex();
-                if (index >= 0 && index < lvNorms.getItems().size()){
+                if (index >= 0 && index < lvNorms.getItems().size()) {
                     lvNorms.getItems().remove(index);
                 }
             }
         });
 
         lvCountries.setOnKeyReleased(event -> {
-            if (event.getCode()== KeyCode.DELETE) {
+            if (event.getCode() == KeyCode.DELETE) {
                 int index = lvCountries.getSelectionModel().getSelectedIndex();
-                if (index >= 0 && index < lvCountries.getItems().size()){
+                if (index >= 0 && index < lvCountries.getItems().size()) {
                     lvCountries.getItems().remove(index);
                 }
             }
@@ -68,6 +69,7 @@ public class CertificateEditorWindowController implements Initializable {
     }
 
     public void cancel() {
+        certificatesContentTable.restoreBackupedItems();
         CertificateEditorWindowActions.close();
     }
 
@@ -92,17 +94,23 @@ public class CertificateEditorWindowController implements Initializable {
         }
     }
 
-    public void addNorm(){
+    public void addNorm() {
         CertificateEditorWindowActions.addNorm();
     }
 
-    public void normsKey(){
+    public void normsKey() {
 
     }
 
-    public void countryKey(){
+    public void countryKey() {
 
     }
 
+    public CertificatesContentTable getCertificatesContentTable() {
+        return certificatesContentTable;
+    }
 
+    public void setCertificatesContentTable(CertificatesContentTable certificatesContentTable) {
+        this.certificatesContentTable = certificatesContentTable;
+    }
 }

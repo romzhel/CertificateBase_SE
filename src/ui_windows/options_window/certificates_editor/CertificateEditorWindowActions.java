@@ -14,6 +14,7 @@ import utils.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 
 import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
@@ -109,6 +110,8 @@ public class CertificateEditorWindowActions {
             Utils.setControlValue(root, "ckbMaterialMatch", cert.isMaterialMatch());
 
             CoreModule.getCertificatesContentTable().setContent(cert.getContent());
+            ((CertificateEditorWindowController) CertificateEditorWindow.getLoader().getController())
+                    .getCertificatesContentTable().setBackupItems(cert.getContent());
         }
     }
 

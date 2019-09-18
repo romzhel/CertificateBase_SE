@@ -48,8 +48,8 @@ public class CertificateContentActions {
 //                CoreModule.getProductTypes().delete();
                 CoreModule.getCertificates().removeContent(cc); //remove from cert
                 CoreModule.getCertificatesContent().delete(cc); //remove from contents
-                CoreModule.getCertificatesContentTable().getTableView().getItems().remove(cc); //remove from table
             }
+            CoreModule.getCertificatesContentTable().getTableView().getItems().remove(cc); //remove from table
         }
 
     }
