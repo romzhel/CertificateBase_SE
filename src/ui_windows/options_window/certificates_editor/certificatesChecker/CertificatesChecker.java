@@ -19,21 +19,18 @@ import static ui_windows.options_window.certificates_editor.certificatesChecker.
 public class CertificatesChecker {
     public final static String NOT_OK = "НЕ ОК";
     public final static String OK = "ОК";
-    public final static String EXPIRED = ", истек";
-    public final static String BAD_COUNTRY = ", нет страны";
+    public final static String EXPIRED = ", истек ";
+    public final static String BAD_COUNTRY = ", нет страны ";
     public final static String CERT_NO_NEEDED = "Сертификаты не требуются";
+    public final static String ALL_COUNTRIES = "--";
     private TreeSet<CertificateVerificationItem> resultTableItems;
     private ArrayList<Integer> satisfiedNorms;
     private HashSet<Integer> globalNeededNorms;
     private HashSet<Integer> productNeededNorms;
     private CheckStatusResult checkStatusResult = NO_DATA;
-    private int certsOk;
     private int certsErr;
-    private int certTotal;
-    private int certsAbs;
     private int temporaryTypeId;
     private boolean useTemporaryTypeId;
-
 
     public CertificatesChecker() {
         resultTableItems = new TreeSet<>((o1, o2) -> {
@@ -63,10 +60,7 @@ public class CertificatesChecker {
     }
 
     private void clearData() {
-        certsOk = 0;
         certsErr = 0;
-        certTotal = 0;
-        certsAbs = 0;
         resultTableItems.clear();
         satisfiedNorms.clear();
     }
@@ -75,9 +69,9 @@ public class CertificatesChecker {
         ArrayList<String> prodNames = new ArrayList<>();
 
         int results = 0;
-        boolean isHardMode = false /*true*/;
+        boolean isHardMode =  true;
 
-//        do {
+        do {
             for (Certificate cert : CoreModule.getCertificates().getCertificates()) {//check all certificates
 
                 prodNames.clear();//forming comparing product values (article / material)
@@ -106,8 +100,8 @@ public class CertificatesChecker {
 
                                 String contentValue = getContentValueForComparing(cert, contentName);
 
-                                if (prod.matches(contentValue) /*&& product.getMaterial().equals("AVS16.290/109") && contentValue.contains("AVS")*/) {
-                                    if (typeNotDefined && isHardMode && !isMatchEquipTypeName(product, content)) continue;
+                                if (prod.matches(contentValue)) {
+                                    if (!fullNameMatch && typeNotDefined && isHardMode && !isMatchEquipTypeName(product, content)) continue;
 
                                     results++;
                                     String status = getStatusString(product, cert);
@@ -123,10 +117,10 @@ public class CertificatesChecker {
                 }
             }
 
-//            if (results == 0) {
-//                isHardMode = !isHardMode;
-//            }
-//        } while (results == 0 && !isHardMode);
+            if (results == 0) {
+                isHardMode = !isHardMode;
+            }
+        } while (results == 0 && !isHardMode);
     }
 
     private String getStatusString(Product product, Certificate cert) {
@@ -138,7 +132,7 @@ public class CertificatesChecker {
 
         boolean productHasCert = !product.getCountry().trim().isEmpty();
         boolean certCountryMatch = cert.getCountries().toLowerCase().contains(product.getCountry().toLowerCase());
-        boolean certAllCountries = cert.getCountries().contains("--");
+        boolean certAllCountries = cert.getCountries().contains(ALL_COUNTRIES);
 
         if (!certAllCountries && productHasCert && !certCountryMatch) {//no country
             status = status.isEmpty() ? NOT_OK + BAD_COUNTRY + " (" + product.getCountry().toUpperCase() + ")"
@@ -148,7 +142,6 @@ public class CertificatesChecker {
 
         if (status.isEmpty()) {
             status = OK + ", до " + cert.getExpirationDate();
-            certsOk++;
         }
         return status;
     }
@@ -220,10 +213,7 @@ public class CertificatesChecker {
                 certsErr++;
             }
             resultTableItems.add(cvi);
-            certsAbs++;
         }
-
-        certTotal = resultTableItems.size();
 
         if (certNotNeeded) {
             checkStatusResult = STATUS_OK;
