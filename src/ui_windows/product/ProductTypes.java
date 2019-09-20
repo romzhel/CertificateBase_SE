@@ -32,8 +32,11 @@ public class ProductTypes {
             addItem(pt);
         }
 
-        return productTypes.indexOf(pt);//return index of new item
+//        return productTypes.indexOf(pt);//return index of new item
+        if (pt.getId() == 0) System.out.println("not found product type ID for certificate content " + cc.getEquipmentName());
+        return pt.getId();
     }
+
     public int getIDbyType(String type) {
         for (ProductType pt : productTypes) {
             if (pt.getType().equals(type.trim())) return pt.getId();//existing type

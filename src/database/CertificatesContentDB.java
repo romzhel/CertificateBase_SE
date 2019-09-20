@@ -63,7 +63,9 @@ public class CertificatesContentDB extends DbRequest {
             }
 
         } catch (SQLException e) {
-            logAndMessage("exception of writing content to BD: " + e.getMessage());
+            logAndMessage("exception of writing content to BD: " + e.getMessage() + "\n" +
+                    "Additional info: certID = " + content.getCertId() + ", prodTypeId = " + CoreModule.getProductTypes().getID(content) +
+                    ", equipEnums = " + content.getEquipmentName() + "\n" + e.getSQLState() + "\n" + e.getStackTrace());
         } finally {
             finalActions();
         }

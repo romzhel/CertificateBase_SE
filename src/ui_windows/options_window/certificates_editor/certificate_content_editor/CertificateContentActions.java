@@ -50,6 +50,7 @@ public class CertificateContentActions {
                 CoreModule.getCertificatesContent().delete(cc); //remove from contents
             }
             CoreModule.getCertificatesContentTable().getTableView().getItems().remove(cc); //remove from table
+            CoreModule.getCertificatesContentTable().getTableView().refresh();
         }
 
     }
