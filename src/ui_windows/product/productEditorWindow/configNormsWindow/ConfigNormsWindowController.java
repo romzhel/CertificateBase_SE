@@ -1,11 +1,14 @@
 package ui_windows.product.productEditorWindow.configNormsWindow;
 
+import com.sun.deploy.util.FXLoader;
 import core.CoreModule;
 import database.ProductsDB;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
+import javafx.scene.layout.AnchorPane;
 import ui_windows.options_window.requirements_types_editor.RequirementTypesListViews;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
@@ -32,24 +35,6 @@ public class ConfigNormsWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        /*ToggleGroup group = new ToggleGroup();
-        rbAddToGlobal.setToggleGroup(group);
-        rbInsteadGlobal.setToggleGroup(group);
-
-        editedProduct = ProductEditorWindowActions.getEditedItem();
-
-        if (editedProduct.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
-            rbAddToGlobal.setSelected(true);
-        } else if (editedProduct.getNormsMode() == NormsList.INSTEAD_GLOBAL) {
-            rbInsteadGlobal.setSelected(true);
-        }
-
-        requirementTypesListViews = new RequirementTypesListViews(editedProduct, lvAllNorms, lvSelectedNorms);
-
-        group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            editedProduct.setNormsMode(rbAddToGlobal.isSelected() ? NormsList.ADD_TO_GLOBAL : NormsList.INSTEAD_GLOBAL);
-            requirementTypesListViews.display();
-        });*/
     }
 
     public void apply() {
@@ -73,6 +58,16 @@ public class ConfigNormsWindowController implements Initializable {
         }
 
         if (saveToDbResult) {
+
+
+            FXMLLoader fxmlLoader = ConfigNormsWindow.getLoader();
+
+
+            FXMLLoader loader = ProductEditorWindow.getLoader();
+            ProductEditorWindowController pewc = (ProductEditorWindowController) loader.getController();
+            boolean test = pewc.rmiTypeFilter.isSelected();
+
+
             boolean isEqTypeFilter = ((ProductEditorWindowController) ProductEditorWindow.getLoader().getController()).rmiTypeFilter.isSelected();
             ProductEditorWindowActions.fillCertificateVerificationTable(isEqTypeFilter);
             CoreModule.getProducts().getTableView().refresh();

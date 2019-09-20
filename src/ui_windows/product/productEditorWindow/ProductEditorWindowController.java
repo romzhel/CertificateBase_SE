@@ -175,12 +175,12 @@ public class ProductEditorWindowController implements Initializable {
             ProductEditorWindowActions.fillCertificateVerificationTable(newValue);
             ProductEditorWindow.fillProductTypesCombo();
 
-            cbType.valueProperty().removeListener(eqTypeChangeListener);
+//            cbType.valueProperty().removeListener(eqTypeChangeListener);
             if (cbType.getItems().indexOf(prevType) < 0) {
                 cbType.getItems().add(prevType);
             }
             cbType.getEditor().setText(prevType);
-            cbType.valueProperty().addListener(eqTypeChangeListener);
+//            cbType.valueProperty().addListener(eqTypeChangeListener);
         });
 
     }

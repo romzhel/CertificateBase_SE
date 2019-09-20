@@ -101,7 +101,7 @@ public class CertificatesChecker {
                                 String contentValue = getContentValueForComparing(cert, contentName);
 
                                 if (prod.matches(contentValue)) {
-                                    if (!fullNameMatch && typeNotDefined && isEqTypeFiltered && !isMatchEquipTypeName(product, content)) continue;
+                                    if (!content.getEquipmentName().isEmpty() && !fullNameMatch && typeNotDefined && isEqTypeFiltered && !isMatchEquipTypeName(product, content)) continue;
 
                                     results++;
                                     String status = getStatusString(product, cert);
