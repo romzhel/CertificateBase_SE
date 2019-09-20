@@ -66,7 +66,7 @@ public class MainTable {
 
                                     Product product = param.getTableView().getItems().get(getIndex());
 
-                                    CoreModule.getCertificates().getCertificatesChecker().check(product);
+                                    CoreModule.getCertificates().getCertificatesChecker().check(product, true);
                                     getStyleClass().removeAll("itemStrikethroughRed", "itemStrikethroughBrown",
                                             "itemStrikethroughGreen", "itemStrikethroughBlack");
 

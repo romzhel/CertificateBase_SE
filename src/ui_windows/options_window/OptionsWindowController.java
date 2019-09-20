@@ -328,7 +328,7 @@ public class OptionsWindowController implements Initializable {
 
             CertificatesChecker certificatesChecker = CoreModule.getCertificates().getCertificatesChecker();
             for (Product product : CoreModule.getProducts().getItems()) {
-                certificatesChecker.check(product);
+                certificatesChecker.check(product, true);
                 for (CertificateVerificationItem cv : certificatesChecker.getResultTableItems()) {
                     if (cv.getStatus().startsWith(CertificatesChecker.NOT_OK) && cv.getStatus().contains(CertificatesChecker.BAD_COUNTRY)) {
                         problemCv.add(cv);

@@ -9,7 +9,9 @@ import javafx.scene.control.RadioButton;
 import ui_windows.options_window.requirements_types_editor.RequirementTypesListViews;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
+import ui_windows.product.productEditorWindow.ProductEditorWindow;
 import ui_windows.product.productEditorWindow.ProductEditorWindowActions;
+import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -71,8 +73,8 @@ public class ConfigNormsWindowController implements Initializable {
         }
 
         if (saveToDbResult) {
-
-            ProductEditorWindowActions.fillCertificateVerificationTable();
+            boolean isEqTypeFilter = ((ProductEditorWindowController) ProductEditorWindow.getLoader().getController()).rmiTypeFilter.isSelected();
+            ProductEditorWindowActions.fillCertificateVerificationTable(isEqTypeFilter);
             CoreModule.getProducts().getTableView().refresh();
             close();
         }

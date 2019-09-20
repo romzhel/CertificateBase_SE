@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class CertificateContentActions {
 
     public static void addItem(CertificatesContentTable certificatesContentTable) {
-        CertificateContent newItem = new CertificateContent(0, 0, "введите значение", "введите значение", "введите значение");
+        CertificateContent newItem = new CertificateContent(0, 0, "", "", "");
         CoreModule.getCertificatesContentTable().getTableView().getItems().add(newItem);
         certificatesContentTable.setEditMode(CoreModule.getCertificatesContentTable().getTableView().getItems().indexOf(newItem));
     }

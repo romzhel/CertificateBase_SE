@@ -2,6 +2,8 @@ package ui_windows.product.productEditorWindow;
 
 import core.CoreModule;
 import core.Dialogs;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -86,12 +88,13 @@ public class ProductEditorWindowController implements Initializable {
     @FXML
     public TextArea taDescription;
 
+    @FXML
+    public RadioMenuItem rmiTypeFilter;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         new ProductEditorWindowTable(tvCertVerification);
         ProductEditorWindowActions.setTableView(tvCertVerification);
-
-//        cbType.getItems().addAll(CoreModule.getProductTypes().getPreparedTypes());//moved to fill cert verif table
 
         cmCertActions.getItems().get(3).setDisable(CoreModule.getUsers().getCurrentUser().getProfile().getName().equals(Profile.COMMON_ACCESS));
 
@@ -105,13 +108,28 @@ public class ProductEditorWindowController implements Initializable {
 //        cbType.getItems().addAll(CoreModule.getProductTypes().getPreparedTypes());
 
 //        ProductEditorWindowActions.fillCertificateVerificationTable();
-        cbType.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null && !newValue.isEmpty()) {
-                CoreModule.getCertificates().getCertificatesChecker().setTemporaryTypeId(CoreModule.getProductTypes().getIDbyType(newValue));
-                CoreModule.getCertificates().getCertificatesChecker().setUseTemporaryTypeId(true);
-                ProductEditorWindowActions.fillCertificateVerificationTable();
+        /*cbType.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (newValue != null && !newValue.isEmpty()) {
+                    CoreModule.getCertificates().getCertificatesChecker().setTemporaryTypeId(CoreModule.getProductTypes().getIDbyType(newValue));
+                    CoreModule.getCertificates().getCertificatesChecker().setUseTemporaryTypeId(true);
+                    ProductEditorWindowActions.fillCertificateVerificationTable(rmiTypeFilter.isSelected());
+                }
             }
-        });
+        });*/
+
+        ChangeListener<String> eqTypeChangeListener = new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (newValue != null && !newValue.isEmpty()) {
+                    CoreModule.getCertificates().getCertificatesChecker().setTemporaryTypeId(CoreModule.getProductTypes().getIDbyType(newValue));
+                    CoreModule.getCertificates().getCertificatesChecker().setUseTemporaryTypeId(true);
+                    ProductEditorWindowActions.fillCertificateVerificationTable(rmiTypeFilter.isSelected());
+                }
+            }
+        };
+        cbType.valueProperty().addListener(eqTypeChangeListener);
 
         Product editedProduct = CoreModule.getProducts().getTableView().getSelectionModel().getSelectedItem();
         LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(
@@ -145,6 +163,24 @@ public class ProductEditorWindowController implements Initializable {
             boolean isOrderable = oa == null ? false : oa.isOrderable();
             cbxOrderable.setSelected(isOrderable);
             cbxOrderable.setIndeterminate(!isOrderable);
+        });
+
+        rmiTypeFilter.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            String prevType = cbType.getEditor().getText();
+
+
+            CoreModule.getCertificates().getCertificatesChecker().setTemporaryTypeId(CoreModule.getProductTypes().getIDbyType(prevType));
+            CoreModule.getCertificates().getCertificatesChecker().setUseTemporaryTypeId(true);
+
+            ProductEditorWindowActions.fillCertificateVerificationTable(newValue);
+            ProductEditorWindow.fillProductTypesCombo();
+
+            cbType.valueProperty().removeListener(eqTypeChangeListener);
+            if (cbType.getItems().indexOf(prevType) < 0) {
+                cbType.getItems().add(prevType);
+            }
+            cbType.getEditor().setText(prevType);
+            cbType.valueProperty().addListener(eqTypeChangeListener);
         });
 
     }

@@ -106,12 +106,12 @@ public class ProductEditorWindowActions {
         }
     }
 
-    public static void fillCertificateVerificationTable() {
+    public static void fillCertificateVerificationTable(boolean isEqTypeFilter) {
         if (multiEditor == null) {
-            CoreModule.getCertificates().getCertificatesChecker().check(getEditedItem());
+            CoreModule.getCertificates().getCertificatesChecker().check(getEditedItem(), isEqTypeFilter);
         } else {
             CoreModule.getCertificates().getCertificatesChecker().setUseTemporaryTypeId(true);
-            CoreModule.getCertificates().getCertificatesChecker().check(multiEditor.getEditedItems());
+            CoreModule.getCertificates().getCertificatesChecker().check(multiEditor.getEditedItems(), isEqTypeFilter);
         }
         tableView.getItems().clear();
         tableView.getItems().addAll(CoreModule.getCertificates().getCertificatesChecker().getResultTableItems());

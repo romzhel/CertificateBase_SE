@@ -194,7 +194,7 @@ public class MainWindowsController implements Initializable {
                 MainWindow.setProgress(progress);
 
                 CertificatesChecker certificatesChecker = CoreModule.getCertificates().getCertificatesChecker();
-                certificatesChecker.check(pr);
+                certificatesChecker.check(pr, true);
                 if (certificatesChecker.getResultTableItems().size() == 0) result.add(pr);
             }
 
@@ -218,7 +218,7 @@ public class MainWindowsController implements Initializable {
                 MainWindow.setProgress(progress);
 
                 CertificatesChecker certificatesChecker = CoreModule.getCertificates().getCertificatesChecker();
-                certificatesChecker.check(pr);
+                certificatesChecker.check(pr, true);
                 for (CertificateVerificationItem cv : certificatesChecker.getResultTableItems()) {
                     if (cv.getStatus().startsWith(CertificatesChecker.NOT_OK)) {
                         result.add(pr);
@@ -254,7 +254,7 @@ public class MainWindowsController implements Initializable {
                 MainWindow.setProgress(progress);
 
                 CertificatesChecker certificatesChecker = CoreModule.getCertificates().getCertificatesChecker();
-                certificatesChecker.check(pr);
+                certificatesChecker.check(pr, true);
                 for (CertificateVerificationItem cv : certificatesChecker.getResultTableItems()) {
                     Date certDate = Utils.getDate(cv.getExpirationDate());
                     Date now = new Date();

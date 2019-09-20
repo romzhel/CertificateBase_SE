@@ -58,7 +58,7 @@ public class CertificateRequestWindowController implements Initializable {
                         lineWasFound = true;
 
                         CertificatesChecker certificatesChecker = CoreModule.getCertificates().getCertificatesChecker();
-                        certificatesChecker.check(product);
+                        certificatesChecker.check(product, true);
 
                         HashSet<File> files = new HashSet<>();
                         for (CertificateVerificationItem cv : certificatesChecker.getResultTableItems()) {

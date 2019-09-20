@@ -58,7 +58,7 @@ public class ProductEditorWindow extends OrdinalWindow {
 
         }
 
-        ProductEditorWindowActions.fillCertificateVerificationTable();
+        ProductEditorWindowActions.fillCertificateVerificationTable(true);
         fillProductTypesCombo();
 
         applyProfileSimple(CoreModule.getUsers().getCurrentUser().getProfile().getProducts());

@@ -43,18 +43,18 @@ public class CertificatesChecker {
         productNeededNorms = new HashSet<>();
     }
 
-    public void check(ObservableList<Product> products) {
+    public void check(ObservableList<Product> products, boolean isEqTypeFiltered) {
         clearData();
         for (Product product : products) {
-            checkExistingCertificates(product);
+            checkExistingCertificates(product, isEqTypeFiltered);
             checkNorms(product);
         }
         useTemporaryTypeId = false;
     }
 
-    public void check(Product product) {
+    public void check(Product product, boolean isEqTypeFiltered) {
         clearData();
-        checkExistingCertificates(product);
+        checkExistingCertificates(product, isEqTypeFiltered);
         checkNorms(product);
         useTemporaryTypeId = false;
     }
@@ -65,13 +65,13 @@ public class CertificatesChecker {
         satisfiedNorms.clear();
     }
 
-    private void checkExistingCertificates(Product product) {
+    private void checkExistingCertificates(Product product, boolean isEqTypeFiltered) {
         ArrayList<String> prodNames = new ArrayList<>();
 
         int results = 0;
-        boolean isHardMode =  true;
+//        boolean isHardMode =  true;
 
-        do {
+//        do {
             for (Certificate cert : CoreModule.getCertificates().getCertificates()) {//check all certificates
 
                 prodNames.clear();//forming comparing product values (article / material)
@@ -101,7 +101,7 @@ public class CertificatesChecker {
                                 String contentValue = getContentValueForComparing(cert, contentName);
 
                                 if (prod.matches(contentValue)) {
-                                    if (!fullNameMatch && typeNotDefined && isHardMode && !isMatchEquipTypeName(product, content)) continue;
+                                    if (!fullNameMatch && typeNotDefined && isEqTypeFiltered && !isMatchEquipTypeName(product, content)) continue;
 
                                     results++;
                                     String status = getStatusString(product, cert);
@@ -117,10 +117,12 @@ public class CertificatesChecker {
                 }
             }
 
-            if (results == 0) {
-                isHardMode = !isHardMode;
-            }
-        } while (results == 0 && !isHardMode);
+//            if (results == 0) {
+//                isHardMode = !isHardMode;
+//                isEqTypeFiltered = !isEqTypeFiltered;
+//            }
+//        } while (results == 0 && !isHardMode);
+//        } while (results == 0 && !isEqTypeFiltered);
     }
 
     private String getStatusString(Product product, Certificate cert) {
