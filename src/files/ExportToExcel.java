@@ -12,7 +12,7 @@ import org.apache.poi.ss.usermodel.*;
 import ui_windows.product.Product;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.CertificateCheckingResult;
-import ui_windows.options_window.certificates_editor.certificatesChecker.CertificateVerificationItem;
+import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.request_certificates.RequestResult;
 import utils.Utils;
 

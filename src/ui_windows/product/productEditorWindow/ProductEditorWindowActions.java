@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import ui_windows.main_window.file_import_window.ColumnsMapper;
 import ui_windows.main_window.file_import_window.FileImportTableItem;
 import ui_windows.main_window.file_import_window.ObjectsComparator2;
-import ui_windows.options_window.certificates_editor.certificatesChecker.CertificateVerificationItem;
+import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.MultiEditor;
@@ -24,7 +24,7 @@ import static ui_windows.Mode.EDIT;
 import static ui_windows.main_window.file_import_window.NamesMapping.DESC_ORDER_NUMBER;
 
 public class ProductEditorWindowActions {
-    private static TableView<CertificateVerificationItem> tableView;
+    private static CertificateVerificationTable certificateVerificationTable;
     private static MultiEditor multiEditor;
 
     public static Product getEditedItem() {
@@ -106,7 +106,7 @@ public class ProductEditorWindowActions {
         }
     }
 
-    public static void fillCertificateVerificationTable(boolean isEqTypeFilter) {
+    /*public static void fillCertificateVerificationTable(boolean isEqTypeFilter) {
         if (multiEditor == null) {
             CoreModule.getCertificates().getCertificatesChecker().check(getEditedItem(), isEqTypeFilter);
         } else {
@@ -116,15 +116,15 @@ public class ProductEditorWindowActions {
         tableView.getItems().clear();
         tableView.getItems().addAll(CoreModule.getCertificates().getCertificatesChecker().getResultTableItems());
         tableView.refresh();
-    }
+    }*/
 
-    public static TableView<CertificateVerificationItem> getTableView() {
+    /*public static TableView<CertificateVerificationItem> getTableView() {
         return tableView;
     }
 
     public static void setTableView(TableView<CertificateVerificationItem> tableView) {
         ProductEditorWindowActions.tableView = tableView;
-    }
+    }*/
 
     public static void setMultiEditor(MultiEditor multiEditor) {
         ProductEditorWindowActions.multiEditor = multiEditor;

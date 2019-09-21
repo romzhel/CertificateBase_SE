@@ -1,20 +1,17 @@
 package ui_windows.product.productEditorWindow.configNormsWindow;
 
-import com.sun.deploy.util.FXLoader;
 import core.CoreModule;
 import database.ProductsDB;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
-import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import ui_windows.options_window.requirements_types_editor.RequirementTypesListViews;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
-import ui_windows.product.productEditorWindow.ProductEditorWindow;
+import ui_windows.product.productEditorWindow.CertificateVerificationTable;
 import ui_windows.product.productEditorWindow.ProductEditorWindowActions;
-import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,6 +26,7 @@ public class ConfigNormsWindowController implements Initializable {
     RadioButton rbAddToGlobal;
     @FXML
     RadioButton rbInsteadGlobal;
+    private CertificateVerificationTable certificateVerificationTable;
     private RequirementTypesListViews requirementTypesListViews;
     //    private Product editedProduct;
     private MultiEditor multiEditor;
@@ -58,25 +56,18 @@ public class ConfigNormsWindowController implements Initializable {
         }
 
         if (saveToDbResult) {
-
-
-            FXMLLoader fxmlLoader = ConfigNormsWindow.getLoader();
-
-
-            FXMLLoader loader = ProductEditorWindow.getLoader();
-            ProductEditorWindowController pewc = (ProductEditorWindowController) loader.getController();
-            boolean test = pewc.rmiTypeFilter.isSelected();
-
-
-            boolean isEqTypeFilter = ((ProductEditorWindowController) ProductEditorWindow.getLoader().getController()).rmiTypeFilter.isSelected();
-            ProductEditorWindowActions.fillCertificateVerificationTable(isEqTypeFilter);
+            /*boolean isEqTypeFilter = ((ProductEditorWindowController) ProductEditorWindow.getLoader().getController()).rmiTypeFilter.isSelected();
+            ProductEditorWindowActions.fillCertificateVerificationTable(isEqTypeFilter);*/
             CoreModule.getProducts().getTableView().refresh();
             close();
         }
+
+        certificateVerificationTable.display(certificateVerificationTable.getCheckParameters());
     }
 
     public void close() {
-        ConfigNormsWindow.getStage().close();
+//        ConfigNormsWindow.getStage().close();
+        ((Stage)lvSelectedNorms.getScene().getWindow()).close();
     }
 
     public void moveNorm() {
@@ -141,5 +132,9 @@ public class ConfigNormsWindowController implements Initializable {
 
     public void setRbInsteadGlobal(RadioButton rbInsteadGlobal) {
         this.rbInsteadGlobal = rbInsteadGlobal;
+    }
+
+    public void setCertificateVerificationTable(CertificateVerificationTable certificateVerificationTable) {
+        this.certificateVerificationTable = certificateVerificationTable;
     }
 }

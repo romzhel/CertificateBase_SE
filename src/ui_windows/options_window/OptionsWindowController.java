@@ -12,8 +12,8 @@ import javafx.scene.input.MouseButton;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.MainWindowsController;
 import ui_windows.options_window.certificates_editor.*;
-import ui_windows.options_window.certificates_editor.certificatesChecker.CertificateVerificationItem;
-import ui_windows.options_window.certificates_editor.certificatesChecker.CertificatesChecker;
+import ui_windows.product.certificatesChecker.CertificateVerificationItem;
+import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.options_window.families_editor.FamiliesEditorWindow;
 import ui_windows.options_window.families_editor.ProductFamiliesTable;
 import ui_windows.options_window.families_editor.ProductFamily;
@@ -320,7 +320,7 @@ public class OptionsWindowController implements Initializable {
     }
 
     public void actionCheckCertificates() {
-        new Thread(() -> {
+        /*new Thread(() -> {
             ArrayList<CertificateVerificationItem> problemCv = new ArrayList<>();
             HashSet<Certificate> problemCertificates = new HashSet<>();
             HashSet<Product> problemProducts = new HashSet<>();
@@ -362,7 +362,7 @@ public class OptionsWindowController implements Initializable {
             } catch (Exception e) {
                 System.out.println("Can't open created file");
             }
-        }).start();
+        }).start();*/
 
 
     }

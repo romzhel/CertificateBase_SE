@@ -8,8 +8,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import ui_windows.product.Product;
-import ui_windows.options_window.certificates_editor.certificatesChecker.CertificateVerificationItem;
-import ui_windows.options_window.certificates_editor.certificatesChecker.CertificatesChecker;
+import ui_windows.product.certificatesChecker.CertificateVerificationItem;
+import ui_windows.product.certificatesChecker.CertificatesChecker;
 import utils.Utils;
 
 import java.awt.*;
@@ -34,7 +34,7 @@ public class CertificateRequestWindowController implements Initializable {
     }
 
     public void actionRequestCertificatesRun() {
-        ArrayList<RequestResult> results = new ArrayList<>();
+       /* ArrayList<RequestResult> results = new ArrayList<>();
         HashSet<File> lostFiles = new HashSet<>();
         String linesNotFound = "";
 
@@ -132,7 +132,7 @@ public class CertificateRequestWindowController implements Initializable {
             Desktop.getDesktop().open(excelFile);
         } catch (Exception e) {
             System.out.println("Can't open created file");
-        }
+        }*/
 
     }
 

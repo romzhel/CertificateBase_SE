@@ -4,17 +4,17 @@ import core.CoreModule;
 import core.Dialogs;
 import database.CertificatesDB;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
-import ui_windows.options_window.certificates_editor.certificatesChecker.CertificatesChecker;
+import ui_windows.product.certificatesChecker.CertificatesChecker;
 import utils.Utils;
 
 import java.util.ArrayList;
 
 public class Certificates {
-    private CertificatesChecker certificatesChecker;
+//    private CertificatesChecker certificatesChecker;
     private ArrayList<Certificate> certificates;
 
     public Certificates() {
-        certificatesChecker = new CertificatesChecker();
+//        certificatesChecker = new CertificatesChecker();
         certificates = new CertificatesDB().getData();
     }
 
@@ -78,7 +78,7 @@ public class Certificates {
         return null;
     }
 
-    public CertificatesChecker getCertificatesChecker() {
-        return certificatesChecker;
-    }
+//    public CertificatesChecker getCertificatesChecker() {
+//        return certificatesChecker;
+//    }
 }

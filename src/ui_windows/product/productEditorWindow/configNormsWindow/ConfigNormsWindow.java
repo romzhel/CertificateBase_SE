@@ -8,15 +8,19 @@ import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.requirements_types_editor.RequirementTypesListViews;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
+import ui_windows.product.productEditorWindow.CertificateVerificationTable;
 import ui_windows.product.productEditorWindow.ProductEditorWindowActions;
 
+import java.security.cert.Certificate;
+
 public class ConfigNormsWindow extends OrdinalWindow {
-    public ConfigNormsWindow(Stage parentStage, MultiEditor multiEditor) {
+    public ConfigNormsWindow(Stage parentStage, MultiEditor multiEditor, CertificateVerificationTable certificateVerificationTable) {
         super(parentStage, Modality.APPLICATION_MODAL, mode, "configNormsWindow.fxml",
                 "Настройка проверки норм");
 
         ConfigNormsWindowController cnwc = loader.getController();
         cnwc.setMultiEditor(multiEditor);
+        cnwc.setCertificateVerificationTable(certificateVerificationTable);
 
         ToggleGroup group = new ToggleGroup();
         cnwc.rbAddToGlobal.setToggleGroup(group);

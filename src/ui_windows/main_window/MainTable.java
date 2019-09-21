@@ -12,9 +12,9 @@ import javafx.util.Callback;
 import org.apache.commons.collections4.comparators.ComparatorChain;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
+import ui_windows.product.certificatesChecker.CertificatesChecker;
+import ui_windows.product.certificatesChecker.CheckParameters;
 import ui_windows.product.productEditorWindow.ProductEditorWindow;
-
-import java.util.Comparator;
 
 import static ui_windows.Mode.EDIT;
 
@@ -66,13 +66,14 @@ public class MainTable {
 
                                     Product product = param.getTableView().getItems().get(getIndex());
 
-                                    CoreModule.getCertificates().getCertificatesChecker().check(product, true);
-                                    getStyleClass().removeAll("itemStrikethroughRed", "itemStrikethroughBrown",
-                                            "itemStrikethroughGreen", "itemStrikethroughBlack");
+                                    CertificatesChecker certificatesChecker = new CertificatesChecker(product, new CheckParameters());
 
-                                    String style = CoreModule.getCertificates().getCertificatesChecker().getCheckStatusResultStyle();
-                                    getStyleClass().add(style);
-                                    setTooltip(new Tooltip(CoreModule.getCertificates().getCertificatesChecker().getCheckStatusResult()));
+//                                    CoreModule.getCertificates().getCertificatesChecker().check(product, true);
+                                    /*getStyleClass().removeAll("itemStrikethroughRed", "itemStrikethroughBrown",
+                                            "itemStrikethroughGreen", "itemStrikethroughBlack");*/
+
+                                    getStyleClass().add(certificatesChecker.getCheckStatusResultStyle(getStyleClass()));
+                                    setTooltip(new Tooltip(certificatesChecker.getCheckStatusResult()));
                                 }
                             }
                         };
@@ -106,7 +107,7 @@ public class MainTable {
         tvTable.setOnMouseClicked(event -> {//double click on product
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 2) {
-                    editProduct();//open product editor window
+                    displayEditorWindow();//open product editor window
                 }
             }
         });
@@ -117,7 +118,7 @@ public class MainTable {
 
     }
 
-    public void editProduct() {
+    public void displayEditorWindow() {
         if (tvTable.getSelectionModel().getSelectedIndex() < 0) Dialogs.showMessage("Выбор строки",
                 "Нужно выбрать строку");
         else new ProductEditorWindow(EDIT, tvTable.getSelectionModel().getSelectedItems());

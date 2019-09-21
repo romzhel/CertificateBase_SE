@@ -11,8 +11,8 @@ import ui_windows.login_window.LoginWindow;
 import ui_windows.main_window.file_import_window.FileImport;
 import ui_windows.main_window.filter_window.FilterWindow;
 import ui_windows.options_window.OptionsWindow;
-import ui_windows.options_window.certificates_editor.certificatesChecker.CertificateVerificationItem;
-import ui_windows.options_window.certificates_editor.certificatesChecker.CertificatesChecker;
+import ui_windows.product.certificatesChecker.CertificateVerificationItem;
+import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.user_editor.User;
 import ui_windows.product.Product;
@@ -126,10 +126,7 @@ public class MainWindowsController implements Initializable {
     }
 
     public void editProduct() {
-        /*if (tvTable.getSelectionModel().getSelectedIndex() < 0) Dialogs.showMessage("Выбор строки",
-                "Нужно выбрать строку");
-        else new ProductEditorWindow(EDIT, tvTable.getSelectionModel().getSelectedItems());*/
-        mainTable.editProduct();
+        mainTable.displayEditorWindow();
     }
 
     public void deleteProduct() {
@@ -184,7 +181,7 @@ public class MainWindowsController implements Initializable {
     }
 
     public void reportNoCertificates() {
-        ArrayList<Product> result = new ArrayList<>();
+        /*ArrayList<Product> result = new ArrayList<>();
 
         new Thread(() -> {
             for (Product pr : CoreModule.getProducts().getItems()) {
@@ -204,11 +201,11 @@ public class MainWindowsController implements Initializable {
                 CoreModule.setCurrentItems(result);
                 CoreModule.filter();
             });
-        }).start();
+        }).start();*/
     }
 
     public void reportProblemCertificates() {
-        ArrayList<Product> result = new ArrayList<>();
+        /*ArrayList<Product> result = new ArrayList<>();
 
         new Thread(() -> {
             for (Product pr : CoreModule.getProducts().getItems()) {
@@ -233,11 +230,11 @@ public class MainWindowsController implements Initializable {
                 CoreModule.setCurrentItems(result);
                 CoreModule.filter();
             });
-        }).start();
+        }).start();*/
     }
 
     public void reportExpiredSoonCertificates() {
-        ArrayList<Product> result = new ArrayList<>();
+        /*ArrayList<Product> result = new ArrayList<>();
         String durationS = Dialogs.textInput("Ввод данных", "Введите срок, в течении которого истекает\n" +
                 "действие сертификата (месяцев)", "2");
 
@@ -275,7 +272,7 @@ public class MainWindowsController implements Initializable {
                 CoreModule.setCurrentItems(result);
                 CoreModule.filter();
             });
-        }).start();
+        }).start();*/
     }
 
     public void reportDoubles() {

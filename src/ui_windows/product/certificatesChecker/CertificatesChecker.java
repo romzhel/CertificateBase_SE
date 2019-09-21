@@ -1,4 +1,4 @@
-package ui_windows.options_window.certificates_editor.certificatesChecker;
+package ui_windows.product.certificatesChecker;
 
 import core.CoreModule;
 import javafx.collections.ObservableList;
@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.TreeSet;
 
-import static ui_windows.options_window.certificates_editor.certificatesChecker.CheckStatusResult.*;
+import static ui_windows.product.certificatesChecker.CheckStatusResult.*;
 
 public class CertificatesChecker {
     public final static String NOT_OK = "НЕ ОК";
@@ -24,15 +24,32 @@ public class CertificatesChecker {
     public final static String CERT_NO_NEEDED = "Сертификаты не требуются";
     public final static String ALL_COUNTRIES = "--";
     private TreeSet<CertificateVerificationItem> resultTableItems;
+    private CheckStatusResult checkStatusResult = NO_DATA;
     private ArrayList<Integer> satisfiedNorms;
     private HashSet<Integer> globalNeededNorms;
     private HashSet<Integer> productNeededNorms;
-    private CheckStatusResult checkStatusResult = NO_DATA;
     private int certsErr;
-    private int temporaryTypeId;
-    private boolean useTemporaryTypeId;
+    private TreeSet<String> productTypes;
+    //    private int temporaryTypeId;
+//    private boolean useTemporaryTypeId;
 
-    public CertificatesChecker() {
+    public CertificatesChecker(Product product, CheckParameters checkParameters) {
+        init();
+
+        checkExistingCertificates(product, /*isEqTypeFiltered*/checkParameters);
+        checkNorms(product);
+    }
+
+    public CertificatesChecker(ObservableList<Product> checkedProducts, CheckParameters checkParameters) {
+        init();
+
+        for (Product product : checkedProducts) {
+            checkExistingCertificates(product, /*isEqTypeFiltered*/checkParameters);
+            checkNorms(product);
+        }
+    }
+
+    private void init() {
         resultTableItems = new TreeSet<>((o1, o2) -> {
             String o1c = o1.getNorm().concat(o1.getMatchedPart()).concat(o1.getFile()).concat(o1.getStatus());
             String o2c = o2.getNorm().concat(o2.getMatchedPart()).concat(o2.getFile()).concat(o2.getStatus());
@@ -41,88 +58,69 @@ public class CertificatesChecker {
         satisfiedNorms = new ArrayList<>();
         globalNeededNorms = new HashSet<>();
         productNeededNorms = new HashSet<>();
+        productTypes = new TreeSet<>();
     }
 
-    public void check(ObservableList<Product> products, boolean isEqTypeFiltered) {
-        clearData();
+    public void check(ObservableList<Product> products,/* boolean isEqTypeFiltered*/CheckParameters checkParameters) {
         for (Product product : products) {
-            checkExistingCertificates(product, isEqTypeFiltered);
+            checkExistingCertificates(product, /*isEqTypeFiltered*/checkParameters);
             checkNorms(product);
         }
-        useTemporaryTypeId = false;
     }
 
-    public void check(Product product, boolean isEqTypeFiltered) {
-        clearData();
-        checkExistingCertificates(product, isEqTypeFiltered);
-        checkNorms(product);
-        useTemporaryTypeId = false;
-    }
-
-    private void clearData() {
-        certsErr = 0;
-        resultTableItems.clear();
-        satisfiedNorms.clear();
-    }
-
-    private void checkExistingCertificates(Product product, boolean isEqTypeFiltered) {
+    private void checkExistingCertificates(Product product, CheckParameters checkParameters) {
         ArrayList<String> prodNames = new ArrayList<>();
 
-        int results = 0;
-//        boolean isHardMode =  true;
+        for (Certificate cert : CoreModule.getCertificates().getCertificates()) {//check all certificates
 
-//        do {
-            for (Certificate cert : CoreModule.getCertificates().getCertificates()) {//check all certificates
+            prodNames.clear();//forming comparing product values (article / material)
+            prodNames.add(Utils.toEN(product.getArticle()).toUpperCase());
+            if (cert.isMaterialMatch()) prodNames.add(Utils.toEN(product.getMaterial()).toUpperCase());
 
-                prodNames.clear();//forming comparing product values (article / material)
-                prodNames.add(Utils.toEN(product.getArticle()).toUpperCase());
-                if (cert.isMaterialMatch()) prodNames.add(Utils.toEN(product.getMaterial()).toUpperCase());
+            int contentTypeId;
 
-                int contentTypeId;
+            for (CertificateContent content : cert.getContent()) {//check all content
+                contentTypeId = CoreModule.getProductTypes().getIDbyType(content.getEquipmentType());
 
-                for (CertificateContent content : cert.getContent()) {//check all content
-                    contentTypeId = CoreModule.getProductTypes().getIDbyType(content.getEquipmentType());
+                boolean fullNameMatch = cert.isFullNameMatch();
+                boolean productTypeNotDefined = product.getType_id() == 0;
+                boolean productTypeMatches = product.getType_id() > 0 && product.getType_id() == contentTypeId;
+                boolean changedProductTypeMatch = checkParameters.getTemporaryTypeId() > 0 && checkParameters.getTemporaryTypeId() == contentTypeId;
+                boolean changedProductTypeNotDefined = checkParameters.getTemporaryTypeId() == 0;
 
-                    boolean fullNameMatch = cert.isFullNameMatch();
-                    boolean productTypeNotDefined = product.getType_id() == 0;
-                    boolean productTypeMatches = product.getType_id() > 0 && product.getType_id() == contentTypeId;
-                    boolean changedProductTypeMatch = temporaryTypeId > 0 && temporaryTypeId == contentTypeId;
-                    boolean changedProductTypeNotDefined = temporaryTypeId == 0;
-                    boolean typeNotDefined = productTypeNotDefined || changedProductTypeNotDefined;
 
-                    boolean usualWay = !useTemporaryTypeId && (productTypeNotDefined || productTypeMatches);
-                    boolean temporaryWay = useTemporaryTypeId && (changedProductTypeNotDefined || changedProductTypeMatch);
+                boolean usualWay = !checkParameters.isUseTemporaryTypeId() && (productTypeNotDefined || productTypeMatches);
+                boolean temporaryWay = checkParameters.isUseTemporaryTypeId() && (changedProductTypeNotDefined || changedProductTypeMatch);
 
-                    if (fullNameMatch || usualWay || temporaryWay) {
-                        for (String contentName : Utils.stringToList(content.getEquipmentName())) {//check all content names
+                if (fullNameMatch || usualWay || temporaryWay) {
+                    for (String contentName : Utils.stringToList(content.getEquipmentName())) {//check all content names
 
-                            for (String prod : prodNames) {//compare product article / material with certificate content
+                        for (String prod : prodNames) {//compare product article / material with certificate content
 
-                                String contentValue = getContentValueForComparing(cert, contentName);
+                            String contentValue = getContentValueForComparing(cert, contentName);
 
-                                if (prod.matches(contentValue)) {
-                                    if (!content.getEquipmentName().isEmpty() && !fullNameMatch && typeNotDefined && isEqTypeFiltered && !isMatchEquipTypeName(product, content)) continue;
-
-                                    results++;
-                                    String status = getStatusString(product, cert);
-
-                                    satisfiedNorms.addAll(Utils.getNumberALfromStringEnum(cert.getNorms()));
-                                    String norms = CoreModule.getRequirementTypes().getNormsShortNamesByIds(cert.getNorms());
-                                    resultTableItems.add(new CertificateVerificationItem(norms, contentName, content.getEquipmentType(),
-                                            cert.getFileName(), status, cert.getExpirationDate(), cert, product));
+                            if (prod.matches(contentValue)) {
+                                if (content.getEquipmentType() != null && !content.getEquipmentType().isEmpty()) {
+                                    productTypes.add(content.getEquipmentType());
                                 }
+
+                                boolean typeNotDefined = (!checkParameters.isUseTemporaryTypeId() && productTypeNotDefined) ||
+                                        (checkParameters.isUseTemporaryTypeId() && changedProductTypeNotDefined);
+                                if (!content.getEquipmentName().isEmpty() && !fullNameMatch && typeNotDefined && checkParameters.isEqTypeFiltered() && !isMatchEquipTypeName(product, content))
+                                    continue;
+
+                                String status = getStatusString(product, cert);
+
+                                satisfiedNorms.addAll(Utils.getNumberALfromStringEnum(cert.getNorms()));
+                                String norms = CoreModule.getRequirementTypes().getNormsShortNamesByIds(cert.getNorms());
+                                resultTableItems.add(new CertificateVerificationItem(norms, contentName, content.getEquipmentType(),
+                                        cert.getFileName(), status, cert.getExpirationDate(), cert, product));
                             }
                         }
                     }
                 }
             }
-
-//            if (results == 0) {
-//                isHardMode = !isHardMode;
-//                isEqTypeFiltered = !isEqTypeFiltered;
-//            }
-//        } while (results == 0 && !isHardMode);
-//        } while (results == 0 && !isEqTypeFiltered);
+        }
     }
 
     private String getStatusString(Product product, Certificate cert) {
@@ -159,7 +157,6 @@ public class CertificatesChecker {
                     return true;
                 }
             }
-
         }
         return false;
     }
@@ -170,7 +167,7 @@ public class CertificatesChecker {
             contentValue = contentName.replaceAll("[x]{2,}", ".*").trim().toUpperCase();
         } else if (!cert.isFullNameMatch()) {
             contentValue = contentName.trim().toUpperCase() + "\\s*\\d+.*";
-        } else contentValue = contentName.trim().toUpperCase();
+        } else contentValue = contentName.trim().replaceAll("\\s", "").toUpperCase();
 
         contentValue = contentValue.replaceAll("\\(", "\\\\(")
                 .replaceAll("\\)", "\\\\)");
@@ -228,7 +225,9 @@ public class CertificatesChecker {
         }
     }
 
-    public String getCheckStatusResultStyle() {
+    public String getCheckStatusResultStyle(ObservableList<String> styles) {
+        styles.removeAll("itemStrikethroughRed", "itemStrikethroughBrown", "itemStrikethroughGreen",
+                "itemStrikethroughBlack");
         switch (checkStatusResult) {
             case NO_CERT:
             case CERT_WITH_ERR:
@@ -262,11 +261,7 @@ public class CertificatesChecker {
         return checkStatusResult.getText();
     }
 
-    public void setTemporaryTypeId(int temporaryTypeId) {
-        this.temporaryTypeId = temporaryTypeId;
-    }
-
-    public void setUseTemporaryTypeId(boolean useTemporaryTypeId) {
-        this.useTemporaryTypeId = useTemporaryTypeId;
+    public TreeSet<String> getProductTypes() {
+        return productTypes;
     }
 }
