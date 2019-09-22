@@ -2,6 +2,7 @@ package ui_windows.main_window;
 
 import core.CoreModule;
 import core.Dialogs;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.*;
@@ -16,13 +17,19 @@ import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
 import ui_windows.product.productEditorWindow.ProductEditorWindow;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import static ui_windows.Mode.EDIT;
 
 public class MainTable {
     private TableView<Product> tvTable;
+    private Thread certCheckerThread;
+    private ExecutorService executorService;
 
     public MainTable(TableView<Product> tvTable) {
         this.tvTable = tvTable;
+        executorService = Executors.newFixedThreadPool(10);
         String[] cols = new String[]{"material", "article", "description", "family", "endofservice",
                 "country", "dchain"};
         String[] titles = new String[]{"Заказной номер", "Артикул", "Описание", "Направление", "Окончание",
@@ -64,16 +71,18 @@ public class MainTable {
                                 if (!empty) {
                                     setText(item);
 
-                                    Product product = param.getTableView().getItems().get(getIndex());
+                                    final Product product = param.getTableView().getItems().get(getIndex());
 
-                                    CertificatesChecker certificatesChecker = new CertificatesChecker(product, new CheckParameters());
+                                    Runnable certCheck = () -> {
+                                        CertificatesChecker certificatesChecker = new CertificatesChecker(product, new CheckParameters());
 
-//                                    CoreModule.getCertificates().getCertificatesChecker().check(product, true);
-                                    /*getStyleClass().removeAll("itemStrikethroughRed", "itemStrikethroughBrown",
-                                            "itemStrikethroughGreen", "itemStrikethroughBlack");*/
+                                        Platform.runLater(() -> {
+                                            getStyleClass().add(certificatesChecker.getCheckStatusResultStyle(getStyleClass()));
+                                            setTooltip(new Tooltip(certificatesChecker.getCheckStatusResult()));
+                                        });
+                                    };
 
-                                    getStyleClass().add(certificatesChecker.getCheckStatusResultStyle(getStyleClass()));
-                                    setTooltip(new Tooltip(certificatesChecker.getCheckStatusResult()));
+                                    executorService.execute(certCheck);
                                 }
                             }
                         };
@@ -113,14 +122,15 @@ public class MainTable {
         });
         tvTable.setPlaceholder(new Label("Нет данных для отображения"));
         tvTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
-
-
     }
 
     public void displayEditorWindow() {
         if (tvTable.getSelectionModel().getSelectedIndex() < 0) Dialogs.showMessage("Выбор строки",
                 "Нужно выбрать строку");
         else new ProductEditorWindow(EDIT, tvTable.getSelectionModel().getSelectedItems());
+    }
+
+    public void close() {
+        executorService.shutdown();
     }
 }

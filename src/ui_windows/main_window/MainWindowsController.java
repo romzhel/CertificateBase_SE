@@ -291,4 +291,8 @@ public class MainWindowsController implements Initializable {
         CoreModule.setCurrentItems(CoreModule.getProducts().getChangedPositions());
         CoreModule.filter();
     }
+
+    public MainTable getMainTable() {
+        return mainTable;
+    }
 }

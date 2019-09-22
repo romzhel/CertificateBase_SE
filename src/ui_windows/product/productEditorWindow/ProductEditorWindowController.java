@@ -2,8 +2,6 @@ package ui_windows.product.productEditorWindow;
 
 import core.CoreModule;
 import core.Dialogs;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -18,11 +16,9 @@ import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.profile_editor.Profile;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
-import ui_windows.product.ProductTypes;
 import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.product.certificatesChecker.CheckParameters;
 import ui_windows.product.productEditorWindow.configNormsWindow.ConfigNormsWindow;
-import utils.AutoCompleteComboBoxListener;
 import utils.Utils;
 
 import java.io.File;
@@ -31,7 +27,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.TreeSet;
 
 public class ProductEditorWindowController implements Initializable {
     @FXML
@@ -59,6 +54,8 @@ public class ProductEditorWindowController implements Initializable {
     @FXML
     public TextArea taDescription;
     @FXML
+    public TextArea taDescriptionEn;
+    @FXML
     public RadioMenuItem rmiTypeFilter;
     @FXML
     TableView<CertificateVerificationItem> tvCertVerification;
@@ -79,24 +76,44 @@ public class ProductEditorWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         certificateVerificationTable = new CertificateVerificationTable(this);
-        certificateVerificationTable.display(CoreModule.getProducts().getTableView().getSelectionModel().getSelectedItems(), new CheckParameters());
+        certificateVerificationTable.display(CoreModule.getProducts().getTableView().getSelectionModel().getSelectedItems(),
+                new CheckParameters());
         comboBoxEqTypeSelector = new ComboBoxEqTypeSelector(cbType, certificateVerificationTable);
-
-//        ProductEditorWindowActions.setTableView(tvCertVerification);
-
-
 
         cmCertActions.getItems().get(3).setDisable(CoreModule.getUsers().getCurrentUser().getProfile().getName().equals(Profile.COMMON_ACCESS));
 
         rmiTypeFilter.selectedProperty().addListener((observable, oldValue, newValue) -> {
             String prevType = cbType.getValue();
-
-            certificateVerificationTable.display(certificateVerificationTable.getCheckParameters()
-                    .setEqTypeFiltered(newValue));
-
+            certificateVerificationTable.display(certificateVerificationTable.getCheckParameters().setEqTypeFiltered(newValue));
             comboBoxEqTypeSelector.refresh(prevType);
         });
 
+        initNotUsedSelector();
+        initFamilySelector();
+        initBlockSelector();
+    }
+
+    private void initBlockSelector() {
+        cbxOrderable.setOnMouseClicked(event -> {
+            Product pr = ProductEditorWindowActions.getEditedItem();
+            OrderAccessibility oa = CoreModule.getOrdersAccessibility().getOrderAccessibilityByStatusCode(pr.getDchain());
+
+            boolean isOrderable = oa == null ? false : oa.isOrderable();
+            cbxOrderable.setSelected(isOrderable);
+            cbxOrderable.setIndeterminate(!isOrderable);
+        });
+    }
+
+    private void initFamilySelector() {
+        cbFamily.setOnAction(event -> {
+            ProductFamily pf = CoreModule.getProductFamilies().getFamilyByName(cbFamily.getValue());
+
+            if (pf != null) tfPm.setText(pf.getResponsible());
+            else tfPm.setText("");
+        });
+    }
+
+    private void initNotUsedSelector() {
         Product editedProduct = CoreModule.getProducts().getTableView().getSelectionModel().getSelectedItem();
         LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(
                 new ProductLgbk(editedProduct.getLgbk(), editedProduct.getHierarchy()));
@@ -114,23 +131,6 @@ public class ProductEditorWindowController implements Initializable {
         } else {
             cbxNotUsed.setSelected(false);
         }
-
-        cbFamily.setOnAction(event -> {
-            ProductFamily pf = CoreModule.getProductFamilies().getFamilyByName(cbFamily.getValue());
-
-            if (pf != null) tfPm.setText(pf.getResponsible());
-            else tfPm.setText("");
-        });
-
-        cbxOrderable.setOnMouseClicked(event -> {
-            Product pr = ProductEditorWindowActions.getEditedItem();
-            OrderAccessibility oa = CoreModule.getOrdersAccessibility().getOrderAccessibilityByStatusCode(pr.getDchain());
-
-            boolean isOrderable = oa == null ? false : oa.isOrderable();
-            cbxOrderable.setSelected(isOrderable);
-            cbxOrderable.setIndeterminate(!isOrderable);
-        });
-
     }
 
     public void apply() {
@@ -171,7 +171,7 @@ public class ProductEditorWindowController implements Initializable {
 
         File file = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + cv.getFile());
         ArrayList<File> files = new ArrayList<>();
-        if (file.exists()) files.add(file);
+        if (file.exists() && file.getPath().endsWith(".pdf")) files.add(file);
         Utils.copyFilesToClipboard(files);
     }
 
@@ -180,7 +180,7 @@ public class ProductEditorWindowController implements Initializable {
         for (CertificateVerificationItem cv : tvCertVerification.getItems()) {
             if (cv.getFile() != null && !cv.getFile().isEmpty()) {
                 File file = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + cv.getFile());
-                if (file.exists()) files.add(file);
+                if (file.exists() && file.getPath().endsWith(".pdf")) files.add(file);
             }
         }
         Utils.copyFilesToClipboard(files);

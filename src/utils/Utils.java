@@ -39,35 +39,29 @@ public class Utils {
     }
 
     public static boolean hasEmptyControls(AnchorPane root, String... exceptions) {
-        boolean hasEmpty = false;
         for (Node n : root.getChildren()) {
             if (n.getId() != null) {
                 if (Arrays.asList(exceptions).indexOf(n.getId()) >= 0) continue;
 
                 if (n instanceof TextField)
-                    if (((TextField) n).getText().length() == 0) hasEmpty = true;
+                    if (((TextField) n).getText().length() == 0) return true;
 
                 if (n instanceof TextArea)
-                    if (((TextArea) n).getLength() == 0) hasEmpty = true;
+                    if (((TextArea) n).getLength() == 0) return true;
 
                 if (n instanceof ComboBox)
                     if (((ComboBox) n).isEditable()) {
-                        if (((ComboBox) n).getEditor().getText().length() == 0) hasEmpty = true;
+                        if (((ComboBox) n).getEditor().getText().length() == 0) return true;
                     } else {
-                        if ((((ComboBox) n).getSelectionModel().getSelectedIndex() < 0)) hasEmpty = true;
+                        if ((((ComboBox) n).getSelectionModel().getSelectedIndex() < 0)) return true;
                     }
 
                 if (n instanceof DatePicker)
-                    if (((DatePicker) n).getEditor().getText().length() == 0) hasEmpty = true;
+                    if (((DatePicker) n).getEditor().getText().length() == 0) return true;
 
                 if (n instanceof ListView)
-                    if (((ListView) n).getItems().size() == 0) hasEmpty = true;
+                    if (((ListView) n).getItems().size() == 0) return true;
             }
-        }
-
-        if (hasEmpty) {
-            Dialogs.showMessage("Пустые значения", "Не все поля заполнены");
-            return true;
         }
 
         return false;

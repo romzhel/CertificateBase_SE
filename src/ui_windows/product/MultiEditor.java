@@ -9,7 +9,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import ui_windows.product.productEditorWindow.ProductEditorWindow;
 import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 import utils.Countries;
 import utils.comparation.ObjectsComparator;
@@ -18,30 +17,32 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class MultiEditor {
+    public static final boolean CAN_BE_SAVED = true;
+    public static final boolean CAN_NOT_BE_SAVED = false;
     private ObjectsComparator objectsComparator;
     private ObservableList<Product> editedItems;
     private ArrayList<FieldsAndControls> fieldsAndControls;
 
-    public MultiEditor(ObservableList<Product> editedItems) {
+    public MultiEditor(ObservableList<Product> editedItems, ProductEditorWindowController pewc) {
         this.editedItems = editedItems;
         objectsComparator = new ObjectsComparator();
-        ProductEditorWindowController pewc = ProductEditorWindow.getLoader().getController();
         fieldsAndControls = new ArrayList<>();
 
-        compare("price", pewc.cbxPrice);
-        compare("notused", pewc.cbxNotUsed);
-        compare("archive", pewc.cbxArchive);
-        compare("lgbk", pewc.tfLgbk);
-        compare("hierarchy", pewc.tfHierarchy);
-//        compare("dchain", pewc.tfAccessibility);//пишется в базу с расшифровкой, НЕ ВКЛЮЧАТЬ
-        compare("endofservice", pewc.tfEndOfService);
-//        compare("country", pewc.tfCountry); //пишется в базу с расшифровкой, НЕ ВКЛЮЧАТЬ
-        compare("comments", pewc.taComments);
-        compare("type_id", pewc.cbType);
-        compare("descriptionru", pewc.taDescription);
+        compare("price", pewc.cbxPrice, CAN_BE_SAVED);
+        compare("notused", pewc.cbxNotUsed, CAN_BE_SAVED);
+        compare("archive", pewc.cbxArchive, CAN_BE_SAVED);
+        compare("lgbk", pewc.tfLgbk, CAN_NOT_BE_SAVED);
+        compare("hierarchy", pewc.tfHierarchy, CAN_NOT_BE_SAVED);
+        compare("dchain", pewc.tfAccessibility, CAN_NOT_BE_SAVED);//пишется в базу с расшифровкой, НЕ ВКЛЮЧАТЬ
+        compare("endofservice", pewc.tfEndOfService, CAN_NOT_BE_SAVED);
+        compare("country", pewc.tfCountry, CAN_NOT_BE_SAVED); //пишется в базу с расшифровкой, НЕ ВКЛЮЧАТЬ
+        compare("comments", pewc.taComments, CAN_BE_SAVED);
+        compare("type_id", pewc.cbType, CAN_BE_SAVED);
+        compare("descriptionru", pewc.taDescription, CAN_BE_SAVED);
+        compare("descriptionen", pewc.taDescriptionEn, CAN_BE_SAVED);
     }
 
-    public boolean compare(String fieldName, Node control) {
+    public boolean compare(String fieldName, Node control, boolean canBeSaved) {
         Field field = null;
         Object tempValue = null;
         boolean compRes = true;
@@ -60,7 +61,7 @@ public class MultiEditor {
             }
         }
 
-        fieldsAndControls.add(new FieldsAndControls(field, control, compRes));
+        fieldsAndControls.add(new FieldsAndControls(field, control, compRes, canBeSaved));
 
         if (field.getType().getName().toLowerCase().contains("boolean")) {
             if (control instanceof CheckBox) {
@@ -93,7 +94,8 @@ public class MultiEditor {
             if (control instanceof ComboBox) {
                 if (field.getName().equals("type_id")) {
                     if (compRes) {
-                        ((ComboBox<String>) control).getEditor().setText(CoreModule.getProductTypes().getTypeById((int) tempValue));
+//                        ((ComboBox<String>) control).getEditor().setText(CoreModule.getProductTypes().getTypeById((int) tempValue));
+                        ((ComboBox<String>) control).setValue(CoreModule.getProductTypes().getTypeById((int) tempValue));
                     } else {
                         control.setDisable(true);
                     }
@@ -104,10 +106,9 @@ public class MultiEditor {
     }
 
     public void save() {
-        System.out.println();
         try {
             for (FieldsAndControls fac : fieldsAndControls) {
-                if (fac.isCanBeSaved()) {
+                if (fac.isAllTheSame() && fac.canBeSaved) {
                     for (Product product : editedItems) {
                         if (fac.getField().getType().getName().toLowerCase().contains("boolean")) {
                             fac.getField().set(product, new SimpleBooleanProperty(((CheckBox) fac.getControl()).isSelected()));
@@ -128,7 +129,7 @@ public class MultiEditor {
                         } else if (fac.getField().getType().getName().toLowerCase().contains("int")) {
                             if (fac.getControl() instanceof ComboBox) {
                                 fac.getField().set(product, CoreModule.getProductTypes().getIDbyType(
-                                        ((ComboBox) fac.getControl()).getEditor().getText()));
+                                        ((ComboBox<String>) fac.getControl()).getValue()));
                             }
                         }
                     }
@@ -160,11 +161,13 @@ public class MultiEditor {
     public class FieldsAndControls {
         private Field field;
         private Node control;
+        private boolean isAllTheSame;
         private boolean canBeSaved;
 
-        public FieldsAndControls(Field field, Node control, boolean canBeSaved) {
+        public FieldsAndControls(Field field, Node control, boolean allTheSame, boolean canBeSaved) {
             this.field = field;
             this.control = control;
+            this.isAllTheSame = allTheSame;
             this.canBeSaved = canBeSaved;
         }
 
@@ -174,6 +177,10 @@ public class MultiEditor {
 
         public Node getControl() {
             return control;
+        }
+
+        public boolean isAllTheSame() {
+            return isAllTheSame;
         }
 
         public boolean isCanBeSaved() {

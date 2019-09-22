@@ -10,6 +10,7 @@ import java.sql.SQLException;
 public class CertificateContent {
     private int id;
     private int certId;
+    private int eqTypeId;
     private String equipmentType;
     private String tnved;
     private String equipmentName;
@@ -22,12 +23,14 @@ public class CertificateContent {
         this.tnved = tnved;
         this.equipmentName = equipmentName;
         wasChanged = false;
+        eqTypeId = CoreModule.getProductTypes().getIDbyType(equipmentType);
     }
 
     public CertificateContent(ResultSet rs) {
         try {
             id = rs.getInt("id");
             certId = rs.getInt("cert_id");
+            eqTypeId = rs.getInt("product_type_id");
             equipmentType = CoreModule.getProductTypes().getTypeById(rs.getInt("product_type_id"));
             tnved = CoreModule.getProductTypes().getTnVedById(rs.getInt("product_type_id"));
             equipmentName = rs.getString("product_names");
@@ -82,5 +85,13 @@ public class CertificateContent {
 
     public void setWasChanged(boolean wasChanged) {
         this.wasChanged = wasChanged;
+    }
+
+    public int getEqTypeId() {
+        return eqTypeId;
+    }
+
+    public void setEqTypeId(int eqTypeId) {
+        this.eqTypeId = eqTypeId;
     }
 }

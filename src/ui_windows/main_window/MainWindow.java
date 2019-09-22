@@ -48,12 +48,9 @@ public class MainWindow extends Application {
         initOk = CoreModule.init();
 
         if (initOk) {
-//            Parent root = null;
             fxmlLoader = new FXMLLoader(getClass().getResource("mainWindow.fxml"));
             try {
-//                root = fxmlLoader.load();
                 rootAnchorPane = fxmlLoader.load();
-//                rootAnchorPane = (AnchorPane) root;
             } catch (IOException e) {
                 System.out.println("error xml file loading: " + e.getMessage());
             }
@@ -130,6 +127,8 @@ public class MainWindow extends Application {
     @Override
     public void stop() throws Exception {
         if (initOk) CoreModule.getDataBase().disconnect();
+
+        ((MainWindowsController) fxmlLoader.getController()).getMainTable().close();
         super.stop();
     }
 

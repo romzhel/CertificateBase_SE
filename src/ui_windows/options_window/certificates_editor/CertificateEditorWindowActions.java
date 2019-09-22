@@ -7,6 +7,7 @@ import database.CertificatesDB;
 import javafx.application.Platform;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContentActions;
 import utils.Countries;
 import utils.Utils;
@@ -14,11 +15,10 @@ import utils.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 
 import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
-import static ui_windows.options_window.profile_editor.SimpleRight.*;
+import static ui_windows.options_window.profile_editor.SimpleRight.FULL;
 
 public class CertificateEditorWindowActions {
 
@@ -27,7 +27,7 @@ public class CertificateEditorWindowActions {
 
         if (CertificateEditorWindow.getMode() == ADD) {//adding new record
 
-            if (Utils.hasEmptyControls(root, "cbCountrySelect", "cbNormSelect")) {//empty fields
+            if (Utils.hasEmptyControls(root, "cbCountrySelect", "cbNormSelect") || hasEmptyCellInTable()) {//empty fields
                 Dialogs.showMessage("Пустые поля", "Не все поля заполнены");
             } else {//save to DB
 
@@ -49,7 +49,7 @@ public class CertificateEditorWindowActions {
 
         } else if (CertificateEditorWindow.getMode() == EDIT) {//editing existing record
             Certificate cert = getItem();
-            if (cert != null) {
+            if (cert != null && !hasEmptyCellInTable()) {
 
                 getCertFromEditorWindow(cert);//get data from form
                 if (CoreModule.getUsers().getCurrentUser().getProfile().getCertificates() != FULL)
@@ -67,6 +67,8 @@ public class CertificateEditorWindowActions {
                     }
 
                 }
+            } else {
+                Dialogs.showMessage("Пустые поля", "Не все поля заполнены");
             }
         }
     }
@@ -174,6 +176,16 @@ public class CertificateEditorWindowActions {
                 }
             }
         }
+    }
+
+    public static boolean hasEmptyCellInTable() {
+        for (CertificateContent cc : CoreModule.getCertificatesContentTable().getTableView().getItems()) {
+            boolean eqTypeEmpty = cc.getEquipmentType() == null || cc.getEquipmentType().trim().isEmpty();
+            boolean tnvedEmpty = cc.getTnved() == null || cc.getTnved().trim().isEmpty();
+            boolean eqNamesEmpty = cc.getEquipmentName() == null || cc.getEquipmentName().trim().isEmpty();
+            if (eqTypeEmpty || eqNamesEmpty || tnvedEmpty) return true;
+        }
+        return false;
     }
 
 

@@ -4,6 +4,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 
@@ -79,35 +80,41 @@ public class CertificatesContentTable {
                             if (getIndex() == selectedIndex) {
                                 TextArea text = new TextArea(item);
                                 text.setWrapText(true);
+                                text.setPromptText("Введите значение");
                                 setPrefHeight(120);
                                 setGraphic(text);
 
                                 text.textProperty().addListener((observable, oldValue, newValue) -> {
-                                    CertificateContent cc = tableView.getItems().get(selectedIndex);
-                                    if (tc.getText().equals(EQ_TYPE_COL)) {
-                                        cc.setEquipmentType(newValue.replaceAll("\\n", ""));
-                                    } else if (tc.getText().equals(TN_VED_COL)) {
-                                        cc.setTnved(newValue.replaceAll("\\n", ""));
-                                    } else if (tc.getText().equals(NAMES_COL)) {
-                                        cc.setEquipmentName(newValue.replaceAll("\\n", ""));
+                                    if (!newValue.trim().isEmpty()) {
+                                        CertificateContent cc = tableView.getItems().get(selectedIndex);
+                                        if (tc.getText().equals(EQ_TYPE_COL)) {
+                                            cc.setEquipmentType(newValue.replaceAll("\\n", ""));
+                                        } else if (tc.getText().equals(TN_VED_COL)) {
+                                            cc.setTnved(newValue.replaceAll("\\n", ""));
+                                        } else if (tc.getText().equals(NAMES_COL)) {
+                                            cc.setEquipmentName(newValue.replaceAll("\\n", ""));
+                                        }
+                                        cc.setWasChanged(true);
                                     }
-                                    String t = text.getText().replaceAll("\\n", "");
-                                    cc.setWasChanged(true);
                                 });
 
                                 text.setOnKeyReleased(event -> {
                                     if (event.getCode() == KeyCode.ENTER) {
-                                        String t = text.getText();
-
                                         editMode(tc, -1);
                                     }
                                 });
 
                             } else {
-                                Text text = new Text(item);
-                                text.setWrappingWidth(param.getWidth() - 30);
-                                setPrefHeight(text.getLayoutBounds().getHeight() + 10);
-                                setGraphic(text);
+                                Text text;
+                                if (item.trim().isEmpty()) {
+                                    text = new Text("Введите значение");
+                                    text.setFill(Color.RED);
+                                } else {
+                                    text = new Text(item);
+                                }
+                                    text.setWrappingWidth(param.getWidth() - 30);
+                                    setPrefHeight(text.getLayoutBounds().getHeight() + 10);
+                                    setGraphic(text);
                             }
                         }
                     }

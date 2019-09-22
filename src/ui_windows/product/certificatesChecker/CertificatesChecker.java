@@ -30,13 +30,11 @@ public class CertificatesChecker {
     private HashSet<Integer> productNeededNorms;
     private int certsErr;
     private TreeSet<String> productTypes;
-    //    private int temporaryTypeId;
-//    private boolean useTemporaryTypeId;
 
     public CertificatesChecker(Product product, CheckParameters checkParameters) {
         init();
 
-        checkExistingCertificates(product, /*isEqTypeFiltered*/checkParameters);
+        checkExistingCertificates(product, checkParameters);
         checkNorms(product);
     }
 
@@ -44,7 +42,7 @@ public class CertificatesChecker {
         init();
 
         for (Product product : checkedProducts) {
-            checkExistingCertificates(product, /*isEqTypeFiltered*/checkParameters);
+            checkExistingCertificates(product, checkParameters);
             checkNorms(product);
         }
     }
@@ -61,9 +59,9 @@ public class CertificatesChecker {
         productTypes = new TreeSet<>();
     }
 
-    public void check(ObservableList<Product> products,/* boolean isEqTypeFiltered*/CheckParameters checkParameters) {
+    public void check(ObservableList<Product> products, CheckParameters checkParameters) {
         for (Product product : products) {
-            checkExistingCertificates(product, /*isEqTypeFiltered*/checkParameters);
+            checkExistingCertificates(product, checkParameters);
             checkNorms(product);
         }
     }
@@ -98,6 +96,7 @@ public class CertificatesChecker {
                         for (String prod : prodNames) {//compare product article / material with certificate content
 
                             String contentValue = getContentValueForComparing(cert, contentName);
+                            prod = prod.replaceAll("\\s", "");
 
                             if (prod.matches(contentValue)) {
                                 if (content.getEquipmentType() != null && !content.getEquipmentType().isEmpty()) {
@@ -226,8 +225,10 @@ public class CertificatesChecker {
     }
 
     public String getCheckStatusResultStyle(ObservableList<String> styles) {
-        styles.removeAll("itemStrikethroughRed", "itemStrikethroughBrown", "itemStrikethroughGreen",
-                "itemStrikethroughBlack");
+        if (styles != null) {
+            styles.removeAll("itemStrikethroughRed", "itemStrikethroughBrown", "itemStrikethroughGreen",
+                    "itemStrikethroughBlack");
+        }
         switch (checkStatusResult) {
             case NO_CERT:
             case CERT_WITH_ERR:

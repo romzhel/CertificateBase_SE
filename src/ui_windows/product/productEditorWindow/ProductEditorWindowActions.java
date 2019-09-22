@@ -106,26 +106,6 @@ public class ProductEditorWindowActions {
         }
     }
 
-    /*public static void fillCertificateVerificationTable(boolean isEqTypeFilter) {
-        if (multiEditor == null) {
-            CoreModule.getCertificates().getCertificatesChecker().check(getEditedItem(), isEqTypeFilter);
-        } else {
-            CoreModule.getCertificates().getCertificatesChecker().setUseTemporaryTypeId(true);
-            CoreModule.getCertificates().getCertificatesChecker().check(multiEditor.getEditedItems(), isEqTypeFilter);
-        }
-        tableView.getItems().clear();
-        tableView.getItems().addAll(CoreModule.getCertificates().getCertificatesChecker().getResultTableItems());
-        tableView.refresh();
-    }*/
-
-    /*public static TableView<CertificateVerificationItem> getTableView() {
-        return tableView;
-    }
-
-    public static void setTableView(TableView<CertificateVerificationItem> tableView) {
-        ProductEditorWindowActions.tableView = tableView;
-    }*/
-
     public static void setMultiEditor(MultiEditor multiEditor) {
         ProductEditorWindowActions.multiEditor = multiEditor;
     }

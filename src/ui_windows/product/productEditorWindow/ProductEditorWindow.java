@@ -3,27 +3,20 @@ package ui_windows.product.productEditorWindow;
 import core.CoreModule;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Modality;
-import javafx.stage.Window;
 import ui_windows.Mode;
 import ui_windows.OrdinalWindow;
 import ui_windows.main_window.MainWindow;
-import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.profile_editor.SimpleRight;
 import ui_windows.options_window.user_editor.User;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
-import ui_windows.product.ProductTypes;
-import ui_windows.product.certificatesChecker.CheckParameters;
 import utils.Utils;
-
-import java.util.TreeSet;
 
 import static ui_windows.Mode.*;
 import static ui_windows.options_window.profile_editor.SimpleRight.*;
@@ -34,11 +27,7 @@ public class ProductEditorWindow extends OrdinalWindow {
         super(MainWindow.getMainStage(), Modality.APPLICATION_MODAL,
                 editorMode, "productEditorWindow.fxml", "");
 
-//        ArrayList<Product> selectedItems = new ArrayList<>(selectedProducts);
-
         ProductEditorWindowController pewc = (ProductEditorWindowController) loader.getController();
-
-//        rootAnchorPane = ((ProductEditorWindowController) loader.getController()).apRoot;
         rootAnchorPane = pewc.apRoot;
 
         if (mode == ADD) {
@@ -49,46 +38,24 @@ public class ProductEditorWindow extends OrdinalWindow {
                 Product product = selectedProducts.get(0);
                 String lastUpdate = product.getLastChangeDate() == null ? "нет данных" : product.getLastChangeDate();
                 stage.setTitle("Продукт " + product.getArticle() + " (посл. обновление: " + lastUpdate + ")");
-
-//                CoreModule.getProducts().getSelectedItem().displayInEditorWindow(rootAnchorPane);
                 product.displayInEditorWindow(rootAnchorPane);
             } else if (selectedProducts.size() > 1) {
                 stage.setTitle("Элементов выбрано: " + selectedProducts.size());
 
-                MultiEditor multiEditor = new MultiEditor(selectedProducts);
-                ((ProductEditorWindowController) loader.getController()).setMultiEditor(multiEditor);
+                MultiEditor multiEditor = new MultiEditor(selectedProducts, pewc);
+                pewc.setMultiEditor(multiEditor);
                 ProductEditorWindowActions.setMultiEditor(multiEditor);
             }
-
 
         } else if (mode == DELETE) {
 
         }
-
-//        ProductEditorWindowActions.fillCertificateVerificationTable(true);
-//        pewc.getCertificateVerificationTable().display(selectedProducts, new CheckParameters());
-
-//        fillProductTypesCombo();
 
         applyProfileSimple(CoreModule.getUsers().getCurrentUser().getProfile().getProducts());
 
         stage.setResizable(true);
         stage.show();
     }
-
-    /*public static void fillProductTypesCombo() {
-        ProductEditorWindowController pewc = ProductEditorWindow.getLoader().getController();
-        TreeSet<String> prodTypeNames = new TreeSet<>(pewc.cbType.getItems());
-        prodTypeNames.remove(ProductTypes.NO_SELECTED);
-        pewc.cbType.getItems().clear();
-        pewc.cbType.getItems().add(ProductTypes.NO_SELECTED);
-        for (CertificateVerificationItem cvi : pewc.tvCertVerification.getItems()) {
-            if (cvi != null && !cvi.getProdType().isEmpty()) {
-                prodTypeNames.add(cvi.getProdType());
-            }
-        }
-        pewc.cbType.getItems().addAll(prodTypeNames);
-    }*/
 
     @Override
     public void applyProfileSimple(SimpleRight sr) {

@@ -11,8 +11,6 @@ import ui_windows.product.Product;
 import ui_windows.product.productEditorWindow.CertificateVerificationTable;
 import ui_windows.product.productEditorWindow.ProductEditorWindowActions;
 
-import java.security.cert.Certificate;
-
 public class ConfigNormsWindow extends OrdinalWindow {
     public ConfigNormsWindow(Stage parentStage, MultiEditor multiEditor, CertificateVerificationTable certificateVerificationTable) {
         super(parentStage, Modality.APPLICATION_MODAL, mode, "configNormsWindow.fxml",
@@ -44,10 +42,10 @@ public class ConfigNormsWindow extends OrdinalWindow {
                 requirementTypesListViews.display();
             });
         } else {
-            multiEditor.compare("normsMode", cnwc.rbInsteadGlobal);
-            multiEditor.compare("normsList", cnwc.lvSelectedNorms);
+            multiEditor.compare("normsMode", cnwc.rbInsteadGlobal, MultiEditor.CAN_NOT_BE_SAVED);
+            multiEditor.compare("normsList", cnwc.lvSelectedNorms, MultiEditor.CAN_NOT_BE_SAVED);
 
-            if (multiEditor.getFieldAndControl("normsMode").isCanBeSaved() &&
+            if (multiEditor.getFieldAndControl("normsMode").isAllTheSame() &&
                     multiEditor.getEditedItems().get(0).getNormsMode() == NormsList.ADD_TO_GLOBAL) {
                 cnwc.rbAddToGlobal.setSelected(true);
             } else {
