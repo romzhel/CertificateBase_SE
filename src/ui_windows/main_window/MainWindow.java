@@ -16,13 +16,14 @@ import javafx.stage.Stage;
 import ui_windows.options_window.profile_editor.Profile;
 import utils.SearchBox;
 import utils.Utils;
+import utils.waiting_window.WaitingWindow;
 
 import java.io.IOException;
 
 import static ui_windows.options_window.profile_editor.SimpleRight.*;
 
 public class MainWindow extends Application {
-    private String version = "1.0.9.6 от 20.09.2019";
+    private String version = "1.0.9.8 от 22.09.2019";
     private static Stage mainStage;
     private static AnchorPane rootAnchorPane;
     private static ProgressBar progressBar;
@@ -45,7 +46,9 @@ public class MainWindow extends Application {
     public void start(Stage primaryStage) {
         mainStage = primaryStage;
 
+//        WaitingWindow ww = new WaitingWindow(null);
         initOk = CoreModule.init();
+//        WaitingWindow.close();
 
         if (initOk) {
             fxmlLoader = new FXMLLoader(getClass().getResource("mainWindow.fxml"));

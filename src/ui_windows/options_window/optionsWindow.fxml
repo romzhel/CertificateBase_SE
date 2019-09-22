@@ -76,7 +76,7 @@
                                         </ContextMenu>
                                     </contextMenu>
                                 </TableView>
-                                <TreeTableView fx:id="tvLgbk" layoutX="41.0" layoutY="277.0" prefHeight="433.0" prefWidth="1107.0" stylesheets="@families_editor/treeTableView.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="277.0">
+                                <TreeTableView fx:id="tvLgbk" layoutX="41.0" layoutY="277.0" prefHeight="433.0" prefWidth="1107.0" stylesheets="@../../css/treeTableView.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="277.0">
                                     <columns>
                                         <TreeTableColumn prefWidth="149.0" text="LGBK" />
                                         <TreeTableColumn prefWidth="142.0" text="Иерархия" />
