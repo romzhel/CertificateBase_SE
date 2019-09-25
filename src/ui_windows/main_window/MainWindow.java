@@ -5,6 +5,8 @@ import core.CoreModule;
 import core.Dialogs;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -19,6 +21,8 @@ import utils.Utils;
 import utils.waiting_window.WaitingWindow;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static ui_windows.options_window.profile_editor.SimpleRight.*;
 
@@ -36,6 +40,8 @@ public class MainWindow extends Application {
     private static FXMLLoader fxmlLoader;
 
     private static SearchBox searchBox;
+
+    ExecutorService executorService;
 
     public static void main(String[] args) {
         launch(args);
@@ -78,8 +84,20 @@ public class MainWindow extends Application {
             rootAnchorPane.setBottomAnchor(searchBox, 39.0);
             rootAnchorPane.setLeftAnchor(searchBox, 158.0);
 
-            searchBox.getTextBox().textProperty().addListener((observable, oldValue, newValue) ->
-                    CoreModule.filter());
+
+            executorService = Executors.newFixedThreadPool(5);
+            searchBox.getTextBox().textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    Runnable filterAction = new Runnable() {
+                        @Override
+                        public void run() {
+                            CoreModule.filter();
+                        }
+                    };
+                    executorService.execute(filterAction);
+                }
+            });
 
             final String searchBoxCss = getClass().getResource("/utils/SearchBox.css").toExternalForm();
             rootAnchorPane.getStylesheets().add(searchBoxCss);
@@ -100,6 +118,7 @@ public class MainWindow extends Application {
         } else Platform.exit();
 
         mainStage.setOnCloseRequest(event -> {
+            executorService.shutdown();
             try {
                 if (CoreModule.getFolders().getTempFolder().exists())
                     Utils.deleteFolder(CoreModule.getFolders().getTempFolder().toPath());

@@ -2,6 +2,7 @@ package core;
 
 import database.DataBase;
 import files.Folders;
+import javafx.application.Platform;
 import javafx.scene.control.TableView;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.filter_window.Filter;
@@ -92,7 +93,7 @@ public class CoreModule {
         return true;
     }
 
-    public static synchronized void filter() {
+    public static /*synchronized*/ void filter() {
         TableView<Product> tableView = CoreModule.getProducts().getTableView();
         String find = MainWindow.getSearchBox().getText();
         find = find.replaceAll("\\*", ".*");
@@ -142,13 +143,15 @@ public class CoreModule {
             }
         }
 
-        if (tableRenewedListener != null) tableRenewedListener.getLgbksForItems(accessibleLgbks);
+        Platform.runLater(() -> {
+            if (tableRenewedListener != null) tableRenewedListener.getLgbksForItems(accessibleLgbks);
 
-        tableView.getItems().clear();
-        tableView.getItems().addAll(result);
-        tableView.sort();
-        Utils.setControlValue(MainWindow.getRootAnchorPane(), "lbRecordCount", Integer.toString(tableView.getItems().size()));
-        tableView.refresh();
+            tableView.getItems().clear();
+            tableView.getItems().addAll(result);
+            tableView.sort();
+            Utils.setControlValue(MainWindow.getRootAnchorPane(), "lbRecordCount", Integer.toString(tableView.getItems().size()));
+            tableView.refresh();
+        });
     }
 
     public static TableRenewedListener getTableRenewedListener() {
