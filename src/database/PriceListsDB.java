@@ -14,11 +14,12 @@ public class PriceListsDB extends DbRequest {
         super();
         try {
             addData = connection.prepareStatement("INSERT INTO " +
-                    "priceLists (name, file_name, lgbks) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
+                    "priceLists (name, file_name, template_name, lgbks) " +
+                    "VALUES (?, ?, ?, ?);"
+                    , Statement.RETURN_GENERATED_KEYS);
             updateData = connection.prepareStatement("UPDATE priceLists " +
-                    "SET name = ?, file_name = ?, lgbks = ? WHERE id = ?");
-            deleteData = connection.prepareStatement("DELETE FROM priceLists " +
-                    "WHERE id = ?");
+                    "SET name = ?, file_name = ?, template_name = ?, lgbks = ? WHERE id = ?");
+            deleteData = connection.prepareStatement("DELETE FROM priceLists WHERE id = ?");
         } catch (SQLException e) {
             logAndMessage("priceLists prepared statements exception " + e.getMessage());
             finalActions();
@@ -34,6 +35,7 @@ public class PriceListsDB extends DbRequest {
                 priceLists.add(new PriceList(rs));
             }
 
+            rs.close();
         } catch (SQLException e) {
             logAndMessage("SQL exception product families get data");
         }
@@ -44,7 +46,8 @@ public class PriceListsDB extends DbRequest {
         try {
             addData.setString(1, pl.getName());
             addData.setString(2, pl.getFileName());
-            addData.setString(3, pl.getLgbksAsString());
+            addData.setString(3, pl.getTemplate().getName());
+            addData.setString(4, pl.getLgbksAsString());
 
             MainWindow.setProgress(1.0);
 
@@ -56,6 +59,8 @@ public class PriceListsDB extends DbRequest {
 //                        System.out.println("new ID = " + rs.getInt(1));
                     return true;
                 }
+
+                rs.close();
             } else {
                 logAndMessage("PriceList DB insert error");
             }
@@ -73,9 +78,10 @@ public class PriceListsDB extends DbRequest {
 
             updateData.setString(1, pl.getName());
             updateData.setString(2, pl.getFileName());
-            updateData.setString(3, pl.getLgbksAsString());
+            updateData.setString(3, pl.getTemplate().getName());
+            updateData.setString(4, pl.getLgbksAsString());
 
-            updateData.setInt(4, pl.getId());
+            updateData.setInt(5, pl.getId());
 
             if (updateData.executeUpdate() > 0) {//successful
                 return true;

@@ -34,6 +34,8 @@ public class ProductTypesDB extends DbRequest {
             while (rs.next()) {
                 productTypes.add(new ProductType(rs));
             }
+
+            rs.close();
         } catch (SQLException e) {
             logAndMessage("SQL exception productTypes get data");
         }

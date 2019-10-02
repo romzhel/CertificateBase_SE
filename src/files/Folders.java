@@ -12,6 +12,7 @@ public class Folders {
     private File certFolder;
     private File manualsFolder;
     private File tempFolder;
+    private File templatesFolder;
     private PathFile pathFile;
     private String appFolder;
     private File dbBackupFolder;
@@ -50,6 +51,7 @@ public class Folders {
             certFolder = new File(dbFile.getParent() + "\\_certs");
             manualsFolder = new File(dbFile.getParent() + "\\_manuals");
             dbBackupFolder = new File(dbFile.getParent() + "\\_db_backups");
+            templatesFolder = new File(dbFile.getParent() + "\\_templates");
 //            tempFolder = new File(System.getProperty("user.dir") + "\\_temp");
 
             try {
@@ -85,5 +87,9 @@ public class Folders {
 
     public File getDbBackupFolder() {
         return dbBackupFolder;
+    }
+
+    public File getTemplatesFolder() {
+        return templatesFolder;
     }
 }

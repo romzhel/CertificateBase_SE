@@ -36,6 +36,8 @@ public class ProfilesDB extends DbRequest {
             while (rs.next()) {
                 profiles.add(new Profile(rs));
             }
+
+            rs.close();
         } catch (SQLException e) {
             logAndMessage("profiles getting from DB error " + e.getMessage());
         }

@@ -3,7 +3,6 @@ package ui_windows.main_window;
 import core.CoreModule;
 import core.Dialogs;
 import files.ExportPriceListToExcel;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -11,20 +10,14 @@ import ui_windows.login_window.LoginWindow;
 import ui_windows.main_window.file_import_window.FileImport;
 import ui_windows.main_window.filter_window.FilterWindow;
 import ui_windows.options_window.OptionsWindow;
-import ui_windows.product.certificatesChecker.CertificateVerificationItem;
-import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.user_editor.User;
 import ui_windows.product.Product;
 import ui_windows.request_certificates.CertificateRequestWindow;
-import utils.Utils;
 
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
 
 public class MainWindowsController implements Initializable {
     @FXML

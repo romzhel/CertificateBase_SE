@@ -1,7 +1,11 @@
 package ui_windows.options_window.price_lists_editor;
 
+import core.CoreModule;
 import core.Dialogs;
+import database.PriceListSheetDB;
 import database.PriceListsDB;
+import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
+import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheets;
 
 import java.util.ArrayList;
 
@@ -15,6 +19,13 @@ public class PriceLists {
 
     public PriceLists getFromDB() {
         items = new PriceListsDB().getData();
+
+
+        PriceListSheets sheets = new PriceListSheets().getFromDB();
+
+
+        //add sheet tabs to price
+
         return this;
     }
 
@@ -22,22 +33,33 @@ public class PriceLists {
         return priceListsTable;
     }
 
-    public void addItem(PriceList priceList) {
+    public boolean addItem(PriceList priceList) {
         if (isDouble(priceList.getName())) {
             Dialogs.showMessage("Добавление записи", "Прайс-лист с таким именем уже существует. " +
                     "Введите другое имя.");
-            return;
+            return false;
         }
 
         if (new PriceListsDB().putData(priceList)) {
+            for (PriceListSheet pls:priceList.getSheets()) {
+                if (!new PriceListSheetDB().putData(pls)) {
+                    return false;
+                }
+            }
+
             items.add(priceList);
             priceListsTable.getTableView().getItems().add(priceList);
         }
+        return true;
     }
 
-    public void editItem(PriceList priceList){
-        if (new PriceListsDB().updateData(priceList)) {
+    public void editItem(PriceList refreshedItem) {
+        if (new PriceListsDB().updateData(refreshedItem)) {
+            PriceList selectedItem = priceListsTable.getSelectedItem();
+            CoreModule.getPriceLists().getItems().set(items.indexOf(selectedItem), refreshedItem);
 
+            priceListsTable.getTableView().getItems().clear();
+            priceListsTable.getTableView().getItems().addAll(items);
         }
     }
 
@@ -50,7 +72,7 @@ public class PriceLists {
 
     public boolean isDouble(String name) {
         for (PriceList pl : items) {
-            if (pl.getName().equals(name)) return true;
+            if (pl.getName() != null && pl.getName().equals(name)) return true;
         }
 
         return false;

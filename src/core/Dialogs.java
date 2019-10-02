@@ -68,9 +68,15 @@ public class Dialogs {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(windowTitle);
         if (fileFilter != null) fileChooser.getExtensionFilters().add(fileFilter);
-        fileChooser.setInitialFileName(fileName);
+        if (fileName != null) {
+            if (fileName.contains("\\")) {
+                fileChooser.setInitialDirectory(new File(fileName));
+            } else {
+                fileChooser.setInitialFileName(fileName);
+            }
+        }
 
-        return fileName == null ? fileChooser.showOpenDialog(stage) : fileChooser.showSaveDialog(stage);
+        return fileName == null || fileName.contains("\\") ? fileChooser.showOpenDialog(stage) : fileChooser.showSaveDialog(stage);
     }
 
     public static File selectFolder(Stage stage) {

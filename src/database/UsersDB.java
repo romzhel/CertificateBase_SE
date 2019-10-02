@@ -36,6 +36,8 @@ public class UsersDB extends DbRequest {
             while (rs.next()) {
                 users.add(new User(rs));
             }
+
+            rs.close();
         } catch (SQLException e) {
             logAndMessage("SQL exception users getting" + e.getMessage());
         }

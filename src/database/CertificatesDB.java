@@ -36,6 +36,8 @@ public class CertificatesDB extends DbRequest {
             while (rs.next()) {
                 certificates.add(new Certificate(rs));
             }
+
+            rs.close();
         } catch (SQLException e) {
             logAndMessage("SQL exception cert types: " + e.getMessage());
         }

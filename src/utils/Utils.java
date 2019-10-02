@@ -18,6 +18,8 @@ import ui_windows.options_window.requirements_types_editor.RequirementType;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
@@ -298,7 +300,7 @@ public class Utils {
 
     public static String getValueInBrackets(String line) {
         if (line == null || line.isEmpty()) return "";
-        if (line.contains("(") ) return line.substring(line.indexOf('(') + 1, line.indexOf(')'));
+        if (line.contains("(")) return line.substring(line.indexOf('(') + 1, line.indexOf(')'));
         else return "";
     }
 

@@ -2,30 +2,49 @@ package ui_windows.options_window.price_lists_editor;
 
 import core.CoreModule;
 import javafx.scene.layout.AnchorPane;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.options_window.price_lists_editor.se.PriceListEditorWindowControllerv2;
+import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import utils.Utils;
 
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.TreeSet;
 
 public class PriceList {
     private int id;
-    private String name;
-    private String fileName;
+    private String name = "";
+    private String fileName = "";
+    private File template;
+    private ArrayList<PriceListSheet> sheets = new ArrayList<>();
     private ArrayList<String> lgbks;
+
+    public PriceList() {
+    }
+
+    public PriceList(PriceListEditorWindowControllerv2 controller) {
+        name = controller.tfPriceName.getText();
+        fileName = controller.tfPriceFileName.getText();
+    }
 
     public PriceList(String type, ArrayList<String> lgbks) {
         this.name = type;
         this.lgbks = lgbks;
     }
 
+    public PriceList(PriceList anotherInstance) {
+        id = anotherInstance.id;
+        name = anotherInstance.name;
+        fileName = anotherInstance.fileName;
+        template = anotherInstance.template;
+    }
+
     public PriceList(ResultSet rs) throws SQLException {
         id = rs.getInt("id");
         name = rs.getString("name");
         fileName = rs.getString("file_name");
+        template = new File(CoreModule.getFolders().getTemplatesFolder() + "\\" + rs.getString("template_name"));
 
         String valueFromDB = rs.getString("lgbks");
         String[] values;
@@ -52,11 +71,23 @@ public class PriceList {
         Utils.setControlValue(root, "tfFileName", fileName);
     }
 
+    public void showInEditorWindow(PriceListEditorWindowControllerv2 controller) {
+        controller.tfPriceName.setText(name);
+        controller.tfPriceFileName.setText(fileName);
+        if (template != null) {
+            controller.tfTemplateName.setText(template.getName().replaceAll("null", ""));
+        }
+        controller.mainTabPane.getTabs().addAll(sheets);
+    }
+
     public String getLgbksAsString() {
         String result = "";
-        for (String plgbk : lgbks) {
-            result += plgbk.concat(",");
+        if (lgbks != null) {
+            for (String plgbk : lgbks) {
+                result += plgbk.concat(",");
+            }
         }
+
         result.replaceAll("\\,$", "");
 
         return result;
@@ -93,5 +124,21 @@ public class PriceList {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public File getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(File template) {
+        this.template = template;
+    }
+
+    public ArrayList<PriceListSheet> getSheets() {
+        return sheets;
+    }
+
+    public void setSheets(ArrayList<PriceListSheet> sheets) {
+        this.sheets = sheets;
     }
 }

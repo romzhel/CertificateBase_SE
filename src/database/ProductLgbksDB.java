@@ -36,6 +36,8 @@ public class ProductLgbksDB extends DbRequest {
             while (rs.next()) {
                 productLgbks.add(new ProductLgbk(rs));
             }
+
+            rs.close();
         } catch (SQLException e) {
             logAndMessage("SQL exception product lgbk get data");
         }

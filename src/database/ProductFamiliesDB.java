@@ -33,6 +33,8 @@ public class ProductFamiliesDB extends DbRequest {
             while (rs.next()) {
                 productFamilies.add(new ProductFamily(rs));
             }
+
+            rs.close();
         } catch (SQLException e) {
             logAndMessage("SQL exception product families get data");
         }

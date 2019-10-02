@@ -25,7 +25,6 @@ import java.util.TreeSet;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class ExportPriceListToExcel {
-    public static final String TEMPLATE_FILE = "PL.xlsx";
     public static final int INITIAL_ROW = 2;
     private PriceList priceList;
     private XSSFWorkbook excelDoc;
@@ -56,7 +55,7 @@ public class ExportPriceListToExcel {
     }
 
     private boolean loadTemplate() {
-        templateFile = new File(CoreModule.getFolders().getDbFile().getParent() + "\\" + TEMPLATE_FILE);
+        templateFile = priceList.getTemplate();
         if (templateFile == null || !templateFile.exists()) {
             File dialogFile = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор файла шаблона",
                     Dialogs.EXCEL_FILES, null);

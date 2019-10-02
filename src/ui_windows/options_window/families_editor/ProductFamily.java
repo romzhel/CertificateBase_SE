@@ -3,12 +3,14 @@ package ui_windows.options_window.families_editor;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.layout.AnchorPane;
+import ui_windows.options_window.price_lists_editor.se.PriceListContentItem;
+import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
 import utils.Utils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ProductFamily {
+public class ProductFamily implements PriceListContentItem {
     private int id;
     private StringProperty name;
     private StringProperty responsible;
@@ -18,6 +20,9 @@ public class ProductFamily {
         responsible = new SimpleStringProperty("введите ответственных");
     }
 
+    public ProductFamily(String name) {
+        this.name = new SimpleStringProperty(name);
+    }
 
     public ProductFamily(AnchorPane root){
         name = new SimpleStringProperty(Utils.getControlValue(root, "tfFamily"));
@@ -69,5 +74,10 @@ public class ProductFamily {
 
     public void setResponsible(String responsible) {
         this.responsible.set(responsible);
+    }
+
+    @Override
+    public PriceListContentTableItem getTableItem() {
+        return new PriceListContentTableItem(this);
     }
 }

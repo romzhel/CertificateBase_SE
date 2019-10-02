@@ -12,6 +12,7 @@ import javafx.scene.input.MouseButton;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.MainWindowsController;
 import ui_windows.options_window.certificates_editor.*;
+import ui_windows.options_window.price_lists_editor.se.PriceListEditorWindow;
 import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.options_window.families_editor.FamiliesEditorWindow;
@@ -21,7 +22,6 @@ import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibilityEditorWindow;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibilityTable;
 import ui_windows.options_window.price_lists_editor.PriceList;
-import ui_windows.options_window.price_lists_editor.PriceListEditorWindow;
 import ui_windows.options_window.price_lists_editor.PriceListsTable;
 import ui_windows.options_window.product_lgbk.LgbkEditorWindow;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
@@ -367,20 +367,27 @@ public class OptionsWindowController implements Initializable {
 
     }
 
+//    public void actionAddPriceList() {
+//        new PriceListEditorWindow(ADD);
+//    }
+
     public void actionAddPriceList() {
         new PriceListEditorWindow(ADD);
     }
 
     public void actionEditPriceList() {
+//        new PriceListEditorWindow(EDIT);
         new PriceListEditorWindow(EDIT);
     }
 
+
+
     public void actionRemovePriceList() {
-        PriceList priceList = tvPriceLists.getSelectionModel().getSelectedItem();
-        if (priceList != null) {
-            CoreModule.getPriceLists().deleteItem(priceList);
-            ((MainWindowsController) MainWindow.getFxmlLoader().getController()).initPriceListMenu();
-        }
+//        PriceList priceList = tvPriceLists.getSelectionModel().getSelectedItem();
+//        if (priceList != null) {
+//            CoreModule.getPriceLists().deleteItem(priceList);
+//            ((MainWindowsController) MainWindow.getFxmlLoader().getController()).initPriceListMenu();
+//        }
     }
 
 

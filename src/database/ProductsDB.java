@@ -44,6 +44,7 @@ public class ProductsDB extends DbRequest {
                 products.add(new Product(rs));
             }
 
+            rs.close();
         } catch (SQLException e) {
             logAndMessage("SQL exception products, " + e.getMessage());
         }

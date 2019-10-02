@@ -38,6 +38,8 @@ public class AccessibilityDB extends DbRequest {
                 ordersAccessibility.add(new OrderAccessibility(rs));
             }
 
+            rs.close();
+
         } catch (SQLException e) {
             logAndMessage("SQL exception order accessibility" + e.getMessage());
         }

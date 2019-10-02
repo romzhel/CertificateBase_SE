@@ -5,21 +5,20 @@ import core.Dialogs;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
+import utils.ItemsGroup;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.*;
 
 public class ProductLgbkGroups {
     private ProductLgbk rootNode;
     private TreeItem<ProductLgbk> treeItemRoot;
-    private TreeSet<ProductLgbkGroup> lgbkGroups;
+    private TreeSet<ItemsGroup<ProductLgbk, ProductLgbk>> lgbkGroups;
 
     public ProductLgbkGroups() {
-        lgbkGroups = new TreeSet<>((o1, o2) -> o1.getGroupNode().getLgbk().compareTo(o2.getGroupNode().getLgbk()));
+        lgbkGroups = new TreeSet<>((o1, o2) ->
+                o1.getGroupNode().getLgbk().compareToIgnoreCase(o2.getGroupNode().getLgbk()));
     }
 
     public ProductLgbkGroups get() {
@@ -37,7 +36,7 @@ public class ProductLgbkGroups {
 
     public ArrayList<ProductLgbk> createFromProducts(Products products) {
         rootNode = new ProductLgbk("Все позиции", "...", ProductLgbk.ROOT_NODE);
-        ArrayList<ProductLgbk> newProductLgbk = new ArrayList<>();
+        ArrayList<ProductLgbk> newProductLgbks = new ArrayList<>();
 
         for (Product product : products.getItems()) {
             String hierarchyName = product.getHierarchy();
@@ -46,26 +45,27 @@ public class ProductLgbkGroups {
 
             ProductLgbk newLgbk = new ProductLgbk(product.getLgbk(), productHierarchy + "...");
             ProductLgbk newLgbkForGroup = new ProductLgbk(product.getLgbk(), "Все", ProductLgbk.GROUP_NODE);
-            ProductLgbkGroup newGroup = new ProductLgbkGroup(newLgbkForGroup);
+            ItemsGroup<ProductLgbk, ProductLgbk> newHierarchyGroup = new ItemsGroup<>(newLgbkForGroup,
+                    (o1, o2) -> o1.getHierarchy().compareToIgnoreCase(o2.getHierarchy()));
 
-            if (!lgbkGroups.contains(newGroup)) {
-                lgbkGroups.add(newGroup);
-                newGroup.addProductLgbkNode(newLgbk);
-                newProductLgbk.add(newLgbkForGroup);
-                newProductLgbk.add(newLgbk);
+            if (!lgbkGroups.contains(newHierarchyGroup)) {
+                lgbkGroups.add(newHierarchyGroup);
+                newHierarchyGroup.addItem(newLgbk);
+                newProductLgbks.add(newLgbkForGroup);
+                newProductLgbks.add(newLgbk);
             } else {
-                Iterator<ProductLgbkGroup> iterator = lgbkGroups.iterator();
+                Iterator<ItemsGroup<ProductLgbk, ProductLgbk>> iterator = lgbkGroups.iterator();
                 while (iterator.hasNext()) {
-                    ProductLgbkGroup temp = iterator.next();
+                    ItemsGroup<ProductLgbk, ProductLgbk> temp = iterator.next();
                     if (temp.getGroupNode().getLgbk().equals(newLgbk.getLgbk())) {
-                        if (temp.addProductLgbkNode(newLgbk)) newProductLgbk.add(newLgbk);
+                        if (temp.addItem(newLgbk)) newProductLgbks.add(newLgbk);
                         break;
                     }
                 }
             }
         }
 
-        return newProductLgbk;
+        return newProductLgbks;
     }
 
     public void createFromLgbks(ProductLgbks productLgbks) {
@@ -75,16 +75,22 @@ public class ProductLgbkGroups {
                 rootNode = lgbk;
                 continue;
             } else if (lgbk.getNodeType() == ProductLgbk.GROUP_NODE) {
-                lgbkGroups.add(new ProductLgbkGroup(lgbk));
+                lgbkGroups.add(new ItemsGroup<ProductLgbk, ProductLgbk>(lgbk,
+                        (o1, o2) -> o1.getHierarchy().compareToIgnoreCase(o2.getHierarchy())));
                 continue;
             } else if (lgbk.getNodeType() == ProductLgbk.ITEM_NODE) {
-                Iterator<ProductLgbkGroup> iterator = lgbkGroups.iterator();
+                Iterator<ItemsGroup<ProductLgbk, ProductLgbk>> iterator = lgbkGroups.iterator();
+                boolean wasFound = false;
                 while (iterator.hasNext()) {
-                    ProductLgbkGroup temp = iterator.next();
+                    ItemsGroup<ProductLgbk, ProductLgbk> temp = iterator.next();
                     if (temp.getGroupNode().getLgbk().equals(lgbk.getLgbk())) {
-                        temp.addProductLgbkNode(lgbk);
-                        continue;
+                        temp.addItem(lgbk);
+                        wasFound = true;
+                        break;
                     }
+                }
+                if (!wasFound) {
+                    System.out.println(lgbk.getLgbk() + "/" + lgbk.getHierarchy() + " was not added due group absent !!!");
                 }
             }
         }
@@ -115,10 +121,10 @@ public class ProductLgbkGroups {
     public TreeItem<ProductLgbk> getFullTreeSet() {
         treeItemRoot = new TreeItem<>(rootNode);
 
-        for (ProductLgbkGroups.ProductLgbkGroup lgbkGroup : lgbkGroups) {
+        for (ItemsGroup<ProductLgbk, ProductLgbk> lgbkGroup : lgbkGroups) {
             TreeItem<ProductLgbk> lgbkGroupNode = new TreeItem<>(lgbkGroup.getGroupNode());
 
-            for (ProductLgbk productLgbk : lgbkGroup.getLgbkItems()) {
+            for (ProductLgbk productLgbk : lgbkGroup.getItems()) {
                 lgbkGroupNode.getChildren().add(new TreeItem<>(productLgbk));
             }
 
@@ -133,22 +139,23 @@ public class ProductLgbkGroups {
 
         result.add(rootNode);
 
-        for (ProductLgbkGroups.ProductLgbkGroup lgbkGroup : lgbkGroups) {
+        for (ItemsGroup<ProductLgbk, ProductLgbk> lgbkGroup : lgbkGroups) {
             result.add(lgbkGroup.getGroupNode());
-            result.addAll(lgbkGroup.getLgbkItems());
+            result.addAll(lgbkGroup.getItems());
         }
 
         return result;
     }
 
     public LgbkAndParent getLgbkAndParent(ProductLgbk lookingForLgbk) {
-        ProductLgbkGroup lookingForGroup = new ProductLgbkGroup(lookingForLgbk);
+        ItemsGroup<ProductLgbk, ProductLgbk> lookingForGroup = new ItemsGroup<>(lookingForLgbk,
+                (o1, o2) -> o1.getLgbk().compareToIgnoreCase(o2.getLgbk()));
         LgbkAndParent result = new LgbkAndParent(rootNode);
 
         if (lgbkGroups.contains(lookingForGroup)) {
-            Iterator<ProductLgbkGroup> iterator = lgbkGroups.iterator();
+            Iterator<ItemsGroup<ProductLgbk, ProductLgbk>> iterator = lgbkGroups.iterator();
             while (iterator.hasNext()) {
-                ProductLgbkGroup temp = iterator.next();
+                ItemsGroup<ProductLgbk, ProductLgbk> temp = iterator.next();
 
                 String comp1 = lookingForLgbk.getLgbk();
                 String comp2 = temp.getGroupNode().getLgbk();
@@ -160,7 +167,7 @@ public class ProductLgbkGroups {
                 }
             }
 
-            Iterator<ProductLgbk> iterator2 = lookingForGroup.getLgbkItems().iterator();
+            Iterator<ProductLgbk> iterator2 = lookingForGroup.getItems().iterator();
             while (iterator2.hasNext()) {
                 ProductLgbk tempLgbk = iterator2.next();
 
@@ -230,31 +237,5 @@ public class ProductLgbkGroups {
 
     public ProductLgbk getRootNode() {
         return rootNode;
-    }
-
-    private class ProductLgbkGroup {
-        private ProductLgbk groupNode;
-        private TreeSet<ProductLgbk> lgbkItems;
-
-        private ProductLgbkGroup(ProductLgbk groupNode) {
-            this.groupNode = groupNode;
-            groupNode.setNodeType(ProductLgbk.GROUP_NODE);
-            lgbkItems = new TreeSet<>((o1, o2) -> o1.getHierarchy().compareTo(o2.getHierarchy()));
-        }
-
-        private boolean addProductLgbkNode(ProductLgbk lgbk) {
-            if (!lgbkItems.contains(lgbk)) {
-                lgbkItems.add(lgbk);
-                return true;
-            } else return false;
-        }
-
-        public TreeSet<ProductLgbk> getLgbkItems() {
-            return lgbkItems;
-        }
-
-        public ProductLgbk getGroupNode() {
-            return groupNode;
-        }
     }
 }

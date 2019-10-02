@@ -4,16 +4,18 @@ import core.CoreModule;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.layout.AnchorPane;
+import ui_windows.options_window.price_lists_editor.se.PriceListContentItem;
+import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
 import utils.Utils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class ProductLgbk {
-    static final int ROOT_NODE = 0;
-    static final int GROUP_NODE = 1;
-    static final int ITEM_NODE = 2;
+public class ProductLgbk implements PriceListContentItem {
+    public static final int ROOT_NODE = 0;
+    public static final int GROUP_NODE = 1;
+    public static final int ITEM_NODE = 2;
     private int id;
     private StringProperty lgbk;
     private StringProperty hierarchy;
@@ -220,5 +222,10 @@ public class ProductLgbk {
     @Override
     public String toString() {
         return id + ", " + lgbk.getValue() + ", " + hierarchy.getValue();
+    }
+
+    @Override
+    public PriceListContentTableItem getTableItem() {
+        return new PriceListContentTableItem(this);
     }
 }

@@ -34,6 +34,8 @@ public class RequirementTypesDB extends DbRequest {
             while (rs.next()) {
                 requirementTypes.add(new RequirementType(rs));
             }
+
+            rs.close();
         } catch (SQLException e) {
             logAndMessage("SQL exception cert types, " + e.getMessage());
         }

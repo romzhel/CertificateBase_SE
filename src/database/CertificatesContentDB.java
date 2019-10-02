@@ -36,6 +36,8 @@ public class CertificatesContentDB extends DbRequest {
                 content.add(new CertificateContent(rs));
             }
 
+            rs.close();
+
         } catch (SQLException e) {
             logAndMessage("SQL exception of getting cert content: " + e.getMessage());
         }

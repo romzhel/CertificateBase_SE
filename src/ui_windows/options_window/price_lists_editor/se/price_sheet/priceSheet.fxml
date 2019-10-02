@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="545.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheetController">
+
+    <children>
+        <TabPane prefHeight="545.0" prefWidth="790.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <tabs>
+
+                <Tab text="   Опции   ">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="545.0" prefWidth="790.0">
+                            <children>
+                                <TextField fx:id="tfSheetName" layoutX="144.0" layoutY="38.0" prefHeight="25.0" prefWidth="251.0" />
+                                <Label alignment="CENTER_RIGHT" layoutX="26.0" layoutY="42.0" prefHeight="17.0" prefWidth="107.0" text="Название листа" />
+                                <RadioButton fx:id="rbLangRu" layoutX="144.0" layoutY="85.0" mnemonicParsing="false" text="Русский" />
+                                <RadioButton fx:id="rbLangEn" layoutX="294.0" layoutY="85.0" mnemonicParsing="false" text="Английский" />
+                                <Label alignment="CENTER_RIGHT" layoutX="34.0" layoutY="85.0" prefHeight="17.0" prefWidth="99.0" text="Язык" />
+                        <Label alignment="CENTER_RIGHT" layoutX="25.0" layoutY="126.0" prefHeight="17.0" prefWidth="107.0" text="Начальная строка" />
+                        <TextField fx:id="tfInitialRow" layoutX="143.0" layoutY="122.0" prefHeight="25.0" prefWidth="85.0" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="   Столбцы   ">
+                    <content>
+                        <AnchorPane fx:id="apPriceColumns" minHeight="0.0" minWidth="0.0" prefHeight="545.0" prefWidth="790.0">
+                            <children>
+                                <Pane fx:id="pPriceColumns" prefHeight="516.0" prefWidth="790.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="   Содержимое   ">
+                    <content>
+                        <AnchorPane fx:id="apPriceContent" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <TreeTableView fx:id="ttvPriceContent" layoutX="30.0" layoutY="20.0" prefHeight="200.0" prefWidth="200.0" stylesheets="@../../../../../css/treeTableView.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="   Коды статусов   ">
+                    <content>
+                        <AnchorPane fx:id="apPriceDchain" minHeight="0.0" minWidth="0.0" prefHeight="550.0" prefWidth="800.0">
+                            <children>
+                                <Pane fx:id="pPriceDchain" prefHeight="516.0" prefWidth="790.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+
+</AnchorPane>
