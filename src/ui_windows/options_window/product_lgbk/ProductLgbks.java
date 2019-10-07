@@ -130,7 +130,7 @@ public class ProductLgbks {
         return "[" + product.getLgbk() + "] " + getByLgbkName(product.getLgbk()).getDescriptionRuEn();
     }
 
-    public ArrayList<ProductLgbk> getProductLgbks() {
+    public ArrayList<ProductLgbk> getItems() {
         return productLgbks;
     }
 

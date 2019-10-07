@@ -201,8 +201,8 @@ public class PriceListContentTable {
     public void test() {
 
 
-//        treeTableView.setRoot(new ConverterToPriceTable<>(CoreModule.getProductLgbkGroups().getFullTreeSet()));
-        treeTableView.setRoot(new ConverterToPriceTable<PriceListContentItem>(new FamilyTree(new FamilyGroups())));
+        treeTableView.setRoot(new ConverterToPriceTable<>(CoreModule.getProductLgbkGroups().getFullTreeSet()));
+//        treeTableView.setRoot(new FamilyTree(new FamilyGroups()));
     }
 
 

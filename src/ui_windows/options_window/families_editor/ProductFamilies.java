@@ -26,7 +26,7 @@ public class ProductFamilies {
         this.productFamiliesTable = productFamiliesTable;
     }
 
-    public ArrayList<ProductFamily> getProductFamilies() {
+    public ArrayList<ProductFamily> getItems() {
         return productFamilies;
     }
 

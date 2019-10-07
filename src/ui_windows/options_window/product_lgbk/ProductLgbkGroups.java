@@ -23,7 +23,7 @@ public class ProductLgbkGroups {
 
     public ProductLgbkGroups get() {
         lgbkGroups.clear();
-        if (CoreModule.getProductLgbks().getProductLgbks().size() > 0) {
+        if (CoreModule.getProductLgbks().getItems().size() > 0) {
             createFromLgbks(CoreModule.getProductLgbks());
         } else {
             createFromProducts(CoreModule.getProducts());
@@ -70,7 +70,7 @@ public class ProductLgbkGroups {
 
     public void createFromLgbks(ProductLgbks productLgbks) {
         lgbkGroups.clear();
-        for (ProductLgbk lgbk : productLgbks.getProductLgbks()) {
+        for (ProductLgbk lgbk : productLgbks.getItems()) {
             if (lgbk.getNodeType() == ProductLgbk.ROOT_NODE) {
                 rootNode = lgbk;
                 continue;
@@ -200,8 +200,10 @@ public class ProductLgbkGroups {
 
             if (groupTreeItem.getValue().getLgbk().equals(lookingForLgbk.getLgbk())) {
                 for (TreeItem<ProductLgbk> subgroupTreeItem : groupTreeItem.getChildren()) {
+                    String containingPart = subgroupTreeItem.getValue().getHierarchy().replaceAll("\\.", "");
+
                     if (lookingForLgbk.getId() == subgroupTreeItem.getValue().getId() ||
-                            lookingForLgbk.getHierarchy().contains(subgroupTreeItem.getValue().getHierarchy().replaceAll("\\.", ""))) {
+                            !containingPart.isEmpty() && lookingForLgbk.getHierarchy().contains(containingPart)) {
                         return subgroupTreeItem;
                     }
                 }
@@ -214,7 +216,7 @@ public class ProductLgbkGroups {
     public HashSet<Integer> getGlobalNormIds(ProductLgbk productLgbk) {
         HashSet<Integer> globalNorms = new HashSet<>();
 
-        TreeItem<ProductLgbk> selectedTreeItem = CoreModule.getProductLgbkGroups().getTreeItem(productLgbk);
+        TreeItem<ProductLgbk> selectedTreeItem = getTreeItem(productLgbk);
         while (selectedTreeItem != null) {
             globalNorms.addAll(selectedTreeItem.getValue().getNormsList().getIntegerItems());
             selectedTreeItem = selectedTreeItem.getParent();

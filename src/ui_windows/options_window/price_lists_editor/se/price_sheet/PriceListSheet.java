@@ -1,24 +1,33 @@
 package ui_windows.options_window.price_lists_editor.se.price_sheet;
 
+import core.CoreModule;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.util.Callback;
+import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
+import ui_windows.options_window.price_lists_editor.se.PriceListContentTable;
 import utils.twin_list_views.TwinListViews;
 
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import static ui_windows.main_window.file_import_window.NamesMapping.*;
 
 public class PriceListSheet extends Tab {
-    private int sheetId;
     private static final int LANG_RU = 0;
     private static final int LANG_EN = 1;
+    private TwinListViews<String> columnsSelector;
+    private TwinListViews<OrderAccessibility> dchainSelector;
+    private PriceListContentTable contentTable;
+    private int sheetId = -1;
+    private int priceListId = -1;
     private int language;
     private String sheetName;
     private int initialRow = -1;
@@ -26,12 +35,50 @@ public class PriceListSheet extends Tab {
     private int leadTimeCorrection;
     private boolean groupNameDisplaying = true;
     private PriceListSheetController controller;
-    TwinListViews<String> columnsSelector;
 
 
     public PriceListSheet(String title) {
         super();
-//        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("priceSheet.fxml"));
+
+        setText(title);
+        init();
+    }
+
+    public PriceListSheet(ResultSet rs) {
+        init();
+        try {
+            sheetId = rs.getInt("id");
+            sheetName = rs.getString("name");
+            priceListId = rs.getInt("price_list_id");
+            language = rs.getInt("language");
+            initialRow = rs.getInt("init_row");
+            contentMode = rs.getInt("content_mode");
+            leadTimeCorrection = rs.getInt("lead_time_correction");
+            groupNameDisplaying = rs.getBoolean("group_names_displaying");
+            columnsSelector.setSelectedItemsFromString(rs.getString("column_enums"));
+
+            dchainSelector.setSelectedItemsFromString(rs.getString("dchain_enums"));
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public PriceListSheet(PriceListSheet anotherInstance) {
+        init();
+        sheetId = anotherInstance.sheetId;
+        priceListId = anotherInstance.priceListId;
+        language = anotherInstance.language;
+        sheetName = anotherInstance.sheetName;
+        initialRow = anotherInstance.initialRow;
+        contentMode = anotherInstance.contentMode;
+        leadTimeCorrection = anotherInstance.leadTimeCorrection;
+        groupNameDisplaying = anotherInstance.groupNameDisplaying;
+        columnsSelector.setSelectedItemsFromString(anotherInstance.columnsSelector.getSelectedItemsAsString());
+
+        dchainSelector.setSelectedItemsFromString(anotherInstance.dchainSelector.getSelectedItemsAsString());
+    }
+
+    private void getUi() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("priceSheet.fxml"));
         fxmlLoader.setControllerFactory(param -> {
             controller = new PriceListSheetController();
@@ -43,26 +90,16 @@ public class PriceListSheet extends Tab {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        setText(title);
-        init();
-    }
-
-    public PriceListSheet(ResultSet rs) {
-        try {
-            sheetName = rs.getString("name");
-            language = rs.getInt("language");
-            initialRow = rs.getInt("init_row");
-            contentMode = rs.getInt("content_mode");
-            leadTimeCorrection = rs.getInt("lead_time_correction");
-            groupNameDisplaying = rs.getBoolean("group_names_displaying");
-            columnsSelector.setSelectedItems(rs.getString("column_enums").split("\\,"));
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
     }
 
     private void init() {
+        getUi();
+        initColumnsSelector();
+        initContentTable();
+        initDchainSelector();
+    }
+
+    private void initColumnsSelector() {
         ArrayList<String> columns = new ArrayList<>();
         columns.add(DESC_ORDER_NUMBER);
         columns.add(DESC_ARTICLE);
@@ -99,12 +136,59 @@ public class PriceListSheet extends Tab {
             for (String item : param) {
                 result = result.concat(item).concat(",");
             }
-            result.replaceAll("\\,$", "");
+            result = result.replaceAll("\\,$", "");
 
             return result;
         });
+        columnsSelector.setConvertFromText(param ->
+                param != null && !param.isEmpty() ? new ArrayList<>(Arrays.asList(param.split("\\,"))) : new ArrayList<>());
+    }
 
+    private void initContentTable(){
+        contentTable = new PriceListContentTable(controller.ttvPriceContent);
+    }
 
+    private void initDchainSelector() {
+        dchainSelector = new TwinListViews<>(controller.pPriceDchain, CoreModule.getOrdersAccessibility().getItems());
+        dchainSelector.setListViewsCellFactory(new Callback<ListView<OrderAccessibility>, ListCell<OrderAccessibility>>() {
+            @Override
+            public ListCell<OrderAccessibility> call(ListView<OrderAccessibility> param) {
+                return new ListCell<OrderAccessibility>() {
+                    @Override
+                    protected void updateItem(OrderAccessibility item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (item != null && !empty) {
+                            String description = item.getDescriptionRu().isEmpty() ? item.getDescriptionEn() : item.getDescriptionRu();
+                            setText("[" + item.getStatusCode() + "] " + description);
+                        } else {
+                            setText(null);
+                        }
+                    }
+                };
+            }
+        });
+        Comparator<OrderAccessibility> dchainComparator = (o1, o2) -> o1.getStatusCode().compareTo(o2.getStatusCode());
+        dchainSelector.setListViewsAllComparator(dchainComparator);
+        dchainSelector.setListViewsSelectedComparator(dchainComparator);
+        dchainSelector.setConvertFromText(param -> {
+            ArrayList<OrderAccessibility> result = new ArrayList<>();
+            if (param != null && !param.isEmpty()) {
+                for (String item : param.split("\\,")) {
+                    result.add(CoreModule.getOrdersAccessibility().getOrderAccessibilityByStatusCode(item));
+                }
+            }
+            return result;
+        });
+        dchainSelector.setConvertToText(param -> {
+            String result = "";
+            for (OrderAccessibility oa : param) {
+                result = result.concat(oa.getStatusCode()).concat(",");
+            }
+            result = result.replaceAll("\\,$","");
+
+            return result;
+        });
     }
 
     public int getLanguage() {
@@ -177,5 +261,17 @@ public class PriceListSheet extends Tab {
 
     public void setSheetId(int sheetId) {
         this.sheetId = sheetId;
+    }
+
+    public int getPriceListId() {
+        return priceListId;
+    }
+
+    public void setPriceListId(int priceListId) {
+        this.priceListId = priceListId;
+    }
+
+    public TwinListViews<OrderAccessibility> getDchainSelector() {
+        return dchainSelector;
     }
 }

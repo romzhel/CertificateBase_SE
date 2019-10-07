@@ -10,11 +10,20 @@ public class PriceListSheets {
     public PriceListSheets() {
     }
 
-    public PriceListSheets getFromDB(){
+    public PriceListSheets getFromDB() {
         sheets = new PriceListSheetDB().getData();
         return this;
     }
 
+    public ArrayList<PriceListSheet> getPriceListSheets(int priceListId) {
+        ArrayList<PriceListSheet> result = new ArrayList<>();
+        for (PriceListSheet sheet : sheets) {
+            if (sheet.getPriceListId() == priceListId) {
+                result.add(sheet);
+            }
+        }
+        return result;
+    }
 
 
 }

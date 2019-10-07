@@ -18,9 +18,9 @@ public class FamilyGroups extends TreeSet<ItemsGroup<ProductFamily, ProductLgbk>
             return familyName1.compareToIgnoreCase(familyName2);
         }));
 
-        for (ProductFamily pf : CoreModule.getProductFamilies().getProductFamilies()) {
+        for (ProductFamily pf : CoreModule.getProductFamilies().getItems()) {
 
-            for (ProductLgbk pl : CoreModule.getProductLgbks().getProductLgbks()) {
+            for (ProductLgbk pl : CoreModule.getProductLgbks().getItems()) {
                 if (pf.getId() == pl.getFamilyId()) {
                     ItemsGroup<ProductFamily, ProductLgbk> newFamilyGroup = new ItemsGroup<>(pf,
                             (o1, o2) -> o1.getLgbk().compareTo(o2.getLgbk()));

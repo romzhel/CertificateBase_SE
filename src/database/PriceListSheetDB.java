@@ -14,18 +14,18 @@ public class PriceListSheetDB extends DbRequest {
         super();
         try {
             addData = connection.prepareStatement("INSERT INTO priceListSheets" +
-                            "(name, language, init_row, content_mode, lead_time_correction, group_names_displaying, " +
-                            "column_enums" +
-//                            ", content_enums, status_enums" +
+                            "(price_list_id, name, language, init_row, content_mode, lead_time_correction, " +
+                            "group_names_displaying, column_enums, dchain_enums" +
+//                            ", content_enums" +
                             ") " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?" +
-//                            ", ?, ?" +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?" +
+//                            ", ?" +
                             ");",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = connection.prepareStatement("UPDATE priceListSheets " +
-                    "SET name = ?, language = ?, init_row = ?, content_mode = ?, lead_time_correction = ?, " +
-                    "group_names_displaying = ?, column_enums = ?" +
-//                    ", content_enums = ?, status_enums = ? " +
+                    "SET price_list_id = ?, name = ?, language = ?, init_row = ?, content_mode = ?, lead_time_correction = ?, " +
+                    "group_names_displaying = ?, column_enums = ?, dchain_enums = ?" +
+//                    ", content_enums = ? " +
                     "WHERE id = ?");
             deleteData = connection.prepareStatement("DELETE FROM priceListSheets " +
                     "WHERE id = ?");
@@ -57,6 +57,7 @@ public class PriceListSheetDB extends DbRequest {
     public boolean putData(PriceListSheet pls) {
         try {
             int index = 1;
+            addData.setInt(index++, pls.getPriceListId());
             addData.setString(index++, pls.getSheetName());
             addData.setInt(index++, pls.getLanguage());
             addData.setInt(index++, pls.getInitialRow());
@@ -64,8 +65,8 @@ public class PriceListSheetDB extends DbRequest {
             addData.setInt(index++, pls.getLeadTimeCorrection());
             addData.setBoolean(index++, pls.isGroupNameDisplaying());
             addData.setString(index++, pls.getColumnsSelector().getSelectedItemsAsString());
-            /*addData.setBoolean(8, pls.isOrderable());
-            addData.setBoolean(9, pls.isOrderable());*/
+//            addData.setBoolean(8, pls.isOrderable());
+            addData.setString(index++, pls.getDchainSelector().getSelectedItemsAsString());
 
             MainWindow.setProgress(1.0);
 
@@ -94,6 +95,7 @@ public class PriceListSheetDB extends DbRequest {
 
         try {
             int index = 1;
+            updateData.setInt(index++, pls.getPriceListId());
             updateData.setString(index++, pls.getSheetName());
             updateData.setInt(index++, pls.getLanguage());
             updateData.setInt(index++, pls.getInitialRow());
@@ -101,7 +103,7 @@ public class PriceListSheetDB extends DbRequest {
             updateData.setInt(index++, pls.getLeadTimeCorrection());
             updateData.setBoolean(index++, pls.isGroupNameDisplaying());
             updateData.setString(index++, pls.getColumnsSelector().getSelectedItemsAsString());
-//            updateData.setBoolean(index++, pls.isOrderable());
+            updateData.setString(index++, pls.getDchainSelector().getSelectedItemsAsString());
 
             updateData.setInt(index++, pls.getSheetId());
 

@@ -42,36 +42,12 @@ public class PriceListSheetController implements Initializable {
         rbLangEn.setToggleGroup(languageSelector);
         rbLangRu.setToggleGroup(languageSelector);
 
-
         rbLangRu.setSelected(true);
 
 
 
 
-        TwinListViews<OrderAccessibility> dchainSelector = new TwinListViews<>(pPriceDchain,
-                CoreModule.getOrdersAccessibility().getItems());
 
-        /*dchainSelector.setListViewsCellFactory(new Callback<ListView<OrderAccessibility>, ListCell<OrderAccessibility>>() {
-            @Override
-            public ListCell<OrderAccessibility> call(ListView<OrderAccessibility> param) {
-                return new ListCell<OrderAccessibility>(){
-                    @Override
-                    protected void updateItem(OrderAccessibility item, boolean empty) {
-                        super.updateItem(item, empty);
-
-                        if (item != null && !empty) {
-                            String description = item.getDescriptionRu().isEmpty() ? item.getDescriptionEn() : item.getDescriptionRu();
-                            setText("[" + item.getStatusCode() + "] " + description);
-                        } else {
-                            setText(null);
-                        }
-                    }
-                };
-            }
-        });
-        Comparator<OrderAccessibility> dchainComparator = (o1, o2) -> o1.getStatusCode().compareTo(o2.getStatusCode());
-        dchainSelector.setListViewsAllComparator(dchainComparator);
-        dchainSelector.setListViewsSelectedComparator(dchainComparator);*/
 
 
 //        new PriceListContentTable(ttvPriceContent);

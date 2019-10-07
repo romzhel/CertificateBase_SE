@@ -13,7 +13,7 @@ public class ProductFamiliesTable {
         tableView.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("name"));
         tableView.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("responsible"));
 
-        tableView.getItems().addAll(CoreModule.getProductFamilies().getProductFamilies());
+        tableView.getItems().addAll(CoreModule.getProductFamilies().getItems());
     }
 
     public TableView<ProductFamily> getTableView() {

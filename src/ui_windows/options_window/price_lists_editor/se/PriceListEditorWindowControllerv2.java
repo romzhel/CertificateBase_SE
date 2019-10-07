@@ -14,8 +14,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static ui_windows.Mode.ADD;
-
 public class PriceListEditorWindowControllerv2 implements Initializable {
     PriceList tempPriceList;
 
@@ -47,23 +45,26 @@ public class PriceListEditorWindowControllerv2 implements Initializable {
     }
 
     public void actionApply() {
-        if (PriceListEditorWindow.getMode() == ADD) {
-            if (tfPriceName.getText().isEmpty() || tfPriceFileName.getText().isEmpty() || tfTemplateName.getText().isEmpty()) {
-                Dialogs.showMessage("Сохранение прайс-листа", "Не все поля заполнены.");
-            } else {
-                tempPriceList.setName(tfPriceName.getText());
-                tempPriceList.setFileName(tfPriceFileName.getText());
-                 if (CoreModule.getPriceLists().addItem(tempPriceList)) {
-                     actionClose();
-                 }
-            }
+//        if (PriceListEditorWindow.getMode() == ADD) {
+        if (tfPriceName.getText().isEmpty() || tfPriceFileName.getText().isEmpty() || tfTemplateName.getText().isEmpty()) {
+            Dialogs.showMessage("Сохранение прайс-листа", "Не все поля заполнены.");
         } else {
-            CoreModule.getPriceLists().editItem(tempPriceList);
-            actionClose();
+            tempPriceList.setName(tfPriceName.getText());
+            tempPriceList.setFileName(tfPriceFileName.getText());
+            if (tempPriceList.getId() == -1) {
+                if (CoreModule.getPriceLists().addItem(tempPriceList)) {
+                    actionClose();
+                }
+            } else {
+                if (CoreModule.getPriceLists().editItem(tempPriceList)) {
+                    actionClose();
+                }
+            }
         }
     }
 
     public void actionClose() {
+        mainTabPane.getSelectionModel().clearSelection(mainTabPane.getSelectionModel().getSelectedIndex());
         ((Stage) mainTabPane.getScene().getWindow()).close();
     }
 

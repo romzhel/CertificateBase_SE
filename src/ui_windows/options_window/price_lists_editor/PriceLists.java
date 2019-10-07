@@ -1,6 +1,5 @@
 package ui_windows.options_window.price_lists_editor;
 
-import core.CoreModule;
 import core.Dialogs;
 import database.PriceListSheetDB;
 import database.PriceListsDB;
@@ -19,12 +18,11 @@ public class PriceLists {
 
     public PriceLists getFromDB() {
         items = new PriceListsDB().getData();
-
-
         PriceListSheets sheets = new PriceListSheets().getFromDB();
 
-
-        //add sheet tabs to price
+        for (PriceList item : items) {
+            item.getSheets().addAll(sheets.getPriceListSheets(item.getId()));
+        }
 
         return this;
     }
@@ -41,8 +39,9 @@ public class PriceLists {
         }
 
         if (new PriceListsDB().putData(priceList)) {
-            for (PriceListSheet pls:priceList.getSheets()) {
-                if (!new PriceListSheetDB().putData(pls)) {
+            for (PriceListSheet sheet : priceList.getSheets()) {
+                sheet.setSheetId(priceList.getId());
+                if (!new PriceListSheetDB().putData(sheet)) {
                     return false;
                 }
             }
@@ -53,17 +52,33 @@ public class PriceLists {
         return true;
     }
 
-    public void editItem(PriceList refreshedItem) {
+    public boolean editItem(PriceList refreshedItem) {
         if (new PriceListsDB().updateData(refreshedItem)) {
-            PriceList selectedItem = priceListsTable.getSelectedItem();
-            CoreModule.getPriceLists().getItems().set(items.indexOf(selectedItem), refreshedItem);
+//            PriceList selectedItem = priceListsTable.getSelectedItem();
+            items.set(priceListsTable.getTableView().getSelectionModel().getSelectedIndex(), refreshedItem);
+
+            for (PriceListSheet sheet : refreshedItem.getSheets()) {
+                sheet.setPriceListId(refreshedItem.getId());
+
+                if (sheet.getSheetId() == -1) {
+                    if (!(new PriceListSheetDB().putData(sheet))) {
+                        return false;
+                    }
+                } else {
+                    if (!(new PriceListSheetDB().updateData(sheet))) {
+                        return false;
+                    }
+                }
+            }
 
             priceListsTable.getTableView().getItems().clear();
             priceListsTable.getTableView().getItems().addAll(items);
+            return true;
         }
+        return false;
     }
 
-    public void deleteItem(PriceList priceList){
+    public void deleteItem(PriceList priceList) {
         if (new PriceListsDB().deleteData(priceList)) {
             items.remove(priceList);
             priceListsTable.getTableView().getItems().remove(priceList);

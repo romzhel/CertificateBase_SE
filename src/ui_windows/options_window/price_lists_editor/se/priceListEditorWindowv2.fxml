@@ -34,7 +34,7 @@
           </Tab>
         </tabs>
       </TabPane>
-      <Button fx:id="btnApply" layoutX="195.0" layoutY="561.0" mnemonicParsing="false" onAction="#actionApply" prefHeight="25.0" prefWidth="118.0" text="Сохранить" />
-      <Button fx:id="btnClose" layoutX="622.0" layoutY="561.0" mnemonicParsing="false" onAction="#actionClose" prefHeight="25.0" prefWidth="118.0" text="Закрыть" />
+      <Button fx:id="btnApply" layoutX="195.0" layoutY="567.0" mnemonicParsing="false" onAction="#actionApply" prefHeight="25.0" prefWidth="118.0" text="Сохранить" />
+      <Button fx:id="btnClose" layoutX="622.0" layoutY="567.0" mnemonicParsing="false" onAction="#actionClose" prefHeight="25.0" prefWidth="118.0" text="Закрыть" />
    </children>
 </AnchorPane>

@@ -372,12 +372,12 @@ public class OptionsWindowController implements Initializable {
 //    }
 
     public void actionAddPriceList() {
-        new PriceListEditorWindow(ADD);
+        new PriceListEditorWindow(new PriceList());
     }
 
     public void actionEditPriceList() {
-//        new PriceListEditorWindow(EDIT);
-        new PriceListEditorWindow(EDIT);
+        PriceList selectedItem = tvPriceLists.getSelectionModel().getSelectedItem();
+         if (selectedItem != null) new PriceListEditorWindow(new PriceList(selectedItem));
     }
 
 

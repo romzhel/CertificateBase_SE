@@ -11,24 +11,13 @@ import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
 
 public class PriceListEditorWindow extends OrdinalWindow {
-    public PriceListEditorWindow(Mode mode) {
+    public PriceListEditorWindow(PriceList editedPriceList) {
         super(OptionsWindow.getStage(), Modality.APPLICATION_MODAL, mode,
                 "priceListEditorWindowv2.fxml", "Прайс лист");
 
         PriceListEditorWindowControllerv2 controller = (PriceListEditorWindowControllerv2) loader.getController();
-
-        PriceList tempPriceList = null;
-        if (mode == ADD) {
-            tempPriceList = new PriceList();
-        } else if (mode == EDIT) {//put data into fields
-            PriceList selectedItem = CoreModule.getPriceLists().getPriceListsTable().getSelectedItem();
-
-            tempPriceList = new PriceList(selectedItem);
-            tempPriceList.getSheets().addAll(selectedItem.getSheets());
-        }
-
-        tempPriceList.showInEditorWindow(controller);
-        controller.setTempPriceList(tempPriceList);
+        editedPriceList.showInEditorWindow(controller);
+        controller.setTempPriceList(editedPriceList);
 
         stage.show();
     }

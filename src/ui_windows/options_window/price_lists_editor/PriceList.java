@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class PriceList {
-    private int id;
+    private int id = -1;
     private String name = "";
     private String fileName = "";
     private File template;
@@ -38,6 +38,9 @@ public class PriceList {
         name = anotherInstance.name;
         fileName = anotherInstance.fileName;
         template = anotherInstance.template;
+        for (PriceListSheet sheet : anotherInstance.sheets) {
+            sheets.add(new PriceListSheet(sheet));
+        }
     }
 
     public PriceList(ResultSet rs) throws SQLException {
@@ -77,7 +80,17 @@ public class PriceList {
         if (template != null) {
             controller.tfTemplateName.setText(template.getName().replaceAll("null", ""));
         }
-        controller.mainTabPane.getTabs().addAll(sheets);
+
+        int sheetIndex = 1;
+        for (PriceListSheet sheet : sheets) {
+            sheet.setText("Лист " + String.valueOf(sheetIndex++));
+
+            controller.mainTabPane.getTabs().add(sheet);
+            controller.mainTabPane.getSelectionModel().clearSelection(sheetIndex - 1);
+        }
+
+//        controller.mainTabPane.getSelectionModel().clearSelection();
+//        controller.mainTabPane.getSelectionModel().selectFirst();
     }
 
     public String getLgbksAsString() {
