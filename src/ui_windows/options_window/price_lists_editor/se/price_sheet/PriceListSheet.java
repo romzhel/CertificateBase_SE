@@ -1,7 +1,6 @@
 package ui_windows.options_window.price_lists_editor.se.price_sheet;
 
 import core.CoreModule;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -19,6 +18,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import static ui_windows.main_window.file_import_window.NamesMapping.*;
+import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_FAMILY;
+import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_LGBK;
 
 public class PriceListSheet extends Tab {
     private static final int LANG_RU = 0;
@@ -26,12 +27,13 @@ public class PriceListSheet extends Tab {
     private TwinListViews<String> columnsSelector;
     private TwinListViews<OrderAccessibility> dchainSelector;
     private PriceListContentTable contentTable;
+//    private String contentString;
     private int sheetId = -1;
     private int priceListId = -1;
     private int language;
     private String sheetName;
     private int initialRow = -1;
-    private int contentMode = -1;
+    private int contentMode = 0;
     private int leadTimeCorrection;
     private boolean groupNameDisplaying = true;
     private PriceListSheetController controller;
@@ -42,6 +44,7 @@ public class PriceListSheet extends Tab {
 
         setText(title);
         init();
+        contentTable.setContentMode(CONTENT_MODE_FAMILY);
     }
 
     public PriceListSheet(ResultSet rs) {
@@ -53,9 +56,20 @@ public class PriceListSheet extends Tab {
             language = rs.getInt("language");
             initialRow = rs.getInt("init_row");
             contentMode = rs.getInt("content_mode");
+            contentTable.setContentMode(rs.getInt("content_mode"));
             leadTimeCorrection = rs.getInt("lead_time_correction");
             groupNameDisplaying = rs.getBoolean("group_names_displaying");
             columnsSelector.setSelectedItemsFromString(rs.getString("column_enums"));
+//            contentString = rs.getString("content_enums");
+            contentTable.importFromString(rs.getString("content_enums"));
+
+            contentTable.setContentMode(contentMode);
+            if (contentMode == CONTENT_MODE_LGBK) {
+                controller.rmiByLgbk.setSelected(true);
+            } else {
+                controller.rmiByFamily.setSelected(true);
+            }
+            contentTable.importFromString(rs.getString("content_enums"));
 
             dchainSelector.setSelectedItemsFromString(rs.getString("dchain_enums"));
         } catch (SQLException e) {
@@ -74,8 +88,15 @@ public class PriceListSheet extends Tab {
         leadTimeCorrection = anotherInstance.leadTimeCorrection;
         groupNameDisplaying = anotherInstance.groupNameDisplaying;
         columnsSelector.setSelectedItemsFromString(anotherInstance.columnsSelector.getSelectedItemsAsString());
-
         dchainSelector.setSelectedItemsFromString(anotherInstance.dchainSelector.getSelectedItemsAsString());
+
+        contentTable.setContentMode(anotherInstance.getContentMode());
+        if (anotherInstance.contentMode == CONTENT_MODE_LGBK) {
+            controller.rmiByLgbk.setSelected(true);
+        } else {
+            controller.rmiByFamily.setSelected(true);
+        }
+        contentTable.importFromString(anotherInstance.contentTable.exportToString());
     }
 
     private void getUi() {
@@ -144,8 +165,23 @@ public class PriceListSheet extends Tab {
                 param != null && !param.isEmpty() ? new ArrayList<>(Arrays.asList(param.split("\\,"))) : new ArrayList<>());
     }
 
-    private void initContentTable(){
+    private void initContentTable() {
         contentTable = new PriceListContentTable(controller.ttvPriceContent);
+        controller.rmiByLgbk.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            int newMode = newValue ? CONTENT_MODE_LGBK : CONTENT_MODE_FAMILY;
+            contentMode = newMode;
+            String content = contentTable.exportToString();
+            contentTable.setContentMode(newMode);
+            contentTable.importFromString(content);
+        });
+        /*controller.rmiByFamily.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            int newMode = CONTENT_MODE_FAMILY;
+            contentMode = newMode;
+            String content = contentTable.exportToString();
+            contentTable.setContentMode(newMode);
+            contentTable.importFromString(content);
+        });*/
+
     }
 
     private void initDchainSelector() {
@@ -185,7 +221,7 @@ public class PriceListSheet extends Tab {
             for (OrderAccessibility oa : param) {
                 result = result.concat(oa.getStatusCode()).concat(",");
             }
-            result = result.replaceAll("\\,$","");
+            result = result.replaceAll("\\,$", "");
 
             return result;
         });
@@ -273,5 +309,9 @@ public class PriceListSheet extends Tab {
 
     public TwinListViews<OrderAccessibility> getDchainSelector() {
         return dchainSelector;
+    }
+
+    public PriceListContentTable getContentTable() {
+        return contentTable;
     }
 }

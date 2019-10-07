@@ -38,7 +38,15 @@
                     <content>
                         <AnchorPane fx:id="apPriceContent" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <TreeTableView fx:id="ttvPriceContent" layoutX="30.0" layoutY="20.0" prefHeight="200.0" prefWidth="200.0" stylesheets="@../../../../../css/treeTableView.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                <TreeTableView fx:id="ttvPriceContent" layoutX="30.0" layoutY="20.0" prefHeight="200.0" prefWidth="200.0" stylesheets="@../../../../../css/treeTableView.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                    <RadioMenuItem fx:id="rmiByFamily" mnemonicParsing="false" text="   Структура по направлениям   " />
+                                    <RadioMenuItem fx:id="rmiByLgbk" mnemonicParsing="false" text="   Структура по LGBK   " />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu></TreeTableView>
                             </children>
                         </AnchorPane>
                     </content>

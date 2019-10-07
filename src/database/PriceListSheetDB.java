@@ -15,17 +15,12 @@ public class PriceListSheetDB extends DbRequest {
         try {
             addData = connection.prepareStatement("INSERT INTO priceListSheets" +
                             "(price_list_id, name, language, init_row, content_mode, lead_time_correction, " +
-                            "group_names_displaying, column_enums, dchain_enums" +
-//                            ", content_enums" +
-                            ") " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?" +
-//                            ", ?" +
-                            ");",
+                            "group_names_displaying, column_enums, content_enums, dchain_enums) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = connection.prepareStatement("UPDATE priceListSheets " +
                     "SET price_list_id = ?, name = ?, language = ?, init_row = ?, content_mode = ?, lead_time_correction = ?, " +
-                    "group_names_displaying = ?, column_enums = ?, dchain_enums = ?" +
-//                    ", content_enums = ? " +
+                    "group_names_displaying = ?, column_enums = ?, content_enums = ?, dchain_enums = ?" +
                     "WHERE id = ?");
             deleteData = connection.prepareStatement("DELETE FROM priceListSheets " +
                     "WHERE id = ?");
@@ -65,7 +60,7 @@ public class PriceListSheetDB extends DbRequest {
             addData.setInt(index++, pls.getLeadTimeCorrection());
             addData.setBoolean(index++, pls.isGroupNameDisplaying());
             addData.setString(index++, pls.getColumnsSelector().getSelectedItemsAsString());
-//            addData.setBoolean(8, pls.isOrderable());
+            addData.setString(index++, pls.getContentTable().exportToString());
             addData.setString(index++, pls.getDchainSelector().getSelectedItemsAsString());
 
             MainWindow.setProgress(1.0);
@@ -103,6 +98,7 @@ public class PriceListSheetDB extends DbRequest {
             updateData.setInt(index++, pls.getLeadTimeCorrection());
             updateData.setBoolean(index++, pls.isGroupNameDisplaying());
             updateData.setString(index++, pls.getColumnsSelector().getSelectedItemsAsString());
+            updateData.setString(index++, pls.getContentTable().exportToString());
             updateData.setString(index++, pls.getDchainSelector().getSelectedItemsAsString());
 
             updateData.setInt(index++, pls.getSheetId());

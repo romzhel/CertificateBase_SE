@@ -55,6 +55,24 @@
     -fx-padding:2px
 }
 
+.root-two-color-cell .check-box .box {
+    -fx-background-color: yellow;
+    -fx-border-color:blue;
+    -fx-border-radius:3px;
+    -fx-padding:2px
+}
+
+.root-two-color-cell .check-box:selected .mark {
+    -fx-background-color: blue;
+}
+
+.root-two-color-cell .check-box:selected .box {
+    -fx-background-color: yellow;
+    -fx-border-color:blue;
+    -fx-border-radius:3px;
+    -fx-padding:2px
+}
+
 .one-color-cell .check-box .box {
     -fx-background-color: white;
     -fx-border-color:red;

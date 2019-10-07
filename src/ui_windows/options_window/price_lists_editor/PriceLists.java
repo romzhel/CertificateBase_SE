@@ -42,6 +42,7 @@ public class PriceLists {
             for (PriceListSheet sheet : priceList.getSheets()) {
                 sheet.setSheetId(priceList.getId());
                 if (!new PriceListSheetDB().putData(sheet)) {
+//                    sheet.setContentString(sheet.getContentTable().exportToString());
                     return false;
                 }
             }

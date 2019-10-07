@@ -3,7 +3,6 @@ package ui_windows.options_window.product_lgbk;
 import core.CoreModule;
 import core.Dialogs;
 import database.ProductLgbksDB;
-import javafx.collections.ObservableList;
 import javafx.scene.control.TreeTableView;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.product.Product;
@@ -126,7 +125,16 @@ public class ProductLgbks {
         return result;
     }
 
-    public String getLgbkCombineText (Product product) {
+    public ProductLgbk getLgbkById(int id) {
+        for (ProductLgbk lgbk : productLgbks) {
+            if (id == lgbk.getId()) {
+                return lgbk;
+            }
+        }
+        return null;
+    }
+
+    public String getLgbkCombineText(Product product) {
         return "[" + product.getLgbk() + "] " + getByLgbkName(product.getLgbk()).getDescriptionRuEn();
     }
 

@@ -17,6 +17,7 @@ public class PriceList {
     private String name = "";
     private String fileName = "";
     private File template;
+    private File destination;
     private ArrayList<PriceListSheet> sheets = new ArrayList<>();
     private ArrayList<String> lgbks;
 
@@ -38,6 +39,7 @@ public class PriceList {
         name = anotherInstance.name;
         fileName = anotherInstance.fileName;
         template = anotherInstance.template;
+        destination = anotherInstance.destination;
         for (PriceListSheet sheet : anotherInstance.sheets) {
             sheets.add(new PriceListSheet(sheet));
         }
@@ -88,9 +90,6 @@ public class PriceList {
             controller.mainTabPane.getTabs().add(sheet);
             controller.mainTabPane.getSelectionModel().clearSelection(sheetIndex - 1);
         }
-
-//        controller.mainTabPane.getSelectionModel().clearSelection();
-//        controller.mainTabPane.getSelectionModel().selectFirst();
     }
 
     public String getLgbksAsString() {
@@ -153,5 +152,13 @@ public class PriceList {
 
     public void setSheets(ArrayList<PriceListSheet> sheets) {
         this.sheets = sheets;
+    }
+
+    public File getDestination() {
+        return destination;
+    }
+
+    public void setDestination(File destination) {
+        this.destination = destination;
     }
 }

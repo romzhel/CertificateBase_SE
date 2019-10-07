@@ -36,6 +36,12 @@ public class PriceListSheetController implements Initializable {
     @FXML
     public Pane pPriceDchain;
 
+    @FXML
+    RadioMenuItem rmiByFamily;
+
+    @FXML
+    RadioMenuItem rmiByLgbk;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ToggleGroup languageSelector = new ToggleGroup();
@@ -44,7 +50,9 @@ public class PriceListSheetController implements Initializable {
 
         rbLangRu.setSelected(true);
 
-
+        ToggleGroup contentModeSelector = new ToggleGroup();
+        rmiByFamily.setToggleGroup(contentModeSelector);
+        rmiByLgbk.setToggleGroup(contentModeSelector);
 
 
 

@@ -17,16 +17,17 @@ import static ui_windows.options_window.product_lgbk.ProductLgbk.GROUP_NODE;
 import static ui_windows.options_window.product_lgbk.ProductLgbk.ROOT_NODE;
 
 public class PriceListContentTable {
+    private static final String FAMILY_ITEM = "0";
+    private static final String LGBK_ITEM = "1";
+    public static final int CONTENT_MODE_FAMILY = 0;
+    public static final int CONTENT_MODE_LGBK = 1;
     private TreeTableView<PriceListContentTableItem> treeTableView;
-
 
     public PriceListContentTable(TreeTableView<PriceListContentTableItem> treeTableView) {
         this.treeTableView = treeTableView;
         treeTableView.setEditable(true);
 
         initColumns();
-
-        test();
     }
 
     public void initColumns() {
@@ -71,7 +72,7 @@ public class PriceListContentTable {
             boolean result = false;
 
             if (currItem.getContent() instanceof ProductFamily) {
-                if (hasAllCheckedChildren(treeItem)) result = true;
+                result = hasAllCheckedChildren(treeItem);
             } else if (currItem.getContent() instanceof ProductLgbk) {
                 result = currItem.isPrice();
             }
@@ -104,32 +105,34 @@ public class PriceListContentTable {
             @Override
             public TreeTableCell<PriceListContentTableItem, Boolean> call(TreeTableColumn<PriceListContentTableItem, Boolean> param) {
                 return new CheckBoxTreeTableCell<PriceListContentTableItem, Boolean>() {
-                   /* @Override
+                    @Override
                     public void updateItem(Boolean item, boolean empty) {
                         super.updateItem(item, empty);
 
                         if (item != null && !empty) {
-//                            boolean childNormsDefined = false;
-
                             TreeItem<PriceListContentTableItem> currItem = getTreeTableView().getTreeItem(getIndex());
+                            if (currItem.equals(getTreeTableView().getRoot())) {
 
-                            if (currItem.getValue().getContent() instanceof ProductFamily) {
+                            } else if (currItem.getValue().getContent() instanceof ProductFamily) {
                                 boolean childChecked = false;
-                                for (TreeItem<PriceListContentTableItem> lgbkTreeItem : currItem.getChildren()) {
-                                    if (lgbkTreeItem.getValue().isPrice()) {
+                                for (TreeItem<PriceListContentTableItem> lgbkGroupTreeItem : currItem.getChildren()) {
+                                    if (lgbkGroupTreeItem.getValue().isPrice()) {
                                         childChecked = true;
                                         break;
+                                    } else {
+                                        for (TreeItem<PriceListContentTableItem> lgbkTreeItem : lgbkGroupTreeItem.getChildren()) {
+                                            if (lgbkTreeItem.getValue().isPrice()) {
+                                                childChecked = true;
+                                                break;
+                                            }
+                                            if (childChecked) break;
+                                        }
                                     }
                                 }
-                                getStyleClass().removeAll("standard-cell", "one-color-cell", "two-color-cell", "root-cell");
-                                if (((ProductLgbk) currItem.getValue().getContent()).getNodeType() == GROUP_NODE) {
-                                    if (childChecked) getStyleClass().add("two-color-cell");
-                                    else getStyleClass().add("one-color-cell");
-                                } else if (((ProductLgbk) currItem.getValue().getContent()).getNodeType() == ROOT_NODE) {
-                                    getStyleClass().add("root-cell");
-                                } else {
-                                    getStyleClass().add("standard-cell");
-                                }
+                                getStyleClass().removeAll("standard-cell", "one-color-cell", "two-color-cell", "root-cell", "root-two-color-cell");
+                                if (childChecked) getStyleClass().add("root-two-color-cell");
+                                else getStyleClass().add("root-cell");
+
                             } else if (currItem.getValue().getContent() instanceof ProductLgbk) {
                                 boolean childChecked = false;
                                 for (TreeItem<PriceListContentTableItem> lgbkTreeItem : currItem.getChildren()) {
@@ -138,7 +141,7 @@ public class PriceListContentTable {
                                         break;
                                     }
                                 }
-                                getStyleClass().removeAll("standard-cell", "one-color-cell", "two-color-cell", "root-cell");
+                                getStyleClass().removeAll("standard-cell", "one-color-cell", "two-color-cell", "root-cell", "root-two-color-cell");
                                 if (((ProductLgbk) currItem.getValue().getContent()).getNodeType() == GROUP_NODE) {
                                     if (childChecked) getStyleClass().add("two-color-cell");
                                     else getStyleClass().add("one-color-cell");
@@ -149,27 +152,9 @@ public class PriceListContentTable {
                                 }
 
                             }
-
-
-                            *//*for (TreeItem<PriceListContentTableItem> plgbk : currItem.getChildren()) {
-                                if (plgbk.getValue().getNormsList().getIntegerItems().size() > 0) childNormsDefined = true;
-                            }
-
-                            getStyleClass().removeAll("standard-cell", "one-color-cell", "two-color-cell", "root-cell");
-                            if (currItem.getValue().getNodeType() == GROUP_NODE) {
-                                if (childNormsDefined) getStyleClass().add("two-color-cell");
-                                else getStyleClass().add("one-color-cell");
-                            } else if (currItem.getValue().getNodeType() == ROOT_NODE) {
-                                getStyleClass().add("root-cell");
-                            } else {
-                                getStyleClass().add("standard-cell");
-
-                            }*//*
                             setAlignment(Pos.CENTER);
                         }
-
-
-                    }*/
+                    }
                 };
             }
         });
@@ -198,12 +183,96 @@ public class PriceListContentTable {
         return true;
     }
 
-    public void test() {
-
-
-        treeTableView.setRoot(new ConverterToPriceTable<>(CoreModule.getProductLgbkGroups().getFullTreeSet()));
-//        treeTableView.setRoot(new FamilyTree(new FamilyGroups()));
+    public void setContentMode(int contentMode) {
+        if (contentMode == CONTENT_MODE_FAMILY) {
+            treeTableView.setRoot(new FamilyTree(new FamilyGroups()));
+        } else if (contentMode == CONTENT_MODE_LGBK) {
+            treeTableView.setRoot(new ConverterToPriceTable<>(CoreModule.getProductLgbkGroups().getFullTreeSet()));
+        } else {
+            treeTableView.setRoot(new FamilyTree(new FamilyGroups()));
+        }
     }
 
+    public String exportToString() {
+        String result = "";
+        for (TreeItem<PriceListContentTableItem> groupTreeItem : treeTableView.getRoot().getChildren()) {
+            if (groupTreeItem.getValue().isPrice()) {
+                result = exportTreeItemToString(result, groupTreeItem);
+            } else {
+                for (TreeItem<PriceListContentTableItem> subGroupTreeItem : groupTreeItem.getChildren()) {
+                    if (subGroupTreeItem.getValue().isPrice()) {
+                        result = exportTreeItemToString(result, subGroupTreeItem);
+                    } else {
+                        for (TreeItem<PriceListContentTableItem> treeItem : subGroupTreeItem.getChildren()) {
+                            result = exportTreeItemToString(result, treeItem);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private String exportTreeItemToString(String result, TreeItem<PriceListContentTableItem> groupTreeItem) {
+        PriceListContentItem plci = groupTreeItem.getValue().getContent();
+        if (groupTreeItem.getValue().isPrice()) {
+            if (plci instanceof ProductLgbk) {
+                result = result.concat(LGBK_ITEM).concat(",").concat(String.valueOf(((ProductLgbk) plci).getId()));
+            } else {
+                result = result.concat(FAMILY_ITEM).concat(",").concat(String.valueOf(((ProductFamily) plci).getId()));
+            }
+            result = result.concat(";");
+        }
+        return result;
+    }
+
+    public void importFromString(String text) {
+        if (text == null || text.isEmpty()) return;
+
+        String[] items = text.split("\\;");
+        for (String item : items) {
+            String[] contentItem = item.split("\\,");
+
+            if (!contentItem[1].matches("^\\d+$")) continue;
+            PriceListContentItem plci;
+            int id = Integer.parseInt(contentItem[1].trim());
+
+            if (contentItem[0].equals(LGBK_ITEM)) {
+                plci = CoreModule.getProductLgbks().getLgbkById(id);
+            } else {
+                plci = CoreModule.getProductFamilies().getFamilyById(id);
+            }
+
+//            boolean result = false;
+            for (TreeItem<PriceListContentTableItem> treeItem : treeTableView.getRoot().getChildren()) {
+                if (setPrice(treeItem, plci)) {
+//                    result = true;
+                    break;
+                }
+
+                for (TreeItem<PriceListContentTableItem> treeItem2 : treeItem.getChildren()) {
+                    if (setPrice(treeItem2, plci)) {
+//                        result = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean setPrice(TreeItem<PriceListContentTableItem> treeItem, PriceListContentItem contentItem) {
+        if (contentItem.equals(treeItem.getValue().getContent())) {
+            treeItem.getValue().setPrice(true);
+            return true;
+        }
+
+        for (TreeItem<PriceListContentTableItem> item : treeItem.getChildren()) {
+            if (contentItem.equals(item.getValue().getContent())) {
+                item.getValue().setPrice(true);
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
