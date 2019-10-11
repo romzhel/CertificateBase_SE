@@ -50,15 +50,7 @@ public class PriceList {
         name = rs.getString("name");
         fileName = rs.getString("file_name");
         template = new File(CoreModule.getFolders().getTemplatesFolder() + "\\" + rs.getString("template_name"));
-
-        String valueFromDB = rs.getString("lgbks");
-        String[] values;
-        if (valueFromDB != null && !valueFromDB.isEmpty()) {
-            values = valueFromDB.split("\\,");
-            lgbks = new ArrayList<String>(Arrays.asList(values));
-        } else {
-            lgbks = new ArrayList<>();
-        }
+        destination = new File(rs.getString("destination_folder"));
     }
 
     public PriceList(AnchorPane root) {
@@ -81,6 +73,9 @@ public class PriceList {
         controller.tfPriceFileName.setText(fileName);
         if (template != null) {
             controller.tfTemplateName.setText(template.getName().replaceAll("null", ""));
+        }
+        if (destination != null) {
+            controller.tfDestinationFolder.setText(destination.getPath());
         }
 
         int sheetIndex = 1;

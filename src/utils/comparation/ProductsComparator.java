@@ -24,9 +24,6 @@ public class ProductsComparator {
         for (Product pr1 : prs1.getItems()) {//go throw all the existing items
 
             for (Product pr2 : prs2.getItems()) {//go throw all the updating item
-                if (pr2.getMaterial().contains("GBI")) {
-                    System.out.println();
-                }
                 pr1t = pr1.getMaterial().replaceAll("\\-", "").replaceAll("BPZ:", "").replaceAll("\\:", "");
                 pr2t = pr2.getMaterial().replaceAll("\\-", "").replaceAll("BPZ:", "").replaceAll("\\:", "");
 

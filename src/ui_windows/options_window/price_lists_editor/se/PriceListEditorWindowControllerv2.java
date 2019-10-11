@@ -9,11 +9,9 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
-import utils.Utils;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Date;
 import java.util.ResourceBundle;
 
 public class PriceListEditorWindowControllerv2 implements Initializable {
@@ -32,7 +30,7 @@ public class PriceListEditorWindowControllerv2 implements Initializable {
     public TextField tfPriceFileName;
 
     @FXML
-    public TextField tfDestinationFile;
+    public TextField tfDestinationFolder;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -49,11 +47,11 @@ public class PriceListEditorWindowControllerv2 implements Initializable {
     }
 
     public void setDestinationFile() {
-        File selectedFile = new Dialogs().selectAnyFile(PriceListEditorWindow.getStage(), "Выбор места сохранения",
-                Dialogs.EXCEL_FILES, tempPriceList.getFileName().concat("_").concat(Utils.getDate(new Date())));
-        if (selectedFile != null) {
-            tempPriceList.setDestination(selectedFile);
-            tfDestinationFile.setText(selectedFile.getName());
+        File selectedFolder = new Dialogs().selectFolder(PriceListEditorWindow.getStage(),
+                "Выбор папки для сохранения прайс-листов");
+        if (selectedFolder != null) {
+            tempPriceList.setDestination(selectedFolder);
+            tfDestinationFolder.setText(selectedFolder.getPath());
         }
     }
 

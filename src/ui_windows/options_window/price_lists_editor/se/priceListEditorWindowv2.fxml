@@ -23,7 +23,7 @@
                         <TextField fx:id="tfPriceFileName" layoutX="184.0" layoutY="80.0" prefHeight="25.0" prefWidth="594.0" />
                         <Label alignment="CENTER_RIGHT" layoutX="52.0" layoutY="154.0" prefHeight="17.0" prefWidth="112.0" text="Место сохранения" />
                         <Button fx:id="btnDestibationPath" layoutX="708.0" layoutY="150.0" mnemonicParsing="false" onAction="#setDestinationFile" prefHeight="25.0" prefWidth="69.0" text="Обзор" />
-                        <TextField fx:id="tfDestinationFile" editable="false" layoutX="184.0" layoutY="150.0" prefHeight="25.0" prefWidth="518.0" />
+                        <TextField fx:id="tfDestinationFolder" editable="false" layoutX="184.0" layoutY="150.0" prefHeight="25.0" prefWidth="518.0" />
                      </children>
                   </AnchorPane>
             </content>

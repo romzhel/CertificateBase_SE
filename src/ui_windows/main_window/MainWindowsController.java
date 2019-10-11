@@ -3,6 +3,7 @@ package ui_windows.main_window;
 import core.CoreModule;
 import core.Dialogs;
 import files.ExportPriceListToExcel;
+import files.price_to_excel.ExportPriceListToExcel_SE;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -101,6 +102,7 @@ public class MainWindowsController implements Initializable {
             mi.setOnAction(event -> {
                 int index = mPriceList.getItems().indexOf(mi);
                 new ExportPriceListToExcel(CoreModule.getPriceLists().getItems().get(index));
+//                new ExportPriceListToExcel_SE(CoreModule.getPriceLists().getItems().get(index));
             });
         }
     }

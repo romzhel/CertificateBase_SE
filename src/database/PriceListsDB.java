@@ -14,11 +14,11 @@ public class PriceListsDB extends DbRequest {
         super();
         try {
             addData = connection.prepareStatement("INSERT INTO " +
-                    "priceLists (name, file_name, template_name, lgbks) " +
+                    "priceLists (name, file_name, template_name, destination_folder) " +
                     "VALUES (?, ?, ?, ?);"
                     , Statement.RETURN_GENERATED_KEYS);
             updateData = connection.prepareStatement("UPDATE priceLists " +
-                    "SET name = ?, file_name = ?, template_name = ?, lgbks = ? WHERE id = ?");
+                    "SET name = ?, file_name = ?, template_name = ?, destination_folder = ? WHERE id = ?");
             deleteData = connection.prepareStatement("DELETE FROM priceLists WHERE id = ?");
         } catch (SQLException e) {
             logAndMessage("priceLists prepared statements exception " + e.getMessage());
@@ -47,7 +47,7 @@ public class PriceListsDB extends DbRequest {
             addData.setString(1, pl.getName());
             addData.setString(2, pl.getFileName());
             addData.setString(3, pl.getTemplate().getName());
-            addData.setString(4, pl.getLgbksAsString());
+            addData.setString(4, pl.getDestination().getPath());
 
             MainWindow.setProgress(1.0);
 
@@ -79,7 +79,7 @@ public class PriceListsDB extends DbRequest {
             updateData.setString(1, pl.getName());
             updateData.setString(2, pl.getFileName());
             updateData.setString(3, pl.getTemplate().getName());
-            updateData.setString(4, pl.getLgbksAsString());
+            updateData.setString(4, pl.getDestination().getPath());
 
             updateData.setInt(5, pl.getId());
 

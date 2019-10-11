@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class Folders {
+    private final String dbFolder = "\\\\rumowmc0022dat\\SBT.RU\\SBT\\FS\\Base";
     private File dbFile;
     private File certFolder;
     private File manualsFolder;
@@ -19,7 +20,7 @@ public class Folders {
 
     public Folders() {
         appFolder = System.getProperty("user.dir");
-        File remoteBaseFile = new File("S:\\SBT\\FS\\Base\\certificateDB.db");
+        File remoteBaseFile = new File( dbFolder + "\\certificateDB.db");
         File localBaseFile = new File(appFolder + "\\certificateDB.db");
 
         if (remoteBaseFile.exists()) {
@@ -36,8 +37,7 @@ public class Folders {
 
             if (dbFile == null) {
                 Dialogs.showMessage("Подключение к базе данных", "Файл базы данных не был найден. Как это " +
-                        "сообщение будет закрыто откроется диалог открытия файла. Местонахождение файла:\n\n" +
-                        "SBT.RU:\\SBT\\FS\\Base\\");
+                        "сообщение будет закрыто откроется диалог открытия файла. Местонахождение файла:\n\n" + dbFolder);
                 dbFile = Dialogs.selectDBFile(MainWindow.getMainStage());
 
                 //create new path file

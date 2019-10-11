@@ -113,8 +113,10 @@ public class ProductLgbkGroups {
         CoreModule.getProductLgbks().addItems(newLgbks);
 
         if (newLgbks.size() > 0) {
-            TreeTableView<ProductLgbk> tableView = CoreModule.getProductLgbks().getProductLgbksTable().getTableView();
-            if (tableView != null) tableView.setRoot(getFullTreeSet());
+            if (CoreModule.getProductLgbks().getProductLgbksTable() != null) {
+                TreeTableView<ProductLgbk> tableView = CoreModule.getProductLgbks().getProductLgbksTable().getTableView();
+                if (tableView != null) tableView.setRoot(getFullTreeSet());
+            }
         }
     }
 

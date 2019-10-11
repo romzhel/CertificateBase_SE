@@ -275,4 +275,7 @@ public class PriceListContentTable {
         return false;
     }
 
+    public TreeTableView<PriceListContentTableItem> getTreeTableView() {
+        return treeTableView;
+    }
 }

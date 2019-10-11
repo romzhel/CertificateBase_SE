@@ -1,4 +1,4 @@
-package files;
+package files.price_to_excel;
 
 import core.CoreModule;
 import core.Dialogs;
@@ -9,7 +9,6 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import ui_windows.main_window.MainWindow;
-import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
@@ -23,28 +22,27 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.TreeSet;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-public class ExportPriceListToExcel {
+public class ExportPriceListToExcel_SE {
     public static final int INITIAL_ROW = 2;
     private PriceList priceList;
     private XSSFWorkbook excelDoc;
     private File templateFile;
     private File resultFile;
     private int itemCount;
-    private Structure priceRuEn;
-    private Structure priceService;
+    private ExportPriceListToExcel_SE.Structure priceRuEn;
+    private ExportPriceListToExcel_SE.Structure priceService;
     private XSSFCellStyle CELL_ALIGN_LEFT;
     private XSSFCellStyle CELL_ALIGN_LEFT_BOLD;
     private XSSFCellStyle CELL_ALIGN_RIGHT;
     private XSSFCellStyle CELL_ALIGN_CENTER;
     private XSSFCellStyle CELL_CURRENCY_FORMAT;
 
-    public ExportPriceListToExcel(PriceList priceList) {
+    public ExportPriceListToExcel_SE(PriceList priceList) {
         this.priceList = priceList;
 
         if (loadTemplate()) {
@@ -72,7 +70,9 @@ public class ExportPriceListToExcel {
         }
 
         String targetFileName = priceList.getFileName().isEmpty() ? "PriceList" : priceList.getFileName();
-        resultFile = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор места сохранения",
+        if (priceList.getDestination() != null) resultFile = new File(priceList.getDestination().getPath() +
+                "\\" + targetFileName + ".xlsx");
+        else resultFile = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор места сохранения",
                 Dialogs.EXCEL_FILES, targetFileName + ".xlsx");
         if (resultFile == null) {
             Dialogs.showMessage("Выбор места сохранения", "Операция отменена, так как не было выбрано " +
@@ -100,21 +100,16 @@ public class ExportPriceListToExcel {
     }
 
     private void fillDoc() {
-        priceRuEn = new Structure();
-        priceService = new Structure();
+        PriceListSheet priceListSheet = CoreModule.getPriceLists().getItems().get(0).getSheets().get(0);
 
-        for (Product product : CoreModule.getProducts().getItems()) {
+        TreeItem<PriceListContentTableItem> contentRoot = priceListSheet.getContentTable().getTreeTableView().getRoot();
 
-            LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
-            boolean globalNotUsed = lap == null ? true : lap.getLgbkItem().isNotUsed() || lap.getLgbkParent().isNotUsed();
-            boolean isInPrice = product.isPrice() && !product.isNotused() && !globalNotUsed && !isNewProduct(product);
+        System.out.println("end test");
 
-            if (isInPrice && isPricePosition(product)) {
-                priceRuEn.addProduct(product);
-            } else if (isInPrice && isServicePosition(product)) {
-                priceService.addProduct(product);
-            }
-        }
+
+//        priceRuEn = new ExportPriceListToExcel_SE.Structure();
+//        priceService = new ExportPriceListToExcel_SE.Structure();
+
 
         initCellStyles();
 
@@ -124,7 +119,7 @@ public class ExportPriceListToExcel {
         System.out.println("price items: " + priceRuEn.getSize() + " / " + priceService.getSize());
     }
 
-    private void fillSheet(int sheetIndex, Structure price) {
+    private void fillSheet(int sheetIndex, ExportPriceListToExcel_SE.Structure price) {
         XSSFSheet sheet = excelDoc.getSheetAt(sheetIndex);
         XSSFTable table = sheet.getTables().get(0);
         CTTable cttable = table.getCTTable();
@@ -177,49 +172,20 @@ public class ExportPriceListToExcel {
         }
     }
 
-    private boolean isSpProduct(Product product) {
-        int id = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
-        boolean productFamId = product.getFamily() == 24;
-        return id == 24 || productFamId;
-    }
-
-    private boolean isEvacProduct(Product product) {
-        int id = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
-        boolean productFamId = product.getFamily() == 28;
-        return id == 28 || productFamId;
-    }
-
-    private boolean isNewProduct(Product product) {
-        String status = product.getDchain();
-        return status.equals("0") || status.equals("20") || status.equals("22") || status.equals("23") || status.equals("24");
-    }
-
-    private boolean isPricePosition(Product product) {
-        String status = product.getDchain();
-        return status.equals("28") || status.equals("30") || status.equals("36") || (status.isEmpty() && isSpProduct(product));
-//                /*|| isEvacProduct(product)*/);//эвакуация
-    }
-
-    private boolean isServicePosition(Product product) {
-        String status = product.getDchain();
-        return status.equals("52") || status.equals("56") || status.equals("58") ||
-                status.equals("60") || status.equals("61") || status.equals("62");
-    }
-
     private class Structure {
-        private TreeSet<LgbkGroup> lgbkGroups;
+        private TreeSet<ExportPriceListToExcel_SE.LgbkGroup> lgbkGroups;
 
         public Structure() {
-            lgbkGroups = new TreeSet<>(new Comparator<LgbkGroup>() {
+            lgbkGroups = new TreeSet<>(new Comparator<ExportPriceListToExcel_SE.LgbkGroup>() {
                 @Override
-                public int compare(LgbkGroup o1, LgbkGroup o2) {
+                public int compare(ExportPriceListToExcel_SE.LgbkGroup o1, ExportPriceListToExcel_SE.LgbkGroup o2) {
                     return o1.name.compareTo(o2.name);
                 }
             });
         }
 
         public void addProduct(Product product) {
-            for (LgbkGroup group : lgbkGroups) {
+            for (ExportPriceListToExcel_SE.LgbkGroup group : lgbkGroups) {
                 String l = product.getLgbk();
                 String n = group.getName();
                 if (l.equals(n)) {
@@ -227,25 +193,25 @@ public class ExportPriceListToExcel {
                     return;
                 }
             }
-            LgbkGroup newGroup = new LgbkGroup(product.getLgbk());
+            ExportPriceListToExcel_SE.LgbkGroup newGroup = new ExportPriceListToExcel_SE.LgbkGroup(product.getLgbk());
             newGroup.addProduct(product);
             lgbkGroups.add(newGroup);
         }
 
         public int getSize() {
             int result = 0;
-            for (LgbkGroup lg : lgbkGroups) {
+            for (ExportPriceListToExcel_SE.LgbkGroup lg : lgbkGroups) {
                 result += lg.getSize();
             }
             return result;
         }
 
-        public TreeSet<LgbkGroup> getLgbkGroups() {
+        public TreeSet<ExportPriceListToExcel_SE.LgbkGroup> getLgbkGroups() {
             return lgbkGroups;
         }
 
         public int export(XSSFSheet sheet, int rowIndex) {
-            for (LgbkGroup lgroup : lgbkGroups) {
+            for (ExportPriceListToExcel_SE.LgbkGroup lgroup : lgbkGroups) {
                 rowIndex = lgroup.print(sheet, rowIndex);
             }
             return rowIndex;
@@ -255,21 +221,26 @@ public class ExportPriceListToExcel {
 
     private class LgbkGroup {
         private String name;
-        private TreeSet<HierarchyGroup> hierarchyGroups;
+        private TreeSet<ExportPriceListToExcel_SE.HierarchyGroup> hierarchyGroups;
 
         public LgbkGroup(String name) {
             this.name = name;
-            hierarchyGroups = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
+            hierarchyGroups = new TreeSet<>(new Comparator<ExportPriceListToExcel_SE.HierarchyGroup>() {
+                @Override
+                public int compare(ExportPriceListToExcel_SE.HierarchyGroup o1, ExportPriceListToExcel_SE.HierarchyGroup o2) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+            });
         }
 
         public void addProduct(Product product) {
-            for (HierarchyGroup group : hierarchyGroups) {
+            for (ExportPriceListToExcel_SE.HierarchyGroup group : hierarchyGroups) {
                 if (isSpProduct(product) || product.getHierarchy().contains(group.getName())) {
                     group.addProduct(product);
                     return;
                 }
             }
-            HierarchyGroup newGroup = new HierarchyGroup(product.getHierarchy());
+            ExportPriceListToExcel_SE.HierarchyGroup newGroup = new ExportPriceListToExcel_SE.HierarchyGroup(product.getHierarchy());
             newGroup.addProduct(product);
             hierarchyGroups.add(newGroup);
         }
@@ -280,7 +251,7 @@ public class ExportPriceListToExcel {
 
         public int getSize() {
             int result = 0;
-            for (HierarchyGroup hg : hierarchyGroups) {
+            for (ExportPriceListToExcel_SE.HierarchyGroup hg : hierarchyGroups) {
                 result += hg.getSize();
             }
             return result;
@@ -308,7 +279,7 @@ public class ExportPriceListToExcel {
                 cell.setCellValue(pl.getDescriptionRuEn());
             }
 
-            for (HierarchyGroup hgroup : hierarchyGroups) {
+            for (ExportPriceListToExcel_SE.HierarchyGroup hgroup : hierarchyGroups) {
                 rowIndex = hgroup.export(sheet, rowIndex, name, hierarchyGroups.first().equals(hgroup));
             }
 
@@ -317,7 +288,7 @@ public class ExportPriceListToExcel {
             return rowIndex;
         }
 
-        public TreeSet<HierarchyGroup> getHierarchyGroups() {
+        public TreeSet<ExportPriceListToExcel_SE.HierarchyGroup> getHierarchyGroups() {
             return hierarchyGroups;
         }
     }
@@ -468,4 +439,32 @@ public class ExportPriceListToExcel {
         }
     }
 
+    private boolean isSpProduct(Product product) {
+        int id = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
+        boolean productFamId = product.getFamily() == 24;
+        return id == 24 || productFamId;
+    }
+
+    private boolean isEvacProduct(Product product) {
+        int id = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
+        boolean productFamId = product.getFamily() == 28;
+        return id == 28 || productFamId;
+    }
+
+    private boolean isNewProduct(Product product) {
+        String status = product.getDchain();
+        return status.equals("0") || status.equals("20") || status.equals("22") || status.equals("23") || status.equals("24");
+    }
+
+    private boolean isPricePosition(Product product) {
+        String status = product.getDchain();
+        return status.equals("28") || status.equals("30") || (status.isEmpty() && isSpProduct(product));
+//                /*|| isEvacProduct(product)*/);//эвакуация
+    }
+
+    private boolean isServicePosition(Product product) {
+        String status = product.getDchain();
+        return status.equals("36") || status.equals("52") || status.equals("56") || status.equals("58") ||
+                status.equals("60") || status.equals("61") || status.equals("62");
+    }
 }
