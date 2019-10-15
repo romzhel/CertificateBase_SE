@@ -6,6 +6,7 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.layout.AnchorPane;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentItem;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
+import ui_windows.product.Product;
 import utils.Utils;
 
 import java.sql.ResultSet;
@@ -81,6 +82,11 @@ public class ProductLgbk implements PriceListContentItem {
 
         isNotUsed = Utils.getControlValue(root, "ckbNotUsed") == "true" ? true : false;
         normsList = new NormsList(Utils.getControlValue(root, "lvSelectedNorms"));
+    }
+
+    public ProductLgbk(Product product) {
+        lgbk = new SimpleStringProperty(product.getLgbk());
+        hierarchy= new SimpleStringProperty(product.getHierarchy());
     }
 
     public void showInEditorWindow(AnchorPane root) {

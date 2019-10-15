@@ -10,8 +10,12 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.util.Callback;
+import org.apache.poi.ss.formula.functions.T;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.product.Product;
+
+import java.util.ArrayList;
 
 import static ui_windows.options_window.product_lgbk.ProductLgbk.GROUP_NODE;
 import static ui_windows.options_window.product_lgbk.ProductLgbk.ROOT_NODE;
@@ -277,5 +281,11 @@ public class PriceListContentTable {
 
     public TreeTableView<PriceListContentTableItem> getTreeTableView() {
         return treeTableView;
+    }
+
+    public ArrayList<PriceListContentItem> getPriceTreeItems(Product product) {
+
+
+        return new ArrayList<>();
     }
 }

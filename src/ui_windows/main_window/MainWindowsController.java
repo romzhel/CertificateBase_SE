@@ -101,8 +101,8 @@ public class MainWindowsController implements Initializable {
 
             mi.setOnAction(event -> {
                 int index = mPriceList.getItems().indexOf(mi);
-                new ExportPriceListToExcel(CoreModule.getPriceLists().getItems().get(index));
-//                new ExportPriceListToExcel_SE(CoreModule.getPriceLists().getItems().get(index));
+//                new ExportPriceListToExcel(CoreModule.getPriceLists().getItems().get(index));
+                new ExportPriceListToExcel_SE(CoreModule.getPriceLists().getItems().get(index));
             });
         }
     }

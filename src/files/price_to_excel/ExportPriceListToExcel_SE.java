@@ -4,15 +4,14 @@ import core.CoreModule;
 import core.Dialogs;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
+import ui_windows.options_window.price_lists_editor.se.PriceListContentTable;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
-import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 import utils.Utils;
@@ -22,8 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Comparator;
-import java.util.TreeSet;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -34,8 +31,8 @@ public class ExportPriceListToExcel_SE {
     private File templateFile;
     private File resultFile;
     private int itemCount;
-    private ExportPriceListToExcel_SE.Structure priceRuEn;
-    private ExportPriceListToExcel_SE.Structure priceService;
+    //    private ExportPriceListToExcel_SE.Structure priceRuEn;
+//    private ExportPriceListToExcel_SE.Structure priceService;
     private XSSFCellStyle CELL_ALIGN_LEFT;
     private XSSFCellStyle CELL_ALIGN_LEFT_BOLD;
     private XSSFCellStyle CELL_ALIGN_RIGHT;
@@ -100,9 +97,21 @@ public class ExportPriceListToExcel_SE {
     }
 
     private void fillDoc() {
-        PriceListSheet priceListSheet = CoreModule.getPriceLists().getItems().get(0).getSheets().get(0);
-
+        PriceListSheet priceListSheet = priceList.getSheets().get(0);
+        XSSFSheet sheet = excelDoc.getSheetAt(0);
         TreeItem<PriceListContentTableItem> contentRoot = priceListSheet.getContentTable().getTreeTableView().getRoot();
+
+        if (priceListSheet.getContentMode() == PriceListContentTable.CONTENT_MODE_FAMILY) {
+            int row = priceListSheet.getInitialRow();
+            for (TreeItem<PriceListContentTableItem> treeItem : contentRoot.getChildren()) {
+                PriceStructure family = new PriceStructure();
+                row = family.export(sheet, row);
+            }
+        } else {
+            PriceStructure lgbkStructure = new PriceStructure();
+            lgbkStructure.export(sheet, priceListSheet.getInitialRow());
+        }
+
 
         System.out.println("end test");
 
@@ -172,16 +181,11 @@ public class ExportPriceListToExcel_SE {
         }
     }
 
-    private class Structure {
+    /*private class Structure {
         private TreeSet<ExportPriceListToExcel_SE.LgbkGroup> lgbkGroups;
 
         public Structure() {
-            lgbkGroups = new TreeSet<>(new Comparator<ExportPriceListToExcel_SE.LgbkGroup>() {
-                @Override
-                public int compare(ExportPriceListToExcel_SE.LgbkGroup o1, ExportPriceListToExcel_SE.LgbkGroup o2) {
-                    return o1.name.compareTo(o2.name);
-                }
-            });
+            lgbkGroups = new TreeSet<>((o1, o2) -> o1.name.compareTo(o2.name));
         }
 
         public void addProduct(Product product) {
@@ -217,9 +221,9 @@ public class ExportPriceListToExcel_SE {
             return rowIndex;
         }
 
-    }
+    }*/
 
-    private class LgbkGroup {
+    /*private class LgbkGroup {
         private String name;
         private TreeSet<ExportPriceListToExcel_SE.HierarchyGroup> hierarchyGroups;
 
@@ -291,9 +295,9 @@ public class ExportPriceListToExcel_SE {
         public TreeSet<ExportPriceListToExcel_SE.HierarchyGroup> getHierarchyGroups() {
             return hierarchyGroups;
         }
-    }
+    }*/
 
-    private class HierarchyGroup {
+    /*private class HierarchyGroup {
         private String name;
         private TreeSet<Product> products;
 
@@ -424,20 +428,20 @@ public class ExportPriceListToExcel_SE {
                 cell.setCellValue(product.getWeight());
 //                cellAlignRight(cell);
 
-                /*CertificatesChecker cc = CoreModule.getCertificates().getCertificatesChecker();
+                *//*CertificatesChecker cc = CoreModule.getCertificates().getCertificatesChecker();
                 cc.check(product);
                 cell = row.createCell(colIndex++, CellType.STRING);
                 cell.setCellValue(cc.getCheckStatusResult());
 
                 cell = row.createCell(colIndex++, CellType.STRING);
-                cell.setCellValue(product.getDchain());*/
+                cell.setCellValue(product.getDchain());*//*
 
             }
             sheet.groupRow(firstRowForGroup + 1, rowIndex - 1);
 //            sheet.setRowGroupCollapsed(rowIndex - 1, true);
             return rowIndex;
         }
-    }
+    }*/
 
     private boolean isSpProduct(Product product) {
         int id = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(product.getLgbk(), product.getHierarchy()));

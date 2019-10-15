@@ -12,7 +12,6 @@ import ui_windows.product.Product;
 import java.util.TreeSet;
 
 public class HierarchyGroup {
-   /* private class HierarchyGroup {
         private String name;
         private TreeSet<Product> products;
 
@@ -43,7 +42,7 @@ public class HierarchyGroup {
         }
 
         public int export(XSSFSheet sheet, int rowIndex, String lgroupName, boolean space) {
-            if (name.isEmpty() || getSize() == 0) return rowIndex;
+         /*   if (name.isEmpty() || getSize() == 0) return rowIndex;
             int firstRowForGroup = rowIndex;
             XSSFRow row;
             XSSFCell cell;
@@ -72,7 +71,7 @@ public class HierarchyGroup {
                 if (!printText.isEmpty()) {
                     row = sheet.createRow(rowIndex++);
                     cell = row.createCell(0, CellType.STRING);
-                    cell.setCellStyle(CELL_ALIGN_LEFT_BOLD);
+//                    cell.setCellStyle(CELL_ALIGN_LEFT_BOLD);
                     cell.setCellValue(printText);
                 }
             } else {
@@ -83,7 +82,7 @@ public class HierarchyGroup {
                 row = sheet.createRow(rowIndex++);
                 int colIndex = 0;
                 cell = row.createCell(colIndex++, CellType.STRING); //material
-                cell.setCellStyle(CELL_ALIGN_LEFT);
+//                cell.setCellStyle(CELL_ALIGN_LEFT);
                 if (!product.getProductForPrint().isEmpty()) {
                     cell.setCellValue(product.getProductForPrint());
                 } else {
@@ -92,10 +91,10 @@ public class HierarchyGroup {
 
                 cell = row.createCell(colIndex++, CellType.STRING); //article
                 cell.setCellValue(product.getArticle());
-                cell.setCellStyle(CELL_ALIGN_LEFT);
+//                cell.setCellStyle(CELL_ALIGN_LEFT);
 
                 cell = row.createCell(colIndex++, CellType.STRING); //description
-                cell.setCellStyle(CELL_ALIGN_LEFT);
+//                cell.setCellStyle(CELL_ALIGN_LEFT);
                 if (sheet.getSheetName().toLowerCase().contains("en")) {
                     cell.setCellValue(product.getDescriptionen());
                 } else {
@@ -105,7 +104,7 @@ public class HierarchyGroup {
 //                boolean licence = product.getLgbk().equals("H3FQ") || product.getLgbk().equals("H5ET");
                 boolean priceEmpty = product.getLocalPrice() == 0.0;
 
-                if (isPricePosition(product) && !priceEmpty) {
+//                if (isPricePosition(product) && !priceEmpty) {
                     cell = row.createCell(colIndex++, CellType.NUMERIC);
                     cell.setCellStyle(CELL_CURRENCY_FORMAT);
                     cell.setCellValue(product.getLocalPrice());
@@ -136,25 +135,27 @@ public class HierarchyGroup {
 
                 cell = row.createCell(colIndex++, CellType.STRING);
                 cell.setCellStyle(CELL_ALIGN_CENTER);
-                cell.setCellValue(product.getLgbk()*//*.concat("-").concat(product.getHierarchy())*//*);
+                cell.setCellValue(product.getLgbk());
 
                 cell = row.createCell(colIndex++, CellType.NUMERIC);
                 cell.setCellStyle(CELL_ALIGN_RIGHT);
                 cell.setCellValue(product.getWeight());
 //                cellAlignRight(cell);
 
-                *//*CertificatesChecker cc = CoreModule.getCertificates().getCertificatesChecker();
+                CertificatesChecker cc = CoreModule.getCertificates().getCertificatesChecker();
                 cc.check(product);
                 cell = row.createCell(colIndex++, CellType.STRING);
                 cell.setCellValue(cc.getCheckStatusResult());
 
                 cell = row.createCell(colIndex++, CellType.STRING);
-                cell.setCellValue(product.getDchain());*//*
+                cell.setCellValue(product.getDchain());
 
             }
             sheet.groupRow(firstRowForGroup + 1, rowIndex - 1);
 //            sheet.setRowGroupCollapsed(rowIndex - 1, true);
             return rowIndex;
+            */
+         return rowIndex;
         }
-    }*/
+
 }
