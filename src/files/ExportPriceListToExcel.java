@@ -105,7 +105,7 @@ public class ExportPriceListToExcel {
 
         for (Product product : CoreModule.getProducts().getItems()) {
 
-            LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
+            LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(product));
             boolean globalNotUsed = lap == null ? true : lap.getLgbkItem().isNotUsed() || lap.getLgbkParent().isNotUsed();
             boolean isInPrice = product.isPrice() && !product.isNotused() && !globalNotUsed && !isNewProduct(product);
 

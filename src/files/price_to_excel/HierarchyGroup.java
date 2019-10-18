@@ -11,6 +11,8 @@ import ui_windows.product.Product;
 
 import java.util.TreeSet;
 
+import static files.price_to_excel.ExportPriceListToExcel_SE.CELL_ALIGN_LEFT_BOLD;
+
 public class HierarchyGroup {
         private String name;
         private TreeSet<Product> products;
@@ -42,7 +44,7 @@ public class HierarchyGroup {
         }
 
         public int export(XSSFSheet sheet, int rowIndex, String lgroupName, boolean space) {
-         /*   if (name.isEmpty() || getSize() == 0) return rowIndex;
+            if (name.isEmpty() || getSize() == 0) return rowIndex;
             int firstRowForGroup = rowIndex;
             XSSFRow row;
             XSSFCell cell;
@@ -71,7 +73,7 @@ public class HierarchyGroup {
                 if (!printText.isEmpty()) {
                     row = sheet.createRow(rowIndex++);
                     cell = row.createCell(0, CellType.STRING);
-//                    cell.setCellStyle(CELL_ALIGN_LEFT_BOLD);
+                    cell.setCellStyle(CELL_ALIGN_LEFT_BOLD);
                     cell.setCellValue(printText);
                 }
             } else {
@@ -104,9 +106,9 @@ public class HierarchyGroup {
 //                boolean licence = product.getLgbk().equals("H3FQ") || product.getLgbk().equals("H5ET");
                 boolean priceEmpty = product.getLocalPrice() == 0.0;
 
-//                if (isPricePosition(product) && !priceEmpty) {
+                /*if (isPricePosition(product) && !priceEmpty) {
                     cell = row.createCell(colIndex++, CellType.NUMERIC);
-                    cell.setCellStyle(CELL_CURRENCY_FORMAT);
+//                    cell.setCellStyle(CELL_CURRENCY_FORMAT);
                     cell.setCellValue(product.getLocalPrice());
                 } else if (isServicePosition(product) && !priceEmpty) {//service positions
                     cell = row.createCell(colIndex++, CellType.NUMERIC);
@@ -114,48 +116,46 @@ public class HierarchyGroup {
                     cell.setCellValue(product.getLocalPrice() * 0.7);
                 } else {
                     cell = row.createCell(colIndex++, CellType.STRING);
-                    cell.setCellStyle(CELL_ALIGN_RIGHT);
+                    cell.setCellStyle(CELL_ALIGN_RIGHT);*/
 
-                    if (sheet.getSheetName().toLowerCase().contains("en")) {
+                    /*if (sheet.getSheetName().toLowerCase().contains("en")) {
                         cell.setCellValue("By request");
                     } else {
                         cell.setCellValue("По запросу");
                     }
-                }
+                }*/
 
                 if (!sheet.getSheetName().toLowerCase().contains("сервисные")) {
                     cell = row.createCell(colIndex++, CellType.NUMERIC);
                     cell.setCellValue(product.getPreparedLeadTime());
-                    cell.setCellStyle(CELL_ALIGN_CENTER);
+//                    cell.setCellStyle(CELL_ALIGN_CENTER);
                 }
 
                 cell = row.createCell(colIndex++, CellType.NUMERIC);
-                cell.setCellStyle(CELL_ALIGN_CENTER);
+//                cell.setCellStyle(CELL_ALIGN_CENTER);
                 cell.setCellValue(product.getMinOrder());
 
                 cell = row.createCell(colIndex++, CellType.STRING);
-                cell.setCellStyle(CELL_ALIGN_CENTER);
+//                cell.setCellStyle(CELL_ALIGN_CENTER);
                 cell.setCellValue(product.getLgbk());
 
                 cell = row.createCell(colIndex++, CellType.NUMERIC);
-                cell.setCellStyle(CELL_ALIGN_RIGHT);
+//                cell.setCellStyle(CELL_ALIGN_RIGHT);
                 cell.setCellValue(product.getWeight());
 //                cellAlignRight(cell);
 
-                CertificatesChecker cc = CoreModule.getCertificates().getCertificatesChecker();
+                /*CertificatesChecker cc = CoreModule.getCertificates().getCertificatesChecker();
                 cc.check(product);
                 cell = row.createCell(colIndex++, CellType.STRING);
                 cell.setCellValue(cc.getCheckStatusResult());
 
                 cell = row.createCell(colIndex++, CellType.STRING);
-                cell.setCellValue(product.getDchain());
+                cell.setCellValue(product.getDchain());*/
 
             }
             sheet.groupRow(firstRowForGroup + 1, rowIndex - 1);
 //            sheet.setRowGroupCollapsed(rowIndex - 1, true);
             return rowIndex;
-            */
-         return rowIndex;
         }
 
 }

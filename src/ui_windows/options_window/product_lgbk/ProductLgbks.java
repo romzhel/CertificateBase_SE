@@ -134,6 +134,21 @@ public class ProductLgbks {
         return null;
     }
 
+    public ProductLgbk getLgbkByLgbk(ProductLgbk findingLgbk) {
+        for (ProductLgbk currLgbk : productLgbks) {
+            if (currLgbk.getId() == findingLgbk.getId() ||
+                    currLgbk.getLgbk().equals(findingLgbk.getLgbk()) && currLgbk.getHierarchy().equals(findingLgbk.getHierarchy())) {
+                return currLgbk;
+            }
+        }
+
+        return null;
+    }
+
+    public ProductLgbk getLgbkByProduct(Product product) {
+        return getLgbkByLgbk(new ProductLgbk(product));
+    }
+
     public String getLgbkCombineText(Product product) {
         return "[" + product.getLgbk() + "] " + getByLgbkName(product.getLgbk()).getDescriptionRuEn();
     }

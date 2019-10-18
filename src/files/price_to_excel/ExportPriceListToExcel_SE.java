@@ -3,14 +3,11 @@ package files.price_to_excel;
 import core.CoreModule;
 import core.Dialogs;
 import javafx.application.Platform;
-import javafx.scene.control.TreeItem;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
-import ui_windows.options_window.price_lists_editor.se.PriceListContentTable;
-import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
@@ -33,11 +30,11 @@ public class ExportPriceListToExcel_SE {
     private int itemCount;
     //    private ExportPriceListToExcel_SE.Structure priceRuEn;
 //    private ExportPriceListToExcel_SE.Structure priceService;
-    private XSSFCellStyle CELL_ALIGN_LEFT;
-    private XSSFCellStyle CELL_ALIGN_LEFT_BOLD;
-    private XSSFCellStyle CELL_ALIGN_RIGHT;
-    private XSSFCellStyle CELL_ALIGN_CENTER;
-    private XSSFCellStyle CELL_CURRENCY_FORMAT;
+    public static XSSFCellStyle CELL_ALIGN_LEFT;
+    public static XSSFCellStyle CELL_ALIGN_LEFT_BOLD;
+    public static XSSFCellStyle CELL_ALIGN_RIGHT;
+    public static XSSFCellStyle CELL_ALIGN_CENTER;
+    public static XSSFCellStyle CELL_CURRENCY_FORMAT;
 
     public ExportPriceListToExcel_SE(PriceList priceList) {
         this.priceList = priceList;
@@ -97,20 +94,12 @@ public class ExportPriceListToExcel_SE {
     }
 
     private void fillDoc() {
+        initCellStyles();
         PriceListSheet priceListSheet = priceList.getSheets().get(0);
         XSSFSheet sheet = excelDoc.getSheetAt(0);
-        TreeItem<PriceListContentTableItem> contentRoot = priceListSheet.getContentTable().getTreeTableView().getRoot();
 
-        if (priceListSheet.getContentMode() == PriceListContentTable.CONTENT_MODE_FAMILY) {
-            int row = priceListSheet.getInitialRow();
-            for (TreeItem<PriceListContentTableItem> treeItem : contentRoot.getChildren()) {
-                PriceStructure family = new PriceStructure();
-                row = family.export(sheet, row);
-            }
-        } else {
-            PriceStructure lgbkStructure = new PriceStructure();
-            lgbkStructure.export(sheet, priceListSheet.getInitialRow());
-        }
+        PriceStructure priceStructure = new PriceStructure(priceListSheet);
+        priceStructure.export(sheet);
 
 
         System.out.println("end test");
@@ -120,22 +109,21 @@ public class ExportPriceListToExcel_SE {
 //        priceService = new ExportPriceListToExcel_SE.Structure();
 
 
-        initCellStyles();
-
+/*
         fillSheet(0, priceRuEn);
         fillSheet(1, priceService);
 
-        System.out.println("price items: " + priceRuEn.getSize() + " / " + priceService.getSize());
+        System.out.println("price items: " + priceRuEn.getSize() + " / " + priceService.getSize());*/
     }
 
-    private void fillSheet(int sheetIndex, ExportPriceListToExcel_SE.Structure price) {
-        XSSFSheet sheet = excelDoc.getSheetAt(sheetIndex);
+    private void fillSheet(int sheetIndex, PriceStructure price) {
+        /*XSSFSheet sheet = excelDoc.getSheetAt(sheetIndex);
         XSSFTable table = sheet.getTables().get(0);
         CTTable cttable = table.getCTTable();
 
         int lastRow = price.export(excelDoc.getSheetAt(sheetIndex), INITIAL_ROW);
         char lastColumnLetter = table.getCellReferences().getLastCell().formatAsString().charAt(0);
-        cttable.setRef(table.getCellReferences().getFirstCell().formatAsString() + ":" + lastColumnLetter + String.valueOf(lastRow));
+        cttable.setRef(table.getCellReferences().getFirstCell().formatAsString() + ":" + lastColumnLetter + String.valueOf(lastRow));*/
     }
 
     private void initCellStyles() {

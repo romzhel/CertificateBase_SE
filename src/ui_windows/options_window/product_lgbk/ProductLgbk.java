@@ -137,6 +137,20 @@ public class ProductLgbk implements PriceListContentItem {
         }
     }
 
+    public boolean compare(ProductLgbk anotherInstance) {
+        String currLgbk = lgbk.get();
+        String anotherLgbk = anotherInstance.getLgbk();
+        String currHierarchy = hierarchy.get().replaceAll("\\.", "");
+        String anotherHierarchy = anotherInstance.getHierarchy().replaceAll("\\.", "");
+
+        if (currLgbk.equals(anotherLgbk) &&
+                (currHierarchy.contains(anotherHierarchy) || anotherHierarchy.contains(currHierarchy))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public int getId() {
         return id;
     }

@@ -44,7 +44,7 @@ public class LgbkGroup {
         return result;
     }
 
-    public int print(XSSFSheet sheet, int rowIndex) {
+    public int export(XSSFSheet sheet, int rowIndex) {
 //        boolean isInPriceList = priceList.getLgbks().indexOf(name) != -1;
 //        boolean isEmpty = name.isEmpty() || getSize() == 0;
 //        if (!isInPriceList || isEmpty) return rowIndex;

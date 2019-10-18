@@ -12,6 +12,7 @@ import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.util.Callback;
 import org.apache.poi.ss.formula.functions.T;
 import ui_windows.options_window.families_editor.ProductFamily;
+import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 
@@ -25,6 +26,7 @@ public class PriceListContentTable {
     private static final String LGBK_ITEM = "1";
     public static final int CONTENT_MODE_FAMILY = 0;
     public static final int CONTENT_MODE_LGBK = 1;
+    private  int contentMode;
     private TreeTableView<PriceListContentTableItem> treeTableView;
 
     public PriceListContentTable(TreeTableView<PriceListContentTableItem> treeTableView) {
@@ -187,14 +189,25 @@ public class PriceListContentTable {
         return true;
     }
 
-    public void setContentMode(int contentMode) {
-        if (contentMode == CONTENT_MODE_FAMILY) {
+    public void initContentMode(int contentMode) {
+       /* if (contentMode == CONTENT_MODE_FAMILY) {
             treeTableView.setRoot(new FamilyTree(new FamilyGroups()));
-        } else if (contentMode == CONTENT_MODE_LGBK) {
+            contentMode = CONTENT_MODE_FAMILY;
+        } else*/ if (contentMode == CONTENT_MODE_LGBK) {
             treeTableView.setRoot(new ConverterToPriceTable<>(CoreModule.getProductLgbkGroups().getFullTreeSet()));
+            contentMode = CONTENT_MODE_LGBK;
         } else {
             treeTableView.setRoot(new FamilyTree(new FamilyGroups()));
+            contentMode = CONTENT_MODE_FAMILY;
         }
+    }
+
+    public void switchContentMode(int newMode) {
+//        if (newMode != contentMode) {
+            String content = exportToString();
+            initContentMode(newMode);
+            importFromString(content);
+//        }
     }
 
     public String exportToString() {
@@ -283,9 +296,11 @@ public class PriceListContentTable {
         return treeTableView;
     }
 
-    public ArrayList<PriceListContentItem> getPriceTreeItems(Product product) {
+    public int getContentMode() {
+        return contentMode;
+    }
 
-
-        return new ArrayList<>();
+    public void setContentMode(int contentMode) {
+        this.contentMode = contentMode;
     }
 }

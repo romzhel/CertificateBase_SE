@@ -1,14 +1,9 @@
 package ui_windows.options_window.price_lists_editor.se;
 
-import core.CoreModule;
 import javafx.stage.Modality;
-import ui_windows.Mode;
 import ui_windows.OrdinalWindow;
 import ui_windows.options_window.OptionsWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
-
-import static ui_windows.Mode.ADD;
-import static ui_windows.Mode.EDIT;
 
 public class PriceListEditorWindow extends OrdinalWindow {
     public PriceListEditorWindow(PriceList editedPriceList) {

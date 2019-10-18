@@ -5,9 +5,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TreeItem;
 import javafx.util.Callback;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTable;
+import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
+import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.product.Product;
 import utils.twin_list_views.TwinListViews;
 
 import java.io.IOException;
@@ -27,7 +31,7 @@ public class PriceListSheet extends Tab {
     private TwinListViews<String> columnsSelector;
     private TwinListViews<OrderAccessibility> dchainSelector;
     private PriceListContentTable contentTable;
-//    private String contentString;
+    //    private String contentString;
     private int sheetId = -1;
     private int priceListId = -1;
     private int language;
@@ -44,7 +48,7 @@ public class PriceListSheet extends Tab {
 
         setText(title);
         init();
-        contentTable.setContentMode(CONTENT_MODE_FAMILY);
+        contentTable.initContentMode(CONTENT_MODE_FAMILY);
     }
 
     public PriceListSheet(ResultSet rs) {
@@ -56,14 +60,14 @@ public class PriceListSheet extends Tab {
             language = rs.getInt("language");
             initialRow = rs.getInt("init_row");
             contentMode = rs.getInt("content_mode");
-            contentTable.setContentMode(rs.getInt("content_mode"));
+            contentTable.initContentMode(rs.getInt("content_mode"));
             leadTimeCorrection = rs.getInt("lead_time_correction");
             groupNameDisplaying = rs.getBoolean("group_names_displaying");
             columnsSelector.setSelectedItemsFromString(rs.getString("column_enums"));
 //            contentString = rs.getString("content_enums");
             contentTable.importFromString(rs.getString("content_enums"));
 
-            contentTable.setContentMode(contentMode);
+            contentTable.initContentMode(contentMode);
             if (contentMode == CONTENT_MODE_LGBK) {
                 controller.rmiByLgbk.setSelected(true);
             } else {
@@ -90,7 +94,7 @@ public class PriceListSheet extends Tab {
         columnsSelector.setSelectedItemsFromString(anotherInstance.columnsSelector.getSelectedItemsAsString());
         dchainSelector.setSelectedItemsFromString(anotherInstance.dchainSelector.getSelectedItemsAsString());
 
-        contentTable.setContentMode(anotherInstance.getContentMode());
+        contentTable.initContentMode(anotherInstance.getContentMode());
         if (anotherInstance.contentMode == CONTENT_MODE_LGBK) {
             controller.rmiByLgbk.setSelected(true);
         } else {
@@ -170,18 +174,8 @@ public class PriceListSheet extends Tab {
         controller.rmiByLgbk.selectedProperty().addListener((observable, oldValue, newValue) -> {
             int newMode = newValue ? CONTENT_MODE_LGBK : CONTENT_MODE_FAMILY;
             contentMode = newMode;
-            String content = contentTable.exportToString();
-            contentTable.setContentMode(newMode);
-            contentTable.importFromString(content);
+            contentTable.switchContentMode(newMode);
         });
-        /*controller.rmiByFamily.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            int newMode = CONTENT_MODE_FAMILY;
-            contentMode = newMode;
-            String content = contentTable.exportToString();
-            contentTable.setContentMode(newMode);
-            contentTable.importFromString(content);
-        });*/
-
     }
 
     private void initDchainSelector() {
@@ -225,6 +219,35 @@ public class PriceListSheet extends Tab {
 
             return result;
         });
+    }
+
+    public boolean isInPrice(Product product) {
+        for (TreeItem<PriceListContentTableItem> groupTreeItem : contentTable.getTreeTableView().getRoot().getChildren()) {
+            if (groupTreeItem.getValue().getContent() instanceof ProductLgbk) {
+                if (((ProductLgbk) groupTreeItem.getValue().getContent()).getLgbk().equals(product.getLgbk())) {
+
+                    for (TreeItem<PriceListContentTableItem> treeItem : groupTreeItem.getChildren()) {
+                        if (((ProductLgbk) treeItem.getValue().getContent()).compare(new ProductLgbk(product))) {
+                            boolean isLgbkMatch = treeItem.getValue().isPrice() || treeItem.getParent().getValue().isPrice();
+                            boolean isDchainMatch = false;
+                            for (OrderAccessibility oa : dchainSelector.getSelectedItems()) {
+                                if (product.getDchain().equals(oa.getStatusCode())) {
+                                    isDchainMatch = true;
+                                    break;
+                                }
+                            }
+
+                            if (isLgbkMatch && isDchainMatch) {
+                                return true;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        return false;
     }
 
     public int getLanguage() {
