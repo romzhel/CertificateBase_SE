@@ -41,7 +41,7 @@ public class PriceStructure {
                 return;
             }
         }
-        LgbkGroup newGroup = new LgbkGroup(product.getLgbk());
+        LgbkGroup newGroup = new LgbkGroup(product.getLgbk(), priceListSheet);
         newGroup.addProduct(product);
         lgbkGroups.add(newGroup);
     }

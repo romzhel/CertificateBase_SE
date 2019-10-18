@@ -8,6 +8,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
 import javafx.util.Callback;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
+import ui_windows.options_window.price_lists_editor.se.PriceListColumn;
+import ui_windows.options_window.price_lists_editor.se.PriceListColumns;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTable;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
@@ -28,7 +30,7 @@ import static ui_windows.options_window.price_lists_editor.se.PriceListContentTa
 public class PriceListSheet extends Tab {
     private static final int LANG_RU = 0;
     private static final int LANG_EN = 1;
-    private TwinListViews<String> columnsSelector;
+    private TwinListViews<PriceListColumn> columnsSelector;
     private TwinListViews<OrderAccessibility> dchainSelector;
     private PriceListContentTable contentTable;
     //    private String contentString;
@@ -125,28 +127,19 @@ public class PriceListSheet extends Tab {
     }
 
     private void initColumnsSelector() {
-        ArrayList<String> columns = new ArrayList<>();
-        columns.add(DESC_ORDER_NUMBER);
-        columns.add(DESC_ARTICLE);
-        columns.add(DESC_DESCRIPTION_RU);
-        columns.add(DESC_DESCRIPTION_EN);
-        columns.add(DESC_LOCAL_PRICE);
-        columns.add(DESC_LEADTIME);
-        columns.add(DESC_MIN_ORDER);
-        columns.add(DESC_LGBK);
-        columns.add(DESC_WEIGHT);
+        ArrayList<PriceListColumn> columns = new PriceListColumns().getColumns();
 
         columnsSelector = new TwinListViews<>(controller.pPriceColumns, columns);
-        columnsSelector.setListViewsCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+        columnsSelector.setListViewsCellFactory(new Callback<ListView<PriceListColumn>, ListCell<PriceListColumn>>() {
             @Override
-            public ListCell call(ListView<String> param) {
-                return new ListCell<String>() {
+            public ListCell call(ListView<PriceListColumn> param) {
+                return new ListCell<PriceListColumn>() {
                     @Override
-                    protected void updateItem(String item, boolean empty) {
+                    protected void updateItem(PriceListColumn item, boolean empty) {
                         super.updateItem(item, empty);
 
                         if (item != null && !empty) {
-                            setText(item);
+                            setText(item.getDisplayingName());
                         } else {
                             setText(null);
                         }
@@ -154,19 +147,32 @@ public class PriceListSheet extends Tab {
                 };
             }
         });
-        columnsSelector.setListViewsAllComparator((o1, o2) -> o1.compareToIgnoreCase(o2));
+        columnsSelector.setListViewsAllComparator((o1, o2) -> o1.getDisplayingName().compareToIgnoreCase(o2.getDisplayingName()));
         columnsSelector.setListViewsSelectedComparator(null);
         columnsSelector.setConvertToText(param -> {
             String result = "";
-            for (String item : param) {
-                result = result.concat(item).concat(",");
+            for (PriceListColumn item : param) {
+                result = result.concat(item.getDisplayingName()).concat(",");
             }
             result = result.replaceAll("\\,$", "");
 
             return result;
         });
-        columnsSelector.setConvertFromText(param ->
-                param != null && !param.isEmpty() ? new ArrayList<>(Arrays.asList(param.split("\\,"))) : new ArrayList<>());
+        columnsSelector.setConvertFromText(new Callback<String, ArrayList<PriceListColumn>>() {
+            @Override
+            public ArrayList<PriceListColumn> call(String param) {
+                ArrayList<PriceListColumn> result = new ArrayList<>();
+                for (String columnName : param.split("\\,")) {
+                    for (PriceListColumn plc : columns) {
+                        if (plc.getDisplayingName().equals(columnName)) {
+                            result.add(plc);
+                            break;
+                        }
+                    }
+                }
+                return result;
+            }
+        });
     }
 
     private void initContentTable() {
@@ -306,11 +312,11 @@ public class PriceListSheet extends Tab {
         this.controller = controller;
     }
 
-    public TwinListViews<String> getColumnsSelector() {
+    public TwinListViews<PriceListColumn> getColumnsSelector() {
         return columnsSelector;
     }
 
-    public void setColumnsSelector(TwinListViews<String> columnsSelector) {
+    public void setColumnsSelector(TwinListViews<PriceListColumn> columnsSelector) {
         this.columnsSelector = columnsSelector;
     }
 

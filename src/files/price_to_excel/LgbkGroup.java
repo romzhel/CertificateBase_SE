@@ -5,17 +5,22 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 
 import java.util.Comparator;
 import java.util.TreeSet;
 
+import static files.price_to_excel.ExportPriceListToExcel_SE.CELL_ALIGN_LEFT_BOLD;
+
 public class LgbkGroup {
+    private PriceListSheet priceListSheet;
     private String name;
     private TreeSet<HierarchyGroup> hierarchyGroups;
 
-    public LgbkGroup(String name) {
+    public LgbkGroup(String name, PriceListSheet priceListSheet) {
+        this.priceListSheet = priceListSheet;
         this.name = name;
         hierarchyGroups = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
     }
@@ -27,7 +32,7 @@ public class LgbkGroup {
                 return;
             }
         }
-        HierarchyGroup newGroup = new HierarchyGroup(product.getHierarchy());
+        HierarchyGroup newGroup = new HierarchyGroup(product.getHierarchy(), priceListSheet);
         newGroup.addProduct(product);
         hierarchyGroups.add(newGroup);
     }
@@ -56,7 +61,7 @@ public class LgbkGroup {
         int firstRowForGroup = rowIndex;
         row = sheet.createRow(rowIndex++);
         cell = row.createCell(0, CellType.STRING);
-//        cell.setCellStyle(CELL_ALIGN_LEFT_BOLD);
+        cell.setCellStyle(CELL_ALIGN_LEFT_BOLD);
 
         ProductLgbk pl = CoreModule.getProductLgbks().getByLgbkName(name);
 
