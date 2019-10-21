@@ -192,7 +192,7 @@ public class Product {
                 }
             }
 
-            if (result.length() > 0) result += " (" + getDchain() + ")";
+            if (result.length() > 0) result = "(" + getDchain() + ") " + result;
             else result = "(" + getDchain() + ")";
 
         } else {

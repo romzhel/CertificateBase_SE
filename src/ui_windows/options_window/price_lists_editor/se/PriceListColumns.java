@@ -3,11 +3,13 @@ package ui_windows.options_window.price_lists_editor.se;
 import javafx.util.Callback;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 
 import java.util.ArrayList;
 
 import static files.price_to_excel.ExportPriceListToExcel_SE.*;
 import static ui_windows.main_window.file_import_window.NamesMapping.*;
+import static ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet.LANG_RU;
 
 public class PriceListColumns extends ArrayList<PriceListColumn> {
     private ArrayList<PriceListColumn> columns;
@@ -18,7 +20,8 @@ public class PriceListColumns extends ArrayList<PriceListColumn> {
         final PriceListColumn COLUMN_ORDER_NUMBER_PRINT = new PriceListColumn(DESC_ORDER_NUMBER_PRINT, FIELD_ORDER_NUMBER_PRINT);
         COLUMN_ORDER_NUMBER_PRINT.setValueFactory(param -> {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
-            cell.setCellValue(param.getProduct().getProductForPrint());
+            cell.setCellValue(param.getProduct().getProductForPrint().isEmpty() ? param.getProduct().getMaterial() :
+                    param.getProduct().getProductForPrint());
             cell.setCellStyle(CELL_ALIGN_LEFT);
 
             return cell;
@@ -53,9 +56,25 @@ public class PriceListColumns extends ArrayList<PriceListColumn> {
 
         PriceListColumn COLUMN_LOCAL_PRICE = new PriceListColumn(DESC_LOCAL_PRICE, FIELD_LOCAL_PRICE);
         COLUMN_LOCAL_PRICE.setValueFactory(param -> {
-            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.NUMERIC);
-            cell.setCellValue(param.getProduct().getLocalPrice());
-            cell.setCellStyle(CELL_CURRENCY_FORMAT);
+            XSSFCell cell = null;
+            if (param.getProduct().getLocalPrice() > 0) {
+                cell = param.getRow().createCell(param.getIndex(), CellType.NUMERIC);
+                double correction = 1D - ((double) param.getPriceListSheet().getDiscount() / 100);
+                if (correction > 0.4) {
+                    cell.setCellValue(param.getProduct().getLocalPrice() * correction);
+                } else {
+                    System.out.println("price list sheet " + param.getPriceListSheet().getSheetName() + ", discount = " + ((int) correction * 100) + " %");
+                    cell.setCellValue(param.getProduct().getLocalPrice());
+                }
+                cell.setCellStyle(CELL_CURRENCY_FORMAT);
+            } else {
+                cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+                if (param.getPriceListSheet().getLanguage() == LANG_RU) {
+                    cell.setCellValue("По запросу");
+                } else {
+                    cell.setCellValue("By request");
+                }
+            }
 
             return cell;
         });

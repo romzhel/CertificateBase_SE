@@ -41,6 +41,8 @@ public class PriceLists {
         if (new PriceListsDB().putData(priceList)) {
             for (PriceListSheet sheet : priceList.getSheets()) {
                 sheet.setSheetId(priceList.getId());
+                sheet.uploadFromUI();
+
                 if (!new PriceListSheetDB().putData(sheet)) {
 //                    sheet.setContentString(sheet.getContentTable().exportToString());
                     return false;
@@ -60,6 +62,7 @@ public class PriceLists {
 
             for (PriceListSheet sheet : refreshedItem.getSheets()) {
                 sheet.setPriceListId(refreshedItem.getId());
+                sheet.uploadFromUI();
 
                 if (sheet.getSheetId() == -1) {
                     if (!(new PriceListSheetDB().putData(sheet))) {

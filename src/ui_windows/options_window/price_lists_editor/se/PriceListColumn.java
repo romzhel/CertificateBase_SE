@@ -3,6 +3,7 @@ package ui_windows.options_window.price_lists_editor.se;
 import javafx.util.Callback;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
+import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.product.Product;
 
 import java.lang.reflect.Field;
@@ -26,7 +27,7 @@ public class PriceListColumn {
 
     }
 
-    public XSSFCell createXssfCell(Product product, XSSFRow row, int index) {
+    public XSSFCell createXssfCell(Product product, XSSFRow row, int index, PriceListSheet priceListSheet) {
         /*Object value = new ObjectsComparator().getProperty(product, field);
         XSSFCell cell = null;
         if (value instanceof Number) {
@@ -44,7 +45,7 @@ public class PriceListColumn {
         }
         return cell;*/
 
-        return valueFactory == null ? null : valueFactory.call(new Container(product, row, index));
+        return valueFactory == null ? null : valueFactory.call(new Container(product, row, index, priceListSheet));
     }
 
     public String getDisplayingName() {
@@ -59,11 +60,13 @@ public class PriceListColumn {
         private Product product;
         private XSSFRow row;
         int index;
+        private PriceListSheet priceListSheet;
 
-        public Container(Product product, XSSFRow row, int index) {
+        public Container(Product product, XSSFRow row, int index, PriceListSheet priceListSheet) {
             this.product = product;
             this.row = row;
             this.index = index;
+            this.priceListSheet = priceListSheet;
         }
 
         public Product getProduct() {
@@ -88,6 +91,14 @@ public class PriceListColumn {
 
         public void setIndex(int index) {
             this.index = index;
+        }
+
+        public PriceListSheet getPriceListSheet() {
+            return priceListSheet;
+        }
+
+        public void setPriceListSheet(PriceListSheet priceListSheet) {
+            this.priceListSheet = priceListSheet;
         }
     }
 }

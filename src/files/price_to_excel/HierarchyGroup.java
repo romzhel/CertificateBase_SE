@@ -90,28 +90,10 @@ public class HierarchyGroup {
 
             int colIndex = 0;
             for (PriceListColumn plc : priceListSheet.getColumnsSelector().getSelectedItems()) {
-                plc.createXssfCell(product, row, colIndex++);
+                plc.createXssfCell(product, row, colIndex++, priceListSheet);
             }
 
-            /*cell = row.createCell(colIndex++, CellType.STRING); //material
-//                cell.setCellStyle(CELL_ALIGN_LEFT);
-            if (!product.getProductForPrint().isEmpty()) {
-                cell.setCellValue(product.getProductForPrint());
-            } else {
-                cell.setCellValue(product.getMaterial());
-            }
-
-            cell = row.createCell(colIndex++, CellType.STRING); //article
-            cell.setCellValue(product.getArticle());
-//                cell.setCellStyle(CELL_ALIGN_LEFT);
-
-            cell = row.createCell(colIndex++, CellType.STRING); //description
-//                cell.setCellStyle(CELL_ALIGN_LEFT);
-            if (sheet.getSheetName().toLowerCase().contains("en")) {
-                cell.setCellValue(product.getDescriptionen());
-            } else {
-                cell.setCellValue(product.getDescriptionRuEn());
-            }*/
+            /*
 
 //                boolean licence = product.getLgbk().equals("H3FQ") || product.getLgbk().equals("H5ET");
 //            boolean priceEmpty = product.getLocalPrice() == 0.0;

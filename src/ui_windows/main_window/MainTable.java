@@ -15,8 +15,11 @@ import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
+import ui_windows.product.certificatesChecker.CheckStatusResult;
 import ui_windows.product.productEditorWindow.ProductEditorWindow;
+import utils.Utils;
 
+import java.util.Comparator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -77,6 +80,7 @@ public class MainTable {
                                         CertificatesChecker certificatesChecker = new CertificatesChecker(product, new CheckParameters());
 
                                         Platform.runLater(() -> {
+
                                             getStyleClass().add(certificatesChecker.getCheckStatusResultStyle(getStyleClass()));
                                             setTooltip(new Tooltip(certificatesChecker.getCheckStatusResult()));
                                         });
@@ -88,7 +92,6 @@ public class MainTable {
                         };
                     }
                 });
-                col.setComparator(new ComparatorChain<>());
 
             } else if (cols[i] == "description") {
                 col.setCellValueFactory(param -> {

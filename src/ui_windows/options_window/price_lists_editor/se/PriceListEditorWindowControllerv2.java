@@ -15,22 +15,17 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class PriceListEditorWindowControllerv2 implements Initializable {
-    PriceList tempPriceList;
-
     @FXML
     public TabPane mainTabPane;
-
     @FXML
     public TextField tfPriceName;
-
     @FXML
     public TextField tfTemplateName;
-
     @FXML
     public TextField tfPriceFileName;
-
     @FXML
     public TextField tfDestinationFolder;
+    PriceList tempPriceList;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -56,10 +51,7 @@ public class PriceListEditorWindowControllerv2 implements Initializable {
     }
 
     public void actionApply() {
-//        if (PriceListEditorWindow.getMode() == ADD) {
-        if (tfPriceName.getText().isEmpty() || tfPriceFileName.getText().isEmpty() || tfTemplateName.getText().isEmpty()) {
-            Dialogs.showMessage("Сохранение прайс-листа", "Не все поля заполнены.");
-        } else {
+        if (checkUiFilling()) {
             tempPriceList.setName(tfPriceName.getText());
             tempPriceList.setFileName(tfPriceFileName.getText());
             if (tempPriceList.getId() == -1) {
@@ -72,6 +64,24 @@ public class PriceListEditorWindowControllerv2 implements Initializable {
                 }
             }
         }
+    }
+
+    private boolean checkUiFilling() {
+        if (tfPriceName.getText().isEmpty() || tfPriceFileName.getText().isEmpty() || tfTemplateName.getText().isEmpty()) {
+            Dialogs.showMessage("Сохранение прайс-листа", "Не все поля заполнены.");
+            return false;
+        }
+
+        for (PriceListSheet priceListSheet : tempPriceList.getSheets()) {
+            String discountS = priceListSheet.getController().tfDiscount.getText();
+            if (discountS.matches("^\\d+$") && Integer.parseInt(discountS) > 30) {
+                Dialogs.showMessage("Сохранение прайс-листа", "Неправильно указана скидка в листе " +
+                        (tempPriceList.getSheets().indexOf(priceListSheet) + 1));
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public void actionClose() {

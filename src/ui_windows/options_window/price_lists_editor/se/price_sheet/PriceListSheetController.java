@@ -37,6 +37,15 @@ public class PriceListSheetController implements Initializable {
     public Pane pPriceDchain;
 
     @FXML
+    public TextField tfSheetName;
+
+    @FXML
+    public TextField tfInitialRow;
+
+    @FXML
+    public TextField tfDiscount;
+
+    @FXML
     RadioMenuItem rmiByFamily;
 
     @FXML
@@ -56,8 +65,5 @@ public class PriceListSheetController implements Initializable {
 
 
 
-
-
-//        new PriceListContentTable(ttvPriceContent);
     }
 }

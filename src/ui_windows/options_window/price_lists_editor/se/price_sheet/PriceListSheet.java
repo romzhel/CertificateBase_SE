@@ -20,20 +20,17 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 
-import static ui_windows.main_window.file_import_window.NamesMapping.*;
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_FAMILY;
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_LGBK;
 
 public class PriceListSheet extends Tab {
-    private static final int LANG_RU = 0;
-    private static final int LANG_EN = 1;
+    public static final int LANG_RU = 0;
+    public static final int LANG_EN = 1;
     private TwinListViews<PriceListColumn> columnsSelector;
     private TwinListViews<OrderAccessibility> dchainSelector;
     private PriceListContentTable contentTable;
-    //    private String contentString;
     private int sheetId = -1;
     private int priceListId = -1;
     private int language;
@@ -42,6 +39,7 @@ public class PriceListSheet extends Tab {
     private int contentMode = 0;
     private int leadTimeCorrection;
     private boolean groupNameDisplaying = true;
+    private int discount;
     private PriceListSheetController controller;
 
 
@@ -78,6 +76,9 @@ public class PriceListSheet extends Tab {
             contentTable.importFromString(rs.getString("content_enums"));
 
             dchainSelector.setSelectedItemsFromString(rs.getString("dchain_enums"));
+            discount = rs.getInt("discount");
+
+            initMainOptions();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -103,6 +104,9 @@ public class PriceListSheet extends Tab {
             controller.rmiByFamily.setSelected(true);
         }
         contentTable.importFromString(anotherInstance.contentTable.exportToString());
+        discount = anotherInstance.discount;
+
+        initMainOptions();
     }
 
     private void getUi() {
@@ -124,6 +128,21 @@ public class PriceListSheet extends Tab {
         initColumnsSelector();
         initContentTable();
         initDchainSelector();
+    }
+
+    private void initMainOptions() {
+        if (language == LANG_RU) {
+            controller.rbLangRu.setSelected(true);
+        } else {
+            controller.rbLangEn.setSelected(true);
+        }
+        controller.tfSheetName.setText(sheetName);
+        if (initialRow > 0) {
+            controller.tfInitialRow.setText(String.valueOf(initialRow));
+        }
+        if (discount > 0) {
+            controller.tfDiscount.setText(String.valueOf(discount));
+        }
     }
 
     private void initColumnsSelector() {
@@ -236,8 +255,13 @@ public class PriceListSheet extends Tab {
                         if (((ProductLgbk) treeItem.getValue().getContent()).compare(new ProductLgbk(product))) {
                             boolean isLgbkMatch = treeItem.getValue().isPrice() || treeItem.getParent().getValue().isPrice();
                             boolean isDchainMatch = false;
+
                             for (OrderAccessibility oa : dchainSelector.getSelectedItems()) {
-                                if (product.getDchain().equals(oa.getStatusCode())) {
+                                boolean dchainMatches = product.getDchain().equals(oa.getStatusCode());
+                                boolean dchainMatchesSP = product.getDchain().trim().isEmpty() && oa.getStatusCode().trim().isEmpty() &&
+                                        isSpProduct(product);
+
+                                if (dchainMatches || dchainMatchesSP) {
                                     isDchainMatch = true;
                                     break;
                                 }
@@ -254,6 +278,21 @@ public class PriceListSheet extends Tab {
         }
 
         return false;
+    }
+
+    private boolean isSpProduct(Product product) {
+        int id = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
+        boolean productFamId = product.getFamily() == 24;
+        return id == 24 || productFamId;
+    }
+
+    public void uploadFromUI() {
+        sheetName = controller.tfSheetName.getText();
+        String initRow = controller.tfInitialRow.getText();
+        initialRow = initRow.matches("^\\d+$") ? Integer.parseInt(initRow) : -1;
+        language = controller.rbLangRu.isSelected() ? LANG_RU : LANG_EN;
+        String costDiscount = controller.tfDiscount.getText();
+        discount = costDiscount.matches("^\\d+$") ? Integer.parseInt(costDiscount) : 0;
     }
 
     public int getLanguage() {
@@ -342,5 +381,13 @@ public class PriceListSheet extends Tab {
 
     public PriceListContentTable getContentTable() {
         return contentTable;
+    }
+
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
     }
 }

@@ -4,13 +4,13 @@ import core.CoreModule;
 import core.Dialogs;
 import javafx.application.Platform;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.xssf.usermodel.*;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFDataFormat;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
-import ui_windows.product.Product;
 import utils.Utils;
 
 import java.io.File;
@@ -18,23 +18,23 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Date;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class ExportPriceListToExcel_SE {
     public static final int INITIAL_ROW = 2;
-    private PriceList priceList;
-    private XSSFWorkbook excelDoc;
-    private File templateFile;
-    private File resultFile;
-    private int itemCount;
-    //    private ExportPriceListToExcel_SE.Structure priceRuEn;
-//    private ExportPriceListToExcel_SE.Structure priceService;
     public static XSSFCellStyle CELL_ALIGN_LEFT;
     public static XSSFCellStyle CELL_ALIGN_LEFT_BOLD;
     public static XSSFCellStyle CELL_ALIGN_RIGHT;
     public static XSSFCellStyle CELL_ALIGN_CENTER;
     public static XSSFCellStyle CELL_CURRENCY_FORMAT;
+    private PriceList priceList;
+    private XSSFWorkbook excelDoc;
+    private File templateFile;
+    private File tempFile;
+    private File resultFile;
+    private int itemCount;
 
     public ExportPriceListToExcel_SE(PriceList priceList) {
         this.priceList = priceList;
@@ -64,25 +64,18 @@ public class ExportPriceListToExcel_SE {
         }
 
         String targetFileName = priceList.getFileName().isEmpty() ? "PriceList" : priceList.getFileName();
-        if (priceList.getDestination() != null) resultFile = new File(priceList.getDestination().getPath() +
-                "\\" + targetFileName + ".xlsx");
-        else resultFile = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор места сохранения",
-                Dialogs.EXCEL_FILES, targetFileName + ".xlsx");
-        if (resultFile == null) {
-            Dialogs.showMessage("Выбор места сохранения", "Операция отменена, так как не было выбрано " +
-                    "место сохранения");
-            return false;
-        }
+        targetFileName = targetFileName.concat("_").concat(Utils.getDate(new Date()));
 
         try {
-            Files.copy(templateFile.toPath(), resultFile.toPath(), REPLACE_EXISTING);
+            tempFile = new File(CoreModule.getFolders().getTempFolder().getPath() + "\\" + targetFileName + ".xlsx");
+            Files.copy(templateFile.toPath(), tempFile.toPath(), REPLACE_EXISTING);
         } catch (Exception e) {
             Dialogs.showMessage("Ошибка копирования шаблона", "Ошибка копирования файла шаблона: " + e.getMessage());
             return false;
         }
 
         try {
-            FileInputStream fis = new FileInputStream(resultFile);
+            FileInputStream fis = new FileInputStream(tempFile);
             excelDoc = new XSSFWorkbook(fis);
             fis.close();
         } catch (IOException e) {
@@ -95,25 +88,16 @@ public class ExportPriceListToExcel_SE {
 
     private void fillDoc() {
         initCellStyles();
-        PriceListSheet priceListSheet = priceList.getSheets().get(0);
-        XSSFSheet sheet = excelDoc.getSheetAt(0);
 
-        PriceStructure priceStructure = new PriceStructure(priceListSheet);
-        priceStructure.export(sheet);
+        int sheetIndex = 0;
+        for (PriceListSheet priceListSheet : priceList.getSheets()) {
+            String sheetName = priceListSheet.getSheetName();
+            if (sheetName != null && !sheetName.isEmpty()) {
+                excelDoc.setSheetName(sheetIndex, sheetName);
+            }
 
-
-        System.out.println("end test");
-
-
-//        priceRuEn = new ExportPriceListToExcel_SE.Structure();
-//        priceService = new ExportPriceListToExcel_SE.Structure();
-
-
-/*
-        fillSheet(0, priceRuEn);
-        fillSheet(1, priceService);
-
-        System.out.println("price items: " + priceRuEn.getSize() + " / " + priceService.getSize());*/
+            new PriceStructure(priceListSheet).export(excelDoc.getSheetAt(sheetIndex++));
+        }
     }
 
     private void initCellStyles() {
@@ -140,12 +124,23 @@ public class ExportPriceListToExcel_SE {
         CELL_CURRENCY_FORMAT.setDataFormat(dataFormat.getFormat("# ##0.00\\ [$€-x-euro1];[Red]# ##0.00\\ [$€-x-euro1]"));
     }
 
-    private void saveToFile() {
+    private boolean saveToFile() {
         try {
-            FileOutputStream fos = new FileOutputStream(resultFile);
+            FileOutputStream fos = new FileOutputStream(tempFile);
             excelDoc.write(fos);
             fos.close();
             excelDoc.close();
+
+            if (priceList.getDestination() != null) resultFile = new File(priceList.getDestination().getPath() +
+                    "\\" + tempFile.getName());
+            else resultFile = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор места сохранения",
+                    Dialogs.EXCEL_FILES, tempFile.getName());
+            if (resultFile == null) {
+                Dialogs.showMessage("Выбор места сохранения", "Операция отменена, так как не было выбрано " +
+                        "место сохранения");
+                return false;
+            }
+            Files.copy(tempFile.toPath(), resultFile.toPath(), REPLACE_EXISTING);
 
             Platform.runLater(() -> {
                 if (Dialogs.confirm("Формирование прайс листа", "Прайс лист сформирован. Желаете открыть его?")) {
@@ -157,34 +152,6 @@ public class ExportPriceListToExcel_SE {
                 Dialogs.showMessage("Формирование прайс-листа", "Произошла ошибка " + e.getMessage());
             });
         }
-    }
-
-    private boolean isSpProduct(Product product) {
-        int id = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
-        boolean productFamId = product.getFamily() == 24;
-        return id == 24 || productFamId;
-    }
-
-    private boolean isEvacProduct(Product product) {
-        int id = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
-        boolean productFamId = product.getFamily() == 28;
-        return id == 28 || productFamId;
-    }
-
-    private boolean isNewProduct(Product product) {
-        String status = product.getDchain();
-        return status.equals("0") || status.equals("20") || status.equals("22") || status.equals("23") || status.equals("24");
-    }
-
-    private boolean isPricePosition(Product product) {
-        String status = product.getDchain();
-        return status.equals("28") || status.equals("30") || (status.isEmpty() && isSpProduct(product));
-//                /*|| isEvacProduct(product)*/);//эвакуация
-    }
-
-    private boolean isServicePosition(Product product) {
-        String status = product.getDchain();
-        return status.equals("36") || status.equals("52") || status.equals("56") || status.equals("58") ||
-                status.equals("60") || status.equals("61") || status.equals("62");
+        return true;
     }
 }
