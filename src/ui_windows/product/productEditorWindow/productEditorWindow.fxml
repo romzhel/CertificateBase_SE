@@ -25,7 +25,7 @@
                         <Label alignment="CENTER_RIGHT" layoutX="8.0" layoutY="165.0" prefHeight="17.0" prefWidth="110.0" text="Тип" />
                         <Label alignment="CENTER_RIGHT" layoutX="904.0" layoutY="216.0" prefHeight="17.0" prefWidth="61.0" text="Иерархия" />
                         <CheckBox fx:id="cbxPrice" contentDisplay="CENTER" layoutX="526.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="76.0" text="Прайс   " />
-                        <CheckBox fx:id="cbxArchive" contentDisplay="CENTER" layoutX="796.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="86.0" text="Архив   " />
+                        <CheckBox fx:id="cbxArchive" contentDisplay="CENTER" layoutX="796.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="86.0" text="Архив   " visible="false" />
                         <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="418.0" prefHeight="17.0" prefWidth="110.0" text="Имя файла" />
                         <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="477.0" prefHeight="17.0" prefWidth="110.0" text="Комментарии" />
                         <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="449.0" prefHeight="17.0" prefWidth="110.0" text="Замена" />
@@ -79,7 +79,7 @@
                                 </ContextMenu>
                             </contextMenu>
                         </TableView>
-                        <CheckBox fx:id="cbxNeedAction" contentDisplay="CENTER" layoutX="910.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="147.0" text="Требуется проверка   " />
+                        <CheckBox fx:id="cbxNeedAction" contentDisplay="CENTER" layoutX="910.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="147.0" text="Требуется проверка   " visible="false" />
                         <TextField fx:id="tfFileName" editable="false" layoutX="124.0" layoutY="414.0" prefHeight="25.0" prefWidth="363.0" />
                         <Separator layoutX="552.0" layoutY="414.0" orientation="VERTICAL" prefHeight="148.0" prefWidth="12.0" />
                         <Separator layoutX="97.0" layoutY="572.0" prefHeight="3.0" prefWidth="964.0" />
@@ -92,12 +92,12 @@
                         <TextArea fx:id="taComments" layoutX="124.0" layoutY="475.0" prefHeight="84.0" prefWidth="416.0" />
                         <Button fx:id="btnApply" layoutX="220.0" layoutY="745.0" mnemonicParsing="false" onAction="#apply" prefWidth="150.0" text="Сохранить" />
                         <Button layoutX="612.0" layoutY="745.0" mnemonicParsing="false" onAction="#cancel" prefWidth="150.0" text="Закрыть" />
-                        <CheckBox fx:id="cbxNotUsed" contentDisplay="CENTER" layoutX="624.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="156.0" stylesheets="@../../../css/checkboxes_styles.css" text="Не в общем прайсе   " />
+                        <CheckBox fx:id="cbxNotUsed" contentDisplay="CENTER" layoutX="624.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="156.0" stylesheets="@../../../css/checkboxes_styles.css" text="Не в общем прайсе   " visible="false" />
                         <ComboBox fx:id="cbFamily" layoutX="124.0" layoutY="246.0" prefHeight="25.0" prefWidth="628.0" />
                         <CheckBox fx:id="cbxOrderable" contentDisplay="GRAPHIC_ONLY" layoutX="124.0" layoutY="299.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="12.0" text="CheckBox" />
                         <TextArea fx:id="taDescriptionEn" layoutX="124.0" layoutY="116.0" prefHeight="40.0" prefWidth="931.0" wrapText="true" />
-                        <Label alignment="CENTER_RIGHT" layoutX="32.0" layoutY="82.0" prefHeight="17.0" prefWidth="86.0" text=" Описание (ru)" />
-                        <Label alignment="CENTER_RIGHT" layoutX="32.0" layoutY="127.0" prefHeight="17.0" prefWidth="86.0" text="Описание (en)" />
+                        <Label alignment="CENTER_RIGHT" layoutX="7.0" layoutY="82.0" prefHeight="17.0" prefWidth="111.0" text=" Описание (ru)" />
+                        <Label alignment="CENTER_RIGHT" layoutX="2.0" layoutY="127.0" prefHeight="17.0" prefWidth="116.0" text="Описание (en)" />
                         <TextField fx:id="tfManHier" editable="false" layoutX="123.0" layoutY="212.0" prefHeight="25.0" prefWidth="628.0" />
                         <Label alignment="CENTER_RIGHT" layoutX="23.0" layoutY="216.0" prefHeight="17.0" prefWidth="92.0" text="Назначение" />
                         <TextField fx:id="tfMinOrder" editable="false" layoutX="125.0" layoutY="329.0" prefHeight="25.0" prefWidth="86.0" />

@@ -14,14 +14,14 @@ public class ProfilesDB extends DbRequest {
         super();
         try {
             addData = connection.prepareStatement("INSERT INTO " +
-                            "profiles (name, products, file_menu, certificates, families, orderable, users) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?);",
+                            "profiles (name, products, file_menu, file_menu_open, file_menu_export_price, certificates, " +
+                            "families, orderable, users, price_lists) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = connection.prepareStatement("UPDATE profiles " +
-                    "SET name = ?, products = ?, file_menu = ?, certificates = ?, families = ?, orderable = ?," +
-                    "users = ? WHERE id = ?");
-            deleteData = connection.prepareStatement("DELETE FROM profiles " +
-                    "WHERE id = ?");
+                    "SET name = ?, products = ?, file_menu = ?, file_menu_open = ?, file_menu_export_price = ?, " +
+                    "certificates = ?, families = ?, orderable = ?, users = ?, price_lists = ? WHERE id = ?");
+            deleteData = connection.prepareStatement("DELETE FROM profiles WHERE id = ?");
         } catch (SQLException e) {
             logAndMessage("prepared statements exception" + e.getMessage());
             finalActions();
@@ -49,10 +49,13 @@ public class ProfilesDB extends DbRequest {
             addData.setString(1, prof.getName());
             addData.setInt(2, prof.getProducts().ordinal());
             addData.setInt(3, prof.getFileMenu().ordinal());
-            addData.setInt(4, prof.getCertificates().ordinal());
-            addData.setInt(5, prof.getFamilies().ordinal());
-            addData.setInt(6, prof.getOrderAccessible().ordinal());
-            addData.setInt(7, prof.getUsers().ordinal());
+            addData.setInt(4, prof.getFileMenuOpen().ordinal());
+            addData.setInt(5, prof.getFileMenuExportPrice().ordinal());
+            addData.setInt(6, prof.getCertificates().ordinal());
+            addData.setInt(7, prof.getFamilies().ordinal());
+            addData.setInt(8, prof.getOrderAccessible().ordinal());
+            addData.setInt(9, prof.getUsers().ordinal());
+            addData.setInt(10, prof.getPriceLists().ordinal());
 
             MainWindow.setProgress(1.0);
 
@@ -80,11 +83,14 @@ public class ProfilesDB extends DbRequest {
             updateData.setString(1, prof.getName());
             updateData.setInt(2, prof.getProducts().ordinal());
             updateData.setInt(3, prof.getFileMenu().ordinal());
-            updateData.setInt(4, prof.getCertificates().ordinal());
-            updateData.setInt(5, prof.getFamilies().ordinal());
-            updateData.setInt(6, prof.getOrderAccessible().ordinal());
-            updateData.setInt(7, prof.getUsers().ordinal());
-            updateData.setInt(8, prof.getId());
+            updateData.setInt(4, prof.getFileMenuOpen().ordinal());
+            updateData.setInt(5, prof.getFileMenuExportPrice().ordinal());
+            updateData.setInt(6, prof.getCertificates().ordinal());
+            updateData.setInt(7, prof.getFamilies().ordinal());
+            updateData.setInt(8, prof.getOrderAccessible().ordinal());
+            updateData.setInt(9, prof.getUsers().ordinal());
+            updateData.setInt(10, prof.getPriceLists().ordinal());
+            updateData.setInt(11, prof.getId());
 
             MainWindow.setProgress(1.0);
 

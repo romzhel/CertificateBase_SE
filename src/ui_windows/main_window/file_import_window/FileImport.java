@@ -65,31 +65,6 @@ public class FileImport {
                     lastComparationResult.getNewItems().size() + "\nИзменённых позиций: " +
                     lastComparationResult.getChangedItems().size()));
         }).start();
-
-        /*MainWindow.setProgress(-1);
-
-            clearOldResult = false;
-
-
-            new Thread(() -> {
-                rmiLastImportResult.setSelected(true);
-
-//                selectLastImportResult();
-
-                ProductsDB request = new ProductsDB();
-
-                request.putData(lastComparationResult.getNewItems());// save new items to db
-                request.updateData(new ArrayList<>(changedItemsForDB));//save changed items to db
-
-                System.out.println("writing to DB finished");
-
-                MainWindow.setProgress(0);
-
-                Platform.runLater(() -> Dialogs.showMessage("Результаты импорта", "Новых позиций: " +
-                        lastComparationResult.getNewItems().size() + "\nИзменённых позиций: " +
-                        lastComparationResult.getChangedItems().size()));
-
-            }).start();*/
     }
 
     public void addTitlesToTable(int sheetIndex) {

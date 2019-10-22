@@ -40,7 +40,23 @@ public class ProfilesTable {
         fileCol.setOnEditCommit(event -> {
             event.getRowValue().setFileMenu(valueOf(event.getNewValue()));
         });
-        fileCol.setMinWidth(100);
+        fileCol.setMinWidth(200);
+        TableColumn<Profile, String> fileOpenCol = new TableColumn<>("Импорт");
+        fileOpenCol.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getFileMenuOpen().getName()));
+        fileOpenCol.setCellFactory(ComboBoxTableCell.forTableColumn("HIDE", "DISPLAY"));
+        fileOpenCol.setOnEditCommit(event -> {
+            event.getRowValue().setFileMenuOpen(valueOf(event.getNewValue()));
+        });
+        fileOpenCol.setMinWidth(100);
+        TableColumn<Profile, String> filePrice = new TableColumn<>("Прайс");
+        filePrice.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getFileMenuExportPrice().getName()));
+        filePrice.setCellFactory(ComboBoxTableCell.forTableColumn("HIDE", "DISPLAY"));
+        filePrice.setOnEditCommit(event -> {
+            event.getRowValue().setFileMenuExportPrice(valueOf(event.getNewValue()));
+        });
+        filePrice.setMinWidth(100);
+
+        fileCol.getColumns().addAll(fileOpenCol, filePrice);
         tableView.getColumns().add(fileCol);
 
 
@@ -79,8 +95,15 @@ public class ProfilesTable {
         });
         col4.setMinWidth(100);
 
+        TableColumn<Profile, String> col5 = new TableColumn<>("Прайс-листы");
+        col5.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getPriceLists().getName()));
+        col5.setCellFactory(ComboBoxTableCell.forTableColumn("HIDE", "DISPLAY", "FULL"));
+        col5.setOnEditCommit(event -> {
+            event.getRowValue().setPriceLists(valueOf(event.getNewValue()));
+        });
+        col5.setMinWidth(100);
 
-        optionsCol.getColumns().addAll(col1, col2, col3, col4);
+        optionsCol.getColumns().addAll(col1, col2, col3, col4, col5);
         tableView.getColumns().add(optionsCol);
         tableView.getItems().addAll(CoreModule.getProfiles().getItems());
         tableView.setEditable(true);

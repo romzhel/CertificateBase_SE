@@ -10,6 +10,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
@@ -27,7 +28,7 @@ import java.util.concurrent.Executors;
 import static ui_windows.options_window.profile_editor.SimpleRight.*;
 
 public class MainWindow extends Application {
-    private String version = "1.0.9.9 от 21.10.2019";
+    private String version = "1.1.0.0 от 22.10.2019";
     private static Stage mainStage;
     private static AnchorPane rootAnchorPane;
     private static ProgressBar progressBar;
@@ -38,6 +39,7 @@ public class MainWindow extends Application {
     private static Menu miReports;
     private static boolean initOk;
     private static FXMLLoader fxmlLoader;
+    private static MainWindowsController controller;
 
     private static SearchBox searchBox;
 
@@ -64,6 +66,7 @@ public class MainWindow extends Application {
                 System.out.println("error xml file loading: " + e.getMessage());
             }
 
+            controller = (MainWindowsController) fxmlLoader.getController();
             Scene scene = new Scene(rootAnchorPane);
 
             scene.setOnKeyPressed(event -> {
@@ -84,17 +87,11 @@ public class MainWindow extends Application {
             rootAnchorPane.setBottomAnchor(searchBox, 39.0);
             rootAnchorPane.setLeftAnchor(searchBox, 158.0);
 
-
             executorService = Executors.newFixedThreadPool(5);
             searchBox.getTextBox().textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    Runnable filterAction = new Runnable() {
-                        @Override
-                        public void run() {
-                            CoreModule.filter();
-                        }
-                    };
+                    Runnable filterAction = () -> CoreModule.filter();
                     executorService.execute(filterAction);
                 }
             });
@@ -168,6 +165,9 @@ public class MainWindow extends Application {
 
     public static void applyProfile(Profile profile) {
         miFile.setDisable(profile.getFileMenu() == HIDE);
+        controller.mniOpenNow.setDisable(profile.getFileMenuOpen() == HIDE);
+        controller.mPriceList.setDisable(profile.getFileMenuExportPrice() == HIDE);
+
         miOptions.setDisable(profile.getOptionsMenu() == HIDE);
 
         for (MenuItem mi : miReports.getItems()) {

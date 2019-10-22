@@ -1,5 +1,6 @@
 package ui_windows.options_window.price_lists_editor.se;
 
+import core.CoreModule;
 import javafx.stage.Modality;
 import ui_windows.OrdinalWindow;
 import ui_windows.options_window.OptionsWindow;
@@ -13,6 +14,8 @@ public class PriceListEditorWindow extends OrdinalWindow {
         PriceListEditorWindowControllerv2 controller = (PriceListEditorWindowControllerv2) loader.getController();
         editedPriceList.showInEditorWindow(controller);
         controller.setTempPriceList(editedPriceList);
+
+        CoreModule.getUsers().getCurrentUser().getProfile().getPriceLists().apply(controller.btnApply);
 
         stage.show();
     }

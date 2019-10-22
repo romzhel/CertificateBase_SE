@@ -3,7 +3,7 @@ package ui_windows.options_window.price_lists_editor.se;
 import core.CoreModule;
 import core.Dialogs;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -11,10 +11,9 @@ import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 
 import java.io.File;
-import java.net.URL;
-import java.util.ResourceBundle;
 
-public class PriceListEditorWindowControllerv2 implements Initializable {
+public class PriceListEditorWindowControllerv2 {
+    PriceList tempPriceList;
     @FXML
     public TabPane mainTabPane;
     @FXML
@@ -25,12 +24,8 @@ public class PriceListEditorWindowControllerv2 implements Initializable {
     public TextField tfPriceFileName;
     @FXML
     public TextField tfDestinationFolder;
-    PriceList tempPriceList;
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
-    }
+    @FXML
+    public Button btnApply;
 
     public void setTemplateFile() {
         File selectedFile = new Dialogs().selectAnyFile(PriceListEditorWindow.getStage(), "Выбор файла шаблона прайс-листа",

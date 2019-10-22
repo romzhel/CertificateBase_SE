@@ -2,7 +2,6 @@ package ui_windows.main_window;
 
 import core.CoreModule;
 import core.Dialogs;
-import files.ExportPriceListToExcel;
 import files.price_to_excel.ExportPriceListToExcel_SE;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -63,7 +62,10 @@ public class MainWindowsController implements Initializable {
     Menu miReports;
 
     @FXML
-    Menu mPriceList;
+    public Menu mPriceList;
+
+    @FXML
+    public MenuItem mniOpenNow;
 
     private FileImport fileImport;
     private MainTable mainTable;

@@ -2,37 +2,48 @@ package ui_windows.options_window.profile_editor;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 
-import static ui_windows.options_window.profile_editor.SimpleRight.*;
+import static ui_windows.options_window.profile_editor.SimpleRight.DISPLAY;
+import static ui_windows.options_window.profile_editor.SimpleRight.HIDE;
 
 public class Profile {
     private int id;
     private StringProperty name;
     private SimpleRight products;
     private SimpleRight fileMenu;
+    private SimpleRight fileMenuOpen;
+    private SimpleRight fileMenuExportPrice;
     private SimpleRight optionsMenu;
     private SimpleRight certificates;
     private SimpleRight families;
     private SimpleRight orderAccessible;
     private SimpleRight users;
+    private SimpleRight priceLists;
     private boolean newItem;
 
-    public static String COMMON_ACCESS = "Общий доступ";
+    public static final String COMMON_ACCESS = "Общий доступ";
 
     public Profile() {
         id = 1;
         name = new SimpleStringProperty(COMMON_ACCESS);
         products = DISPLAY;
         fileMenu = HIDE;
+        fileMenuOpen = HIDE;
+        fileMenuExportPrice = HIDE;
 
         certificates = HIDE;
         families = HIDE;
         orderAccessible = HIDE;
         users = HIDE;
-        optionsMenu = calcRights(certificates, families, orderAccessible, users);
+        priceLists = HIDE;
+        optionsMenu = calcRights(certificates, families, orderAccessible, users, priceLists);
 
         newItem = true;
     }
@@ -42,14 +53,18 @@ public class Profile {
             id = rs.getInt("id");
             name = new SimpleStringProperty(rs.getString("name"));
             products = SimpleRight.values()[rs.getInt("products")];
-            fileMenu = SimpleRight.values()[rs.getInt("file_menu")];
+//            fileMenu = SimpleRight.values()[rs.getInt("file_menu")];
+            fileMenuOpen = SimpleRight.values()[rs.getInt("file_menu_open")];
+            fileMenuExportPrice = SimpleRight.values()[rs.getInt("file_menu_export_price")];
             certificates = SimpleRight.values()[rs.getInt("certificates")];
             families = SimpleRight.values()[rs.getInt("families")];
             orderAccessible = SimpleRight.values()[rs.getInt("orderable")];
             users = SimpleRight.values()[rs.getInt("users")];
+            priceLists = SimpleRight.values()[rs.getInt("price_lists")];
             newItem = false;
 
-            optionsMenu = calcRights(certificates, families, orderAccessible, users);
+            fileMenu = calcRights(fileMenuOpen, fileMenuExportPrice);
+            optionsMenu = calcRights(certificates, families, orderAccessible, users, priceLists);
 
         } catch (SQLException e) {
             System.out.println("profile constructor exception:" + e.getMessage());
@@ -61,6 +76,18 @@ public class Profile {
             if (sr != HIDE) return DISPLAY;
         }
         return HIDE;
+    }
+
+    public void disableDeleteItem(ContextMenu contextMenu) {
+        final String DELETE = "delete";
+        for (MenuItem mi:contextMenu.getItems()             ) {
+            if (mi.getId() != null && mi.getId().toLowerCase().contains(DELETE) && !name.getValue().toLowerCase().contains("полный")) {
+                mi.setDisable(true);
+            } else {
+                mi.setDisable(false);
+            }
+
+        }
     }
 
     public String getName() {
@@ -145,5 +172,29 @@ public class Profile {
 
     public void setNewItem(boolean newItem) {
         this.newItem = newItem;
+    }
+
+    public SimpleRight getFileMenuOpen() {
+        return fileMenuOpen;
+    }
+
+    public SimpleRight getFileMenuExportPrice() {
+        return fileMenuExportPrice;
+    }
+
+    public void setFileMenuOpen(SimpleRight fileMenuOpen) {
+        this.fileMenuOpen = fileMenuOpen;
+    }
+
+    public void setFileMenuExportPrice(SimpleRight fileMenuExportPrice) {
+        this.fileMenuExportPrice = fileMenuExportPrice;
+    }
+
+    public SimpleRight getPriceLists() {
+        return priceLists;
+    }
+
+    public void setPriceLists(SimpleRight priceLists) {
+        this.priceLists = priceLists;
     }
 }

@@ -136,15 +136,27 @@ public class ExportPriceListToExcel_SE {
             else resultFile = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор места сохранения",
                     Dialogs.EXCEL_FILES, tempFile.getName());
             if (resultFile == null) {
-                Dialogs.showMessage("Выбор места сохранения", "Операция отменена, так как не было выбрано " +
-                        "место сохранения");
+                Platform.runLater(() -> {
+                    Dialogs.showMessage("Выбор места сохранения", "Операция отменена, так как не было выбрано " +
+                            "место сохранения");
+                });
                 return false;
             }
-            Files.copy(tempFile.toPath(), resultFile.toPath(), REPLACE_EXISTING);
 
             Platform.runLater(() -> {
-                if (Dialogs.confirm("Формирование прайс листа", "Прайс лист сформирован. Желаете открыть его?")) {
-                    Utils.openFile(resultFile);
+                if (CoreModule.getUsers().getCurrentUser().getProfile().getName().toLowerCase().contains("полный")) {
+                    if (Dialogs.confirm("Формирование прайс листа", "Прайс лист сформирован. Желаете " +
+                            "скопировать его в " + resultFile.getPath() + "?")) {
+                        try {
+                            Files.copy(tempFile.toPath(), resultFile.toPath(), REPLACE_EXISTING);
+                        } catch (IOException e) {
+                            Dialogs.showMessage("Формирование прайс-листа", e.getMessage());;
+                        }
+                    }
+                }
+
+                if (Dialogs.confirm("Формирование прайс листа", "Желаете открыть локальную копию прайс листа?")) {
+                    Utils.openFile(tempFile);
                 }
             });
         } catch (IOException e) {

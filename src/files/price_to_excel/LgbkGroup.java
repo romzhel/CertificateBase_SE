@@ -9,7 +9,6 @@ import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListShee
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 
-import java.util.Comparator;
 import java.util.TreeSet;
 
 import static files.price_to_excel.ExportPriceListToExcel_SE.CELL_ALIGN_LEFT_BOLD;

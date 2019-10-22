@@ -14,10 +14,13 @@ import static ui_windows.options_window.profile_editor.SimpleRight.*;
 
 public class OptionsWindow extends OrdinalWindow {
     private static TabPane tpOptions;
+    private static OptionsWindowController controller;
 
     public OptionsWindow() {
         super(MainWindow.getMainStage(), Modality.APPLICATION_MODAL,
                 null, "optionsWindow.fxml", "Настройки");
+
+        controller = loader.getController();
 
         applyProfile();
 
@@ -45,15 +48,29 @@ public class OptionsWindow extends OrdinalWindow {
 
         Utils.getTabById("tabCertificates").setDisable(profile.getCertificates() == HIDE);
         Utils.disableEditing(Utils.getTabById("tabCertificates"), profile.getCertificates() == DISPLAY);
+        profile.getCertificates().apply(controller.cmCertTypes);
+        profile.getCertificates().apply(controller.cmCertificates);
+        profile.disableDeleteItem(controller.cmCertTypes);
+        profile.disableDeleteItem(controller.cmCertificates);
 
         Utils.getTabById("tabFamilies").setDisable(profile.getFamilies() == HIDE);
         Utils.disableEditing(Utils.getTabById("tabFamilies"), profile.getFamilies() == DISPLAY);
+        profile.getFamilies().apply(controller.cmFamilies);
+        profile.getFamilies().apply(controller.cmLgbkHierarchy);
+        profile.disableDeleteItem(controller.cmFamilies);
+        profile.disableDeleteItem(controller.cmLgbkHierarchy);
 
         Utils.getTabById("tabOrderable").setDisable(profile.getOrderAccessible() == HIDE);
         Utils.disableEditing(Utils.getTabById("tabOrderable"), profile.getOrderAccessible() == DISPLAY);
+        profile.getOrderAccessible().apply(controller.cmOrderable);
+        profile.disableDeleteItem(controller.cmOrderable);
 
         Utils.getTabById("tabUsers").setDisable(profile.getUsers() == HIDE);
         Utils.disableEditing(Utils.getTabById("tabUsers"), profile.getUsers() == DISPLAY);
+
+        Utils.getTabById("tabPriceLists").setDisable(profile.getPriceLists() == HIDE);
+        profile.getPriceLists().apply(controller.cmPriceListsTable);
+
 
         for (Tab tab : tpOptions.getTabs()) {
             if (!tab.isDisabled()) {

@@ -66,12 +66,12 @@
                                         <TableColumn minWidth="0.0" prefWidth="715.0" text="Ответственные" />
                                     </columns>
                                     <contextMenu>
-                                        <ContextMenu>
+                                        <ContextMenu fx:id="cmFamilies">
                                             <items>
-                                                <MenuItem mnemonicParsing="false" onAction="#actionAddFamily" text="     Добавить    " />
-                                                <MenuItem mnemonicParsing="false" onAction="#actionEditFamily" text="     Редактировать" />
+                                                <MenuItem fx:id="miAdd" mnemonicParsing="false" onAction="#actionAddFamily" text="     Добавить    " />
+                                                <MenuItem fx:id="miEdit" mnemonicParsing="false" onAction="#actionEditFamily" text="     Редактировать" />
                                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                                <MenuItem mnemonicParsing="false" onAction="#actionDeleteFamily" text="     Удалить     " />
+                                                <MenuItem fx:id="miDelete" mnemonicParsing="false" onAction="#actionDeleteFamily" text="     Удалить     " />
                                             </items>
                                         </ContextMenu>
                                     </contextMenu>
@@ -84,14 +84,14 @@
                                         <TreeTableColumn prefWidth="215.0" text="Описание (ru)" />
                                     </columns>
                                     <contextMenu>
-                                        <ContextMenu>
+                                        <ContextMenu fx:id="cmLgbkHierarchy">
                                             <items>
-                                                <MenuItem mnemonicParsing="false" onAction="#actionAddLgbk" text="     Добавить    " />
-                                                <MenuItem mnemonicParsing="false" onAction="#actionEditLgbk" text="     Редактировать     " />
+                                                <MenuItem fx:id="miAdd" mnemonicParsing="false" onAction="#actionAddLgbk" text="     Добавить    " />
+                                                <MenuItem fx:id="miEdit" mnemonicParsing="false" onAction="#actionEditLgbk" text="     Редактировать     " />
                                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                                <MenuItem mnemonicParsing="false" onAction="#actionDeleteLgbk" text="     Удалить     " />
+                                                <MenuItem fx:id="miDelete" mnemonicParsing="false" onAction="#actionDeleteLgbk" text="     Удалить     " />
                                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                                <MenuItem mnemonicParsing="false" onAction="#actionReCheckLgbkFromProducts" text="     Сверка     " />
+                                                <MenuItem fx:id="miRecheckOther" mnemonicParsing="false" onAction="#actionReCheckLgbkFromProducts" text="     Сверка     " />
                                             </items>
                                         </ContextMenu>
                                     </contextMenu>
@@ -108,12 +108,12 @@
                             <children>
                                 <TableView fx:id="tvOrdersAccessibility" layoutX="23.0" layoutY="31.0" prefHeight="683.0" prefWidth="1129.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="23.0" AnchorPane.rightAnchor="19.0" AnchorPane.topAnchor="31.0">
                                     <contextMenu>
-                                        <ContextMenu>
+                                        <ContextMenu fx:id="cmOrderable">
                                             <items>
-                                                <MenuItem mnemonicParsing="false" onAction="#actionAddOrderAccessItem" text="     Добавить     " />
-                                                <MenuItem mnemonicParsing="false" onAction="#actionEditOrderAccessItem" text="     Редактировать     " />
+                                                <MenuItem fx:id="miAdd" mnemonicParsing="false" onAction="#actionAddOrderAccessItem" text="     Добавить     " />
+                                                <MenuItem fx:id="miEdit" mnemonicParsing="false" onAction="#actionEditOrderAccessItem" text="     Редактировать     " />
                                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                                <MenuItem mnemonicParsing="false" onAction="#actionDeleteOrderAccessItem" text="     Удалить     " />
+                                                <MenuItem fx:id="miDelete" mnemonicParsing="false" onAction="#actionDeleteOrderAccessItem" text="     Удалить     " />
                                             </items>
                                         </ContextMenu>
                                     </contextMenu>
@@ -163,12 +163,12 @@
                             <children>
                                 <TableView fx:id="tvPriceLists" layoutX="29.0" layoutY="36.0" prefHeight="284.0" prefWidth="1107.0" AnchorPane.leftAnchor="29.0" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="35.0">
                                     <contextMenu>
-                                        <ContextMenu>
+                                        <ContextMenu fx:id="cmPriceListsTable">
                                             <items>
-                                                <MenuItem mnemonicParsing="false" onAction="#actionAddPriceList" text="     Добавить     " />
-                                                <MenuItem mnemonicParsing="false" onAction="#actionEditPriceList" text="     Редактировать     " />
+                                                <MenuItem fx:id="miAdd" mnemonicParsing="false" onAction="#actionAddPriceList" text="     Добавить     " />
+                                                <MenuItem fx:id="miEdit" mnemonicParsing="false" onAction="#actionEditPriceList" text="     Редактировать     " />
                                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                                <MenuItem mnemonicParsing="false" onAction="#actionRemovePriceList" text="     Удалить     " />
+                                                <MenuItem fx:id="miDelete" mnemonicParsing="false" onAction="#actionRemovePriceList" text="     Удалить     " />
                                             </items>
                                         </ContextMenu>
                                     </contextMenu>

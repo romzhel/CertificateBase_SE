@@ -56,16 +56,28 @@ public class OptionsWindowController implements Initializable {
     TableView<RequirementType> tvCertificateTypes;
 
     @FXML
+    public ContextMenu cmCertTypes;
+
+    @FXML
     TableView<Certificate> tvCertificates;
 
     @FXML
     TableView<ProductFamily> tvFamilies;
 
     @FXML
+    public ContextMenu cmFamilies;
+
+    @FXML
     TreeTableView<ProductLgbk> tvLgbk;
 
     @FXML
+    public ContextMenu cmLgbkHierarchy;
+
+    @FXML
     TableView<OrderAccessibility> tvOrdersAccessibility;
+
+    @FXML
+    public ContextMenu cmOrderable;
 
     @FXML
     TableView<Profile> tvProfiles;
@@ -77,13 +89,13 @@ public class OptionsWindowController implements Initializable {
     TabPane tpOptions;
 
     @FXML
-    ContextMenu cmCertTypes;
-
-    @FXML
     ContextMenu cmCertificates;
 
     @FXML
     TableView<PriceList> tvPriceLists;
+
+    @FXML
+    public ContextMenu cmPriceListsTable;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

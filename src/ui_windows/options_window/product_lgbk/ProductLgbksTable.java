@@ -76,7 +76,7 @@ public class ProductLgbksTable {
         });
         tableView.getColumns().add(colB);
 
-        TreeTableColumn<ProductLgbk, Boolean> colExcPrice = new TreeTableColumn<>("Искл. из прайса");
+        /*TreeTableColumn<ProductLgbk, Boolean> colExcPrice = new TreeTableColumn<>("Искл. из прайса");
         colExcPrice.setCellValueFactory(param -> new SimpleBooleanProperty(param.getValue().getValue().isNotUsed()));
 
         colExcPrice.setCellFactory(new Callback<TreeTableColumn<ProductLgbk, Boolean>, TreeTableCell<ProductLgbk, Boolean>>() {
@@ -111,7 +111,7 @@ public class ProductLgbksTable {
             }
         });
 
-        tableView.getColumns().add(colExcPrice);
+        tableView.getColumns().add(colExcPrice);*/
 
         tableView.setRoot(CoreModule.getProductLgbkGroups().getFullTreeSet());
     }

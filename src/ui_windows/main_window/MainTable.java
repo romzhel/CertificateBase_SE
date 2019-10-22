@@ -27,7 +27,6 @@ import static ui_windows.Mode.EDIT;
 
 public class MainTable {
     private TableView<Product> tvTable;
-    private Thread certCheckerThread;
     private ExecutorService executorService;
 
     public MainTable(TableView<Product> tvTable) {
