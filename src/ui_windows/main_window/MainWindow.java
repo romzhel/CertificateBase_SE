@@ -43,7 +43,7 @@ public class MainWindow extends Application {
 
     private static SearchBox searchBox;
 
-    ExecutorService executorService;
+    private ExecutorService executorService;
 
     public static void main(String[] args) {
         launch(args);

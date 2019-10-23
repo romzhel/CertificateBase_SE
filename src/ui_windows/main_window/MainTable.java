@@ -31,6 +31,10 @@ public class MainTable {
 
     public MainTable(TableView<Product> tvTable) {
         this.tvTable = tvTable;
+        init();
+    }
+
+    private void init() {
         executorService = Executors.newFixedThreadPool(10);
         String[] cols = new String[]{"material", "article", "description", "family", "endofservice",
                 "country", "dchain"};

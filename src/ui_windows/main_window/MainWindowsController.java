@@ -79,13 +79,13 @@ public class MainWindowsController implements Initializable {
         MainWindow.setMiOptions(miOptions);
         MainWindow.setMiReports(miReports);
 
-        ToggleGroup tg = new ToggleGroup();
-        rmiAllItems.setToggleGroup(tg);
-        rmiWithoutCerts.setToggleGroup(tg);
-        rmiWithProblemCerts.setToggleGroup(tg);
-        rmiWithExpCerts.setToggleGroup(tg);
-        rmiDoubles.setToggleGroup(tg);
-        rmiLastImportResult.setToggleGroup(tg);
+        ToggleGroup dataSelector = new ToggleGroup();
+        rmiAllItems.setToggleGroup(dataSelector);
+        rmiWithoutCerts.setToggleGroup(dataSelector);
+        rmiWithProblemCerts.setToggleGroup(dataSelector);
+        rmiWithExpCerts.setToggleGroup(dataSelector);
+        rmiDoubles.setToggleGroup(dataSelector);
+        rmiLastImportResult.setToggleGroup(dataSelector);
 
         rmiAllItems.setSelected(true);
 

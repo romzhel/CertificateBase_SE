@@ -13,7 +13,7 @@ import ui_windows.product.Product;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.CertificateCheckingResult;
 import ui_windows.product.certificatesChecker.CertificateVerificationItem;
-import ui_windows.request_certificates.RequestResult;
+import ui_windows.request_certificates.CertificateRequestResult;
 import utils.Utils;
 
 import java.io.File;
@@ -24,7 +24,7 @@ public class ExportToExcel {
     private File file;
     private HSSFWorkbook workbook;
 
-    public ExportToExcel(ArrayList<RequestResult> items) {
+    public ExportToExcel(ArrayList<CertificateRequestResult> items) {
         workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Сертификаты");
         String[] titles = new String[]{"№ п/п", "Заказной номер", "Наименование", "Описание"};
@@ -38,7 +38,7 @@ public class ExportToExcel {
         int addColumns = 0;
 
         //fill data
-        for (RequestResult rr : items) {
+        for (CertificateRequestResult rr : items) {
             rowNum++;
             row = sheet.createRow(rowNum);
 
