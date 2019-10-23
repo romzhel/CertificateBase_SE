@@ -11,11 +11,15 @@ import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 
+import java.util.Comparator;
 import java.util.TreeSet;
 
 import static files.price_to_excel.ExportPriceListToExcel_SE.CELL_ALIGN_LEFT;
 
 public class HierarchyGroup {
+    public static final Comparator<Product> SORT_MATERIAL = (o1, o2) -> o1.getTextForComparing().compareTo(o2.getTextForComparing());
+    public static final Comparator<Product> SORT_ARTICLE = (o1, o2) -> o1.getArticle().compareTo(o2.getArticle());
+
     private PriceListSheet priceListSheet;
     private String name;
     private TreeSet<Product> products;
@@ -28,7 +32,7 @@ public class HierarchyGroup {
             this.name = name.replaceAll("^\\d", "").substring(0, 3);
         }
 
-        products = new TreeSet<>((o1, o2) -> o1.getMaterial().compareTo(o2.getMaterial()));
+        products = new TreeSet<>(priceListSheet.getSortOrder());
     }
 
     public void addProduct(Product product) {

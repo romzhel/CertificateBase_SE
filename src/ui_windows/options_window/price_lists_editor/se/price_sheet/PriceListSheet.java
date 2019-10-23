@@ -1,6 +1,7 @@
 package ui_windows.options_window.price_lists_editor.se.price_sheet;
 
 import core.CoreModule;
+import files.price_to_excel.HierarchyGroup;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -41,7 +42,7 @@ public class PriceListSheet extends Tab {
     private boolean groupNameDisplaying = true;
     private int discount;
     private PriceListSheetController controller;
-
+    private Comparator<Product> sortOrder;
 
     public PriceListSheet(String title) {
         super();
@@ -77,6 +78,7 @@ public class PriceListSheet extends Tab {
 
             dchainSelector.setSelectedItemsFromString(rs.getString("dchain_enums"));
             discount = rs.getInt("discount");
+            sortOrder = rs.getInt("sort_order") == 0 ? HierarchyGroup.SORT_MATERIAL : HierarchyGroup.SORT_ARTICLE;
 
             initMainOptions();
         } catch (SQLException e) {
@@ -105,6 +107,7 @@ public class PriceListSheet extends Tab {
         }
         contentTable.importFromString(anotherInstance.contentTable.exportToString());
         discount = anotherInstance.discount;
+        sortOrder = anotherInstance.sortOrder;
 
         initMainOptions();
     }
@@ -143,6 +146,9 @@ public class PriceListSheet extends Tab {
         if (discount > 0) {
             controller.tfDiscount.setText(String.valueOf(discount));
         }
+
+        controller.rbOrderMaterial.setSelected(sortOrder == HierarchyGroup.SORT_MATERIAL);
+        controller.rbOrderArticle.setSelected(sortOrder == HierarchyGroup.SORT_ARTICLE);
     }
 
     private void initColumnsSelector() {
@@ -293,6 +299,7 @@ public class PriceListSheet extends Tab {
         language = controller.rbLangRu.isSelected() ? LANG_RU : LANG_EN;
         String costDiscount = controller.tfDiscount.getText();
         discount = costDiscount.matches("^\\d+$") ? Integer.parseInt(costDiscount) : 0;
+        sortOrder = controller.rbOrderMaterial.isSelected() ? HierarchyGroup.SORT_MATERIAL : HierarchyGroup.SORT_ARTICLE;
     }
 
     public int getLanguage() {
@@ -389,5 +396,9 @@ public class PriceListSheet extends Tab {
 
     public void setDiscount(int discount) {
         this.discount = discount;
+    }
+
+    public Comparator<Product> getSortOrder() {
+        return sortOrder;
     }
 }

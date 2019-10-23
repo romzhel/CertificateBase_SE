@@ -40,7 +40,7 @@ public class PriceLists {
 
         if (new PriceListsDB().putData(priceList)) {
             for (PriceListSheet sheet : priceList.getSheets()) {
-                sheet.setSheetId(priceList.getId());
+                sheet.setPriceListId(priceList.getId());
                 sheet.uploadFromUI();
 
                 if (!new PriceListSheetDB().putData(sheet)) {

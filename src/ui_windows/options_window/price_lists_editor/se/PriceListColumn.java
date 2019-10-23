@@ -28,23 +28,6 @@ public class PriceListColumn {
     }
 
     public XSSFCell createXssfCell(Product product, XSSFRow row, int index, PriceListSheet priceListSheet) {
-        /*Object value = new ObjectsComparator().getProperty(product, field);
-        XSSFCell cell = null;
-        if (value instanceof Number) {
-            cell = row.createCell(index, CellType.NUMERIC);
-            if (value instanceof Integer) {
-                cell.setCellValue((Integer) value);
-            } else if (value instanceof Double) {
-                cell.setCellValue((Double) value);
-            }
-        } else if (value instanceof String) {
-            cell = row.createCell(index, CellType.STRING);
-            cell.setCellValue((String) value);
-        } else {
-            System.out.println("filling price list, unknown object type " + value.toString() + value.getClass().getName());
-        }
-        return cell;*/
-
         return valueFactory == null ? null : valueFactory.call(new Container(product, row, index, priceListSheet));
     }
 

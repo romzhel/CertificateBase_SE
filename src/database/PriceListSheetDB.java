@@ -1,5 +1,6 @@
 package database;
 
+import files.price_to_excel.HierarchyGroup;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 
@@ -15,13 +16,13 @@ public class PriceListSheetDB extends DbRequest {
         try {
             addData = connection.prepareStatement("INSERT INTO priceListSheets" +
                             "(price_list_id, name, language, init_row, content_mode, lead_time_correction, " +
-                            "group_names_displaying, column_enums, content_enums, dchain_enums, discount) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                            "group_names_displaying, column_enums, content_enums, dchain_enums, discount, sort_order) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = connection.prepareStatement("UPDATE priceListSheets " +
                     "SET price_list_id = ?, name = ?, language = ?, init_row = ?, content_mode = ?, lead_time_correction = ?, " +
-                    "group_names_displaying = ?, column_enums = ?, content_enums = ?, dchain_enums = ?, discount = ?" +
-                    "WHERE id = ?");
+                    "group_names_displaying = ?, column_enums = ?, content_enums = ?, dchain_enums = ?, discount = ?," +
+                    "sort_order = ? WHERE id = ?");
             deleteData = connection.prepareStatement("DELETE FROM priceListSheets " +
                     "WHERE id = ?");
         } catch (SQLException e) {
@@ -63,6 +64,7 @@ public class PriceListSheetDB extends DbRequest {
             addData.setString(index++, pls.getContentTable().exportToString());
             addData.setString(index++, pls.getDchainSelector().getSelectedItemsAsString());
             addData.setInt(index++, pls.getDiscount());
+            addData.setInt(index++, pls.getSortOrder() == HierarchyGroup.SORT_MATERIAL ? 0 : 1);
 
             MainWindow.setProgress(1.0);
 
@@ -102,6 +104,7 @@ public class PriceListSheetDB extends DbRequest {
             updateData.setString(index++, pls.getContentTable().exportToString());
             updateData.setString(index++, pls.getDchainSelector().getSelectedItemsAsString());
             updateData.setInt(index++, pls.getDiscount());
+            updateData.setInt(index++, pls.getSortOrder() == HierarchyGroup.SORT_MATERIAL ? 0 : 1);
 
             updateData.setInt(index++, pls.getSheetId());
 

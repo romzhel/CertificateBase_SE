@@ -312,6 +312,18 @@ public class Product {
         return false;
     }
 
+    public String getTextForComparing() {
+        String[] parts = getMaterial().split("\\-");
+
+        if (parts.length < 3) return getMaterial();
+
+        int num = Math.max(4 - parts[1].length(), 0);
+        String addedText = "00".substring(0, num);
+        String middlePart = parts[1].substring(0, 1).concat(addedText).concat(parts[1].substring(1));
+
+        return (parts[0] + middlePart + parts[2]);
+    }
+
     @Override
     public String toString() {
         return material.getValue() + ", " + article.getValue();

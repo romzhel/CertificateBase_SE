@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 
@@ -51,6 +52,7 @@ public class PriceListEditorWindowControllerv2 {
             tempPriceList.setFileName(tfPriceFileName.getText());
             if (tempPriceList.getId() == -1) {
                 if (CoreModule.getPriceLists().addItem(tempPriceList)) {
+                    MainWindow.getController().initPriceListMenu();
                     actionClose();
                 }
             } else {
@@ -62,7 +64,8 @@ public class PriceListEditorWindowControllerv2 {
     }
 
     private boolean checkUiFilling() {
-        if (tfPriceName.getText().isEmpty() || tfPriceFileName.getText().isEmpty() || tfTemplateName.getText().isEmpty()) {
+        if (tfPriceName.getText().isEmpty() || tfPriceFileName.getText().isEmpty() || tfTemplateName.getText().isEmpty() ||
+                tfDestinationFolder.getText().isEmpty()) {
             Dialogs.showMessage("Сохранение прайс-листа", "Не все поля заполнены.");
             return false;
         }

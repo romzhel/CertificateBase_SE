@@ -1,6 +1,5 @@
 package ui_windows.main_window;
 
-import core.AddActions;
 import core.CoreModule;
 import core.Dialogs;
 import javafx.application.Application;
@@ -8,9 +7,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
@@ -19,16 +16,15 @@ import javafx.stage.Stage;
 import ui_windows.options_window.profile_editor.Profile;
 import utils.SearchBox;
 import utils.Utils;
-import utils.waiting_window.WaitingWindow;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static ui_windows.options_window.profile_editor.SimpleRight.*;
+import static ui_windows.options_window.profile_editor.SimpleRight.HIDE;
 
 public class MainWindow extends Application {
-    private String version = "1.1.0.0 от 22.10.2019";
+    private String version = "1.1.0.1 от 23.10.2019";
     private static Stage mainStage;
     private static AnchorPane rootAnchorPane;
     private static ProgressBar progressBar;
@@ -214,5 +210,9 @@ public class MainWindow extends Application {
 
     public static FXMLLoader getFxmlLoader() {
         return fxmlLoader;
+    }
+
+    public static MainWindowsController getController() {
+        return controller;
     }
 }
