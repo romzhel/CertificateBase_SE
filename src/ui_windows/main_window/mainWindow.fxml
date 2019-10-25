@@ -25,22 +25,10 @@
                 </Menu>
             <Menu mnemonicParsing="false" text="   Запросы   ">
               <items>
-                <MenuItem fx:id="miRequestCertExistence" mnemonicParsing="false" onAction="#actionRequestCertificates" text="     Наличие сертификатов     " />
+                <MenuItem fx:id="miRequestCertExistence" mnemonicParsing="false" onAction="#actionRequest" text="     Заказные позиции     " />
               </items>
             </Menu>
-            <Menu fx:id="miReports" mnemonicParsing="false" text="   Данные   ">
-              <items>
-                  <RadioMenuItem fx:id="rmiAllItems" mnemonicParsing="false" onAction="#reportAllItems" text="     Все позиции     " />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <RadioMenuItem fx:id="rmiWithoutCerts" mnemonicParsing="false" onAction="#reportNoCertificates" text="     Позиции без сертификатов     " />
-                  <RadioMenuItem fx:id="rmiWithProblemCerts" mnemonicParsing="false" onAction="#reportProblemCertificates" text="     Позиции с проблемными сертификатами     " />
-                  <RadioMenuItem fx:id="rmiWithExpCerts" mnemonicParsing="false" onAction="#reportExpiredSoonCertificates" text="     Позиции с истекающими сертификатами     " />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <RadioMenuItem fx:id="rmiLastImportResult" mnemonicParsing="false" onAction="#selectLastImportResult" text="     Результаты последнего импорта     " />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <RadioMenuItem fx:id="rmiDoubles" mnemonicParsing="false" onAction="#reportDoubles" text="     Дублирующиеся позиции     " />
-              </items>
-            </Menu>
+            <Menu fx:id="miReports" mnemonicParsing="false" text="   Данные   " />
             <Menu mnemonicParsing="false" text="   Фильтр   ">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#displayFilterOptions" text="     Настройки фильтра     " />

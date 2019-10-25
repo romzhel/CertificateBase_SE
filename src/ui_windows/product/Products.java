@@ -142,12 +142,4 @@ public class Products {
 
         return result;
     }
-
-/*    public ProductsDB getDb() {
-        return db;
-    }*/
-
-/*    public void setDb(ProductsDB db) {
-        this.db = db;
-    }*/
 }

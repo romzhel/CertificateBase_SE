@@ -1,21 +1,25 @@
-package ui_windows.request_certificates;
+package ui_windows.request;
 
+import core.CoreModule;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import ui_windows.Mode;
 import ui_windows.OrdinalWindow;
 import ui_windows.main_window.MainWindow;
+import ui_windows.product.Product;
 
-public class CertificateRequestWindow extends OrdinalWindow {
+import java.util.ArrayList;
 
+public class RequestWindow extends OrdinalWindow {
+    private RequestWindowController controller;
 
-    public CertificateRequestWindow() {
+    public RequestWindow() {
         super(MainWindow.getMainStage(), Modality.APPLICATION_MODAL, null, "certificateRequestWindow.fxml",
                 "Ввод данных");
 
+        controller = (RequestWindowController) loader.getController();
+
         stage.show();
     }
-
 
 
 }

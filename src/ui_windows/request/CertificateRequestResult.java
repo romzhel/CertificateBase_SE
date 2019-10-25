@@ -1,4 +1,4 @@
-package ui_windows.request_certificates;
+package ui_windows.request;
 
 import ui_windows.product.Product;
 

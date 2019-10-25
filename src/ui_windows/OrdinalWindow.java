@@ -5,6 +5,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Builder;
+import javafx.util.BuilderFactory;
+import org.apache.poi.ss.formula.functions.T;
 import ui_windows.options_window.profile_editor.SimpleRight;
 import utils.Utils;
 
@@ -17,6 +20,7 @@ public class OrdinalWindow {
     protected static Mode mode;
     protected static AnchorPane rootAnchorPane;
     protected static FXMLLoader loader;
+    protected static T controller;
 
     public OrdinalWindow(Stage parentStage, Modality modality, Mode mode, String resourceName, String title) {
         this.mode = mode;

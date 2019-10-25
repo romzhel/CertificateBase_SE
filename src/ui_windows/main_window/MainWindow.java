@@ -30,9 +30,7 @@ public class MainWindow extends Application {
     private static ProgressBar progressBar;
     private static double progressBarValue;
 
-    private static MenuItem miFile;
     private static MenuItem miOptions;
-    private static Menu miReports;
     private static boolean initOk;
     private static FXMLLoader fxmlLoader;
     private static MainWindowsController controller;
@@ -147,30 +145,16 @@ public class MainWindow extends Application {
         super.stop();
     }
 
-    public static void setMiFile(MenuItem miFile) {
-        MainWindow.miFile = miFile;
-    }
-
     public static void setMiOptions(MenuItem miOptions) {
         MainWindow.miOptions = miOptions;
     }
 
-    public static void setMiReports(Menu miReports) {
-        MainWindow.miReports = miReports;
-    }
-
     public static void applyProfile(Profile profile) {
-        miFile.setDisable(profile.getFileMenu() == HIDE);
+//        miFile.setDisable(profile.getFileMenu() == HIDE);
         controller.mniOpenNow.setDisable(profile.getFileMenuOpen() == HIDE);
         controller.mPriceList.setDisable(profile.getFileMenuExportPrice() == HIDE);
 
         miOptions.setDisable(profile.getOptionsMenu() == HIDE);
-
-        for (MenuItem mi : miReports.getItems()) {
-            if (mi.getText() == null || mi.getText().trim().equals("Все позиции")) continue;
-
-            mi.setDisable(profile.getName().equals(Profile.COMMON_ACCESS));
-        }
     }
 
     public static AnchorPane getRootAnchorPane() {

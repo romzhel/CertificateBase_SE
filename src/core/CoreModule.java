@@ -52,6 +52,7 @@ public class CoreModule {
     private static TableRenewedListener tableRenewedListener;
 
     private static ArrayList<Product> currentItems;
+    private static ArrayList<Product> customItems = new ArrayList<>();
 
     public static boolean init() {
         folders = new Folders();
@@ -272,5 +273,13 @@ public class CoreModule {
 
     public interface TableRenewedListener {
         void getLgbksForItems(TreeSet<String> lgbks);
+    }
+
+    public static ArrayList<Product> getCustomItems() {
+        return customItems;
+    }
+
+    public static void setCustomItems(ArrayList<Product> customItems) {
+        CoreModule.customItems = customItems;
     }
 }

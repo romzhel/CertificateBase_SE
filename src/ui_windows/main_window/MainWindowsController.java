@@ -13,16 +13,16 @@ import ui_windows.options_window.OptionsWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.user_editor.User;
 import ui_windows.product.Product;
-import ui_windows.request_certificates.CertificateRequestWindow;
+import ui_windows.request.RequestWindow;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import static ui_windows.main_window.DataSelectorMenu.DATA_ALL_ITEMS;
+
 public class MainWindowsController implements Initializable {
-    @FXML
-    public RadioMenuItem rmiLastImportResult;
-    //    ProductsComparatorResult lastComparationResult;
+    private DataSelectorMenu dataSelectorMenu;
     boolean clearOldResult;
 
     @FXML
@@ -44,22 +44,7 @@ public class MainWindowsController implements Initializable {
     MenuItem miOptions;
 
     @FXML
-    RadioMenuItem rmiAllItems;
-
-    @FXML
-    RadioMenuItem rmiWithoutCerts;
-
-    @FXML
-    RadioMenuItem rmiWithProblemCerts;
-
-    @FXML
-    RadioMenuItem rmiWithExpCerts;
-
-    @FXML
-    RadioMenuItem rmiDoubles;
-
-    @FXML
-    Menu miReports;
+    public Menu miReports;
 
     @FXML
     public Menu mPriceList;
@@ -74,20 +59,8 @@ public class MainWindowsController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         CoreModule.getProducts().setTableView(tvTable);
         MainWindow.setProgressBar(pbExecuted);
-
-        MainWindow.setMiFile(miFile);
         MainWindow.setMiOptions(miOptions);
-        MainWindow.setMiReports(miReports);
-
-        ToggleGroup dataSelector = new ToggleGroup();
-        rmiAllItems.setToggleGroup(dataSelector);
-        rmiWithoutCerts.setToggleGroup(dataSelector);
-        rmiWithProblemCerts.setToggleGroup(dataSelector);
-        rmiWithExpCerts.setToggleGroup(dataSelector);
-        rmiDoubles.setToggleGroup(dataSelector);
-        rmiLastImportResult.setToggleGroup(dataSelector);
-
-        rmiAllItems.setSelected(true);
+        dataSelectorMenu = new DataSelectorMenu(miReports);
 
         initPriceListMenu();
         mainTable = new MainTable(tvTable);
@@ -103,12 +76,10 @@ public class MainWindowsController implements Initializable {
 
             mi.setOnAction(event -> {
                 int index = mPriceList.getItems().indexOf(mi);
-//                new ExportPriceListToExcel(CoreModule.getPriceLists().getItems().get(index));
                 new ExportPriceListToExcel_SE(CoreModule.getPriceLists().getItems().get(index));
             });
         }
     }
-
 
     public void openNow() {
         fileImport = new FileImport();
@@ -118,44 +89,18 @@ public class MainWindowsController implements Initializable {
         new OptionsWindow();
     }
 
-    public void addProduct() {
-
-    }
+    public void addProduct() {}
 
     public void editProduct() {
         mainTable.displayEditorWindow();
     }
 
-    public void deleteProduct() {
-
-    }
+    public void deleteProduct() {}
 
     public void displayInTable(ArrayList<Product> products) {
         tvTable.getItems().clear();
         tvTable.getItems().addAll(products);
         lbRecordCount.setText(Integer.toString(tvTable.getItems().size()));
-    }
-
-    public void displayAllItems() {
-        displayInTable(CoreModule.getProducts().getItems());
-    }
-
-    public void displayNewItems() {
-        displayInTable(fileImport.getLastComparationResult().getNewItems());
-    }
-
-    public void displayChangedItems() {
-        if (fileImport.getLastComparationResult().getChangedItems() != null)
-            displayInTable(fileImport.getLastComparationResult().getChangedItems());
-    }
-
-    public void displayGoneItems() {
-        if (fileImport.getLastComparationResult().getGoneItems() != null)
-            displayInTable(fileImport.getLastComparationResult().getGoneItems());
-    }
-
-    public void clearDisplay() {
-        tvTable.getItems().clear();
     }
 
     public void actionLogin() {
@@ -172,124 +117,15 @@ public class MainWindowsController implements Initializable {
         new FilterWindow();
     }
 
-    public void reportAllItems() {
-        CoreModule.setCurrentItems(CoreModule.getProducts().getItems());
-        CoreModule.filter();
-    }
-
-    public void reportNoCertificates() {
-        /*ArrayList<Product> result = new ArrayList<>();
-
-        new Thread(() -> {
-            for (Product pr : CoreModule.getProducts().getItems()) {
-                double progress = (double) CoreModule.getProducts().getItems().indexOf(pr) /
-                        (double) CoreModule.getProducts().getItems().size();
-
-                MainWindow.setProgress(progress);
-
-                CertificatesChecker certificatesChecker = CoreModule.getCertificates().getCertificatesChecker();
-                certificatesChecker.check(pr, true);
-                if (certificatesChecker.getResultTableItems().size() == 0) result.add(pr);
-            }
-
-            MainWindow.setProgress(0.0);
-
-            Platform.runLater(() -> {
-                CoreModule.setCurrentItems(result);
-                CoreModule.filter();
-            });
-        }).start();*/
-    }
-
-    public void reportProblemCertificates() {
-        /*ArrayList<Product> result = new ArrayList<>();
-
-        new Thread(() -> {
-            for (Product pr : CoreModule.getProducts().getItems()) {
-                double progress = (double) CoreModule.getProducts().getItems().indexOf(pr) /
-                        (double) CoreModule.getProducts().getItems().size();
-
-                MainWindow.setProgress(progress);
-
-                CertificatesChecker certificatesChecker = CoreModule.getCertificates().getCertificatesChecker();
-                certificatesChecker.check(pr, true);
-                for (CertificateVerificationItem cv : certificatesChecker.getResultTableItems()) {
-                    if (cv.getStatus().startsWith(CertificatesChecker.NOT_OK)) {
-                        result.add(pr);
-                        break;
-                    }
-                }
-            }
-
-            MainWindow.setProgress(0.0);
-
-            Platform.runLater(() -> {
-                CoreModule.setCurrentItems(result);
-                CoreModule.filter();
-            });
-        }).start();*/
-    }
-
-    public void reportExpiredSoonCertificates() {
-        /*ArrayList<Product> result = new ArrayList<>();
-        String durationS = Dialogs.textInput("Ввод данных", "Введите срок, в течении которого истекает\n" +
-                "действие сертификата (месяцев)", "2");
-
-        if (durationS == null || !durationS.matches("\\d+")) return;
-
-        final int duration = Integer.parseInt(durationS);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-
-        new Thread(() -> {
-            for (Product pr : CoreModule.getProducts().getItems()) {
-                double progress = (double) CoreModule.getProducts().getItems().indexOf(pr) /
-                        (double) CoreModule.getProducts().getItems().size();
-
-                MainWindow.setProgress(progress);
-
-                CertificatesChecker certificatesChecker = CoreModule.getCertificates().getCertificatesChecker();
-                certificatesChecker.check(pr, true);
-                for (CertificateVerificationItem cv : certificatesChecker.getResultTableItems()) {
-                    Date certDate = Utils.getDate(cv.getExpirationDate());
-                    Date now = new Date();
-                    long diff = certDate.getTime() - now.getTime();
-
-                    long months = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) / 30;
-
-                    if (months <= duration) {
-                        result.add(pr);
-                        break;
-                    }
-                }
-            }
-
-            MainWindow.setProgress(0.0);
-
-            Platform.runLater(() -> {
-                CoreModule.setCurrentItems(result);
-                CoreModule.filter();
-            });
-        }).start();*/
-    }
-
-    public void reportDoubles() {
-        new Thread(() -> {
-            CoreModule.setCurrentItems(CoreModule.getProducts().getDoubles());
-            CoreModule.filter();
-        }).start();
-
-    }
-
-    public void actionRequestCertificates() {
-        new CertificateRequestWindow();
-    }
-
-    public void selectLastImportResult() {
-        CoreModule.setCurrentItems(CoreModule.getProducts().getChangedPositions());
-        CoreModule.filter();
+    public void actionRequest() {
+        new RequestWindow();
     }
 
     public MainTable getMainTable() {
         return mainTable;
+    }
+
+    public DataSelectorMenu getDataSelectorMenu() {
+        return dataSelectorMenu;
     }
 }

@@ -50,8 +50,7 @@ public class FileImport {
 
             if ((lastComparationResult.getNewItems().size() + lastComparationResult.getChangedItems().size()) > 0) {
                 MainWindowsController mwc = MainWindow.getFxmlLoader().getController();
-                mwc.rmiLastImportResult.setSelected(true);
-                mwc.selectLastImportResult();
+                mwc.getDataSelectorMenu().selectLastImportResult();
             }
 
             if (lastComparationResult.getNewItems().size() > 0) new ProductsDB().putData(lastComparationResult.getNewItems());// save new items to db
