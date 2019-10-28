@@ -63,30 +63,37 @@ public class FilterWindowController implements Initializable {
             }
         });
 
-        CoreModule.getFilter().setTableRenewedListener(lgbks -> {
-            cbLgbk.getItems().clear();
-            cbLgbk.getItems().add(FILTER_VALUE_ALL_LGBKS);
-            cbLgbk.getItems().addAll(lgbks);
-            cbLgbk.setVisibleRowCount(Math.min(cbLgbk.getItems().size() + 1, SELECTOR_LGBK_ROWS_MAX));
+        syncLgbkSelector(CoreModule.getFilter().getProductFamily());
 
-            cbLgbk.setOnAction(null);
-            ProductLgbk selectedItem = CoreModule.getFilter().getLgbk();
-            if (cbLgbk.getItems().indexOf(selectedItem) >= 0) {
-                cbLgbk.getSelectionModel().select(selectedItem);
-            } else if (!CoreModule.getFilter().getLgbk().equals(FILTER_VALUE_ALL_LGBKS)) {
-                cbLgbk.getSelectionModel().select(0);
-                CoreModule.getFilter().setLgbk(FILTER_VALUE_ALL_LGBKS);
+        cbLgbk.setOnAction(event -> {
+            if (cbLgbk.getValue() != null) {
+                CoreModule.getFilter().setLgbk(cbLgbk.getValue());
                 applyFilter();
             }
-
-            cbLgbk.setOnAction(event -> {
-                if (cbLgbk.getValue() != null) {
-                    CoreModule.getFilter().setLgbk(cbLgbk.getValue());
-                    applyFilter();
-                }
-            });
-
         });
+    }
+
+    public void syncLgbkSelector(ProductFamily pf) {
+        cbLgbk.getItems().clear();
+        cbLgbk.getItems().add(FILTER_VALUE_ALL_LGBKS);
+        TreeSet<ProductLgbk> lgbkGroups = new TreeSet<>((o1, o2) -> o1.getLgbk().compareTo(o2.getLgbk()));
+
+        for (ProductLgbk pl : CoreModule.getProductLgbks().getItems()) {
+            if (pf == FILTER_VALUE_ALL_FAMILIES || pl.getFamilyId() == pf.getId()) {
+                lgbkGroups.add(pl);
+            }
+        }
+
+        cbLgbk.getItems().addAll(lgbkGroups);
+        cbLgbk.setVisibleRowCount(Math.min(cbLgbk.getItems().size() + 1, SELECTOR_LGBK_ROWS_MAX));
+
+        ProductLgbk selectedItem = CoreModule.getFilter().getLgbk();
+        if (cbLgbk.getItems().indexOf(selectedItem) >= 0) {
+            cbLgbk.getSelectionModel().select(selectedItem);
+        } else if (!CoreModule.getFilter().getLgbk().equals(FILTER_VALUE_ALL_LGBKS)) {
+            cbLgbk.getSelectionModel().select(0);
+            CoreModule.getFilter().setLgbk(FILTER_VALUE_ALL_LGBKS);
+        }
     }
 
     public void initFamilySelector() {
@@ -116,6 +123,7 @@ public class FilterWindowController implements Initializable {
 
         cbFamily.setOnAction(event -> {
             CoreModule.getFilter().setProductFamily(cbFamily.getValue());
+            syncLgbkSelector(cbFamily.getValue());
             applyFilter();
         });
     }
@@ -174,12 +182,10 @@ public class FilterWindowController implements Initializable {
 
 
     public void applyFilter() {
-        System.out.println("applying filter");
         CoreModule.getFilter().apply();
     }
 
     public void close() {
-        CoreModule.getFilter().setTableRenewedListener(null);
         ((Stage) cbLgbk.getScene().getWindow()).close();
     }
 

@@ -32,7 +32,6 @@ public class Filter {
     private String changeCodes[];
     private String changeTexts[];
     private String changeCode = "";
-    private TableRenewedListener tableRenewedListener;
     private FilterWindowController controller;
 
     public Filter() {
@@ -121,7 +120,7 @@ public class Filter {
             if (lgbk.equals(FILTER_VALUE_ALL_LGBKS) || lgbk == null) {
                 lgbkMatch = true;
             } else if (lgbk != null) {
-                lgbkMatch = lgbk.equals(CoreModule.getProductLgbks().getByLgbkName(p.getLgbk()));
+                lgbkMatch = lgbk.getLgbk().equals(p.getLgbk());
             }
 
             if (familyMatch && lgbkMatch && (filterMatch && (articleMatch || materialMatch || descriptionMatch))) {
@@ -131,8 +130,6 @@ public class Filter {
         }
 
         Platform.runLater(() -> {
-            if (tableRenewedListener != null) tableRenewedListener.getLgbksForItems(accessibleLgbks);
-
             tableView.getItems().clear();
             tableView.getItems().addAll(result);
             tableView.sort();
@@ -160,14 +157,6 @@ public class Filter {
     public interface TableRenewedListener {
         void getLgbksForItems(TreeSet<ProductLgbk> lgbks);
 
-    }
-
-    public TableRenewedListener getTableRenewedListener() {
-        return tableRenewedListener;
-    }
-
-    public void setTableRenewedListener(TableRenewedListener tableRenewedListener) {
-        this.tableRenewedListener = tableRenewedListener;
     }
 
     public void setController(FilterWindowController controller) {
