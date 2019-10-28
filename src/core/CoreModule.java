@@ -49,7 +49,6 @@ public class CoreModule {
     private static Folders folders;
     private static Filter filter;
     private static PriceLists priceLists;
-    private static TableRenewedListener tableRenewedListener;
 
     private static ArrayList<Product> currentItems;
     private static ArrayList<Product> customItems = new ArrayList<>();
@@ -92,75 +91,6 @@ public class CoreModule {
 //        }
 
         return true;
-    }
-
-    public static /*synchronized*/ void filter() {
-        TableView<Product> tableView = CoreModule.getProducts().getTableView();
-        String find = MainWindow.getSearchBox().getText();
-        find = find.replaceAll("\\*", ".*");
-        find = find.replaceAll("\\.", ".");
-
-        ArrayList<Product> result = new ArrayList<>();
-        TreeSet<String> accessibleLgbks = new TreeSet<>();
-
-        boolean articleMatch = false;
-        boolean materialMatch = false;
-        boolean filterMatch = false;
-        LgbkAndParent lgbkAndParent;
-        ProductFamily pf = null;
-        boolean familyMatch = false;
-        boolean descriptionMatch = false;
-
-        for (Product p : currentItems) {
-            articleMatch = p.getArticle().toUpperCase().matches("^(" + find.toUpperCase() + ").*");
-            materialMatch = p.getMaterial().toUpperCase().matches("^(" + find.toUpperCase() + ").*");
-            descriptionMatch = p.getDescriptionru().toLowerCase().contains(find.toLowerCase()) /*||
-                p.getDescriptionen().toLowerCase().matches(".*(" + find.toLowerCase() + ").*")*/;
-            filterMatch = p.matchFilter(CoreModule.getFilter());
-
-            if (CoreModule.getFilter().getProductFamily() != null) {
-                if (p.getFamily() > 0) {
-                    pf = CoreModule.getProductFamilies().getFamilyById(p.getFamily());
-                } else {
-                    lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(p.getLgbk(), p.getHierarchy()));
-                    if (lgbkAndParent.getLgbkItem() != null && lgbkAndParent.getLgbkItem().getFamilyId() > 0) {
-                        pf = CoreModule.getProductFamilies().getFamilyById(lgbkAndParent.getLgbkItem().getFamilyId());
-                    } else if (lgbkAndParent.getLgbkParent() != null) {
-                        pf = CoreModule.getProductFamilies().getFamilyById(lgbkAndParent.getLgbkParent().getFamilyId());
-                    }
-                }
-
-                familyMatch = pf == null ? false : pf.equals(CoreModule.getFilter().getProductFamily());
-
-            /*if (pf == null) familyMatch = false;
-            else familyMatch = pf.equals(CoreModule.getFilter().getProductFamily());*/
-            } else {
-                familyMatch = true;
-            }
-
-            if (familyMatch && (filterMatch && (articleMatch || materialMatch || descriptionMatch))) {
-                result.add(p);
-                accessibleLgbks.add(CoreModule.productLgbks.getLgbkCombineText(p));
-            }
-        }
-
-        Platform.runLater(() -> {
-            if (tableRenewedListener != null) tableRenewedListener.getLgbksForItems(accessibleLgbks);
-
-            tableView.getItems().clear();
-            tableView.getItems().addAll(result);
-            tableView.sort();
-            Utils.setControlValue(MainWindow.getRootAnchorPane(), "lbRecordCount", Integer.toString(tableView.getItems().size()));
-            tableView.refresh();
-        });
-    }
-
-    public static TableRenewedListener getTableRenewedListener() {
-        return tableRenewedListener;
-    }
-
-    public static void setTableRenewedListener(TableRenewedListener tableRenewedListener) {
-        CoreModule.tableRenewedListener = tableRenewedListener;
     }
 
     public static DataBase getDataBase() {
@@ -269,10 +199,6 @@ public class CoreModule {
 
     public static PriceLists getPriceLists() {
         return priceLists;
-    }
-
-    public interface TableRenewedListener {
-        void getLgbksForItems(TreeSet<String> lgbks);
     }
 
     public static ArrayList<Product> getCustomItems() {

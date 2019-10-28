@@ -45,13 +45,13 @@ public class DataSelectorMenu extends Menu {
 
     public void selectDataAllItems() {
         CoreModule.setCurrentItems(CoreModule.getProducts().getItems());
-        CoreModule.filter();
+        CoreModule.getFilter().apply();
         selectMenuItem(DATA_ALL_ITEMS);
     }
 
     public void selectDataCustomSelection() {
         CoreModule.setCurrentItems(CoreModule.getCustomItems());
-        CoreModule.filter();
+        CoreModule.getFilter().apply();
         selectMenuItem(DATA_CUSTOM_SELECTION);
     }
 
@@ -153,14 +153,14 @@ public class DataSelectorMenu extends Menu {
     public void reportDoubles() {
         new Thread(() -> {
             CoreModule.setCurrentItems(CoreModule.getProducts().getDoubles());
-            CoreModule.filter();
+            CoreModule.getFilter().apply();
         }).start();
 
     }
 
     public void selectLastImportResult() {
         CoreModule.setCurrentItems(CoreModule.getProducts().getChangedPositions());
-        CoreModule.filter();
+        CoreModule.getFilter().apply();
         selectMenuItem(DATA_LAST_IMPORT_RESULT);
     }
 }

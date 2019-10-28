@@ -85,7 +85,7 @@ public class MainWindow extends Application {
             searchBox.getTextBox().textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    Runnable filterAction = () -> CoreModule.filter();
+                    Runnable filterAction = () -> CoreModule.getFilter().apply();
                     executorService.execute(filterAction);
                 }
             });
@@ -95,7 +95,7 @@ public class MainWindow extends Application {
 
             applyProfile(CoreModule.getUsers().getCurrentUser().getProfile());
 
-            CoreModule.filter();
+            CoreModule.getFilter().apply();
             searchBox.getTextBox().requestFocus();
 
             mainStage.show();

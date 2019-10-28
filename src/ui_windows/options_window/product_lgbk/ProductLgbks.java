@@ -91,6 +91,14 @@ public class ProductLgbks {
         return null;
     }
 
+    public ProductLgbk getByLgbkCombinedText(String combinedText) {
+        if (combinedText.contains("[") && combinedText.contains("]")) {
+            String findingLgbk = combinedText.substring(1, combinedText.indexOf("]"));
+            return getByLgbkName(findingLgbk);
+        }
+        return null;
+    }
+
     public ProductLgbk getByDescription(String lgbkDescription) {
         for (ProductLgbk plgbk : productLgbks) {
             if (plgbk.getDescription().equals(lgbkDescription) && plgbk.getHierarchy().equals("Все")) {
@@ -147,10 +155,6 @@ public class ProductLgbks {
 
     public ProductLgbk getLgbkByProduct(Product product) {
         return getLgbkByLgbk(new ProductLgbk(product));
-    }
-
-    public String getLgbkCombineText(Product product) {
-        return "[" + product.getLgbk() + "] " + getByLgbkName(product.getLgbk()).getDescriptionRuEn();
     }
 
     public ArrayList<ProductLgbk> getItems() {

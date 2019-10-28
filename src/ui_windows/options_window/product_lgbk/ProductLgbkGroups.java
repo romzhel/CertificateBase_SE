@@ -5,11 +5,14 @@ import core.Dialogs;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
-import utils.ItemsGroup;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
+import utils.ItemsGroup;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 public class ProductLgbkGroups {
     private ProductLgbk rootNode;
@@ -205,7 +208,8 @@ public class ProductLgbkGroups {
                     String containingPart = subgroupTreeItem.getValue().getHierarchy().replaceAll("\\.", "");
 
                     if (lookingForLgbk.getId() == subgroupTreeItem.getValue().getId() ||
-                            !containingPart.isEmpty() && lookingForLgbk.getHierarchy().contains(containingPart)) {
+                            !containingPart.isEmpty() && lookingForLgbk.getHierarchy().contains(containingPart)/* ||
+                            containingPart.isEmpty() && lookingForLgbk.getHierarchy().isEmpty()*/) {
                         return subgroupTreeItem;
                     }
                 }

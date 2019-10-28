@@ -1,47 +1,49 @@
 package ui_windows.main_window.filter_window;
 
 import core.CoreModule;
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import ui_windows.product.Product;
+import javafx.util.StringConverter;
+import ui_windows.options_window.families_editor.ProductFamily;
+import ui_windows.options_window.product_lgbk.ProductLgbk;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.TreeSet;
+
+import static ui_windows.main_window.filter_window.Filter.*;
 
 public class FilterWindowController implements Initializable {
     public static final String ALL_RECORDS = "--- Все ---";
-    @FXML
-    CheckBox cbxPrice;
-    @FXML
-    CheckBox cbxArchive;
-    @FXML
-    CheckBox cbxNotUsed;
-    @FXML
-    CheckBox cbxOnlyChanges;
-    @FXML
-    CheckBox cbxAllRecords;
-    @FXML
-    ComboBox<String> cbFamily;
-    @FXML
-    ComboBox<String> cbChangeType;
-    @FXML
-    Label lChangeType;
-    @FXML
-    ComboBox<String> cbLgbk;
-    @FXML
-    ComboBox<String> cbHier;
+    private static final int SELECTOR_LGBK_ROWS_MAX = 10;
 
-    private ListChangeListener<Product> changeListener;
+    @FXML
+    public CheckBox cbxPrice;
+    @FXML
+    public CheckBox cbxArchive;
+    @FXML
+    public CheckBox cbxNotUsed;
+    @FXML
+    public CheckBox cbxOnlyChanges;
+    @FXML
+    public CheckBox cbxAllRecords;
+    @FXML
+    public ComboBox<ProductFamily> cbFamily;
+    @FXML
+    public ComboBox<String> cbChangeType;
+    @FXML
+    public Label lChangeType;
+    @FXML
+    public ComboBox<ProductLgbk> cbLgbk;
+    @FXML
+    public ComboBox<String> cbHier;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        cbLgbk.setVisibleRowCount(10);
-
         initMainSelection();
         initFamilySelector();
         initChangeSelectors();
@@ -49,44 +51,77 @@ public class FilterWindowController implements Initializable {
     }
 
     public void initLgbkSelector() {
+        cbLgbk.setConverter(new StringConverter<ProductLgbk>() {
+            @Override
+            public String toString(ProductLgbk object) {
+                return object.getCombineDescription();
+            }
 
-        CoreModule.setTableRenewedListener(lgbks -> {
+            @Override
+            public ProductLgbk fromString(String string) {
+                return CoreModule.getProductLgbks().getByLgbkCombinedText(string);
+            }
+        });
+
+        CoreModule.getFilter().setTableRenewedListener(lgbks -> {
             cbLgbk.getItems().clear();
-            cbLgbk.getItems().add(ALL_RECORDS);
+            cbLgbk.getItems().add(FILTER_VALUE_ALL_LGBKS);
             cbLgbk.getItems().addAll(lgbks);
+            cbLgbk.setVisibleRowCount(Math.min(cbLgbk.getItems().size() + 1, SELECTOR_LGBK_ROWS_MAX));
 
             cbLgbk.setOnAction(null);
-            cbLgbk.setValue(CoreModule.getFilter().getPrevLgbkFilterValue());
+            ProductLgbk selectedItem = CoreModule.getFilter().getLgbk();
+            if (cbLgbk.getItems().indexOf(selectedItem) >= 0) {
+                cbLgbk.getSelectionModel().select(selectedItem);
+            } else if (!CoreModule.getFilter().getLgbk().equals(FILTER_VALUE_ALL_LGBKS)) {
+                cbLgbk.getSelectionModel().select(0);
+                CoreModule.getFilter().setLgbk(FILTER_VALUE_ALL_LGBKS);
+                applyFilter();
+            }
 
             cbLgbk.setOnAction(event -> {
                 if (cbLgbk.getValue() != null) {
-                    if (cbLgbk.getValue().equals(ALL_RECORDS)) CoreModule.getFilter().setLgbk(cbLgbk.getValue());
-                    else CoreModule.getFilter().setLgbk(cbLgbk.getValue().split("\\]")[0].replaceAll("[\\[\\s]", ""));
-                    CoreModule.getFilter().setPrevLgbkFilterValue(cbLgbk.getValue());
+                    CoreModule.getFilter().setLgbk(cbLgbk.getValue());
                     applyFilter();
                 }
             });
+
         });
     }
 
     public void initFamilySelector() {
-        cbFamily.getItems().add(ALL_RECORDS);
-        cbFamily.getItems().addAll(CoreModule.getProductFamilies().getFamiliesNames());
+        cbFamily.setConverter(new StringConverter<ProductFamily>() {
+            @Override
+            public String toString(ProductFamily object) {
+                return object.getName();
+            }
+
+            @Override
+            public ProductFamily fromString(String string) {
+                return null;
+            }
+        });
+
+        cbFamily.getItems().add(FILTER_VALUE_ALL_FAMILIES);
+
+        TreeSet<ProductFamily> families = new TreeSet<>((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+        families.addAll(CoreModule.getProductFamilies().getItems());
+        cbFamily.getItems().addAll(families);
 
         if (CoreModule.getFilter().getProductFamily() != null) {
-            cbFamily.setValue(CoreModule.getFilter().getProductFamily().getName());
+            cbFamily.setValue(CoreModule.getFilter().getProductFamily());
         } else {
-            cbFamily.setValue(ALL_RECORDS);
+            cbFamily.setValue(FILTER_VALUE_ALL_FAMILIES);
         }
 
         cbFamily.setOnAction(event -> {
-            CoreModule.getFilter().setProductFamily(CoreModule.getProductFamilies().getFamilyByName(cbFamily.getValue()));
+            CoreModule.getFilter().setProductFamily(cbFamily.getValue());
             applyFilter();
         });
     }
 
     public void initChangeSelectors() {
-        cbxOnlyChanges.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        /*cbxOnlyChanges.selectedProperty().addListener((observable, oldValue, newValue) -> {
             CoreModule.getFilter().getFilterSimpleByUIname("cbxNeedAction").setValue(newValue);
             if (newValue) {
 //                cbxAllRecords.setSelected(false);
@@ -106,26 +141,26 @@ public class FilterWindowController implements Initializable {
         cbChangeType.setOnAction(event -> {
             CoreModule.getFilter().setChangeCode(cbChangeType.getValue());
             applyFilter();
-        });
+        });*/
     }
 
     public void initMainSelection() {
         cbxAllRecords.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            CoreModule.getFilter().getFilterSimpleByUIname("cbxAllRecords").setValue(newValue);
+            FILTER_ALL_ITEMS.setValue(newValue);
             if (newValue) {
                 cbxPrice.setSelected(false);
-                cbxArchive.setSelected(false);
-                cbxNotUsed.setSelected(false);
+//                cbxArchive.setSelected(false);
+//                cbxNotUsed.setSelected(false);
 //                cbxOnlyChanges.setSelected(false);
             }
             applyFilter();
         });
         cbxPrice.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            CoreModule.getFilter().getFilterSimpleByUIname("cbxPrice").setValue(newValue);
+            FILTER_PRICE_ITEMS.setValue(newValue);
             if (newValue) cbxAllRecords.setSelected(false);
             applyFilter();
         });
-        cbxArchive.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        /*cbxArchive.selectedProperty().addListener((observable, oldValue, newValue) -> {
             CoreModule.getFilter().getFilterSimpleByUIname("cbxArchive").setValue(newValue);
             if (newValue) cbxAllRecords.setSelected(false);
             applyFilter();
@@ -134,18 +169,18 @@ public class FilterWindowController implements Initializable {
             CoreModule.getFilter().getFilterSimpleByUIname("cbxNotUsed").setValue(newValue);
             if (newValue) cbxAllRecords.setSelected(false);
             applyFilter();
-        });
+        });*/
     }
 
 
     public void applyFilter() {
-        CoreModule.filter();
+        System.out.println("applying filter");
+        CoreModule.getFilter().apply();
     }
 
     public void close() {
-        CoreModule.setTableRenewedListener(null);
+        CoreModule.getFilter().setTableRenewedListener(null);
         ((Stage) cbLgbk.getScene().getWindow()).close();
-//        FilterWindow.getStage().close();
     }
 
 

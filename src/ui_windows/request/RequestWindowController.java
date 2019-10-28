@@ -53,7 +53,7 @@ public class RequestWindowController implements Initializable {
 
         CoreModule.setCustomItems(results);
         CoreModule.setCurrentItems(results);
-        CoreModule.filter();
+        CoreModule.getFilter().apply();
         MainWindow.getController().getDataSelectorMenu().selectDataCustomSelection();
     }
 

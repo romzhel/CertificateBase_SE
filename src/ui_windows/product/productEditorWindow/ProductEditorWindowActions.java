@@ -100,7 +100,7 @@ public class ProductEditorWindowActions {
             boolean saveToDbResult = new ProductsDB().updateData(productsToUpdate); //update in DB
 
             if (saveToDbResult) {
-                CoreModule.filter();
+                CoreModule.getFilter().apply();
                 ((Stage) root.getScene().getWindow()).close();
             }
         }

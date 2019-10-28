@@ -22,9 +22,9 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static ui_windows.main_window.file_import_window.NamesMapping.*;
+import static ui_windows.main_window.filter_window.Filter.*;
 
 public class Product {
     public static final String NO_DATA = "нет данных";
@@ -271,13 +271,13 @@ public class Product {
     }
 
     public boolean matchFilter(Filter filter) {
-        boolean allRecords = (filter.getFilterSimpleByUIname("cbxAllRecords").isValue());
-        boolean price = (filter.getFilterSimpleByUIname("cbxPrice").isValue() && isPrice());
-        boolean archive = (filter.getFilterSimpleByUIname("cbxArchive").isValue() && isArchive());
-        boolean needAction = (filter.getFilterSimpleByUIname("cbxNeedAction").isValue());// && isNeedaction());
-        boolean lgbk = filter.getLgbk().equals(Filter.ALL_RECORDS) ? true : filter.getLgbk().equals(getLgbk());
-
-        LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(getLgbk(), getHierarchy()));
+        boolean allRecords = ((Boolean) FILTER_ALL_ITEMS.getValue());
+        boolean priceMatches = ((Boolean) FILTER_PRICE_ITEMS.getValue() && isPrice());
+//        boolean archive = (filter.getFilterSimpleByUIname("cbxArchive").isValue() && isArchive());
+//        boolean needAction = (filter.getFilterSimpleByUIname("cbxNeedAction").isValue());// && isNeedaction());
+//        boolean lgbk = filter.getLgbk().equals(FILTER_VALUE_ALL_LGBK) ? true : filter.getLgbk().equals(getLgbk());
+        boolean lgbkMatches = true;
+        LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
 
         while (lgbkAndParent == null || lgbkAndParent.getLgbkParent() == null || lgbkAndParent.getLgbkItem() == null) {
             System.out.println(article.getValue() + ", new lgbk/hierarchy");
@@ -290,7 +290,7 @@ public class Product {
 //        boolean notUsed = filter.getFilterSimpleByUIname("cbxNotUsed").isValue() && summaryNotUsed;
 
         boolean matchChanges = false;
-        if (needAction) {
+       /* if (needAction) {
             if (!isNeedaction()) return false;
 
             ArrayList<String> changeItems = new ArrayList<>(Arrays.asList(CoreModule.getFilter().getChangeCode().split("\\,")));
@@ -302,12 +302,12 @@ public class Product {
                     matchChanges = true;
             }
 
-            if ((allRecords || price/* && (!summaryNotUsed || notUsed)*/ || archive /*|| !price && notUsed*/) && matchChanges && lgbk)
+            if ((allRecords || price*//* && (!summaryNotUsed || notUsed)*//* || archive *//*|| !price && notUsed*//*) && matchChanges && lgbk)
                 return true;
-        } else {
-            if ((allRecords || price /*&& (!summaryNotUsed || notUsed)*/ /*|| !price && notUsed*/ || archive) && lgbk)
-                return true;
-        }
+        } else {*/
+        if ((allRecords || priceMatches) && lgbkMatches)
+            return true;
+//        }
 
         return false;
     }

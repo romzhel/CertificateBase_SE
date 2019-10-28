@@ -13,6 +13,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import static ui_windows.main_window.filter_window.Filter.FILTER_VALUE_ALL_ITEMS;
+import static ui_windows.main_window.filter_window.Filter.FILTER_VALUE_ALL_LGBKS;
+
 public class ProductLgbk implements PriceListContentItem {
     public static final int ROOT_NODE = 0;
     public static final int GROUP_NODE = 1;
@@ -27,6 +30,9 @@ public class ProductLgbk implements PriceListContentItem {
     private boolean isNotUsed;
     private int nodeType = -1;
 
+    public ProductLgbk(String lgbk) {
+        this.lgbk = new SimpleStringProperty(lgbk);
+    }
 
     public ProductLgbk(String lgbk, String hierarchy) {
         this.lgbk = new SimpleStringProperty(lgbk);
@@ -86,7 +92,7 @@ public class ProductLgbk implements PriceListContentItem {
 
     public ProductLgbk(Product product) {
         lgbk = new SimpleStringProperty(product.getLgbk());
-        hierarchy= new SimpleStringProperty(product.getHierarchy());
+        hierarchy = new SimpleStringProperty(product.getHierarchy());
     }
 
     public void showInEditorWindow(AnchorPane root) {
@@ -135,6 +141,11 @@ public class ProductLgbk implements PriceListContentItem {
         } else {
             return description_en.getValue();
         }
+    }
+
+    public String getCombineDescription() {
+        return this.equals(FILTER_VALUE_ALL_LGBKS) ? FILTER_VALUE_ALL_ITEMS :
+                "[".concat(getLgbk()).concat("] ").concat(getDescriptionRuEn());
     }
 
     public boolean compare(ProductLgbk anotherInstance) {
@@ -239,10 +250,10 @@ public class ProductLgbk implements PriceListContentItem {
         this.nodeType = nodeType;
     }
 
-    @Override
+    /*@Override
     public String toString() {
         return id + ", " + lgbk.getValue() + ", " + hierarchy.getValue();
-    }
+    }*/
 
     @Override
     public PriceListContentTableItem getTableItem() {
