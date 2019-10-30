@@ -30,6 +30,7 @@ public class ConfigNormsWindowController implements Initializable {
     private RequirementTypesListViews requirementTypesListViews;
     //    private Product editedProduct;
     private MultiEditor multiEditor;
+    private int normsModeSaved;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -39,11 +40,11 @@ public class ConfigNormsWindowController implements Initializable {
         ArrayList<Product> alp = new ArrayList<>();
         if (multiEditor == null) {
             Product editedProduct = ProductEditorWindowActions.getEditedItem();
-            editedProduct.setNormsList(requirementTypesListViews.getProductNormsListForSave());
+            editedProduct.setNormsList(requirementTypesListViews.getProductNormsListForSave(editedProduct));
             alp.add(editedProduct);
         } else {
             for (Product product : multiEditor.getEditedItems()) {
-                product.setNormsList(requirementTypesListViews.getProductNormsListForSave());
+                product.setNormsList(requirementTypesListViews.getProductNormsListForSave(product));
             }
 
             alp.addAll(multiEditor.getEditedItems());
@@ -59,15 +60,26 @@ public class ConfigNormsWindowController implements Initializable {
             /*boolean isEqTypeFilter = ((ProductEditorWindowController) ProductEditorWindow.getLoader().getController()).rmiTypeFilter.isSelected();
             ProductEditorWindowActions.fillCertificateVerificationTable(isEqTypeFilter);*/
             CoreModule.getProducts().getTableView().refresh();
-            close();
+            closeWindow();
         }
 
         certificateVerificationTable.display(certificateVerificationTable.getCheckParameters());
     }
 
     public void close() {
-//        ConfigNormsWindow.getStage().close();
-        ((Stage)lvSelectedNorms.getScene().getWindow()).close();
+        if (multiEditor == null) {
+            ProductEditorWindowActions.getEditedItem().setNormsMode(normsModeSaved);
+        } else {
+            for (Product product : multiEditor.getEditedItems()) {
+                product.setNormsMode(normsModeSaved);
+            }
+        }
+
+        closeWindow();
+    }
+
+    public void closeWindow() {
+        ((Stage) lvSelectedNorms.getScene().getWindow()).close();
     }
 
     public void moveNorm() {
@@ -136,5 +148,9 @@ public class ConfigNormsWindowController implements Initializable {
 
     public void setCertificateVerificationTable(CertificateVerificationTable certificateVerificationTable) {
         this.certificateVerificationTable = certificateVerificationTable;
+    }
+
+    public void setNormsModeSaved(int normsModeSaved) {
+        this.normsModeSaved = normsModeSaved;
     }
 }

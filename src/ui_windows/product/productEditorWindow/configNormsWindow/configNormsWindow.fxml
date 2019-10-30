@@ -1,39 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="345.0"
-            prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ui_windows.product.productEditorWindow.configNormsWindow.ConfigNormsWindowController">
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="345.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.product.productEditorWindow.configNormsWindow.ConfigNormsWindowController">
     <children>
-        <ListView fx:id="lvAllNorms" layoutX="132.0" layoutY="66.0" prefHeight="220.0" prefWidth="200.0"/>
-        <ListView fx:id="lvSelectedNorms" layoutX="380.0" layoutY="66.0" prefHeight="220.0" prefWidth="200.0"/>
-        <Button fx:id="btnMoveSelected" layoutX="344.0" layoutY="88.0" mnemonicParsing="false" onAction="#moveNorm"
-                text="&gt;"/>
-        <Button fx:id="btnRemoveSelected" layoutX="344.0" layoutY="124.0" mnemonicParsing="false" onAction="#removeNorm"
-                text="&lt;"/>
-        <Button fx:id="btnRemoveAll" layoutX="340.0" layoutY="232.0" mnemonicParsing="false" onAction="#removeAllNorms"
-                text="&lt;&lt;"/>
-        <Button fx:id="btnMoveAll" layoutX="340.0" layoutY="196.0" mnemonicParsing="false" onAction="#moveAllNorms"
-                text="&gt;&gt;"/>
-        <Button fx:id="btnCancel" layoutX="351.0" layoutY="304.0" mnemonicParsing="false" onAction="#close"
-                prefHeight="25.0" prefWidth="137.0" text="Закрыть"/>
-        <Button fx:id="btnApply" layoutX="130.0" layoutY="304.0" mnemonicParsing="false" onAction="#apply"
-                prefHeight="25.0" prefWidth="137.0" text="Сохранить"/>
-        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="16.0" layoutY="100.0" prefHeight="17.0"
-               prefWidth="106.0" text="нормы" textAlignment="CENTER"/>
-        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="16.0" layoutY="67.0" prefHeight="17.0"
-               prefWidth="106.0" text="Список норм /" textAlignment="CENTER"/>
-        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="16.0" layoutY="84.0" prefHeight="17.0"
-               prefWidth="106.0" text="выбранные" textAlignment="CENTER"/>
-        <RadioButton fx:id="rbAddToGlobal" contentDisplay="CENTER" layoutX="133.0" layoutY="22.0"
-                     mnemonicParsing="false" prefHeight="17.0" prefWidth="218.0" selected="true"
-                     text="Дополнение глобальных настроек"/>
-        <RadioButton fx:id="rbInsteadGlobal" contentDisplay="CENTER" layoutX="379.0" layoutY="22.0"
-                     mnemonicParsing="false" prefHeight="17.0" prefWidth="200.0" text="Вместо глобальных настроек"/>
-        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="5.0" layoutY="22.0" prefHeight="17.0"
-               prefWidth="117.0" text="Совмещение норм" textAlignment="CENTER"/>
-        <Separator layoutX="10.0" layoutY="46.0" prefHeight="11.0" prefWidth="582.0"/>
+        <ListView fx:id="lvAllNorms" layoutX="132.0" layoutY="66.0" prefHeight="220.0" prefWidth="200.0" />
+        <ListView fx:id="lvSelectedNorms" layoutX="380.0" layoutY="66.0" prefHeight="220.0" prefWidth="200.0" />
+        <Button fx:id="btnMoveSelected" layoutX="344.0" layoutY="88.0" mnemonicParsing="false" onAction="#moveNorm" text="&gt;" />
+        <Button fx:id="btnRemoveSelected" layoutX="344.0" layoutY="124.0" mnemonicParsing="false" onAction="#removeNorm" text="&lt;" />
+        <Button fx:id="btnRemoveAll" layoutX="340.0" layoutY="232.0" mnemonicParsing="false" onAction="#removeAllNorms" text="&lt;&lt;" />
+        <Button fx:id="btnMoveAll" layoutX="340.0" layoutY="196.0" mnemonicParsing="false" onAction="#moveAllNorms" text="&gt;&gt;" />
+        <Button fx:id="btnCancel" layoutX="351.0" layoutY="304.0" mnemonicParsing="false" onAction="#close" prefHeight="25.0" prefWidth="137.0" text="Закрыть" />
+        <Button fx:id="btnApply" layoutX="130.0" layoutY="304.0" mnemonicParsing="false" onAction="#apply" prefHeight="25.0" prefWidth="137.0" text="Сохранить" />
+        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="16.0" layoutY="100.0" prefHeight="17.0" prefWidth="106.0" text="нормы" textAlignment="CENTER" />
+        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="16.0" layoutY="67.0" prefHeight="17.0" prefWidth="106.0" text="Список норм /" textAlignment="CENTER" />
+        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="16.0" layoutY="84.0" prefHeight="17.0" prefWidth="106.0" text="выбранные" textAlignment="CENTER" />
+        <RadioButton fx:id="rbAddToGlobal" contentDisplay="CENTER" layoutX="133.0" layoutY="22.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="218.0" selected="true" text="Дополнение глобальных настроек" />
+        <RadioButton fx:id="rbInsteadGlobal" contentDisplay="CENTER" layoutX="379.0" layoutY="22.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="200.0" text="Вместо глобальных настроек" />
+        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="5.0" layoutY="22.0" prefHeight="17.0" prefWidth="117.0" text="Совмещение норм" textAlignment="CENTER" />
+        <Separator layoutX="10.0" layoutY="46.0" prefHeight="11.0" prefWidth="582.0" />
     </children>
 </AnchorPane>

@@ -206,12 +206,12 @@ public class RequirementTypesListViews {
         listView.getItems().addAll(sortedList);
     }
 
-    public NormsList getProductNormsListForSave() {
+    public NormsList getProductNormsListForSave(Product product) {
         ArrayList<String> onlyProduct = new ArrayList<>();
         onlyProduct.addAll(lvSelectedNorms.getItems());
 
 //        if (product.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
-        if (normsModeAdd) {
+        if (product.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
             onlyProduct.removeAll(selectedGlobalNorms);
         }
 

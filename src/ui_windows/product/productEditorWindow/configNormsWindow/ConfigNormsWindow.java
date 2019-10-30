@@ -28,6 +28,7 @@ public class ConfigNormsWindow extends OrdinalWindow {
 
         if (multiEditor == null) {
             Product editedProduct = ProductEditorWindowActions.getEditedItem();
+            cnwc.setNormsModeSaved(editedProduct.getNormsMode());
 
             if (editedProduct.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
                 cnwc.rbAddToGlobal.setSelected(true);
@@ -44,6 +45,7 @@ public class ConfigNormsWindow extends OrdinalWindow {
         } else {
             multiEditor.compare("normsMode", cnwc.rbInsteadGlobal, MultiEditor.CAN_NOT_BE_SAVED);
             multiEditor.compare("normsList", cnwc.lvSelectedNorms, MultiEditor.CAN_NOT_BE_SAVED);
+            cnwc.setNormsModeSaved(multiEditor.getEditedItems().get(0).getNormsMode());
 
             if (multiEditor.getFieldAndControl("normsMode").isAllTheSame() &&
                     multiEditor.getEditedItems().get(0).getNormsMode() == NormsList.ADD_TO_GLOBAL) {
