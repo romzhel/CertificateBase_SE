@@ -2,8 +2,13 @@ package ui_windows.main_window.filter_window;
 
 import core.CoreModule;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.ToggleButton;
+import ui_windows.main_window.MainTableContextMenuCustom;
+import ui_windows.main_window.MainTableContextMenuData;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
@@ -15,27 +20,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeSet;
 
-import static ui_windows.main_window.filter_window.FilterParameters.*;
-
 public class Filter {
     public static final String FILTER_VALUE_ALL_ITEMS = "--- Все ---";
     public static final ProductFamily FILTER_VALUE_ALL_FAMILIES = new ProductFamily(FILTER_VALUE_ALL_ITEMS);
     public static final ProductLgbk FILTER_VALUE_ALL_LGBKS = new ProductLgbk(FILTER_VALUE_ALL_ITEMS);
-    public static final FilterParameter FILTER_ALL_ITEMS = new FilterParameter(true);
-    public static final FilterParameter FILTER_PRICE_ITEMS = new FilterParameter(false);
-    public static final FilterParameter FILTER_FAMILY = new FilterParameter(FILTER_VALUE_ALL_FAMILIES);
-    public static final FilterParameter FILTER_LGBK = new FilterParameter(FILTER_VALUE_ALL_LGBKS);
+    public static final FilterParameter FILTER_ALL_ITEMS = new FilterParameter<>(false);
+    public static final FilterParameter FILTER_PRICE_ITEMS = new FilterParameter<>(true);
+    public static final FilterParameter FILTER_FAMILY = new FilterParameter<>(FILTER_VALUE_ALL_FAMILIES);
+    public static final FilterParameter FILTER_LGBK = new FilterParameter<>(FILTER_VALUE_ALL_LGBKS);
 
     public static final String ALL_RECORDS = "--- Все ---";
-    private ProductFamily productFamily = FILTER_VALUE_ALL_FAMILIES;
-    private ProductLgbk lgbk = FILTER_VALUE_ALL_LGBKS;
     private String changeCodes[];
     private String changeTexts[];
     private String changeCode = "";
     private FilterWindowController controller;
+    private FilterParameters savedFilterParameters;
 
     public Filter() {
-        lgbk = FILTER_VALUE_ALL_LGBKS;
+        savedFilterParameters = new FilterParameters(FILTER_FAMILY, FILTER_LGBK, FILTER_ALL_ITEMS, FILTER_PRICE_ITEMS, "");
 
         changeCodes = new String[]{"", "new", "dchain", "country", "article", "hierarchy, lgbk", "endofservice", "dangerous"};
         changeTexts = new String[]{"--- Любое ---", "Новая позиция", "Доступность для заказа", "Страна", "Артикул", "Иерархия",
@@ -47,14 +49,6 @@ public class Filter {
         FILTER_PRICE_ITEMS.displayValue(controller.cbxPrice);
         FILTER_FAMILY.displayValue(controller.cbFamily);
         FILTER_LGBK.displayValue(controller.cbLgbk);
-    }
-
-    public void setProductFamily(ProductFamily productFamily) {
-        this.productFamily = productFamily;
-    }
-
-    public ProductFamily getProductFamily() {
-        return productFamily;
     }
 
     public ArrayList<String> getChangeTexts() {
@@ -82,7 +76,7 @@ public class Filter {
         find = find.replaceAll("\\.", ".");
 
         ArrayList<Product> result = new ArrayList<>();
-        TreeSet<ProductLgbk> accessibleLgbks = new TreeSet<>((o1, o2) -> o1.getLgbk().compareTo(o2.getLgbk()));
+//        TreeSet<ProductLgbk> accessibleLgbks = new TreeSet<>((o1, o2) -> o1.getLgbk().compareTo(o2.getLgbk()));
 
         boolean articleMatch = false;
         boolean materialMatch = false;
@@ -100,6 +94,7 @@ public class Filter {
                 p.getDescriptionen().toLowerCase().matches(".*(" + find.toLowerCase() + ").*")*/;
             filterMatch = p.matchFilter(CoreModule.getFilter());
 
+            ProductFamily productFamily = (ProductFamily) FILTER_FAMILY.getValue();
             if (productFamily.equals(FILTER_VALUE_ALL_FAMILIES) || productFamily == null) {
                 familyMatch = true;
             } else if (productFamily != null) {
@@ -114,18 +109,19 @@ public class Filter {
                     }
                 }
 
-                familyMatch = pf != null && pf.equals(CoreModule.getFilter().getProductFamily());
+                familyMatch = pf != null && pf.equals(productFamily);
             }
 
-            if (lgbk.equals(FILTER_VALUE_ALL_LGBKS) || lgbk == null) {
+            ProductLgbk productLgbk = (ProductLgbk) FILTER_LGBK.getValue();
+            if (productLgbk.equals(FILTER_VALUE_ALL_LGBKS) || productLgbk == null) {
                 lgbkMatch = true;
-            } else if (lgbk != null) {
-                lgbkMatch = lgbk.getLgbk().equals(p.getLgbk());
+            } else if (productLgbk != null) {
+                lgbkMatch = productLgbk.getLgbk().equals(p.getLgbk());
             }
 
             if (familyMatch && lgbkMatch && (filterMatch && (articleMatch || materialMatch || descriptionMatch))) {
                 result.add(p);
-                accessibleLgbks.add(CoreModule.getProductLgbks().getByLgbkName(p.getLgbk()));
+//                accessibleLgbks.add(CoreModule.getProductLgbks().getByLgbkName(p.getLgbk()));
             }
         }
 
@@ -138,20 +134,34 @@ public class Filter {
         });
     }
 
+    public void switchToRequestItems() {
+        savedFilterParameters = new FilterParameters(FILTER_FAMILY, FILTER_LGBK, FILTER_ALL_ITEMS, FILTER_PRICE_ITEMS,
+                MainWindow.getSearchBox().getText());
+        FILTER_FAMILY.setValue(FILTER_VALUE_ALL_FAMILIES);
+        FILTER_LGBK.setValue(FILTER_VALUE_ALL_LGBKS);
+        FILTER_ALL_ITEMS.setValue(true);
+        FILTER_PRICE_ITEMS.setValue(false);
+        MainWindow.getSearchBox().setText("");
+        CoreModule.getProducts().getTableView().setContextMenu(new MainTableContextMenuCustom());
+        apply();
+    }
+
+    public void switchToDataItems() {
+        FILTER_FAMILY.setValue(savedFilterParameters.getProductFamily());
+        FILTER_LGBK.setValue(savedFilterParameters.getProductLgbk());
+        FILTER_ALL_ITEMS.setValue(savedFilterParameters.isAllItems());
+        FILTER_PRICE_ITEMS.setValue(savedFilterParameters.isPriceItems());
+        MainWindow.getSearchBox().setText(savedFilterParameters.getSearchBoxText());
+        CoreModule.getProducts().getTableView().setContextMenu(new MainTableContextMenuData());
+        apply();
+    }
+
     public String getChangeCode() {
         return changeCode;
     }
 
     public void setChangeCode(String changeText) {
         changeCode = getChangeCodeByText(changeText);
-    }
-
-    public ProductLgbk getLgbk() {
-        return lgbk;
-    }
-
-    public void setLgbk(ProductLgbk lgbk) {
-        this.lgbk = lgbk;
     }
 
     public interface TableRenewedListener {

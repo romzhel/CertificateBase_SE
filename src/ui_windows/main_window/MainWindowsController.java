@@ -6,6 +6,7 @@ import files.price_to_excel.ExportPriceListToExcel_SE;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import ui_windows.login_window.LoginWindow;
 import ui_windows.main_window.file_import_window.FileImport;
 import ui_windows.main_window.filter_window.FilterWindow;
@@ -19,38 +20,30 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import static ui_windows.main_window.DataSelectorMenu.DATA_ALL_ITEMS;
-
 public class MainWindowsController implements Initializable {
     private DataSelectorMenu dataSelectorMenu;
     boolean clearOldResult;
 
     @FXML
     TableView<Product> tvTable;
-
     @FXML
     Label lbRecordCount;
-
     @FXML
     ProgressBar pbExecuted;
-
     @FXML
     MenuBar mnuBar;
-
     @FXML
     Menu miFile;
-
     @FXML
     MenuItem miOptions;
-
     @FXML
     public Menu miReports;
-
     @FXML
     public Menu mPriceList;
-
     @FXML
     public MenuItem mniOpenNow;
+    @FXML
+    public ImageView ivFilter;
 
     private FileImport fileImport;
     private MainTable mainTable;
@@ -89,13 +82,15 @@ public class MainWindowsController implements Initializable {
         new OptionsWindow();
     }
 
-    public void addProduct() {}
+    public void addProduct() {
+    }
 
     public void editProduct() {
         mainTable.displayEditorWindow();
     }
 
-    public void deleteProduct() {}
+    public void deleteProduct() {
+    }
 
     public void displayInTable(ArrayList<Product> products) {
         tvTable.getItems().clear();

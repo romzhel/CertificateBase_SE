@@ -6,9 +6,9 @@ import javafx.scene.control.*;
 public class DataSelectorMenu extends Menu {
     private Menu menu;
     private static final String SPACE = "     ";
-    public static final RadioMenuItem DATA_ALL_ITEMS = new RadioMenuItem(SPACE + "Все позиции" + SPACE);
-    public static final RadioMenuItem DATA_CUSTOM_SELECTION = new RadioMenuItem(SPACE + "Запрос" + SPACE);
-    public static final RadioMenuItem DATA_LAST_IMPORT_RESULT = new RadioMenuItem(SPACE + "Результаты последнего импорта" + SPACE);
+    public static final RadioMenuItem MENU_DATA_ALL_ITEMS = new RadioMenuItem(SPACE + "Все позиции" + SPACE);
+    public static final RadioMenuItem MENU_DATA_CUSTOM_SELECTION = new RadioMenuItem(SPACE + "Запрос" + SPACE);
+    public static final RadioMenuItem MENU_DATA_LAST_IMPORT_RESULT = new RadioMenuItem(SPACE + "Результаты последнего импорта" + SPACE);
 
     public DataSelectorMenu(Menu menu) {
         this.menu = menu;
@@ -20,11 +20,12 @@ public class DataSelectorMenu extends Menu {
     private void init(Menu menu) {
         ToggleGroup dataSelector = new ToggleGroup();
 
-        DATA_ALL_ITEMS.setOnAction(event -> selectDataAllItems());
-        DATA_CUSTOM_SELECTION.setOnAction(event -> selectDataCustomSelection());
+        MENU_DATA_ALL_ITEMS.setOnAction(event -> selectDataAllItems());
+        MENU_DATA_CUSTOM_SELECTION.setOnAction(event -> selectDataCustomSelection());
+        MENU_DATA_LAST_IMPORT_RESULT.setOnAction(event -> selectLastImportResult());
 
-        menu.getItems().addAll(DATA_ALL_ITEMS, new SeparatorMenuItem(), DATA_CUSTOM_SELECTION, new SeparatorMenuItem(),
-                DATA_LAST_IMPORT_RESULT);
+        menu.getItems().addAll(MENU_DATA_ALL_ITEMS, new SeparatorMenuItem(), MENU_DATA_CUSTOM_SELECTION, new SeparatorMenuItem(),
+                MENU_DATA_LAST_IMPORT_RESULT);
 
         for (MenuItem mi : menu.getItems()) {
             if (mi instanceof RadioMenuItem) {
@@ -32,7 +33,7 @@ public class DataSelectorMenu extends Menu {
             }
         }
 
-        selectMenuItem(DATA_ALL_ITEMS);
+        selectMenuItem(MENU_DATA_ALL_ITEMS);
     }
 
     public void selectMenuItem(RadioMenuItem radioMenuItem) {
@@ -45,14 +46,20 @@ public class DataSelectorMenu extends Menu {
 
     public void selectDataAllItems() {
         CoreModule.setCurrentItems(CoreModule.getProducts().getItems());
-        CoreModule.getFilter().apply();
-        selectMenuItem(DATA_ALL_ITEMS);
+        CoreModule.getFilter().switchToDataItems();
+        selectMenuItem(MENU_DATA_ALL_ITEMS);
     }
 
     public void selectDataCustomSelection() {
         CoreModule.setCurrentItems(CoreModule.getCustomItems());
-        CoreModule.getFilter().apply();
-        selectMenuItem(DATA_CUSTOM_SELECTION);
+        CoreModule.getFilter().switchToRequestItems();
+        selectMenuItem(MENU_DATA_CUSTOM_SELECTION);
+    }
+
+    public void selectLastImportResult() {
+        CoreModule.setCurrentItems(CoreModule.getProducts().getChangedPositions());
+        CoreModule.getFilter().switchToDataItems();
+        selectMenuItem(MENU_DATA_LAST_IMPORT_RESULT);
     }
 
     public void reportNoCertificates() {
@@ -158,9 +165,5 @@ public class DataSelectorMenu extends Menu {
 
     }
 
-    public void selectLastImportResult() {
-        CoreModule.setCurrentItems(CoreModule.getProducts().getChangedPositions());
-        CoreModule.getFilter().apply();
-        selectMenuItem(DATA_LAST_IMPORT_RESULT);
-    }
+
 }

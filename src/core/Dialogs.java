@@ -4,6 +4,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -87,12 +88,16 @@ public class Dialogs {
     }
 
 
-    public static void showMessage(String title, String message) {
+    public static void showMessage(String title, String message, double... size) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.initModality(Modality.APPLICATION_MODAL);
+
+
+        if (size.length > 0) alert.getDialogPane().setMinWidth(size[0]);
+        if (size.length > 1) alert.getDialogPane().setMinHeight(size[1]);
 
         alert.showAndWait();
     }

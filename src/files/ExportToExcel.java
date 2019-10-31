@@ -55,7 +55,7 @@ public class ExportToExcel {
             cell.setCellValue(rr.getProduct().getArticle());
 
             cell = row.createCell(3, CellType.STRING);
-            cell.setCellValue(rr.getProduct().getDescriptionru());
+            cell.setCellValue(rr.getProduct().getDescriptionRuEn());
 
             for (int i = 0; i < rr.getFiles().size(); i++) {
                 cell = row.createCell(4 + i, CellType.STRING);

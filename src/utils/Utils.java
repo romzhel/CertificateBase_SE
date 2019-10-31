@@ -400,7 +400,8 @@ public class Utils {
             for (File file : filesForCopy) {
                 filesName += " - " + file.getName() + "\n";
             }
-            Dialogs.showMessage("Буфер обмена", "Следующие файлы были вставлены в буфер обмена:\n" + filesName);
+            Dialogs.showMessage("Копирование в буфер обмена",
+                    "Следующие файлы были вставлены в буфер обмена:\n" + filesName, 600);
         } else {
             Dialogs.showMessage("Буфер обмена", "Нет подходящих файлов для копирования в буфер обмена.");
         }

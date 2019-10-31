@@ -13,7 +13,6 @@ public class FilterWindow extends OrdinalWindow {
                 null, "filterWindow.fxml", "Настройки фильтра отображения");
 
         FilterWindowController controller = (FilterWindowController) loader.getController();
-//        CoreModule.getFilter().setController(controller);
         CoreModule.getFilter().displayInUI(controller);
 
         stage.show();

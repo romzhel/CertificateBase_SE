@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
@@ -43,24 +44,16 @@
                 </Menu>
             </menus>
         </MenuBar>
-        <TableView fx:id="tvTable" layoutX="26.0" layoutY="34.0" prefHeight="513.0" prefWidth="1180.0" stylesheets="@../../css/strikethrough.css" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="30.0">
-            <contextMenu>
-                <ContextMenu>
-                    <items>
-                        <MenuItem fx:id="mniAdd" disable="true" mnemonicParsing="false" onAction="#addProduct" text="     Добавить     " />
-                        <MenuItem fx:id="mniEdit" mnemonicParsing="false" onAction="#editProduct" text="     Редактировать     " />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem disable="true" mnemonicParsing="false" text="     В архив     " />
-                        <MenuItem disable="true" mnemonicParsing="false" text="     Из архива     " />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="mniDelete" disable="true" mnemonicParsing="false" onAction="#deleteProduct" text="     Удалить     " />
-                    </items>
-                </ContextMenu>
-            </contextMenu></TableView>
+        <TableView fx:id="tvTable" layoutX="26.0" layoutY="34.0" prefHeight="513.0" prefWidth="1180.0" stylesheets="@../../css/strikethrough.css" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="30.0" />
         <Label fx:id="lSearch" alignment="CENTER_RIGHT" layoutX="96.0" layoutY="578.0" prefHeight="17.0" prefWidth="53.0" text="Поиск" AnchorPane.bottomAnchor="42.0" AnchorPane.leftAnchor="96.0" />
         <Label layoutX="989.0" layoutY="578.0" text="Найдено записей:" AnchorPane.bottomAnchor="42.0" AnchorPane.rightAnchor="112.0" />
         <Label fx:id="lbRecordCount" layoutX="1092.0" layoutY="578.0" text="ХХХХХХХ" AnchorPane.bottomAnchor="42.0" AnchorPane.rightAnchor="58.0" />
       <Pane layoutY="770.0" prefHeight="25.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
       <ProgressBar fx:id="pbExecuted" layoutX="993.0" layoutY="5.0" prefWidth="200.0" progress="0.0" visible="false" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+      <ImageView fx:id="ivFilter" fitHeight="25.0" fitWidth="50.0" layoutX="620.0" layoutY="586.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="39.0" AnchorPane.leftAnchor="620.0">
+         <image>
+            <Image url="@../../../resources/images/filter.png" />
+         </image>
+      </ImageView>
     </children>
 </AnchorPane>

@@ -63,11 +63,11 @@ public class FilterWindowController implements Initializable {
             }
         });
 
-        syncLgbkSelector(CoreModule.getFilter().getProductFamily());
+        syncLgbkSelector((ProductFamily) FILTER_FAMILY.getValue());
 
         cbLgbk.setOnAction(event -> {
             if (cbLgbk.getValue() != null) {
-                CoreModule.getFilter().setLgbk(cbLgbk.getValue());
+                FILTER_LGBK.setValue(cbLgbk.getValue());
                 applyFilter();
             }
         });
@@ -87,12 +87,12 @@ public class FilterWindowController implements Initializable {
         cbLgbk.getItems().addAll(lgbkGroups);
         cbLgbk.setVisibleRowCount(Math.min(cbLgbk.getItems().size() + 1, SELECTOR_LGBK_ROWS_MAX));
 
-        ProductLgbk selectedItem = CoreModule.getFilter().getLgbk();
+        ProductLgbk selectedItem = (ProductLgbk) FILTER_LGBK.getValue();
         if (cbLgbk.getItems().indexOf(selectedItem) >= 0) {
             cbLgbk.getSelectionModel().select(selectedItem);
-        } else if (!CoreModule.getFilter().getLgbk().equals(FILTER_VALUE_ALL_LGBKS)) {
+        } else {
             cbLgbk.getSelectionModel().select(0);
-            CoreModule.getFilter().setLgbk(FILTER_VALUE_ALL_LGBKS);
+            FILTER_LGBK.setValue(FILTER_VALUE_ALL_LGBKS);
         }
     }
 
@@ -115,14 +115,15 @@ public class FilterWindowController implements Initializable {
         families.addAll(CoreModule.getProductFamilies().getItems());
         cbFamily.getItems().addAll(families);
 
-        if (CoreModule.getFilter().getProductFamily() != null) {
-            cbFamily.setValue(CoreModule.getFilter().getProductFamily());
+        ProductFamily productFamily = (ProductFamily) FILTER_FAMILY.getValue();
+        if (productFamily != null) {
+            cbFamily.setValue(productFamily);
         } else {
             cbFamily.setValue(FILTER_VALUE_ALL_FAMILIES);
         }
 
         cbFamily.setOnAction(event -> {
-            CoreModule.getFilter().setProductFamily(cbFamily.getValue());
+            FILTER_FAMILY.setValue(cbFamily.getValue());
             syncLgbkSelector(cbFamily.getValue());
             applyFilter();
         });

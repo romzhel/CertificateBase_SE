@@ -1,6 +1,7 @@
 package ui_windows.request;
 
 import core.CoreModule;
+import core.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -11,6 +12,7 @@ import ui_windows.product.Product;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 
 public class RequestWindowController implements Initializable {
@@ -27,7 +29,7 @@ public class RequestWindowController implements Initializable {
 
     public void actionRequest() {
         ArrayList<Product> results = new ArrayList<>();
-        String linesNotFound = "";
+        String notFoundItems = "";
 
         String[] lines = taData.getText().split("\n");
         String[] words;
@@ -40,26 +42,28 @@ public class RequestWindowController implements Initializable {
                 if (!word.matches(".*\\s.*")) {
                     product = CoreModule.getProducts().getItemByMaterialOrArticle(word);
 
-                    if (product != null) {
+                    if (product == null) {
+                        notFoundItems += "- " + line + "\n";
+                    } else {
                         results.add(product);
-
                         break;
                     }
                 }
             }
         }
 
-        ((Stage) btnApply.getScene().getWindow()).close();
-
-        CoreModule.setCustomItems(results);
-        CoreModule.setCurrentItems(results);
-        CoreModule.getFilter().apply();
+        CoreModule.getCustomItems().addAll(results);
+        CoreModule.setCurrentItems(CoreModule.getCustomItems());
         MainWindow.getController().getDataSelectorMenu().selectDataCustomSelection();
+
+        if (!notFoundItems.isEmpty()) {
+            Dialogs.showMessage("Создание пользовательского списка", "Следующие позиции не были найдены:\n" + notFoundItems);
+        }
+
+        ((Stage) btnApply.getScene().getWindow()).close();
     }
 
     public void actionRequestCertificatesCancel() {
         RequestWindow.close();
     }
-
-
 }

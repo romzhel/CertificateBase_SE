@@ -28,6 +28,7 @@ import ui_windows.product.Products;
 import utils.Utils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.TreeSet;
 
 public class CoreModule {
@@ -50,8 +51,8 @@ public class CoreModule {
     private static Filter filter;
     private static PriceLists priceLists;
 
-    private static ArrayList<Product> currentItems;
-    private static ArrayList<Product> customItems = new ArrayList<>();
+    private static ArrayList<Product> currentItems = new ArrayList<>();
+    private static HashSet<Product> customItems = new HashSet<>();
 
     public static boolean init() {
         folders = new Folders();
@@ -81,7 +82,7 @@ public class CoreModule {
 
         filter = new Filter();
         products = new Products().getFromDB();
-        currentItems = products.getItems();
+        currentItems.addAll(products.getItems());
 
         productLgbkGroups = new ProductLgbkGroups().get();
         priceLists = new PriceLists().getFromDB();
@@ -189,8 +190,14 @@ public class CoreModule {
         return currentItems;
     }
 
-    public static synchronized void setCurrentItems(ArrayList<Product> currentItems) {
-        CoreModule.currentItems = currentItems;
+    public static synchronized void setCurrentItems(ArrayList<Product> items) {
+        CoreModule.currentItems.clear();
+        CoreModule.currentItems.addAll(items);
+    }
+
+    public static synchronized void setCurrentItems(HashSet<Product> items) {
+        CoreModule.currentItems.clear();
+        CoreModule.currentItems.addAll(items);
     }
 
     public static ProductLgbkGroups getProductLgbkGroups() {
@@ -201,11 +208,11 @@ public class CoreModule {
         return priceLists;
     }
 
-    public static ArrayList<Product> getCustomItems() {
+    public static HashSet<Product> getCustomItems() {
         return customItems;
     }
 
-    public static void setCustomItems(ArrayList<Product> customItems) {
+    public static void setCustomItems(HashSet<Product> customItems) {
         CoreModule.customItems = customItems;
     }
 }

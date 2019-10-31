@@ -49,4 +49,8 @@ public class SearchBox extends Region {
     public String getText(){
         return textBox.getText();
     }
+
+    public void setText(String text) {
+        textBox.setText(text);
+    }
 }
