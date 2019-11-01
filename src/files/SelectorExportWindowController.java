@@ -34,8 +34,11 @@ public class SelectorExportWindowController implements Initializable {
     }
 
     private void initButtons() {
-        btnOk.setOnAction(event -> new ExportToExcel(columnsSelector.getSelectedItems(), MainWindow.getMainTable().getItemsForReport()));
-        btnOk.setOnAction(event -> ((Stage)btnOk.getScene().getWindow()).close());
+        btnOk.setOnAction(event -> {
+            new ExportToExcel(columnsSelector.getSelectedItems(), MainWindow.getMainTable().getItemsForReport());
+            ((Stage)btnOk.getScene().getWindow()).close();
+        });
+        btnCancel.setOnAction(event -> ((Stage)btnOk.getScene().getWindow()).close());
     }
 
     private void initTwinListsView() {
@@ -84,5 +87,6 @@ public class SelectorExportWindowController implements Initializable {
                 return result;
             }
         });
+        columnsSelector.setSelectedItems(columns);
     }
 }

@@ -1,7 +1,11 @@
 package ui_windows.product.data;
 
+import core.CoreModule;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import ui_windows.options_window.families_editor.ProductFamily;
+import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
+import ui_windows.options_window.product_lgbk.ProductLgbk;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +49,13 @@ public class ProductData {
 
             return cell;
         });
+        DATA_ORDER_NUMBER.setExcelCellValueFactory(param -> {
+            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+            cell.setCellValue(param.getProduct().getMaterial());
+            cell.setCellStyle(CELL_ALIGN_LEFT);
+
+            return cell;
+        });
         DATA_ARTICLE.setExcelCellValueFactory(param -> {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
             cell.setCellValue(param.getProduct().getArticle());
@@ -82,7 +93,7 @@ public class ProductData {
                     cell.setCellValue(param.getProduct().getLocalPrice());
                 }
                 cell.setCellStyle(CELL_CURRENCY_FORMAT);
-            } else {
+            } else if (param.getPriceListSheet() != null) {
                 cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
                 if (param.getPriceListSheet().getLanguage() == LANG_RU) {
                     cell.setCellValue("По запросу");
@@ -114,9 +125,74 @@ public class ProductData {
 
             return cell;
         });
+        DATA_HIERARCHY.setExcelCellValueFactory(param -> {
+            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+            cell.setCellValue(param.getProduct().getHierarchy());
+            cell.setCellStyle(CELL_ALIGN_CENTER);
+
+            return cell;
+        });
         DATA_WEIGHT.setExcelCellValueFactory(param -> {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
             cell.setCellValue(param.getProduct().getWeight());
+            cell.setCellStyle(CELL_ALIGN_RIGHT);
+
+            return cell;
+        });
+        DATA_COUNTRY.setExcelCellValueFactory(param -> {
+            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+            cell.setCellValue(param.getProduct().getCountry());
+            cell.setCellStyle(CELL_ALIGN_RIGHT);
+
+            return cell;
+        });
+        DATA_SERVICE_END.setExcelCellValueFactory(param -> {
+            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+            cell.setCellValue(param.getProduct().getEndofservice());
+            cell.setCellStyle(CELL_ALIGN_RIGHT);
+
+            return cell;
+        });
+        DATA_DCHAIN.setExcelCellValueFactory(param -> {
+            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+            cell.setCellValue(param.getProduct().getDchain());
+            cell.setCellStyle(CELL_ALIGN_RIGHT);
+
+            return cell;
+        });
+        DATA_DCHAIN_COMMENT.setExcelCellValueFactory(param -> {
+            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+            OrderAccessibility oa = CoreModule.getOrdersAccessibility().getOrderAccessibilityByStatusCode(
+                    param.getProduct().getDchain());
+            String desc = oa.getDescriptionRu().isEmpty() ? oa.getDescriptionEn() : oa.getDescriptionRu();
+            cell.setCellValue(desc);
+            cell.setCellStyle(CELL_ALIGN_RIGHT);
+
+            return cell;
+        });
+        DATA_PACKSIZE.setExcelCellValueFactory(param -> {
+            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+            cell.setCellValue(param.getProduct().getPacketSize());
+            cell.setCellStyle(CELL_ALIGN_RIGHT);
+
+            return cell;
+        });
+        DATA_FAMILY.setExcelCellValueFactory(param -> {
+            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+            int prodFamId = param.getProduct().getFamily();
+            int calcFamId = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(param.getProduct()));
+            int famId = prodFamId > 0 ? prodFamId : calcFamId;
+            ProductFamily pf = CoreModule.getProductFamilies().getFamilyById(famId);
+            if (pf != null) {
+                cell.setCellValue(pf.getName());
+                cell.setCellStyle(CELL_ALIGN_RIGHT);
+            }
+
+            return cell;
+        });
+        DATA_IS_IN_PRICE.setExcelCellValueFactory(param -> {
+            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+            cell.setCellValue(param.getProduct().isPrice());
             cell.setCellStyle(CELL_ALIGN_RIGHT);
 
             return cell;

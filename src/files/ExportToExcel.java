@@ -3,16 +3,11 @@ package files;
 import core.CoreModule;
 import core.Dialogs;
 import org.apache.poi.common.usermodel.HyperlinkType;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.xssf.usermodel.*;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.CertificateCheckingResult;
 import ui_windows.product.Product;
@@ -28,18 +23,18 @@ import java.util.ArrayList;
 
 public class ExportToExcel {
     private File file;
-    private HSSFWorkbook workbook;
+    private Workbook workbook;
 
     public ExportToExcel(ArrayList<CertificateRequestResult> items) {
         workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("Сертификаты");
+        HSSFSheet sheet = (HSSFSheet) workbook.createSheet("Сертификаты");
         String[] titles = new String[]{"№ п/п", "Заказной номер", "Наименование", "Описание"};
         file = null;
 
         int rowNum = 0;
-        Cell cell;
-        Row row;
-        HSSFCellStyle cellStyle = workbook.createCellStyle();
+        HSSFCell cell;
+        HSSFRow row;
+        HSSFCellStyle cellStyle = (HSSFCellStyle) workbook.createCellStyle();
         cellStyle.setAlignment(HorizontalAlignment.CENTER);
         int addColumns = 0;
 
@@ -67,7 +62,8 @@ public class ExportToExcel {
                 cell = row.createCell(4 + i, CellType.STRING);
                 cell.setCellValue(rr.getFiles().get(i).getName());
                 final Hyperlink link = workbook.getCreationHelper().createHyperlink(HyperlinkType.URL);
-                link.setAddress(rr.getFiles().get(i).getName());
+                String fgh = rr.getFiles().get(i).getName();
+                link.setAddress(fgh);
                 cell.setHyperlink(link);
                 cell.setCellStyle(getHyperLinkStyle());
 
@@ -90,8 +86,8 @@ public class ExportToExcel {
     }
 
     public ExportToExcel(CertificateCheckingResult certCheckResult) {
-        workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("Сертификаты с несоответствиями");
+       /* workbook = new XSSFWorkbook();
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Сертификаты с несоответствиями");
         String[] titles = new String[]{"Сертификат", "Заказной номер", "Наименование", "Описание", "Поставки",
                 "Окончание продаж"};
         file = null;
@@ -99,7 +95,7 @@ public class ExportToExcel {
         int rowNum = 0;
         Cell cell;
         Row row;
-        HSSFCellStyle cellStyle = workbook.createCellStyle();
+        XSSFCellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setAlignment(HorizontalAlignment.CENTER);
 
         //fill data
@@ -177,12 +173,12 @@ public class ExportToExcel {
         sheet.setColumnWidth(0, 5000);
 
         //output to file
-        saveToExcelFile();
+        saveToExcelFile();*/
     }
 
     public ExportToExcel(ArrayList<DataItem> columns, ArrayList<Product> items) {
-        XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
-        XSSFSheet xssfSheet = xssfWorkbook.createSheet("Отчёт");
+        workbook = new XSSFWorkbook();
+        XSSFSheet xssfSheet = (XSSFSheet) workbook.createSheet("Отчёт");
 
         int rowIndex = 0;
         XSSFRow xssfRow = xssfSheet.createRow(rowIndex++);
@@ -192,7 +188,9 @@ public class ExportToExcel {
         for (DataItem column : columns) {
             xssfCell = xssfRow.createCell(colIndex++, CellType.STRING);
             xssfCell.setCellValue(column.getDisplayingName());
+            xssfSheet.autoSizeColumn(colIndex - 1);
         }
+
 
         for (Product product : items) {
             xssfRow = xssfSheet.createRow(rowIndex++);
@@ -202,34 +200,37 @@ public class ExportToExcel {
                 column.createXssfCell(product, xssfRow, colIndex++, null);
             }
         }
+
+        saveToExcelFile();
+        openFile();
     }
 
     public File getFile() {
         return file;
     }
 
-    private HSSFCellStyle getHyperLinkStyle() {
-        HSSFCellStyle style = workbook.createCellStyle();
-        HSSFFont font = workbook.createFont();
-        font.setUnderline(HSSFFont.U_SINGLE);
-        font.setColor(HSSFColor.BLUE.index);
+    private CellStyle getHyperLinkStyle() {
+        CellStyle style = workbook.createCellStyle();
+       Font font = workbook.createFont();
+        font.setUnderline(Font.U_SINGLE);
+        font.setColor(IndexedColors.BLUE.index);
         style.setFont(font);
 
         return style;
     }
-
-    private HSSFCellStyle getBoldStyle() {
-        HSSFCellStyle style = workbook.createCellStyle();
-        HSSFFont font = workbook.createFont();
+/*
+    private CellStyle getBoldStyle() {
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
         font.setBold(true);
         style.setFont(font);
 
         return style;
     }
 
-    private HSSFCellStyle getBoldCenterStyle() {
-        HSSFCellStyle style = workbook.createCellStyle();
-        HSSFFont font = workbook.createFont();
+    private XSSFCellStyle getBoldCenterStyle() {
+        XSSFCellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
         font.setBold(true);
         style.setFont(font);
         style.setAlignment(HorizontalAlignment.CENTER);
@@ -237,9 +238,9 @@ public class ExportToExcel {
         return style;
     }
 
-    private HSSFCellStyle getBoldBlueStyle() {
-        HSSFCellStyle style = workbook.createCellStyle();
-        HSSFFont font = workbook.createFont();
+    private XSSFCellStyle getBoldBlueStyle() {
+        XSSFCellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
         font.setBold(true);
         font.setColor(HSSFColor.BLUE.index);
         style.setFont(font);
@@ -247,9 +248,9 @@ public class ExportToExcel {
         return style;
     }
 
-    private HSSFCellStyle getBoldCenterBlueStyle() {
-        HSSFCellStyle style = workbook.createCellStyle();
-        HSSFFont font = workbook.createFont();
+    private XSSFCellStyle getBoldCenterBlueStyle() {
+        XSSFCellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
         font.setBold(true);
         style.setFont(font);
         font.setColor(HSSFColor.BLUE.index);
@@ -258,36 +259,29 @@ public class ExportToExcel {
         return style;
     }
 
-    private HSSFCellStyle getBlueStyle() {
-        HSSFCellStyle style = workbook.createCellStyle();
-        HSSFFont font = workbook.createFont();
+    private XSSFCellStyle getBlueStyle() {
+        XSSFCellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
         font.setColor(HSSFColor.BLUE.index);
         style.setFont(font);
 
         return style;
     }
 
-    private HSSFCellStyle getCenterBlueStyle() {
-        HSSFCellStyle style = workbook.createCellStyle();
-        HSSFFont font = workbook.createFont();
+    private XSSFCellStyle getCenterBlueStyle() {
+        XSSFCellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
         style.setFont(font);
         font.setColor(HSSFColor.BLUE.index);
         style.setAlignment(HorizontalAlignment.CENTER);
 
         return style;
-    }
+    }*/
 
     private boolean saveToExcelFile() {
-        /*if (!CoreModule.getFolders().getTempFolder().exists()) {
-            if (!CoreModule.getFolders().getTempFolder().mkdir()) {
-                Dialogs.showMessage("Создание временной папки", "Не удалось создать временную папку\n" +
-                        CoreModule.getFolders().getTempFolder() + "\n\nОперация не может быть выполнена.");
-                return false;
-            }
-        }*/
-
+        String fileExtension = workbook instanceof HSSFWorkbook ? ".xls" : ".xlsx";
         file = new File(CoreModule.getFolders().getTempFolder().getPath() + "\\" +
-                "Сертификаты_" + Utils.getDateTime().replaceAll(":", "-") + ".xls");
+                "Сертификаты_" + Utils.getDateTime().replaceAll(":", "-") + fileExtension);
 
         try {
             FileOutputStream outFile = new FileOutputStream(file);
@@ -297,13 +291,13 @@ public class ExportToExcel {
             outFile.close();
 
             System.out.println("Created file: " + file.getAbsolutePath());
+            openFile();
+            return true;
         } catch (Exception e) {
             System.out.println("error of excel file creating " + e.getMessage());
+            Dialogs.showMessage("Ошибка создания файла", e.getMessage());
+            return false;
         }
-
-        openFile();
-
-        return true;
     }
 
     public boolean openFile() {
