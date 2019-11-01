@@ -7,7 +7,7 @@ import utils.comparation.ObjectsComparatorResult;
 
 import java.lang.reflect.Field;
 
-import static ui_windows.main_window.file_import_window.NamesMapping.FIELD_ORDER_NUMBER;
+import static ui_windows.product.data.ProductProperties.FIELD_ORDER_NUMBER;
 
 public class ObjectsComparator2 {
     private ObjectsComparatorResult comparatorResult;

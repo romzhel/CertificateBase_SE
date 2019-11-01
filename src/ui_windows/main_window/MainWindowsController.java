@@ -46,7 +46,6 @@ public class MainWindowsController implements Initializable {
     public ImageView ivFilter;
 
     private FileImport fileImport;
-    private MainTable mainTable;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -56,7 +55,6 @@ public class MainWindowsController implements Initializable {
         dataSelectorMenu = new DataSelectorMenu(miReports);
 
         initPriceListMenu();
-        mainTable = new MainTable(tvTable);
 
         lbRecordCount.setText(Integer.toString(tvTable.getItems().size()));
     }
@@ -82,22 +80,6 @@ public class MainWindowsController implements Initializable {
         new OptionsWindow();
     }
 
-    public void addProduct() {
-    }
-
-    public void editProduct() {
-        mainTable.displayEditorWindow();
-    }
-
-    public void deleteProduct() {
-    }
-
-    public void displayInTable(ArrayList<Product> products) {
-        tvTable.getItems().clear();
-        tvTable.getItems().addAll(products);
-        lbRecordCount.setText(Integer.toString(tvTable.getItems().size()));
-    }
-
     public void actionLogin() {
         new LoginWindow();
     }
@@ -114,10 +96,6 @@ public class MainWindowsController implements Initializable {
 
     public void actionRequest() {
         new RequestWindow();
-    }
-
-    public MainTable getMainTable() {
-        return mainTable;
     }
 
     public DataSelectorMenu getDataSelectorMenu() {

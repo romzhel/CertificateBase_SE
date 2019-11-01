@@ -9,6 +9,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,8 +19,8 @@ import java.util.List;
 public class TwinListViews<T> {
     private ArrayList<T> allItems;
     private final static double BUTTON_HEIGHT = 25;
-    private final static double BUTTON_WIDTH = 26;
-    private final static double BUTTON_WIDTH_2 = 36;
+    private final static double BUTTON_WIDTH = 36;
+    private final static double BUTTON_WIDTH_2 = 46;
     private final static double SPACE = 10;
     private Comparator<T> comparatorAll;
     private Comparator<T> comparatorSelected;

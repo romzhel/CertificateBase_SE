@@ -1,6 +1,7 @@
-package ui_windows.options_window.price_lists_editor.se;
+package ui_windows.product.data;
 
 import javafx.util.Callback;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
@@ -8,35 +9,41 @@ import ui_windows.product.Product;
 
 import java.lang.reflect.Field;
 
-public class PriceListColumn {
+public class DataItem {
     private int id;
     private String displayingName;
     private Field field;
-    private Callback<Container, XSSFCell> valueFactory;
+    private Callback<Container, XSSFCell> excelCellValueFactory;
+    private Callback<Product, T> valueFactory;
 
 
-    public PriceListColumn(String name, String fieldName) {
+    public DataItem(String name, String fieldName) {
         this.displayingName = name;
 
-        try {
-            field = Product.class.getDeclaredField(fieldName);
+        if (fieldName != null && !fieldName.trim().isEmpty()) {
+            try {
+                field = Product.class.getDeclaredField(fieldName);
 
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+            } catch (NoSuchFieldException e) {
+                System.out.println("field " + fieldName + " not found");
+            }
         }
-
     }
 
     public XSSFCell createXssfCell(Product product, XSSFRow row, int index, PriceListSheet priceListSheet) {
-        return valueFactory == null ? null : valueFactory.call(new Container(product, row, index, priceListSheet));
+        return excelCellValueFactory == null ? null : excelCellValueFactory.call(new Container(product, row, index, priceListSheet));
     }
 
     public String getDisplayingName() {
         return displayingName;
     }
 
-    public void setValueFactory(Callback<Container, XSSFCell> valueFactory) {
-        this.valueFactory = valueFactory;
+    public void setExcelCellValueFactory(Callback<Container, XSSFCell> excelCellValueFactory) {
+        this.excelCellValueFactory = excelCellValueFactory;
+    }
+
+    public T getValue(Product product) {
+        return valueFactory.call(product);
     }
 
     public class Container {

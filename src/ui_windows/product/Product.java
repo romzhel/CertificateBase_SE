@@ -23,7 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static ui_windows.main_window.file_import_window.NamesMapping.*;
+import static ui_windows.product.data.ProductProperties.*;
 import static ui_windows.main_window.filter_window.Filter.*;
 
 public class Product {

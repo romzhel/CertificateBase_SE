@@ -36,6 +36,7 @@ public class MainWindow extends Application {
     private static MainWindowsController controller;
 
     private static SearchBox searchBox;
+    private static MainTable mainTable;
 
     private ExecutorService executorService;
 
@@ -80,6 +81,8 @@ public class MainWindow extends Application {
             rootAnchorPane.getChildren().add(searchBox);
             rootAnchorPane.setBottomAnchor(searchBox, 39.0);
             rootAnchorPane.setLeftAnchor(searchBox, 158.0);
+
+            mainTable = new MainTable(controller.tvTable);
 
             executorService = Executors.newFixedThreadPool(5);
             searchBox.getTextBox().textProperty().addListener(new ChangeListener<String>() {
@@ -141,7 +144,7 @@ public class MainWindow extends Application {
     public void stop() throws Exception {
         if (initOk) CoreModule.getDataBase().disconnect();
 
-        ((MainWindowsController) fxmlLoader.getController()).getMainTable().close();
+        MainWindow.getMainTable().close();
         super.stop();
     }
 
@@ -198,5 +201,9 @@ public class MainWindow extends Application {
 
     public static MainWindowsController getController() {
         return controller;
+    }
+
+    public static MainTable getMainTable() {
+        return mainTable;
     }
 }

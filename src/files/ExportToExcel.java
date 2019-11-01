@@ -9,13 +9,19 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
-import ui_windows.product.Product;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.CertificateCheckingResult;
+import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificateVerificationItem;
+import ui_windows.product.data.DataItem;
 import ui_windows.request.CertificateRequestResult;
 import utils.Utils;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -81,28 +87,6 @@ public class ExportToExcel {
 
         //output to file
         saveToExcelFile();
-//        if (!CoreModule.getFolders().getTempFolder().exists()) {
-//            if (!CoreModule.getFolders().getTempFolder().mkdir()) {
-//                Dialogs.showMessage("Создание временной папки", "Не удалось создать временную папку\n" +
-//                        CoreModule.getFolders().getTempFolder() + "\n\nОперация не может быть выполнена.");
-//                return;
-//            }
-//        }
-//
-//        file = new File(CoreModule.getFolders().getTempFolder().getPath() + "\\" +
-//                "Сертификаты_" + Utils.getDateTime().replaceAll(":", "-") + ".xls");
-//
-//        try {
-//            FileOutputStream outFile = new FileOutputStream(file);
-//            workbook.write(outFile);
-//
-//            workbook.close();
-//            outFile.close();
-//        } catch (Exception e) {
-//            System.out.println("Something wrong...." + e.getMessage());
-//        }
-//
-//        System.out.println("Created file: " + file.getAbsolutePath());
     }
 
     public ExportToExcel(CertificateCheckingResult certCheckResult) {
@@ -136,9 +120,9 @@ public class ExportToExcel {
 
                 for (CertificateVerificationItem certVer : certCheckResult.getProblemCv()) {
 
-                    if (certVer.getCertificate().equals(curCert) && certVer.getProduct().equals(product)){
+                    if (certVer.getCertificate().equals(curCert) && certVer.getProduct().equals(product)) {
 
-                        if (!curProductwasDisplayed){
+                        if (!curProductwasDisplayed) {
                             rowNum++;
                             row = sheet.createRow(++rowNum);
 
@@ -188,12 +172,36 @@ public class ExportToExcel {
             cell = row.createCell(col, CellType.STRING);
             cell.setCellStyle(getBoldCenterStyle());
             if (col < titles.length) cell.setCellValue(titles[col]);
-            if (col != 0)  sheet.autoSizeColumn(col);
+            if (col != 0) sheet.autoSizeColumn(col);
         }
         sheet.setColumnWidth(0, 5000);
 
         //output to file
         saveToExcelFile();
+    }
+
+    public ExportToExcel(ArrayList<DataItem> columns, ArrayList<Product> items) {
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
+        XSSFSheet xssfSheet = xssfWorkbook.createSheet("Отчёт");
+
+        int rowIndex = 0;
+        XSSFRow xssfRow = xssfSheet.createRow(rowIndex++);
+        XSSFCell xssfCell;
+
+        int colIndex = 0;
+        for (DataItem column : columns) {
+            xssfCell = xssfRow.createCell(colIndex++, CellType.STRING);
+            xssfCell.setCellValue(column.getDisplayingName());
+        }
+
+        for (Product product : items) {
+            xssfRow = xssfSheet.createRow(rowIndex++);
+
+            colIndex = 0;
+            for (DataItem column : columns) {
+                column.createXssfCell(product, xssfRow, colIndex++, null);
+            }
+        }
     }
 
     public File getFile() {
@@ -269,14 +277,14 @@ public class ExportToExcel {
         return style;
     }
 
-    private boolean saveToExcelFile(){
-        if (!CoreModule.getFolders().getTempFolder().exists()) {
+    private boolean saveToExcelFile() {
+        /*if (!CoreModule.getFolders().getTempFolder().exists()) {
             if (!CoreModule.getFolders().getTempFolder().mkdir()) {
                 Dialogs.showMessage("Создание временной папки", "Не удалось создать временную папку\n" +
                         CoreModule.getFolders().getTempFolder() + "\n\nОперация не может быть выполнена.");
                 return false;
             }
-        }
+        }*/
 
         file = new File(CoreModule.getFolders().getTempFolder().getPath() + "\\" +
                 "Сертификаты_" + Utils.getDateTime().replaceAll(":", "-") + ".xls");
@@ -287,12 +295,25 @@ public class ExportToExcel {
 
             workbook.close();
             outFile.close();
+
+            System.out.println("Created file: " + file.getAbsolutePath());
         } catch (Exception e) {
             System.out.println("error of excel file creating " + e.getMessage());
         }
 
-        System.out.println("Created file: " + file.getAbsolutePath());
+        openFile();
 
         return true;
+    }
+
+    public boolean openFile() {
+        try {
+            Desktop.getDesktop().open(file);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            Dialogs.showMessage("Ошибка открытия файла", e.getMessage());
+            return false;
+        }
     }
 }

@@ -4,13 +4,11 @@ import core.CoreModule;
 import database.ProductsDB;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import ui_windows.main_window.file_import_window.ColumnsMapper;
 import ui_windows.main_window.file_import_window.FileImportTableItem;
 import ui_windows.main_window.file_import_window.ObjectsComparator2;
-import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.MultiEditor;
@@ -21,7 +19,7 @@ import java.util.ArrayList;
 
 import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
-import static ui_windows.main_window.file_import_window.NamesMapping.DESC_ORDER_NUMBER;
+import static ui_windows.product.data.ProductProperties.DESC_ORDER_NUMBER;
 
 public class ProductEditorWindowActions {
     private static CertificateVerificationTable certificateVerificationTable;

@@ -1,9 +1,9 @@
-package ui_windows.main_window.file_import_window;
+package ui_windows.product.data;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-public class NamesMapping {
+public class ProductProperties {
     public static final String DESC_ORDER_NUMBER = "Заказной номер";
     public static final String DESC_ARTICLE = "Артикул";
     public static final String DESC_HIERARCHY = "Иерархия";
@@ -21,6 +21,13 @@ public class NamesMapping {
     public static final String DESC_PACKSIZE = "Упаковка";
     public static final String DESC_LEADTIME = "Время поставки";
     public static final String DESC_WEIGHT = "Вес";
+    public static final String DESC_FAMILY = "Направление";
+    public static final String DESC_END_OF_SERVICE = "Сервисный период";
+    public static final String DESC_DCHAIN_COMMENT = "Код доступности - расшифровка";
+    public static final String DESC_PRICE = "Включена в прайс";
+    public static final String DESC_COMMENT = "Комментарий";
+    public static final String DESC_REPLACEMENT = "Замена";
+    public static final String DESC_TYPE = "Тип";
 
     public static final String FIELD_ORDER_NUMBER = "material";
     public static final String FIELD_ARTICLE = "article";
@@ -39,6 +46,13 @@ public class NamesMapping {
     public static final String FIELD_PACKSIZE = "packetSize";
     public static final String FIELD_LEADTIME = "leadTime";
     public static final String FIELD_WEIGHT = "weight";
+    public static final String FIELD_FAMILY = "family";
+    public static final String FIELD_END_OF_SERVICE = "endofservice";
+    public static final String FIELD_DCHAIN_COMMENT = "";
+    public static final String FIELD_PRICE = "price";
+    public static final String FIELD_COMMENT = "comments";
+    public static final String FIELD_REPLACEMENT = "replacement";
+    public static final String FIELD_TYPE = "type_id";
 
 
 
@@ -47,7 +61,7 @@ public class NamesMapping {
         ArrayList<String> result = new ArrayList<>();
         result.add("");
 
-        NamesMapping instance = new NamesMapping();
+        ProductProperties instance = new ProductProperties();
         Field[] fields = instance.getClass().getDeclaredFields();
         for (Field field : fields) {
             if (field.getName().startsWith("DESC_")) {

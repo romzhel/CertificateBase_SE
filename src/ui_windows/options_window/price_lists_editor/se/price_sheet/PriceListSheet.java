@@ -9,8 +9,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
 import javafx.util.Callback;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
-import ui_windows.options_window.price_lists_editor.se.PriceListColumn;
-import ui_windows.options_window.price_lists_editor.se.PriceListColumns;
+import ui_windows.product.data.DataItem;
+import ui_windows.product.data.ProductData;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTable;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
@@ -29,7 +29,7 @@ import static ui_windows.options_window.price_lists_editor.se.PriceListContentTa
 public class PriceListSheet extends Tab {
     public static final int LANG_RU = 0;
     public static final int LANG_EN = 1;
-    private TwinListViews<PriceListColumn> columnsSelector;
+    private TwinListViews<DataItem> columnsSelector;
     private TwinListViews<OrderAccessibility> dchainSelector;
     private PriceListContentTable contentTable;
     private int sheetId = -1;
@@ -152,15 +152,15 @@ public class PriceListSheet extends Tab {
     }
 
     private void initColumnsSelector() {
-        ArrayList<PriceListColumn> columns = new PriceListColumns().getColumns();
+        ArrayList<DataItem> columns = ProductData.getColumnsForPriceList();
 
         columnsSelector = new TwinListViews<>(controller.pPriceColumns, columns);
-        columnsSelector.setListViewsCellFactory(new Callback<ListView<PriceListColumn>, ListCell<PriceListColumn>>() {
+        columnsSelector.setListViewsCellFactory(new Callback<ListView<DataItem>, ListCell<DataItem>>() {
             @Override
-            public ListCell call(ListView<PriceListColumn> param) {
-                return new ListCell<PriceListColumn>() {
+            public ListCell call(ListView<DataItem> param) {
+                return new ListCell<DataItem>() {
                     @Override
-                    protected void updateItem(PriceListColumn item, boolean empty) {
+                    protected void updateItem(DataItem item, boolean empty) {
                         super.updateItem(item, empty);
 
                         if (item != null && !empty) {
@@ -176,19 +176,19 @@ public class PriceListSheet extends Tab {
         columnsSelector.setListViewsSelectedComparator(null);
         columnsSelector.setConvertToText(param -> {
             String result = "";
-            for (PriceListColumn item : param) {
+            for (DataItem item : param) {
                 result = result.concat(item.getDisplayingName()).concat(",");
             }
             result = result.replaceAll("\\,$", "");
 
             return result;
         });
-        columnsSelector.setConvertFromText(new Callback<String, ArrayList<PriceListColumn>>() {
+        columnsSelector.setConvertFromText(new Callback<String, ArrayList<DataItem>>() {
             @Override
-            public ArrayList<PriceListColumn> call(String param) {
-                ArrayList<PriceListColumn> result = new ArrayList<>();
+            public ArrayList<DataItem> call(String param) {
+                ArrayList<DataItem> result = new ArrayList<>();
                 for (String columnName : param.split("\\,")) {
-                    for (PriceListColumn plc : columns) {
+                    for (DataItem plc : columns) {
                         if (plc.getDisplayingName().equals(columnName)) {
                             result.add(plc);
                             break;
@@ -358,11 +358,11 @@ public class PriceListSheet extends Tab {
         this.controller = controller;
     }
 
-    public TwinListViews<PriceListColumn> getColumnsSelector() {
+    public TwinListViews<DataItem> getColumnsSelector() {
         return columnsSelector;
     }
 
-    public void setColumnsSelector(TwinListViews<PriceListColumn> columnsSelector) {
+    public void setColumnsSelector(TwinListViews<DataItem> columnsSelector) {
         this.columnsSelector = columnsSelector;
     }
 

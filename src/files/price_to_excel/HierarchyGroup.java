@@ -5,7 +5,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import ui_windows.options_window.price_lists_editor.se.PriceListColumn;
+import ui_windows.product.data.DataItem;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.TreeSet;
 
 import static files.price_to_excel.ExportPriceListToExcel_SE.CELL_ALIGN_LEFT;
+import static ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet.LANG_RU;
 
 public class HierarchyGroup {
     public static final Comparator<Product> SORT_MATERIAL = (o1, o2) -> o1.getTextForComparing().compareTo(o2.getTextForComparing());
@@ -70,13 +71,7 @@ public class HierarchyGroup {
                     lap.getLgbkItem().getDescriptionEnRu();
             String ruText = CoreModule.getProductLgbks().getByLgbkName(lgroupName).getDescriptionRuEn() + " / " +
                     lap.getLgbkItem().getDescriptionRuEn();
-            String printText;
-
-            if (sheet.getSheetName().toLowerCase().contains("en")) {
-                printText = enText;
-            } else {
-                printText = ruText;
-            }
+            String printText = priceListSheet.getLanguage() == LANG_RU ? ruText : enText;
 
             if (!printText.isEmpty()) {
                 row = sheet.createRow(rowIndex++);
@@ -92,7 +87,7 @@ public class HierarchyGroup {
             row = sheet.createRow(rowIndex++);
 
             int colIndex = 0;
-            for (PriceListColumn plc : priceListSheet.getColumnsSelector().getSelectedItems()) {
+            for (DataItem plc : priceListSheet.getColumnsSelector().getSelectedItems()) {
                 plc.createXssfCell(product, row, colIndex++, priceListSheet);
             }
         }

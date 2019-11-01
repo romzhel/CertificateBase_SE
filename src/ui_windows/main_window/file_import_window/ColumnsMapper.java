@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static ui_windows.main_window.file_import_window.NamesMapping.*;
+import static ui_windows.product.data.ProductProperties.*;
 
 public class ColumnsMapper {
     private Map<String, String> titleToName;

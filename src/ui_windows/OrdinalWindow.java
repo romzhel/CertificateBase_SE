@@ -22,7 +22,7 @@ public class OrdinalWindow {
     protected static FXMLLoader loader;
     protected static T controller;
 
-    public OrdinalWindow(Stage parentStage, Modality modality, Mode mode, String resourceName, String title) {
+    public OrdinalWindow(Stage parentStage, Modality modality, Mode mode, String resourceName, String title, T... controller) {
         this.mode = mode;
         loader = new FXMLLoader(getClass().getResource(resourceName));
         try {

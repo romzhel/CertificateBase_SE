@@ -6,6 +6,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import ui_windows.product.data.ProductProperties;
 
 public class FileImportTable {
     private TableView<FileImportTableItem> tableView;
@@ -31,7 +32,7 @@ public class FileImportTable {
             return param.getValue().productFieldProperty();
         });
         productFieldCol.setPrefWidth(300);
-        productFieldCol.setCellFactory(ComboBoxTableCell.forTableColumn(NamesMapping.getAllNamesRu()));
+        productFieldCol.setCellFactory(ComboBoxTableCell.forTableColumn(ProductProperties.getAllNamesRu()));
         productFieldCol.setEditable(true);
 
         TableColumn<FileImportTableItem, Boolean> importCol = new TableColumn<>("Импорт");

@@ -2,13 +2,8 @@ package ui_windows.main_window.filter_window;
 
 import core.CoreModule;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
-import javafx.scene.control.ToggleButton;
-import ui_windows.main_window.MainTableContextMenuCustom;
-import ui_windows.main_window.MainTableContextMenuData;
+import ui_windows.main_window.MainTable;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
@@ -142,7 +137,7 @@ public class Filter {
         FILTER_ALL_ITEMS.setValue(true);
         FILTER_PRICE_ITEMS.setValue(false);
         MainWindow.getSearchBox().setText("");
-        CoreModule.getProducts().getTableView().setContextMenu(new MainTableContextMenuCustom());
+        MainTable.switchContextMenuCustom();
         apply();
     }
 
@@ -152,7 +147,7 @@ public class Filter {
         FILTER_ALL_ITEMS.setValue(savedFilterParameters.isAllItems());
         FILTER_PRICE_ITEMS.setValue(savedFilterParameters.isPriceItems());
         MainWindow.getSearchBox().setText(savedFilterParameters.getSearchBoxText());
-        CoreModule.getProducts().getTableView().setContextMenu(new MainTableContextMenuData());
+        MainTable.switchContextMenuData();
         apply();
     }
 

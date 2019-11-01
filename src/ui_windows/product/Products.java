@@ -4,6 +4,7 @@ import core.CoreModule;
 import database.ProductsDB;
 import javafx.scene.control.TableView;
 import ui_windows.main_window.MainWindow;
+import ui_windows.product.data.ProductData;
 import utils.Utils;
 
 import java.util.ArrayList;
@@ -11,9 +12,11 @@ import java.util.ArrayList;
 public class Products {
     private ArrayList<Product> products;
     private TableView<Product> tableView;
+    private ProductData productData;
 
     public Products() {
         products = new ArrayList<>();
+        ProductData.init();
     }
 
     public ArrayList<Product> getItems() {
