@@ -264,8 +264,8 @@ public class PriceListSheet extends Tab {
 
                             for (OrderAccessibility oa : dchainSelector.getSelectedItems()) {
                                 boolean dchainMatches = product.getDchain().equals(oa.getStatusCode());
-                                boolean dchainMatchesSP = product.getDchain().trim().isEmpty() && oa.getStatusCode().trim().isEmpty() &&
-                                        isSpProduct(product);
+                                boolean dchainMatchesSP = product.getDchain().trim().isEmpty() &&
+                                        oa.getStatusCode().trim().isEmpty() && product.isSpProduct();
 
                                 if (dchainMatches || dchainMatchesSP) {
                                     isDchainMatch = true;
@@ -284,12 +284,6 @@ public class PriceListSheet extends Tab {
         }
 
         return false;
-    }
-
-    private boolean isSpProduct(Product product) {
-        int id = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
-        boolean productFamId = product.getFamily() == 24;
-        return id == 24 || productFamId;
     }
 
     public void uploadFromUI() {

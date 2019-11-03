@@ -23,8 +23,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import static ui_windows.main_window.filter_window.Filter.FILTER_ALL_ITEMS;
+import static ui_windows.main_window.filter_window.Filter.FILTER_PRICE_ITEMS;
 import static ui_windows.product.data.ProductProperties.*;
-import static ui_windows.main_window.filter_window.Filter.*;
 
 public class Product {
     public static final String NO_DATA = "нет данных";
@@ -129,16 +130,6 @@ public class Product {
         localPrice = getDoubleFromString(rowData.get(mapper.getFieldIndexByName(DESC_LOCAL_PRICE)));
     }
 
-    private double getDoubleFromString(String text) {
-        if (text == null || text.isEmpty()) return 0;
-        try {
-            return Double.parseDouble(text);
-        } catch (Exception e) {
-            System.out.println(article + ", bad double: " + text);
-            return 0.0;
-        }
-    }
-
     public Product(ResultSet rs) throws SQLException {
         id = rs.getInt("id");
         material = new SimpleStringProperty(rs.getString("material"));
@@ -177,6 +168,20 @@ public class Product {
         leadTime = rs.getInt("lead_time");
         weight = rs.getDouble("weight");
         localPrice = rs.getDouble("local_price");
+    }
+
+    public static String getNO_DATA() {
+        return NO_DATA;
+    }
+
+    private double getDoubleFromString(String text) {
+        if (text == null || text.isEmpty()) return 0;
+        try {
+            return Double.parseDouble(text);
+        } catch (Exception e) {
+            System.out.println(article + ", bad double: " + text);
+            return 0.0;
+        }
     }
 
     public String getOrderableStatus() {
@@ -249,18 +254,10 @@ public class Product {
         Utils.setControlValue(root, "tfWeight", weight == 0 ? NO_DATA : String.valueOf(weight));
         Utils.setControlValue(root, "tfLocalPrice", localPrice == 0 ? NO_DATA : String.format("%,.2f", localPrice));
 
-        ProductFamily family;
-        if (getFamily() > 0)//individual value
-            family = CoreModule.getProductFamilies().getFamilyById(getFamily());
-        else {//try to calculate it
-            int id = CoreModule.getProductLgbks().
-                    getFamilyIdByLgbk(new ProductLgbk(getLgbk(), getHierarchy()));
-            family = CoreModule.getProductFamilies().getFamilyById(id);
-        }
-
-        if (family != null) {
-            Utils.setControlValue(root, "cbFamily", family.getName());
-            Utils.setControlValue(root, "tfPm", family.getResponsible());
+        ProductFamily productFamily = getProductFamily();
+        if (productFamily != null) {
+            Utils.setControlValue(root, "cbFamily", productFamily.getName());
+            Utils.setControlValue(root, "tfPm", productFamily.getResponsible());
         }
     }
 
@@ -565,16 +562,30 @@ public class Product {
         this.family = family;
     }
 
+    public ProductFamily getProductFamily() {
+        if (family > 0) {
+            return CoreModule.getProductFamilies().getFamilyById(family);
+        } else {
+            LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
+            return lgbkAndParent != null ? lgbkAndParent.getProductFamily() : null;
+        }
+    }
+
+    public boolean isSpProduct() {
+        ProductFamily pf = getProductFamily();
+        return pf != null && pf.getId() == 24;
+    }
+
     public String getProductForPrint() {
         return productForPrint.get();
     }
 
-    public StringProperty productForPrintProperty() {
-        return productForPrint;
-    }
-
     public void setProductForPrint(String productForPrint) {
         this.productForPrint.set(productForPrint);
+    }
+
+    public StringProperty productForPrintProperty() {
+        return productForPrint;
     }
 
     public String getLastImportcodes() {
@@ -589,12 +600,12 @@ public class Product {
         return descriptionen.get();
     }
 
-    public StringProperty descriptionenProperty() {
-        return descriptionen;
-    }
-
     public void setDescriptionen(String descriptionen) {
         this.descriptionen.set(descriptionen);
+    }
+
+    public StringProperty descriptionenProperty() {
+        return descriptionen;
     }
 
     private String nullToEmpty(String text) {
@@ -615,10 +626,6 @@ public class Product {
 
     public void setNormsMode(int normsMode) {
         this.normsMode = normsMode;
-    }
-
-    public static String getNO_DATA() {
-        return NO_DATA;
     }
 
     public int getMinOrder() {

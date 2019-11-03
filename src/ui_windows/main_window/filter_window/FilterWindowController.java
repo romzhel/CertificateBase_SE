@@ -18,7 +18,6 @@ import java.util.TreeSet;
 import static ui_windows.main_window.filter_window.Filter.*;
 
 public class FilterWindowController implements Initializable {
-    public static final String ALL_RECORDS = "--- Все ---";
     private static final int SELECTOR_LGBK_ROWS_MAX = 10;
 
     @FXML
@@ -169,18 +168,7 @@ public class FilterWindowController implements Initializable {
             if (newValue) cbxAllRecords.setSelected(false);
             applyFilter();
         });
-        /*cbxArchive.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            CoreModule.getFilter().getFilterSimpleByUIname("cbxArchive").setValue(newValue);
-            if (newValue) cbxAllRecords.setSelected(false);
-            applyFilter();
-        });
-        cbxNotUsed.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            CoreModule.getFilter().getFilterSimpleByUIname("cbxNotUsed").setValue(newValue);
-            if (newValue) cbxAllRecords.setSelected(false);
-            applyFilter();
-        });*/
     }
-
 
     public void applyFilter() {
         CoreModule.getFilter().apply();

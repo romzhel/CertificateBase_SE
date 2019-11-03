@@ -67,21 +67,6 @@ public class ProductLgbks {
         return false;
     }
 
-    public int getFamilyIdByLgbk(ProductLgbk pl) {
-        LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(pl);
-        if (lgbkAndParent == null) return -1;
-
-        if (lgbkAndParent.getLgbkItem() == null || lgbkAndParent.getLgbkItem().getFamilyId() == -1) {
-            if (lgbkAndParent.getLgbkParent() == null) {
-                return -1;
-            } else {
-                return lgbkAndParent.getLgbkParent().getFamilyId();
-            }
-        } else {
-            return lgbkAndParent.getLgbkItem().getFamilyId();
-        }
-    }
-
     public ProductLgbk getByLgbkName(String lgbkName) {
         for (ProductLgbk plgbk : productLgbks) {
             if (plgbk.getLgbk().equals(lgbkName) && plgbk.getHierarchy().equals("Все")) {

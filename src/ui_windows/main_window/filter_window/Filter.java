@@ -24,7 +24,6 @@ public class Filter {
     public static final FilterParameter FILTER_FAMILY = new FilterParameter<>(FILTER_VALUE_ALL_FAMILIES);
     public static final FilterParameter FILTER_LGBK = new FilterParameter<>(FILTER_VALUE_ALL_LGBKS);
 
-    public static final String ALL_RECORDS = "--- Все ---";
     private String changeCodes[];
     private String changeTexts[];
     private String changeCode = "";
@@ -77,8 +76,6 @@ public class Filter {
         boolean materialMatch = false;
         boolean descriptionMatch = false;
         boolean filterMatch = false;
-        LgbkAndParent lgbkAndParent;
-        ProductFamily pf = null;
         boolean familyMatch = false;
         boolean lgbkMatch = false;
 
@@ -92,18 +89,8 @@ public class Filter {
             ProductFamily productFamily = (ProductFamily) FILTER_FAMILY.getValue();
             if (productFamily.equals(FILTER_VALUE_ALL_FAMILIES) || productFamily == null) {
                 familyMatch = true;
-            } else if (productFamily != null) {
-                if (p.getFamily() > 0) {
-                    pf = CoreModule.getProductFamilies().getFamilyById(p.getFamily());
-                } else {
-                    lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(p));
-                    if (lgbkAndParent.getLgbkItem() != null && lgbkAndParent.getLgbkItem().getFamilyId() > 0) {
-                        pf = CoreModule.getProductFamilies().getFamilyById(lgbkAndParent.getLgbkItem().getFamilyId());
-                    } else if (lgbkAndParent.getLgbkParent() != null) {
-                        pf = CoreModule.getProductFamilies().getFamilyById(lgbkAndParent.getLgbkParent().getFamilyId());
-                    }
-                }
-
+            } else {
+                ProductFamily pf = p.getProductFamily();
                 familyMatch = pf != null && pf.equals(productFamily);
             }
 

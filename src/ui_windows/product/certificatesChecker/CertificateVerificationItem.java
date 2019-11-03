@@ -7,6 +7,7 @@ import ui_windows.options_window.certificates_editor.Certificate;
 
 public class CertificateVerificationItem {
     public static final String ABSENT_TEXT = "НЕ ОК, отсутствует";
+    public static final String NOT_OK_TEXT = "НЕ ОК";
     private StringProperty norm;
     private StringProperty matchedPart;
     private StringProperty prodType;

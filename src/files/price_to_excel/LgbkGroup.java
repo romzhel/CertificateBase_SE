@@ -26,7 +26,7 @@ public class LgbkGroup {
 
     public void addProduct(Product product) {
         for (HierarchyGroup group : hierarchyGroups) {
-            if (isSpProduct(product) || product.getHierarchy().contains(group.getName())) {
+            if (product.isSpProduct() || product.getHierarchy().contains(group.getName())) {
                 group.addProduct(product);
                 return;
             }
@@ -81,11 +81,5 @@ public class LgbkGroup {
 
     public TreeSet<HierarchyGroup> getHierarchyGroups() {
         return hierarchyGroups;
-    }
-
-    private boolean isSpProduct(Product product) {
-        int id = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(product.getLgbk(), product.getHierarchy()));
-        boolean productFamId = product.getFamily() == 24;
-        return id == 24 || productFamId;
     }
 }

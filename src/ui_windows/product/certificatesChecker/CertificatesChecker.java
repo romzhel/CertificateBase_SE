@@ -59,13 +59,6 @@ public class CertificatesChecker {
         productTypes = new TreeSet<>();
     }
 
-    public void check(ObservableList<Product> products, CheckParameters checkParameters) {
-        for (Product product : products) {
-            checkExistingCertificates(product, checkParameters);
-            checkNorms(product);
-        }
-    }
-
     private void checkExistingCertificates(Product product, CheckParameters checkParameters) {
         ArrayList<String> prodNames = new ArrayList<>();
 
@@ -85,7 +78,6 @@ public class CertificatesChecker {
                 boolean productTypeMatches = product.getType_id() > 0 && product.getType_id() == contentTypeId;
                 boolean changedProductTypeMatch = checkParameters.getTemporaryTypeId() > 0 && checkParameters.getTemporaryTypeId() == contentTypeId;
                 boolean changedProductTypeNotDefined = checkParameters.getTemporaryTypeId() == 0;
-
 
                 boolean usualWay = !checkParameters.isUseTemporaryTypeId() && (productTypeNotDefined || productTypeMatches);
                 boolean temporaryWay = checkParameters.isUseTemporaryTypeId() && (changedProductTypeNotDefined || changedProductTypeMatch);
@@ -146,13 +138,14 @@ public class CertificatesChecker {
     }
 
     private boolean isMatchEquipTypeName(Product product, CertificateContent content) {
-        String[] productDescriptionParts = product.getDescriptionru().split("\\s");
+        String[] productDescriptionParts = product.getDescriptionru().replaceAll("[\\(\\)]", "").split("\\s");
         for (String partOfDesc : productDescriptionParts) {
             String searchPart;
             if (partOfDesc.length() > 3) {
-                searchPart = partOfDesc.substring(0, 3/*partOfDesc.length() - 1).toLowerCase()*/).toLowerCase();
+                searchPart = partOfDesc.substring(0, 3).toLowerCase();
 
-                if (content.getEquipmentType().toLowerCase().contains(searchPart)) {
+                String certEqType = content.getEquipmentType().toLowerCase();
+                if (certEqType.startsWith(searchPart) || certEqType.matches("\\s" + searchPart + ".*")) {
                     return true;
                 }
             }
@@ -216,7 +209,7 @@ public class CertificatesChecker {
         if (certNotNeeded) {
             checkStatusResult = STATUS_OK;
         } else if (certsErr > 0) {
-            checkStatusResult = CERT_WITH_ERR;
+            checkStatusResult = STATUS_NOT_OK;
         } else if (normsForCheckingCount > 0) {
             checkStatusResult = STATUS_OK;
         } else {
@@ -232,6 +225,7 @@ public class CertificatesChecker {
         switch (checkStatusResult) {
             case NO_CERT:
             case CERT_WITH_ERR:
+            case STATUS_NOT_OK:
                 return "itemStrikethroughRed";
             case PART_OF_CERT:
                 return "itemStrikethroughBrown";

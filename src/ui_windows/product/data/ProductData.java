@@ -6,6 +6,8 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.product.certificatesChecker.CertificatesChecker;
+import ui_windows.product.certificatesChecker.CheckParameters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +39,7 @@ public class ProductData {
     public static final DataItem DATA_COMMENT = new DataItem(DESC_COMMENT, FIELD_COMMENT);
     public static final DataItem DATA_REPLACEMENT = new DataItem(DESC_REPLACEMENT, FIELD_REPLACEMENT);
     public static final DataItem DATA_TYPE = new DataItem(DESC_TYPE, FIELD_TYPE);
+    public static final DataItem DATA_CERTIFICATE = new DataItem("Наличие сертификатов", null);
 
     private static ProductData instance;
 
@@ -179,10 +182,7 @@ public class ProductData {
         });
         DATA_FAMILY.setExcelCellValueFactory(param -> {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
-            int prodFamId = param.getProduct().getFamily();
-            int calcFamId = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(param.getProduct()));
-            int famId = prodFamId > 0 ? prodFamId : calcFamId;
-            ProductFamily pf = CoreModule.getProductFamilies().getFamilyById(famId);
+            ProductFamily pf = param.getProduct().getProductFamily();
             if (pf != null) {
                 cell.setCellValue(pf.getName());
                 cell.setCellStyle(CELL_ALIGN_RIGHT);
@@ -194,6 +194,12 @@ public class ProductData {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
             cell.setCellValue(param.getProduct().isPrice());
             cell.setCellStyle(CELL_ALIGN_RIGHT);
+
+            return cell;
+        });
+        DATA_CERTIFICATE.setExcelCellValueFactory(param -> {
+            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+            cell.setCellValue(new CertificatesChecker(param.getProduct(), new CheckParameters()).getCheckStatusResult());
 
             return cell;
         });
@@ -214,6 +220,6 @@ public class ProductData {
         return new ArrayList<>(Arrays.asList(DATA_ORDER_NUMBER, DATA_ORDER_NUMBER_PRINT, DATA_ARTICLE, DATA_DESCRIPTION_RU,
                 DATA_DESCRIPTION_EN, DATA_LOCAL_PRICE, DATA_LEAD_TIME, DATA_MIN_ORDER, DATA_LGBK, DATA_HIERARCHY, DATA_WEIGHT,
                 DATA_COUNTRY, DATA_SERVICE_END, DATA_DCHAIN, DATA_DCHAIN_COMMENT, DATA_PACKSIZE, DATA_FAMILY,
-                DATA_IS_IN_PRICE, DATA_COMMENT, DATA_REPLACEMENT, DATA_TYPE));
+                DATA_IS_IN_PRICE, DATA_COMMENT, DATA_REPLACEMENT, DATA_TYPE, DATA_CERTIFICATE));
     }
 }

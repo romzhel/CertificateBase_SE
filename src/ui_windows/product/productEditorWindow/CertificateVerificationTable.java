@@ -1,7 +1,6 @@
 package ui_windows.product.productEditorWindow;
 
 import core.CoreModule;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -12,16 +11,16 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import ui_windows.product.Product;
-import ui_windows.product.ProductTypes;
 import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
 import utils.Utils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.TreeSet;
+
+import static ui_windows.product.certificatesChecker.CertificateVerificationItem.*;
+import static ui_windows.product.certificatesChecker.CertificatesChecker.CERT_NO_NEEDED;
 
 public class CertificateVerificationTable {
     private TableView<CertificateVerificationItem> tableView;
@@ -55,10 +54,10 @@ public class CertificateVerificationTable {
                                     setText(item);
 
                                     CertificateVerificationItem cv = param.getTableView().getItems().get(getIndex());
-                                    if (cv.getCertificate() == null && !cv.getNorm().equals(CertificatesChecker.CERT_NO_NEEDED)) {
+                                    if (cv.getCertificate() == null && !cv.getNorm().equals(CERT_NO_NEEDED)) {
                                         setTextFill(Color.RED);
                                         setStyle("-fx-font-weight: bold");
-                                    } else if (cv.getNorm().equals(CertificatesChecker.CERT_NO_NEEDED)) {
+                                    } else if (cv.getNorm().equals(CERT_NO_NEEDED)) {
                                         setTextFill(Color.GREEN);
                                         setStyle("-fx-font-weight: bold");
                                     } else {
@@ -109,10 +108,10 @@ public class CertificateVerificationTable {
                                     setText(item);
 
                                     CertificateVerificationItem cv = param.getTableView().getItems().get(getIndex());
-                                    if (cv.getStatus().equals(CertificateVerificationItem.ABSENT_TEXT)) {
+                                    if (cv.getStatus().startsWith(NOT_OK_TEXT)) {
                                         setTextFill(Color.RED);
-                                        setStyle("-fx-font-weight: bold");
-                                    } else if (cv.getNorm().equals(CertificatesChecker.CERT_NO_NEEDED)) {
+                                        if (cv.getStatus().equals(ABSENT_TEXT)) setStyle("-fx-font-weight: bold");
+                                    } else if (cv.getNorm().equals(CERT_NO_NEEDED)) {
                                         setTextFill(Color.GREEN);
                                         setStyle("-fx-font-weight: bold");
                                     } else {
@@ -172,7 +171,7 @@ public class CertificateVerificationTable {
         this.productsForCheckingAndDisplaying = productsForCheckingAndDisplaying;
     }
 
-    public ObservableList<CertificateVerificationItem> getItems(){
+    public ObservableList<CertificateVerificationItem> getItems() {
         return tableView.getItems();
     }
 

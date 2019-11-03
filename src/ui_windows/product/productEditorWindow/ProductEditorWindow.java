@@ -11,6 +11,7 @@ import javafx.stage.Modality;
 import ui_windows.Mode;
 import ui_windows.OrdinalWindow;
 import ui_windows.main_window.MainWindow;
+import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.profile_editor.SimpleRight;
 import ui_windows.options_window.user_editor.User;
@@ -59,20 +60,13 @@ public class ProductEditorWindow extends OrdinalWindow {
 
     @Override
     public void applyProfileSimple(SimpleRight sr) {
-        Product prd = CoreModule.getProducts().getSelectedItem();
         User user = CoreModule.getUsers().getCurrentUser();
+        Product prd = CoreModule.getProducts().getSelectedItem();
 
-        int familyId;
-        if (prd.getFamily() > 0) {
-            familyId = prd.getFamily();
-        } else {
-            familyId = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(prd.getLgbk(), prd.getHierarchy()));
-        }
-        String famName = CoreModule.getProductFamilies().getFamilyNameById(familyId);
-
-        boolean profileRights = (sr == DISPLAY);
-        boolean familyOfUser = famName.isEmpty() ? false : user.getProductFamilies().contains(famName) && sr == OWN;
-        boolean adminRights = (sr == FULL);
+        ProductFamily pf = prd.getProductFamily();
+        boolean profileRights = sr == DISPLAY;
+        boolean familyOfUser = sr == OWN && pf != null && (user.getProductFamilies().contains(pf.getName()));
+        boolean adminRights = sr == FULL;
 
         if ((profileRights || !familyOfUser) && !adminRights) Utils.disableMenuItemsButton(rootAnchorPane, "btnApply");
         else setSaveAccelerator();

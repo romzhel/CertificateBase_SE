@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import ui_windows.main_window.file_import_window.ColumnsMapper;
 import ui_windows.main_window.file_import_window.FileImportTableItem;
 import ui_windows.main_window.file_import_window.ObjectsComparator2;
+import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.MultiEditor;
@@ -46,8 +47,7 @@ public class ProductEditorWindowActions {
                 Product changedProduct = new Product(root);
 
                 //avoiding changing of automatically calculated family
-                int id = CoreModule.getProductLgbks().getFamilyIdByLgbk(new ProductLgbk(pr.getLgbk(), pr.getHierarchy()));
-                if (pr.getFamily() < 1 && changedProduct.getFamily() == id) changedProduct.setFamily(0);
+                if (pr.getFamily() < 1 && changedProduct.getFamily() == pr.getProductFamily().getId()) changedProduct.setFamily(0);
 
                 boolean productWasNeedAction = pr.isNeedaction() && !changedProduct.isNeedaction();
 
@@ -65,7 +65,7 @@ public class ProductEditorWindowActions {
                 fiti.add(new FileImportTableItem("", "needaction", true, true, -1, false));
 
 
-                LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(pr.getLgbk(), pr.getHierarchy()));
+                LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(pr));
                 boolean globalDisabled = lap.getLgbkItem().isNotUsed() || lap.getLgbkParent().isNotUsed();
                 if (!globalDisabled) {
                     fiti.add(new FileImportTableItem("", "notused", true, true, -1, false));

@@ -11,6 +11,7 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.util.Callback;
+import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
@@ -60,17 +61,11 @@ public class MainTable {
             if (cols[i] == "family") {
                 col.setCellValueFactory(param -> {
                     Product pr = param.getValue();
-
-                    if (pr.getFamily() > 0) {//individual value
-                        return new SimpleStringProperty(CoreModule.getProductFamilies().getFamilyNameById(pr.getFamily()));
-                    } else {//try to calculate it
-                        int id = CoreModule.getProductLgbks().
-                                getFamilyIdByLgbk(new ProductLgbk(pr.getLgbk(), pr.getHierarchy()));
-                        String family = CoreModule.getProductFamilies().getFamilyNameById(id);
-
-                        if (family == "") return new SimpleStringProperty(pr.getLgbk().concat(" (").
-                                concat(pr.getHierarchy()).concat(")"));
-                        else return new SimpleStringProperty(family);
+                    ProductFamily pf = pr.getProductFamily();
+                    if (pf != null) {
+                        return new SimpleStringProperty(pf.getName());
+                    }  else {
+                        return new SimpleStringProperty(pr.getLgbk().concat(" (").concat(pr.getHierarchy()).concat(")"));
                     }
                 });
 
@@ -93,7 +88,6 @@ public class MainTable {
                                         CertificatesChecker certificatesChecker = new CertificatesChecker(product, new CheckParameters());
 
                                         Platform.runLater(() -> {
-
                                             getStyleClass().add(certificatesChecker.getCheckStatusResultStyle(getStyleClass()));
                                             setTooltip(new Tooltip(certificatesChecker.getCheckStatusResult()));
                                         });
