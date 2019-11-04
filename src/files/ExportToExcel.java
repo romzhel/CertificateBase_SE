@@ -191,7 +191,6 @@ public class ExportToExcel {
             xssfSheet.autoSizeColumn(colIndex - 1);
         }
 
-
         for (Product product : items) {
             xssfRow = xssfSheet.createRow(rowIndex++);
 

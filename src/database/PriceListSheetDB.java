@@ -16,13 +16,14 @@ public class PriceListSheetDB extends DbRequest {
         try {
             addData = connection.prepareStatement("INSERT INTO priceListSheets" +
                             "(price_list_id, name, language, init_row, content_mode, lead_time_correction, " +
-                            "group_names_displaying, column_enums, content_enums, dchain_enums, discount, sort_order) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                            "group_names_displaying, column_enums, content_enums, dchain_enums, discount, sort_order," +
+                            "check_cert) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = connection.prepareStatement("UPDATE priceListSheets " +
                     "SET price_list_id = ?, name = ?, language = ?, init_row = ?, content_mode = ?, lead_time_correction = ?, " +
                     "group_names_displaying = ?, column_enums = ?, content_enums = ?, dchain_enums = ?, discount = ?," +
-                    "sort_order = ? WHERE id = ?");
+                    "sort_order = ?, check_cert = ? WHERE id = ?");
             deleteData = connection.prepareStatement("DELETE FROM priceListSheets " +
                     "WHERE id = ?");
         } catch (SQLException e) {
@@ -65,6 +66,7 @@ public class PriceListSheetDB extends DbRequest {
             addData.setString(index++, pls.getDchainSelector().getSelectedItemsAsString());
             addData.setInt(index++, pls.getDiscount());
             addData.setInt(index++, pls.getSortOrder() == HierarchyGroup.SORT_MATERIAL ? 0 : 1);
+            addData.setBoolean(index++, pls.isCheckCert());
 
             MainWindow.setProgress(1.0);
 
@@ -105,6 +107,7 @@ public class PriceListSheetDB extends DbRequest {
             updateData.setString(index++, pls.getDchainSelector().getSelectedItemsAsString());
             updateData.setInt(index++, pls.getDiscount());
             updateData.setInt(index++, pls.getSortOrder() == HierarchyGroup.SORT_MATERIAL ? 0 : 1);
+            updateData.setBoolean(index++, pls.isCheckCert());
 
             updateData.setInt(index++, pls.getSheetId());
 

@@ -6,11 +6,16 @@ import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.product.Product;
+import ui_windows.product.certificatesChecker.CertificatesChecker;
 
 import java.util.TreeSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_FAMILY;
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_LGBK;
+import static ui_windows.product.certificatesChecker.CheckStatusResult.STATUS_OK;
 
 public class PriceStructure {
     private PriceListSheet priceListSheet;
@@ -23,16 +28,30 @@ public class PriceStructure {
         int contentMode = priceListSheet.getContentMode();
         if (contentMode == CONTENT_MODE_FAMILY) priceListSheet.getContentTable().switchContentMode(CONTENT_MODE_LGBK);
 
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
         for (Product product : CoreModule.getProducts().getItems()) {
-            if (product.isPrice() && priceListSheet.isInPrice(product)) {
-                addProduct(product);
-            }
+
+            Runnable check = () -> {
+                boolean checkCert = !priceListSheet.isCheckCert() ||
+                        new CertificatesChecker(product).getCheckStatusResult().equals(STATUS_OK.getText());
+                if (product.isPrice() && priceListSheet.isInPrice(product) && checkCert) {
+                    addProduct(product);
+                }
+            };
+            executorService.execute(check);
+        }
+
+        executorService.shutdown();
+        try {
+            executorService.awaitTermination(3, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
         if (contentMode == CONTENT_MODE_FAMILY) priceListSheet.getContentTable().switchContentMode(CONTENT_MODE_FAMILY);
     }
 
-    public void addProduct(Product product) {
+    public synchronized void addProduct(Product product) {
         for (LgbkGroup group : lgbkGroups) {
             String l = product.getLgbk();
             String n = group.getName();

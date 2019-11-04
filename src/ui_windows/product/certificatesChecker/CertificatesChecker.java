@@ -31,6 +31,13 @@ public class CertificatesChecker {
     private int certsErr;
     private TreeSet<String> productTypes;
 
+    public CertificatesChecker(Product product) {
+        init();
+
+        checkExistingCertificates(product, new CheckParameters());
+        checkNorms(product);
+    }
+
     public CertificatesChecker(Product product, CheckParameters checkParameters) {
         init();
 
@@ -138,7 +145,7 @@ public class CertificatesChecker {
     }
 
     private boolean isMatchEquipTypeName(Product product, CertificateContent content) {
-        String[] productDescriptionParts = product.getDescriptionru().replaceAll("[\\(\\)]", "").split("\\s");
+        String[] productDescriptionParts = product.getDescriptionru().replaceAll("[\\(\\)\\[\\]]", "").split("\\s");
         String certEqType = content.getEquipmentType().toLowerCase();
 
         for (String partOfDesc : productDescriptionParts) {

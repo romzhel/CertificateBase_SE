@@ -41,6 +41,7 @@ public class PriceListSheet extends Tab {
     private int leadTimeCorrection;
     private boolean groupNameDisplaying = true;
     private int discount;
+    private boolean checkCert;
     private PriceListSheetController controller;
     private Comparator<Product> sortOrder;
 
@@ -79,6 +80,7 @@ public class PriceListSheet extends Tab {
             dchainSelector.setSelectedItemsFromString(rs.getString("dchain_enums"));
             discount = rs.getInt("discount");
             sortOrder = rs.getInt("sort_order") == 0 ? HierarchyGroup.SORT_MATERIAL : HierarchyGroup.SORT_ARTICLE;
+            checkCert = rs.getBoolean("check_cert");
 
             initMainOptions();
         } catch (SQLException e) {
@@ -108,6 +110,7 @@ public class PriceListSheet extends Tab {
         contentTable.importFromString(anotherInstance.contentTable.exportToString());
         discount = anotherInstance.discount;
         sortOrder = anotherInstance.sortOrder;
+        checkCert = anotherInstance.checkCert;
 
         initMainOptions();
     }
@@ -149,6 +152,7 @@ public class PriceListSheet extends Tab {
 
         controller.rbOrderMaterial.setSelected(sortOrder == HierarchyGroup.SORT_MATERIAL);
         controller.rbOrderArticle.setSelected(sortOrder == HierarchyGroup.SORT_ARTICLE);
+        controller.cbxCheckCert.setSelected(checkCert);
     }
 
     private void initColumnsSelector() {
@@ -294,6 +298,7 @@ public class PriceListSheet extends Tab {
         String costDiscount = controller.tfDiscount.getText();
         discount = costDiscount.matches("^\\d+$") ? Integer.parseInt(costDiscount) : 0;
         sortOrder = controller.rbOrderMaterial.isSelected() ? HierarchyGroup.SORT_MATERIAL : HierarchyGroup.SORT_ARTICLE;
+        checkCert = controller.cbxCheckCert.isSelected();
     }
 
     public int getLanguage() {
@@ -394,5 +399,13 @@ public class PriceListSheet extends Tab {
 
     public Comparator<Product> getSortOrder() {
         return sortOrder;
+    }
+
+    public boolean isCheckCert() {
+        return checkCert;
+    }
+
+    public void setCheckCert(boolean checkCert) {
+        this.checkCert = checkCert;
     }
 }

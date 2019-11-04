@@ -35,6 +35,8 @@ public class PriceListSheetController implements Initializable {
     public RadioButton rbOrderMaterial;
     @FXML
     public RadioButton rbOrderArticle;
+    @FXML
+    public CheckBox cbxCheckCert;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

@@ -5,7 +5,6 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
 
@@ -13,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static files.price_to_excel.ExportPriceListToExcel_SE.*;
-import static ui_windows.product.data.ProductProperties.*;
 import static ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet.LANG_RU;
+import static ui_windows.product.data.ProductProperties.*;
 
 public class ProductData {
     public static final DataItem DATA_ORDER_NUMBER_PRINT = new DataItem(DESC_ORDER_NUMBER_PRINT, FIELD_ORDER_NUMBER_PRINT);
@@ -167,9 +166,11 @@ public class ProductData {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
             OrderAccessibility oa = CoreModule.getOrdersAccessibility().getOrderAccessibilityByStatusCode(
                     param.getProduct().getDchain());
-            String desc = oa.getDescriptionRu().isEmpty() ? oa.getDescriptionEn() : oa.getDescriptionRu();
-            cell.setCellValue(desc);
+            if (oa != null) {
+                String desc = oa.getDescriptionRu().isEmpty() ? oa.getDescriptionEn() : oa.getDescriptionRu();
+                cell.setCellValue(desc);
             cell.setCellStyle(CELL_ALIGN_RIGHT);
+            }
 
             return cell;
         });
