@@ -3,11 +3,10 @@ package ui_windows.main_window.filter_window;
 import core.CoreModule;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.apache.poi.ss.formula.functions.T;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 
@@ -15,21 +14,17 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
 
-import static ui_windows.main_window.filter_window.Filter.*;
+import static ui_windows.main_window.filter_window.FilterParameters.*;
 
 public class FilterWindowController implements Initializable {
     private static final int SELECTOR_LGBK_ROWS_MAX = 10;
 
     @FXML
-    public CheckBox cbxPrice;
+    public RadioButton rbPriceItems;
     @FXML
-    public CheckBox cbxArchive;
-    @FXML
-    public CheckBox cbxNotUsed;
+    public RadioButton rbAllItems;
     @FXML
     public CheckBox cbxOnlyChanges;
-    @FXML
-    public CheckBox cbxAllRecords;
     @FXML
     public ComboBox<ProductFamily> cbFamily;
     @FXML
@@ -62,7 +57,7 @@ public class FilterWindowController implements Initializable {
             }
         });
 
-        syncLgbkSelector((ProductFamily) FILTER_FAMILY.getValue());
+        syncLgbkSelector(FILTER_FAMILY.getValue());
 
         cbLgbk.setOnAction(event -> {
             if (cbLgbk.getValue() != null) {
@@ -86,7 +81,7 @@ public class FilterWindowController implements Initializable {
         cbLgbk.getItems().addAll(lgbkGroups);
         cbLgbk.setVisibleRowCount(Math.min(cbLgbk.getItems().size() + 1, SELECTOR_LGBK_ROWS_MAX));
 
-        ProductLgbk selectedItem = (ProductLgbk) FILTER_LGBK.getValue();
+        ProductLgbk selectedItem = FILTER_LGBK.getValue();
         if (cbLgbk.getItems().indexOf(selectedItem) >= 0) {
             cbLgbk.getSelectionModel().select(selectedItem);
         } else {
@@ -114,7 +109,7 @@ public class FilterWindowController implements Initializable {
         families.addAll(CoreModule.getProductFamilies().getItems());
         cbFamily.getItems().addAll(families);
 
-        ProductFamily productFamily = (ProductFamily) FILTER_FAMILY.getValue();
+        ProductFamily productFamily = FILTER_FAMILY.getValue();
         if (productFamily != null) {
             cbFamily.setValue(productFamily);
         } else {
@@ -153,21 +148,20 @@ public class FilterWindowController implements Initializable {
     }
 
     public void initMainSelection() {
-        cbxAllRecords.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        ToggleGroup itemsGroup = new ToggleGroup();
+        rbAllItems.setToggleGroup(itemsGroup);
+        rbPriceItems.setToggleGroup(itemsGroup);
+
+        rbAllItems.selectedProperty().addListener((observable, oldValue, newValue) -> {
             FILTER_ALL_ITEMS.setValue(newValue);
-            if (newValue) {
-                cbxPrice.setSelected(false);
-//                cbxArchive.setSelected(false);
-//                cbxNotUsed.setSelected(false);
-//                cbxOnlyChanges.setSelected(false);
-            }
+            FILTER_PRICE_ITEMS.setValue(!newValue);
             applyFilter();
         });
-        cbxPrice.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        /*cbxPrice.selectedProperty().addListener((observable, oldValue, newValue) -> {
             FILTER_PRICE_ITEMS.setValue(newValue);
             if (newValue) cbxAllRecords.setSelected(false);
             applyFilter();
-        });
+        });*/
     }
 
     public void applyFilter() {
@@ -177,6 +171,4 @@ public class FilterWindowController implements Initializable {
     public void close() {
         ((Stage) cbLgbk.getScene().getWindow()).close();
     }
-
-
 }

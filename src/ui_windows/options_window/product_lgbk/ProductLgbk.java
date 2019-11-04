@@ -13,8 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static ui_windows.main_window.filter_window.Filter.FILTER_VALUE_ALL_ITEMS;
-import static ui_windows.main_window.filter_window.Filter.FILTER_VALUE_ALL_LGBKS;
+import static ui_windows.main_window.filter_window.FilterParameters.*;
 
 public class ProductLgbk implements PriceListContentItem {
     public static final int ROOT_NODE = 0;

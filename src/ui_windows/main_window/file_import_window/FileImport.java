@@ -4,6 +4,7 @@ import core.CoreModule;
 import core.Dialogs;
 import database.ProductsDB;
 import javafx.application.Platform;
+import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.MainWindowsController;
 import ui_windows.product.Product;
@@ -50,7 +51,7 @@ public class FileImport {
 
             if ((lastComparationResult.getNewItems().size() + lastComparationResult.getChangedItems().size()) > 0) {
                 MainWindowsController mwc = MainWindow.getFxmlLoader().getController();
-                mwc.getDataSelectorMenu().selectLastImportResult();
+                mwc.getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_LAST_IMPORT_RESULT);
             }
 
             if (lastComparationResult.getNewItems().size() > 0) new ProductsDB().putData(lastComparationResult.getNewItems());// save new items to db

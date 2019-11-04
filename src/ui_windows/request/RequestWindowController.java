@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.product.Product;
 
@@ -54,7 +55,7 @@ public class RequestWindowController implements Initializable {
 
         CoreModule.getCustomItems().addAll(results);
         CoreModule.setCurrentItems(CoreModule.getCustomItems());
-        MainWindow.getController().getDataSelectorMenu().selectDataCustomSelection();
+        MainWindow.getController().getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION);
 
         if (!notFoundItems.isEmpty()) {
             Dialogs.showMessage("Создание пользовательского списка", "Следующие позиции не были найдены:\n" + notFoundItems);

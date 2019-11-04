@@ -5,16 +5,16 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="345.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.product.productEditorWindow.configNormsWindow.ConfigNormsWindowController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="345.0" minWidth="600.0" prefHeight="345.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.product.productEditorWindow.configNormsWindow.ConfigNormsWindowController">
     <children>
-        <ListView fx:id="lvAllNorms" layoutX="132.0" layoutY="66.0" prefHeight="220.0" prefWidth="200.0" />
-        <ListView fx:id="lvSelectedNorms" layoutX="380.0" layoutY="66.0" prefHeight="220.0" prefWidth="200.0" />
-        <Button fx:id="btnMoveSelected" layoutX="344.0" layoutY="88.0" mnemonicParsing="false" onAction="#moveNorm" text="&gt;" />
-        <Button fx:id="btnRemoveSelected" layoutX="344.0" layoutY="124.0" mnemonicParsing="false" onAction="#removeNorm" text="&lt;" />
-        <Button fx:id="btnRemoveAll" layoutX="340.0" layoutY="232.0" mnemonicParsing="false" onAction="#removeAllNorms" text="&lt;&lt;" />
-        <Button fx:id="btnMoveAll" layoutX="340.0" layoutY="196.0" mnemonicParsing="false" onAction="#moveAllNorms" text="&gt;&gt;" />
-        <Button fx:id="btnCancel" layoutX="351.0" layoutY="304.0" mnemonicParsing="false" onAction="#close" prefHeight="25.0" prefWidth="137.0" text="Закрыть" />
-        <Button fx:id="btnApply" layoutX="130.0" layoutY="304.0" mnemonicParsing="false" onAction="#apply" prefHeight="25.0" prefWidth="137.0" text="Сохранить" />
+        <ListView fx:id="lvAllNorms" layoutX="132.0" layoutY="66.0" prefHeight="220.0" prefWidth="200.0" AnchorPane.bottomAnchor="59.0" AnchorPane.leftAnchor="132.0" AnchorPane.topAnchor="66.0" />
+        <ListView fx:id="lvSelectedNorms" layoutX="379.0" layoutY="66.0" prefHeight="220.0" prefWidth="200.0" AnchorPane.bottomAnchor="59.0" AnchorPane.leftAnchor="379.0" AnchorPane.topAnchor="66.0" />
+        <Button fx:id="btnMoveSelected" layoutX="344.0" layoutY="88.0" mnemonicParsing="false" onAction="#moveNorm" text="&gt;" AnchorPane.topAnchor="88.0" />
+        <Button fx:id="btnRemoveSelected" layoutX="344.0" layoutY="124.0" mnemonicParsing="false" onAction="#removeNorm" text="&lt;" AnchorPane.topAnchor="124.0" />
+        <Button fx:id="btnRemoveAll" layoutX="340.0" layoutY="232.0" mnemonicParsing="false" onAction="#removeAllNorms" text="&lt;&lt;" AnchorPane.topAnchor="232.0" />
+        <Button fx:id="btnMoveAll" layoutX="340.0" layoutY="196.0" mnemonicParsing="false" onAction="#moveAllNorms" text="&gt;&gt;" AnchorPane.topAnchor="197.0" />
+        <Button fx:id="btnCancel" layoutX="357.0" layoutY="304.0" mnemonicParsing="false" onAction="#close" prefHeight="25.0" prefWidth="137.0" text="Закрыть" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="357.0" />
+        <Button fx:id="btnApply" layoutX="105.0" layoutY="304.0" mnemonicParsing="false" onAction="#apply" prefHeight="25.0" prefWidth="137.0" text="Сохранить" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="105.0" />
         <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="16.0" layoutY="100.0" prefHeight="17.0" prefWidth="106.0" text="нормы" textAlignment="CENTER" />
         <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="16.0" layoutY="67.0" prefHeight="17.0" prefWidth="106.0" text="Список норм /" textAlignment="CENTER" />
         <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="16.0" layoutY="84.0" prefHeight="17.0" prefWidth="106.0" text="выбранные" textAlignment="CENTER" />

@@ -1,10 +1,6 @@
 package ui_windows.main_window.filter_window;
 
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
-import ui_windows.options_window.families_editor.ProductFamily;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
+import javafx.scene.control.*;
 
 public class FilterParameter<T> {
     private Control control;
@@ -16,23 +12,26 @@ public class FilterParameter<T> {
     }
 
     public void displayValue(Control control) {
+        if (control == null) return;
         this.control = control;
-        if (control instanceof CheckBox && value instanceof Boolean) {
-            ((CheckBox) control).setSelected((Boolean) value);
-        } else if (control instanceof ComboBox && value instanceof ProductFamily) {
+        if (control instanceof RadioButton && value instanceof Boolean) {
+            ((RadioButton) control).setSelected((Boolean) value);
+        } else if (control instanceof ComboBox) {
             ((ComboBox) control).setValue(value);
-        } else if (control instanceof ComboBox && value instanceof ProductLgbk) {
-            ((ComboBox) control).setValue(value);
+        } else if (control instanceof TextField) {
+            ((TextField) control).setText((String) value);
+            ((TextField) control).selectRange(((String) value).length(), ((String) value).length());
         } else {
             System.out.println("unknown filter control " + control.getId());
         }
     }
 
-    public void setValue(T value) {
-        this.value = value;
-    }
-
     public T getValue() {
         return value;
+    }
+
+    public void setValue(T value) {
+        this.value = value;
+        displayValue(control);
     }
 }

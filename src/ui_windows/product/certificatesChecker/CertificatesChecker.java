@@ -139,13 +139,14 @@ public class CertificatesChecker {
 
     private boolean isMatchEquipTypeName(Product product, CertificateContent content) {
         String[] productDescriptionParts = product.getDescriptionru().replaceAll("[\\(\\)]", "").split("\\s");
+        String certEqType = content.getEquipmentType().toLowerCase();
+
         for (String partOfDesc : productDescriptionParts) {
             String searchPart;
             if (partOfDesc.length() > 3) {
                 searchPart = partOfDesc.substring(0, 3).toLowerCase();
 
-                String certEqType = content.getEquipmentType().toLowerCase();
-                if (certEqType.startsWith(searchPart) || certEqType.matches("\\s" + searchPart + ".*")) {
+                if (certEqType.startsWith(searchPart) || certEqType.matches(".*\\s" + searchPart + ".*")) {
                     return true;
                 }
             }

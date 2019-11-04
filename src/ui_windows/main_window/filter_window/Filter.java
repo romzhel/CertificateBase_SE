@@ -3,10 +3,8 @@ package ui_windows.main_window.filter_window;
 import core.CoreModule;
 import javafx.application.Platform;
 import javafx.scene.control.TableView;
-import ui_windows.main_window.MainTable;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.families_editor.ProductFamily;
-import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 import utils.Utils;
@@ -15,34 +13,37 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeSet;
 
-public class Filter {
-    public static final String FILTER_VALUE_ALL_ITEMS = "--- Все ---";
-    public static final ProductFamily FILTER_VALUE_ALL_FAMILIES = new ProductFamily(FILTER_VALUE_ALL_ITEMS);
-    public static final ProductLgbk FILTER_VALUE_ALL_LGBKS = new ProductLgbk(FILTER_VALUE_ALL_ITEMS);
-    public static final FilterParameter FILTER_ALL_ITEMS = new FilterParameter<>(false);
-    public static final FilterParameter FILTER_PRICE_ITEMS = new FilterParameter<>(true);
-    public static final FilterParameter FILTER_FAMILY = new FilterParameter<>(FILTER_VALUE_ALL_FAMILIES);
-    public static final FilterParameter FILTER_LGBK = new FilterParameter<>(FILTER_VALUE_ALL_LGBKS);
+import static ui_windows.main_window.filter_window.FilterParameters.*;
 
+public class Filter {
     private String changeCodes[];
     private String changeTexts[];
     private String changeCode = "";
     private FilterWindowController controller;
-    private FilterParameters savedFilterParameters;
 
     public Filter() {
-        savedFilterParameters = new FilterParameters(FILTER_FAMILY, FILTER_LGBK, FILTER_ALL_ITEMS, FILTER_PRICE_ITEMS, "");
-
         changeCodes = new String[]{"", "new", "dchain", "country", "article", "hierarchy, lgbk", "endofservice", "dangerous"};
         changeTexts = new String[]{"--- Любое ---", "Новая позиция", "Доступность для заказа", "Страна", "Артикул", "Иерархия",
                 "Сервисный период", "Ограничения логистики"};
     }
 
-    public void displayInUI(FilterWindowController controller) {
-        FILTER_ALL_ITEMS.displayValue(controller.cbxAllRecords);
-        FILTER_PRICE_ITEMS.displayValue(controller.cbxPrice);
-        FILTER_FAMILY.displayValue(controller.cbFamily);
-        FILTER_LGBK.displayValue(controller.cbLgbk);
+    public void displayInUI() {
+        if (controller != null) {
+            FILTER_ALL_ITEMS.displayValue(controller.rbAllItems);
+            FILTER_PRICE_ITEMS.displayValue(controller.rbPriceItems);
+            FILTER_FAMILY.displayValue(controller.cbFamily);
+            FILTER_LGBK.displayValue(controller.cbLgbk);
+        }
+        if (MainWindow.getSearchBox() != null) {
+            FILTER_SEARCH_BOX.displayValue(MainWindow.getSearchBox().getTextBox());
+        }
+    }
+
+    public void switchFilterParameters(FilterParameters oldFp, FilterParameters newFp) {
+        if (oldFp != null) oldFp.save();
+        if (newFp != null) newFp.load();
+        displayInUI();
+        apply();
     }
 
     public ArrayList<String> getChangeTexts() {
@@ -65,7 +66,7 @@ public class Filter {
 
     public void apply() {
         TableView<Product> tableView = CoreModule.getProducts().getTableView();
-        String find = MainWindow.getSearchBox().getText();
+        String find = FILTER_SEARCH_BOX.getValue();
         find = find.replaceAll("\\*", ".*");
         find = find.replaceAll("\\.", ".");
 
@@ -116,28 +117,6 @@ public class Filter {
         });
     }
 
-    public void switchToRequestItems() {
-        savedFilterParameters = new FilterParameters(FILTER_FAMILY, FILTER_LGBK, FILTER_ALL_ITEMS, FILTER_PRICE_ITEMS,
-                MainWindow.getSearchBox().getText());
-        FILTER_FAMILY.setValue(FILTER_VALUE_ALL_FAMILIES);
-        FILTER_LGBK.setValue(FILTER_VALUE_ALL_LGBKS);
-        FILTER_ALL_ITEMS.setValue(true);
-        FILTER_PRICE_ITEMS.setValue(false);
-        MainWindow.getSearchBox().setText("");
-        MainTable.switchContextMenuCustom();
-        apply();
-    }
-
-    public void switchToDataItems() {
-        FILTER_FAMILY.setValue(savedFilterParameters.getProductFamily());
-        FILTER_LGBK.setValue(savedFilterParameters.getProductLgbk());
-        FILTER_ALL_ITEMS.setValue(savedFilterParameters.isAllItems());
-        FILTER_PRICE_ITEMS.setValue(savedFilterParameters.isPriceItems());
-        MainWindow.getSearchBox().setText(savedFilterParameters.getSearchBoxText());
-        MainTable.switchContextMenuData();
-        apply();
-    }
-
     public String getChangeCode() {
         return changeCode;
     }
@@ -146,12 +125,13 @@ public class Filter {
         changeCode = getChangeCodeByText(changeText);
     }
 
+    public void setController(FilterWindowController controller) {
+        this.controller = controller;
+        displayInUI();
+    }
+
     public interface TableRenewedListener {
         void getLgbksForItems(TreeSet<ProductLgbk> lgbks);
 
-    }
-
-    public void setController(FilterWindowController controller) {
-        this.controller = controller;
     }
 }

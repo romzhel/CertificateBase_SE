@@ -9,7 +9,6 @@
 
 <AnchorPane prefHeight="371.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.main_window.filter_window.FilterWindowController">
    <children>
-      <CheckBox fx:id="cbxPrice" contentDisplay="GRAPHIC_ONLY" layoutX="367.0" layoutY="66.0" mnemonicParsing="false" prefWidth="20.0" text="CheckBox" />
       <CheckBox fx:id="cbxNotUsed" contentDisplay="GRAPHIC_ONLY" layoutX="367.0" layoutY="96.0" mnemonicParsing="false" prefWidth="20.0" text="CheckBox" visible="false" />
       <CheckBox fx:id="cbxOnlyChanges" contentDisplay="GRAPHIC_ONLY" layoutX="213.0" layoutY="252.0" mnemonicParsing="false" prefWidth="20.0" text="CheckBox" />
       <Label fx:id="lbPrice" alignment="CENTER_RIGHT" layoutX="243.0" layoutY="66.0" prefHeight="17.0" prefWidth="114.0" text="Прайс" />
@@ -20,7 +19,6 @@
       <ComboBox fx:id="cbFamily" layoutX="214.0" layoutY="137.0" prefHeight="25.0" prefWidth="365.0" />
       <Label fx:id="lbNotUsed1" alignment="CENTER_RIGHT" layoutX="13.0" layoutY="141.0" prefHeight="17.0" prefWidth="191.0" text="Направление" />
       <Label fx:id="lbAllRecords" alignment="CENTER_RIGHT" layoutX="12.0" layoutY="65.0" prefHeight="17.0" prefWidth="191.0" text="Все записи" />
-      <CheckBox fx:id="cbxAllRecords" contentDisplay="GRAPHIC_ONLY" layoutX="213.0" layoutY="65.0" mnemonicParsing="false" prefWidth="20.0" text="CheckBox" />
       <ComboBox fx:id="cbChangeType" disable="true" layoutX="214.0" layoutY="278.0" prefHeight="25.0" prefWidth="365.0" />
       <Separator layoutX="14.0" layoutY="237.0" prefHeight="5.0" prefWidth="568.0" />
       <Separator layoutX="15.0" layoutY="124.0" prefHeight="5.0" prefWidth="568.0" />
@@ -29,5 +27,7 @@
       <ComboBox fx:id="cbLgbk" layoutX="214.0" layoutY="170.0" prefHeight="25.0" prefWidth="365.0" />
       <Label fx:id="lbNotUsed12" alignment="CENTER_RIGHT" layoutX="13.0" layoutY="206.0" prefHeight="17.0" prefWidth="191.0" text="Иерархия" />
       <ComboBox fx:id="cbHier" layoutX="214.0" layoutY="202.0" prefHeight="25.0" prefWidth="365.0" />
+      <RadioButton fx:id="rbAllItems" layoutX="213.0" layoutY="66.0" mnemonicParsing="false" />
+      <RadioButton fx:id="rbPriceItems" layoutX="367.0" layoutY="66.0" mnemonicParsing="false" />
    </children>
 </AnchorPane>

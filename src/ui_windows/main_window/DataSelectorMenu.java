@@ -2,36 +2,53 @@ package ui_windows.main_window;
 
 import core.CoreModule;
 import javafx.scene.control.*;
+import ui_windows.main_window.filter_window.DataSelectorMenuItem;
+import ui_windows.main_window.filter_window.FilterParameters;
+
+import java.util.ArrayList;
 
 public class DataSelectorMenu extends Menu {
-    private Menu menu;
     private static final String SPACE = "     ";
-    public static final RadioMenuItem MENU_DATA_ALL_ITEMS = new RadioMenuItem(SPACE + "Все позиции" + SPACE);
-    public static final RadioMenuItem MENU_DATA_CUSTOM_SELECTION = new RadioMenuItem(SPACE + "Запрос" + SPACE);
-    public static final RadioMenuItem MENU_DATA_LAST_IMPORT_RESULT = new RadioMenuItem(SPACE + "Результаты последнего импорта" + SPACE);
+    public static final DataSelectorMenuItem MENU_DATA_CUSTOM_SELECTION = new DataSelectorMenuItem(
+            SPACE + "Запрос" + SPACE, new FilterParameters(), () -> new ArrayList<>(CoreModule.getCustomItems()));
+    public static final DataSelectorMenuItem MENU_DATA_LAST_IMPORT_RESULT = new DataSelectorMenuItem(
+            SPACE + "Результаты последнего импорта" + SPACE, new FilterParameters(), () -> CoreModule.getProducts().getChangedPositions());
+    private static final DataSelectorMenuItem MENU_DATA_ALL_ITEMS = new DataSelectorMenuItem(
+            SPACE + "Все позиции" + SPACE, new FilterParameters().setPriceItems(true), () -> CoreModule.getProducts().getItems());
+    private Menu menu;
 
     public DataSelectorMenu(Menu menu) {
         this.menu = menu;
         init(menu);
-
-
     }
 
     private void init(Menu menu) {
-        ToggleGroup dataSelector = new ToggleGroup();
-
-        MENU_DATA_ALL_ITEMS.setOnAction(event -> selectDataAllItems());
-        MENU_DATA_CUSTOM_SELECTION.setOnAction(event -> selectDataCustomSelection());
-        MENU_DATA_LAST_IMPORT_RESULT.setOnAction(event -> selectLastImportResult());
-
-        menu.getItems().addAll(MENU_DATA_ALL_ITEMS, new SeparatorMenuItem(), MENU_DATA_CUSTOM_SELECTION, new SeparatorMenuItem(),
+        menu.getItems().addAll(
+                MENU_DATA_ALL_ITEMS,
+                new SeparatorMenuItem(),
+                MENU_DATA_CUSTOM_SELECTION,
+                new SeparatorMenuItem(),
                 MENU_DATA_LAST_IMPORT_RESULT);
 
+        ToggleGroup dataSelector = new ToggleGroup();
         for (MenuItem mi : menu.getItems()) {
             if (mi instanceof RadioMenuItem) {
                 ((RadioMenuItem) mi).setToggleGroup(dataSelector);
             }
         }
+
+        dataSelector.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != oldValue) {
+                FilterParameters oldFilterParameters = null;
+                FilterParameters newFilterParameters = null;
+                if (oldValue != null) oldFilterParameters = ((DataSelectorMenuItem) oldValue).getFilterParameters();
+                if (newValue != null) {
+                    newFilterParameters = ((DataSelectorMenuItem) newValue).getFilterParameters();
+                    CoreModule.setCurrentItems(((DataSelectorMenuItem) newValue).getSyncDataSource().syncData());
+                }
+                CoreModule.getFilter().switchFilterParameters(oldFilterParameters, newFilterParameters);
+            }
+        });
 
         selectMenuItem(MENU_DATA_ALL_ITEMS);
     }
@@ -42,24 +59,6 @@ public class DataSelectorMenu extends Menu {
                 ((RadioMenuItem) mi).setSelected(true);
             }
         }
-    }
-
-    public void selectDataAllItems() {
-        CoreModule.setCurrentItems(CoreModule.getProducts().getItems());
-        CoreModule.getFilter().switchToDataItems();
-        selectMenuItem(MENU_DATA_ALL_ITEMS);
-    }
-
-    public void selectDataCustomSelection() {
-        CoreModule.setCurrentItems(CoreModule.getCustomItems());
-        CoreModule.getFilter().switchToRequestItems();
-        selectMenuItem(MENU_DATA_CUSTOM_SELECTION);
-    }
-
-    public void selectLastImportResult() {
-        CoreModule.setCurrentItems(CoreModule.getProducts().getChangedPositions());
-        CoreModule.getFilter().switchToDataItems();
-        selectMenuItem(MENU_DATA_LAST_IMPORT_RESULT);
     }
 
     public void reportNoCertificates() {

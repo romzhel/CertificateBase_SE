@@ -13,6 +13,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import ui_windows.main_window.filter_window.FilterParameters;
 import ui_windows.options_window.profile_editor.Profile;
 import utils.SearchBox;
 import utils.Utils;
@@ -24,7 +25,7 @@ import java.util.concurrent.Executors;
 import static ui_windows.options_window.profile_editor.SimpleRight.HIDE;
 
 public class MainWindow extends Application {
-    private String version = "1.1.0.4 от 03.11.2019";
+    private String version = "1.1.0.5 от 04.11.2019";
     private static Stage mainStage;
     private static AnchorPane rootAnchorPane;
     private static ProgressBar progressBar;
@@ -88,6 +89,7 @@ public class MainWindow extends Application {
             searchBox.getTextBox().textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    FilterParameters.FILTER_SEARCH_BOX.setValue(newValue);
                     Runnable filterAction = () -> CoreModule.getFilter().apply();
                     executorService.execute(filterAction);
                 }

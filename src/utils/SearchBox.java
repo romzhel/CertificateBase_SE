@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Region;
+import ui_windows.main_window.filter_window.FilterParameters;
 
 public class SearchBox extends Region {
     private TextField textBox;
@@ -31,6 +32,7 @@ public class SearchBox extends Region {
                 (ObservableValue<? extends String> observable,
                  String oldValue, String newValue) -> {
                     clearButton.setVisible(textBox.getText().length() != 0);
+                    FilterParameters.FILTER_SEARCH_BOX.setValue(getText());
                 };
         textBox.textProperty().addListener(textListener);
         getChildren().addAll(textBox, clearButton);
