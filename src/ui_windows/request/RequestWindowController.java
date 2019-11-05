@@ -2,12 +2,14 @@ package ui_windows.request;
 
 import core.CoreModule;
 import core.Dialogs;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import ui_windows.main_window.DataSelectorMenu;
+import ui_windows.main_window.MainTable;
 import ui_windows.main_window.MainWindow;
 import ui_windows.product.Product;
 
@@ -29,37 +31,51 @@ public class RequestWindowController implements Initializable {
     }
 
     public void actionRequest() {
-        ArrayList<Product> results = new ArrayList<>();
-        String notFoundItems = "";
+        MainWindow.setProgress(-1);
 
-        String[] lines = taData.getText().split("\n");
-        String[] words;
-        Product product;
+        new Thread(new Runnable() {
+            public void run() {
+                ArrayList<Product> results = new ArrayList<>();
+                String notFoundItems = "";
 
-        for (String line : lines) {
-            words = line.split("\t");
+                String[] lines = taData.getText().split("\n");
+                String[] words;
+                Product product;
 
-            for (String word : words) {
-                if (!word.matches(".*\\s.*")) {
-                    product = CoreModule.getProducts().getItemByMaterialOrArticle(word);
+                for (String line : lines) {
+                    words = line.split("\t");
 
-                    if (product == null) {
-                        notFoundItems += "- " + line + "\n";
-                    } else {
-                        results.add(product);
-                        break;
+                    for (String word : words) {
+                        if (word != null && !word.isEmpty() && !word.matches(".*\\s.*")) {
+                            product = CoreModule.getProducts().getItemByMaterialOrArticle(word);
+
+                            if (product == null) {
+                                notFoundItems += "- " + line + "\n";
+                            } else {
+                                results.add(product);
+                                break;
+                            }
+                        }
                     }
                 }
+
+                CoreModule.getCustomItems().addAll(results);
+//        CoreModule.setCurrentItems(CoreModule.getCustomItems());
+        /*if (DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION.isSelected()) {
+            MainTable.getTvTable().getItems().clear();
+            MainTable.getTvTable().getItems().addAll(CoreModule.getCurrentItems());
+        }*/
+                MainWindow.getController().getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION);
+
+                if (!notFoundItems.isEmpty()) {
+                    final String notFoundItemsF = notFoundItems;
+                    Platform.runLater(() ->
+                    Dialogs.showMessage("Создание пользовательского списка", "Следующие позиции не были найдены:\n" + notFoundItemsF));
+                }
+
+                MainWindow.setProgress(0);
             }
-        }
-
-        CoreModule.getCustomItems().addAll(results);
-        CoreModule.setCurrentItems(CoreModule.getCustomItems());
-        MainWindow.getController().getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION);
-
-        if (!notFoundItems.isEmpty()) {
-            Dialogs.showMessage("Создание пользовательского списка", "Следующие позиции не были найдены:\n" + notFoundItems);
-        }
+        }).start();
 
         ((Stage) btnApply.getScene().getWindow()).close();
     }

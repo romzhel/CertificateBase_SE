@@ -10,11 +10,14 @@ import java.util.ArrayList;
 public class DataSelectorMenu extends Menu {
     private static final String SPACE = "     ";
     public static final DataSelectorMenuItem MENU_DATA_CUSTOM_SELECTION = new DataSelectorMenuItem(
-            SPACE + "Запрос" + SPACE, new FilterParameters(), () -> new ArrayList<>(CoreModule.getCustomItems()));
+            SPACE + "Запрос" + SPACE, new FilterParameters(), () -> new ArrayList<>(CoreModule.getCustomItems()),
+            MainTableContextMenuFactory::createContectMenuForCustomItems);
     public static final DataSelectorMenuItem MENU_DATA_LAST_IMPORT_RESULT = new DataSelectorMenuItem(
-            SPACE + "Результаты последнего импорта" + SPACE, new FilterParameters(), () -> CoreModule.getProducts().getChangedPositions());
+            SPACE + "Результаты последнего импорта" + SPACE, new FilterParameters(),
+            () -> CoreModule.getProducts().getChangedPositions(), MainTableContextMenuFactory::createContextMenuForAllData);
     private static final DataSelectorMenuItem MENU_DATA_ALL_ITEMS = new DataSelectorMenuItem(
-            SPACE + "Все позиции" + SPACE, new FilterParameters().setPriceItems(true), () -> CoreModule.getProducts().getItems());
+            SPACE + "Все позиции" + SPACE, new FilterParameters().setPriceItems(true),
+            () -> CoreModule.getProducts().getItems(), () -> MainTableContextMenuFactory.createContextMenuForAllData());
     private Menu menu;
 
     public DataSelectorMenu(Menu menu) {
@@ -37,17 +40,9 @@ public class DataSelectorMenu extends Menu {
             }
         }
 
-        dataSelector.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != oldValue) {
-                FilterParameters oldFilterParameters = null;
-                FilterParameters newFilterParameters = null;
-                if (oldValue != null) oldFilterParameters = ((DataSelectorMenuItem) oldValue).getFilterParameters();
-                if (newValue != null) {
-                    newFilterParameters = ((DataSelectorMenuItem) newValue).getFilterParameters();
-                    CoreModule.setCurrentItems(((DataSelectorMenuItem) newValue).getSyncDataSource().syncData());
-                }
-                CoreModule.getFilter().switchFilterParameters(oldFilterParameters, newFilterParameters);
-            }
+        dataSelector.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {//
+            DataSelectorMenuItem newItem = (DataSelectorMenuItem) newValue;
+            if (newItem != null) newItem.activate();
         });
 
         selectMenuItem(MENU_DATA_ALL_ITEMS);
@@ -56,7 +51,7 @@ public class DataSelectorMenu extends Menu {
     public void selectMenuItem(RadioMenuItem radioMenuItem) {
         for (MenuItem mi : menu.getItems()) {
             if (mi.equals(radioMenuItem)) {
-                ((RadioMenuItem) mi).setSelected(true);
+                ((DataSelectorMenuItem) mi).activate();
             }
         }
     }

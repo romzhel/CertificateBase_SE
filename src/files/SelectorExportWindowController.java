@@ -35,7 +35,7 @@ public class SelectorExportWindowController implements Initializable {
 
     private void initButtons() {
         btnOk.setOnAction(event -> {
-            new ExportToExcel(columnsSelector.getSelectedItems(), MainWindow.getMainTable().getItemsForReport());
+            new Thread(() -> new ExportToExcel(columnsSelector.getSelectedItems(), MainWindow.getMainTable().getItemsForReport())).start();
             ((Stage)btnOk.getScene().getWindow()).close();
         });
         btnCancel.setOnAction(event -> ((Stage)btnOk.getScene().getWindow()).close());

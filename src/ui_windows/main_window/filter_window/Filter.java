@@ -20,6 +20,7 @@ public class Filter {
     private String changeTexts[];
     private String changeCode = "";
     private FilterWindowController controller;
+    private FilterParameters currFp;
 
     public Filter() {
         changeCodes = new String[]{"", "new", "dchain", "country", "article", "hierarchy, lgbk", "endofservice", "dangerous"};
@@ -39,11 +40,14 @@ public class Filter {
         }
     }
 
-    public void switchFilterParameters(FilterParameters oldFp, FilterParameters newFp) {
-        if (oldFp != null) oldFp.save();
-        if (newFp != null) newFp.load();
-        displayInUI();
-        apply();
+    public void switchFilterParameters(FilterParameters newFp) {
+        if (currFp != null) currFp.save();
+        if (newFp != null) {
+            currFp = newFp;
+            newFp.load();
+            displayInUI();
+            apply();
+        }
     }
 
     public ArrayList<String> getChangeTexts() {

@@ -2,12 +2,14 @@ package files;
 
 import core.CoreModule;
 import core.Dialogs;
+import javafx.application.Platform;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.xssf.usermodel.*;
+import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.CertificateCheckingResult;
 import ui_windows.product.Product;
@@ -177,7 +179,10 @@ public class ExportToExcel {
     }
 
     public ExportToExcel(ArrayList<DataItem> columns, ArrayList<Product> items) {
+        MainWindow.setProgress(-1);
+
         workbook = new XSSFWorkbook();
+        new ExcelCellStyleFactory(workbook);
         XSSFSheet xssfSheet = (XSSFSheet) workbook.createSheet("Отчёт");
 
         int rowIndex = 0;
@@ -201,6 +206,7 @@ public class ExportToExcel {
         }
 
         saveToExcelFile();
+        MainWindow.setProgress(0);
         openFile();
     }
 

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class MainWindowsController implements Initializable {
+    public MainTable mainTable;
     private DataSelectorMenu dataSelectorMenu;
     boolean clearOldResult;
 
@@ -49,6 +50,7 @@ public class MainWindowsController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        mainTable = new MainTable(tvTable);
         CoreModule.getProducts().setTableView(tvTable);
         MainWindow.setProgressBar(pbExecuted);
         MainWindow.setMiOptions(miOptions);

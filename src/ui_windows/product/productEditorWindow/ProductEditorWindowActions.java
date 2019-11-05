@@ -47,7 +47,9 @@ public class ProductEditorWindowActions {
                 Product changedProduct = new Product(root);
 
                 //avoiding changing of automatically calculated family
-                if (pr.getFamily() < 1 && changedProduct.getFamily() == pr.getProductFamily().getId()) changedProduct.setFamily(0);
+                if (pr.getFamily() < 1 && pr.getProductFamily() != null && changedProduct.getFamily() == pr.getProductFamily().getId()) {
+                    changedProduct.setFamily(0);
+                }
 
                 boolean productWasNeedAction = pr.isNeedaction() && !changedProduct.isNeedaction();
 

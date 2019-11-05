@@ -5,6 +5,7 @@ import core.Dialogs;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.cell.CheckBoxTableCell;
@@ -43,7 +44,7 @@ public class MainTable {
 
     private void initContextMenu() {
         MainTableContextMenuFactory.init(this);
-        switchContextMenuData();
+//        switchContextMenuData();
     }
 
     private void initTable() {
@@ -157,11 +158,15 @@ public class MainTable {
         }
     }
 
-    public static void switchContextMenuData() {
-        tvTable.setContextMenu(MainTableContextMenuFactory.createContextMenuForAllData());
+    public static void setContextMenu(ContextMenu contextMenu) {
+        tvTable.setContextMenu(contextMenu);
     }
 
-    public static void switchContextMenuCustom() {
-        tvTable.setContextMenu(MainTableContextMenuFactory.createContectMenuForCustomItems());
+    public static TableView<Product> getTvTable() {
+        return tvTable;
+    }
+
+    public ObservableList<Product> getSelectedItems() {
+        return tvTable.getSelectionModel().getSelectedItems();
     }
 }

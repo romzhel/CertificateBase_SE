@@ -11,7 +11,7 @@ import ui_windows.product.certificatesChecker.CheckParameters;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static files.price_to_excel.ExportPriceListToExcel_SE.*;
+import static files.ExcelCellStyleFactory.*;
 import static ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet.LANG_RU;
 import static ui_windows.product.data.ProductProperties.*;
 
@@ -47,6 +47,7 @@ public class ProductData {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
             cell.setCellValue(param.getProduct().getProductForPrint().isEmpty() ? param.getProduct().getMaterial() :
                     param.getProduct().getProductForPrint());
+
             cell.setCellStyle(CELL_ALIGN_LEFT);
 
             return cell;
@@ -76,6 +77,7 @@ public class ProductData {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
             cell.setCellValue(param.getProduct().getDescriptionen());
             cell.setCellStyle(CELL_ALIGN_LEFT);
+
 
             return cell;
         });
@@ -169,7 +171,7 @@ public class ProductData {
             if (oa != null) {
                 String desc = oa.getDescriptionRu().isEmpty() ? oa.getDescriptionEn() : oa.getDescriptionRu();
                 cell.setCellValue(desc);
-            cell.setCellStyle(CELL_ALIGN_RIGHT);
+                cell.setCellStyle(CELL_ALIGN_RIGHT);
             }
 
             return cell;

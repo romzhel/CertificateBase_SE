@@ -11,7 +11,7 @@ import ui_windows.product.Product;
 
 import java.util.TreeSet;
 
-import static files.price_to_excel.ExportPriceListToExcel_SE.CELL_ALIGN_LEFT_BOLD;
+import static files.ExcelCellStyleFactory.CELL_ALIGN_LEFT_BOLD;
 
 public class LgbkGroup {
     private PriceListSheet priceListSheet;

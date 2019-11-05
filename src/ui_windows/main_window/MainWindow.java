@@ -25,7 +25,7 @@ import java.util.concurrent.Executors;
 import static ui_windows.options_window.profile_editor.SimpleRight.HIDE;
 
 public class MainWindow extends Application {
-    private String version = "1.1.0.5 от 04.11.2019";
+    private String version = "1.1.0.6 от 05.11.2019";
     private static Stage mainStage;
     private static AnchorPane rootAnchorPane;
     private static ProgressBar progressBar;
@@ -37,7 +37,6 @@ public class MainWindow extends Application {
     private static MainWindowsController controller;
 
     private static SearchBox searchBox;
-    private static MainTable mainTable;
 
     private ExecutorService executorService;
 
@@ -83,7 +82,7 @@ public class MainWindow extends Application {
             rootAnchorPane.setBottomAnchor(searchBox, 39.0);
             rootAnchorPane.setLeftAnchor(searchBox, 158.0);
 
-            mainTable = new MainTable(controller.tvTable);
+//            mainTable = new MainTable(controller.tvTable);
 
             executorService = Executors.newFixedThreadPool(5);
             searchBox.getTextBox().textProperty().addListener(new ChangeListener<String>() {
@@ -206,6 +205,6 @@ public class MainWindow extends Application {
     }
 
     public static MainTable getMainTable() {
-        return mainTable;
+        return controller.mainTable;
     }
 }
