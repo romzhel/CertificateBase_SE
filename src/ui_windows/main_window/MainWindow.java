@@ -25,7 +25,7 @@ import java.util.concurrent.Executors;
 import static ui_windows.options_window.profile_editor.SimpleRight.HIDE;
 
 public class MainWindow extends Application {
-    private String version = "1.1.0.6 от 05.11.2019";
+    private String version = "1.1.0.8 от 20.12.2019";
     private static Stage mainStage;
     private static AnchorPane rootAnchorPane;
     private static ProgressBar progressBar;

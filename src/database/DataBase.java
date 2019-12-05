@@ -78,8 +78,9 @@ public class DataBase {
         try {
             dbConnection.setAutoCommit(true);
             Statement stat = dbConnection.createStatement();
-            ResultSet rt = stat.executeQuery("PRAGMA journal_mode");
-            result = rt.getString(1);
+            ResultSet rs = stat.executeQuery("PRAGMA journal_mode");
+            result = rs.getString(1);
+            rs.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

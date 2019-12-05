@@ -71,7 +71,7 @@ public class ObjectsComparator {
                         if (value1 != null && isValueNoDefault(value1)) {
                             String historyResult = comparatorResult.getHistoryComment();
                             if (obj1Fields[i].getName().toLowerCase().contains("description")) {//description changes
-                                historyResult += ", " + obj1Fields[i].getName();
+                                historyResult += ", " + obj1Fields[i].getName() + "-> " + value2.toString();
                             } else {
                                 historyResult += ", " + obj1Fields[i].getName() + ": " + (value1 == null ? "" : value1.toString()) +
                                         " -> " + value2.toString();

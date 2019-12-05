@@ -55,8 +55,8 @@ public class ProductEditorWindowActions {
 
                 ObservableList<FileImportTableItem> fiti = FXCollections.observableArrayList();
                 fiti.add(new FileImportTableItem("", DESC_ORDER_NUMBER, true, false, -1, false));
-                fiti.add(new FileImportTableItem("", "descriptionru", true, false, -1, false));
-                fiti.add(new FileImportTableItem("", "descriptionen", true, false, -1, false));
+                fiti.add(new FileImportTableItem("", "descriptionru", true, true, -1, false));
+                fiti.add(new FileImportTableItem("", "descriptionen", true, true, -1, false));
                 fiti.add(new FileImportTableItem("", "type_id", true, true, -1, false));
                 fiti.add(new FileImportTableItem("", "family", true, true, -1, false));
                 fiti.add(new FileImportTableItem("", "fileName", true, false, -1, false));
@@ -67,17 +67,17 @@ public class ProductEditorWindowActions {
                 fiti.add(new FileImportTableItem("", "needaction", true, true, -1, false));
 
 
-                LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(pr));
+                /*LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(pr));
                 boolean globalDisabled = lap.getLgbkItem().isNotUsed() || lap.getLgbkParent().isNotUsed();
                 if (!globalDisabled) {
                     fiti.add(new FileImportTableItem("", "notused", true, true, -1, false));
-                }
+                }*/
 
                 ColumnsMapper mapper = new ColumnsMapper();
                 ObjectsComparator2 comparator = new ObjectsComparator2(pr, changedProduct, false, mapper.getFieldsForImport(fiti));
 
                 if (comparator.getResult().isNeedUpdateInDB()) {//was changed
-                    String oldHistory = pr.getHistory().trim();
+                    String oldHistory = pr.getHistory() == null ? "" : pr.getHistory().trim();
                     if (oldHistory.isEmpty()) {
                         pr.setHistory(oldHistory.concat(Utils.getDateTime()).concat(comparator.getResult().getHistoryComment()
                                 .concat(", ").concat(CoreModule.getUsers().getCurrentUser().getSurname())));

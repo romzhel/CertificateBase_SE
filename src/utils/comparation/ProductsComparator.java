@@ -24,8 +24,8 @@ public class ProductsComparator {
         for (Product pr1 : prs1.getItems()) {//go throw all the existing items
 
             for (Product pr2 : prs2.getItems()) {//go throw all the updating item
-                pr1t = pr1.getMaterial().replaceAll("\\-", "").replaceAll("BPZ:", "").replaceAll("\\:", "");
-                pr2t = pr2.getMaterial().replaceAll("\\-", "").replaceAll("BPZ:", "").replaceAll("\\:", "");
+                pr1t = pr1.getMaterial().replaceAll("(\\-)*(\\:)*(VBPZ)*(BPZ)*", "");
+                pr2t = pr2.getMaterial().replaceAll("(\\-)*(\\:)*(VBPZ)*(BPZ)*", "");
 
                 if (pr2t.matches("^0+\\d+$")) {
                     pr2t = pr2t.replaceAll("^0+", "");
@@ -65,9 +65,9 @@ public class ProductsComparator {
 
         for (Product pr : prs2.getItems()) {//add new items to existing
             if (pr.getArticle() != null && !pr.getArticle().trim().isEmpty()) {
-                pr.setChangecodes("new");
+//                pr.setChangecodes("new");
                 pr.setLastImportcodes("new");
-                pr.setNeedaction(true);
+//                pr.setNeedaction(true);
                 pr.setHistory(pr.getHistory().concat(Utils.getDateTime().concat(", new")));// add back <<<<<<<
                 pr.setLastChangeDate(Utils.getDateTime());
                 prs1.getItems().add(pr);

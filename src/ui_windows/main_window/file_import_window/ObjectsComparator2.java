@@ -56,13 +56,12 @@ public class ObjectsComparator2 {
 
                             comparatorResult.setNeedUpdateInDB(true);
 
-                            if (value1 != null && isValueNoDefault(value1) && field.getFileImportTableItem().isLogHistory()) {
+                            if (/*value1 != null && isValueNoDefault(value1) &&*/ field.getFileImportTableItem().isLogHistory()) {
                                 String historyResult = comparatorResult.getHistoryComment();
                                 if (existingField.getName().toLowerCase().contains("description")) {//description changes
                                     historyResult += ", " + existingField.getName();
                                 } else {
-                                    historyResult += ", " + existingField.getName() + ": " + (value1 == null ? "" : value1.toString()) +
-                                            " -> " + value2.toString();
+                                    historyResult += ", " + existingField.getName() + ": " + value1.toString() + " -> " + value2.toString();
                                 }
                                 comparatorResult.setHistoryComment(historyResult);
                             }

@@ -89,4 +89,8 @@ public class ProductEditorWindow extends OrdinalWindow {
                 }
         );
     }
+
+    public ProductEditorWindowController getController() {
+        return (ProductEditorWindowController) loader.getController();
+    }
 }

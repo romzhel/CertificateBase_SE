@@ -9,16 +9,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import ui_windows.main_window.DataSelectorMenu;
-import ui_windows.main_window.MainTable;
 import ui_windows.main_window.MainWindow;
 import ui_windows.product.Product;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.ResourceBundle;
 
 public class RequestWindowController implements Initializable {
+    String notFoundItems = "";
+    ArrayList<Product> results = new ArrayList<>();
+
     @FXML
     Button btnApply;
 
@@ -31,53 +32,62 @@ public class RequestWindowController implements Initializable {
     }
 
     public void actionRequest() {
+        notFoundItems = "";
+        results.clear();
         MainWindow.setProgress(-1);
 
-        new Thread(new Runnable() {
-            public void run() {
-                ArrayList<Product> results = new ArrayList<>();
-                String notFoundItems = "";
+        new Thread(() -> {
+            String[] lines = taData.getText().split("\n");
+            String[] words;
+            Product product;
+            int position = 0;
 
-                String[] lines = taData.getText().split("\n");
-                String[] words;
-                Product product;
+            boolean lineFound;
+            for (String line : lines) {
+                lineFound = false;
+                words = line.split("[\t\\s\\:]");
 
-                for (String line : lines) {
-                    words = line.split("\t");
+                for (String word : words) {
+                    if (word != null && !word.isEmpty() && !word.matches(".*\\s.*")) {
+                        product = CoreModule.getProducts().getItemByMaterialOrArticle(word);
 
-                    for (String word : words) {
-                        if (word != null && !word.isEmpty() && !word.matches(".*\\s.*")) {
-                            product = CoreModule.getProducts().getItemByMaterialOrArticle(word);
-
-                            if (product == null) {
-                                notFoundItems += "- " + line + "\n";
-                            } else {
-                                results.add(product);
-                                break;
-                            }
+                        if (product == null) {
+//                            notFoundItems += "- " + line + "\n";
+//                            taData.setStyle("-fx-highlight-fill: lightgray; -fx-highlight-text-fill: firebrick; -fx-font-size: 12px;");
+//                            taData.selectRange(position, position + word.length() + 1);
+//                            position += word.length() + 1;
+                        } else {
+                            results.add(product);
+                            position += line.length() + 1;
+                            lineFound = true;
+                            break;
                         }
                     }
                 }
 
-                CoreModule.getCustomItems().addAll(results);
-//        CoreModule.setCurrentItems(CoreModule.getCustomItems());
-        /*if (DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION.isSelected()) {
-            MainTable.getTvTable().getItems().clear();
-            MainTable.getTvTable().getItems().addAll(CoreModule.getCurrentItems());
-        }*/
-                MainWindow.getController().getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION);
+                if (!lineFound) {
+                    notFoundItems += "- " + line + "\n";
+//                    taData.setStyle("-fx-highlight-fill: lightgray; -fx-highlight-text-fill: firebrick; -fx-font-size: 12px;");
+//                    taData.selectRange(position, position + word.length() + 1);
+                }
+            }
 
+            MainWindow.setProgress(0);
+
+            Platform.runLater(() -> {
                 if (!notFoundItems.isEmpty()) {
-                    final String notFoundItemsF = notFoundItems;
-                    Platform.runLater(() ->
-                    Dialogs.showMessage("Создание пользовательского списка", "Следующие позиции не были найдены:\n" + notFoundItemsF));
+                    if (!Dialogs.confirm("Создание пользовательского списка", "Следующие позиции не были найдены:\n" +
+                            notFoundItems + "\nЖелаете продолжить?")) {
+                        return;
+                    }
                 }
 
-                MainWindow.setProgress(0);
-            }
-        }).start();
+                CoreModule.getCustomItems().addAll(results);
+                MainWindow.getController().getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION);
 
-        ((Stage) btnApply.getScene().getWindow()).close();
+                ((Stage) btnApply.getScene().getWindow()).close();
+            });
+        }).start();
     }
 
     public void actionRequestCertificatesCancel() {

@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
@@ -159,6 +160,14 @@ public class CertificateVerificationTable {
         tableView.refresh();
 
         this.productTypes = certificatesChecker.getProductTypes();
+
+        if (checkParameters.isEqTypeFiltered()) {
+            tableView.setStyle("-fx-border-color: orange;");
+            tableView.setTooltip(new Tooltip("Фильтр по совпадению названия активен"));
+        } else {
+            tableView.setStyle("-fx-border-color: -fx-box-border;");
+            tableView.setTooltip(null);
+        }
 
 //        CoreModule.getProducts().getTableView().refresh();
     }

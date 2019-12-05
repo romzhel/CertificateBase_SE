@@ -29,7 +29,7 @@ public class Products {
     }
 
     public Product getItemByMaterialOrArticle(String name) {
-        String nameT = Utils.toEN(name.replaceAll("\\-", "").replaceAll("\\s", "").toUpperCase());
+        String nameT = Utils.toEN(name.replaceAll("[\\-\\s]", "").toUpperCase());
         String materialT;
         String articleT;
 
