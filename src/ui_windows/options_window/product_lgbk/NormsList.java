@@ -1,7 +1,6 @@
 package ui_windows.options_window.product_lgbk;
 
 import core.CoreModule;
-import javafx.scene.control.ListView;
 import ui_windows.options_window.requirements_types_editor.RequirementType;
 
 import java.util.ArrayList;
@@ -60,7 +59,7 @@ public class NormsList {
     @Override
     public String toString() {
         String result = "";
-        for (int normId:norms       ) {
+        for (int normId : norms) {
             result = result.concat(String.valueOf(normId).concat(","));
         }
         return result.replaceAll("\\,$", "");

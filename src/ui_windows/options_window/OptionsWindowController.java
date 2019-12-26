@@ -3,18 +3,15 @@ package ui_windows.options_window;
 import core.CoreModule;
 import core.Dialogs;
 import database.ProfilesDB;
-import files.ExportToExcel;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
-import ui_windows.main_window.MainWindow;
-import ui_windows.main_window.MainWindowsController;
-import ui_windows.options_window.certificates_editor.*;
-import ui_windows.options_window.price_lists_editor.se.PriceListEditorWindow;
-import ui_windows.product.certificatesChecker.CertificateVerificationItem;
-import ui_windows.product.certificatesChecker.CertificatesChecker;
+import ui_windows.options_window.certificates_editor.Certificate;
+import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
+import ui_windows.options_window.certificates_editor.CertificateEditorWindowActions;
+import ui_windows.options_window.certificates_editor.CertificatesTable;
+import ui_windows.options_window.certificates_editor.content_checker.CertificateContentChecker;
 import ui_windows.options_window.families_editor.FamiliesEditorWindow;
 import ui_windows.options_window.families_editor.ProductFamiliesTable;
 import ui_windows.options_window.families_editor.ProductFamily;
@@ -23,6 +20,7 @@ import ui_windows.options_window.order_accessibility_editor.OrdersAccessibilityE
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibilityTable;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.price_lists_editor.PriceListsTable;
+import ui_windows.options_window.price_lists_editor.se.PriceListEditorWindow;
 import ui_windows.options_window.product_lgbk.LgbkEditorWindow;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.product_lgbk.ProductLgbksTable;
@@ -35,16 +33,10 @@ import ui_windows.options_window.requirements_types_editor.RequirementTypesTable
 import ui_windows.options_window.user_editor.User;
 import ui_windows.options_window.user_editor.UserEditorWindow;
 import ui_windows.options_window.user_editor.UsersTable;
-import ui_windows.product.Product;
 import utils.Utils;
 
-import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.ResourceBundle;
 
 import static ui_windows.Mode.ADD;
@@ -331,6 +323,12 @@ public class OptionsWindowController implements Initializable {
         if (deletedUser != null) CoreModule.getUsers().removeItem(deletedUser);
     }
 
+    public void actionCertCheckCountries() {
+        for (Certificate certificate : tvCertificates.getSelectionModel().getSelectedItems()) {
+            new CertificateContentChecker(certificate);
+        }
+    }
+
     public void actionCheckCertificates() {
         /*new Thread(() -> {
             ArrayList<CertificateVerificationItem> problemCv = new ArrayList<>();
@@ -389,9 +387,8 @@ public class OptionsWindowController implements Initializable {
 
     public void actionEditPriceList() {
         PriceList selectedItem = tvPriceLists.getSelectionModel().getSelectedItem();
-         if (selectedItem != null) new PriceListEditorWindow(new PriceList(selectedItem));
+        if (selectedItem != null) new PriceListEditorWindow(new PriceList(selectedItem));
     }
-
 
 
     public void actionRemovePriceList() {

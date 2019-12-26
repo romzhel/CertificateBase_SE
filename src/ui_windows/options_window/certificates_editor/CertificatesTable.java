@@ -3,6 +3,7 @@ package ui_windows.options_window.certificates_editor;
 import core.CoreModule;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -22,6 +23,7 @@ public class CertificatesTable {
 
     public CertificatesTable(TableView<Certificate> tableView){
         this.tableView = tableView;
+        tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         tableView.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("name"));
 

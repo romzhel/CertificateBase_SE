@@ -43,6 +43,7 @@
                                                 <SeparatorMenuItem mnemonicParsing="false" />
                                                 <MenuItem fx:id="miDelete1" mnemonicParsing="false" onAction="#actionDeleteCertificate" text="     Удалить     " />
                                                 <SeparatorMenuItem mnemonicParsing="false" />
+                                    <MenuItem fx:id="miCertCheckCountries" mnemonicParsing="false" onAction="#actionCertCheckCountries" text="     Проверка наличия стран    " />
                                                 <MenuItem fx:id="miCheckCertificates" mnemonicParsing="false" onAction="#actionCheckCertificates" text="     Поиск несоответствий     " />
                                     <SeparatorMenuItem mnemonicParsing="false" />
                                     <MenuItem fx:id="miOpenFile" mnemonicParsing="false" onAction="#actionOpenCertificateFile" text="     Открыть файл     " />
