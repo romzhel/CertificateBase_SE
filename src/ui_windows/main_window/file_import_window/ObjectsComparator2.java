@@ -71,7 +71,7 @@ public class ObjectsComparator2 {
 
                             if (obj1 instanceof Product && field.getFileImportTableItem().isLogLastImportCodes()) {
 //                            ((Product) obj1).setChangecodes(((Product) obj1).getChangecodes().concat(obj1Fields[i].getName()));
-                                ((Product) obj1).setChangecodes(Utils.addTextWithCommas(((Product) obj1).getChangecodes(), existingField.getName()));
+//                                ((Product) obj1).setChangecodes(Utils.addTextWithCommas(((Product) obj1).getChangecodes(), existingField.getName()));
 
 
 //                            ((Product) obj1).setLastImportcodes(((Product) obj1).getLastImportcodes().concat(obj1Fields[i].getName()));

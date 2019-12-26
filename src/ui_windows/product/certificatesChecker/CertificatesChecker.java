@@ -145,7 +145,7 @@ public class CertificatesChecker {
     }
 
     private boolean isMatchEquipTypeName(Product product, CertificateContent content) {
-        String[] productDescriptionParts = product.getDescriptionru().replaceAll("[\\(\\)\\[\\]]", "").split("\\s");
+        String[] productDescriptionParts = product.getDescriptionRu().replaceAll("[\\(\\)\\[\\]]", "").split("\\s");
         String certEqType = content.getEquipmentType().toLowerCase();
 
         for (String partOfDesc : productDescriptionParts) {

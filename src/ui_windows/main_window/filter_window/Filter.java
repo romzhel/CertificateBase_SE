@@ -87,7 +87,7 @@ public class Filter {
         for (Product p : CoreModule.getCurrentItems()) {
             articleMatch = p.getArticle().toUpperCase().matches("^(" + find.toUpperCase() + ").*");
             materialMatch = p.getMaterial().toUpperCase().matches("^(" + find.toUpperCase() + ").*");
-            descriptionMatch = p.getDescriptionru().toLowerCase().contains(find.toLowerCase()) /*||
+            descriptionMatch = p.getDescriptionRu().toLowerCase().contains(find.toLowerCase()) /*||
                 p.getDescriptionen().toLowerCase().matches(".*(" + find.toLowerCase() + ").*")*/;
             filterMatch = p.matchFilter(CoreModule.getFilter());
 

@@ -36,7 +36,7 @@ public class CertificateContentChecker {
                                 resp = productFamily.getResponsible();
                             }
 
-                            System.out.println(";;;" + product.getArticle() + "; " + product.getDescriptionru() + "; " +
+                            System.out.println(";;;" + product.getArticle() + "; " + product.getDescriptionRu() + "; " +
                                     product.getCountry() + ";" + family + ";" + resp);
                         }
 

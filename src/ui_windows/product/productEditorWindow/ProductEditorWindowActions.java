@@ -51,7 +51,7 @@ public class ProductEditorWindowActions {
                     changedProduct.setFamily(0);
                 }
 
-                boolean productWasNeedAction = pr.isNeedaction() && !changedProduct.isNeedaction();
+//                boolean productWasNeedAction = pr.isNeedaction() && !changedProduct.isNeedaction();
 
                 ObservableList<FileImportTableItem> fiti = FXCollections.observableArrayList();
                 fiti.add(new FileImportTableItem("", DESC_ORDER_NUMBER, true, false, -1, false));
@@ -88,7 +88,7 @@ public class ProductEditorWindowActions {
 
                     System.out.println("result = " + comparator.getResult().getHistoryComment());
 
-                    if (productWasNeedAction) pr.setChangecodes("");
+//                    if (productWasNeedAction) pr.setChangecodes("");
 
                     productsToUpdate.add(pr);
                 }

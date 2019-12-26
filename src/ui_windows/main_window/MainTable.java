@@ -13,7 +13,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.util.Callback;
 import ui_windows.options_window.families_editor.ProductFamily;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
@@ -105,9 +104,9 @@ public class MainTable {
                 col.setCellValueFactory(param -> {
                     Product pr = param.getValue();
 
-                    if (!pr.getDescriptionru().trim().isEmpty()) return new SimpleStringProperty(pr.getDescriptionru());
-                    else if (!pr.getDescriptionen().trim().isEmpty())
-                        return new SimpleStringProperty(pr.getDescriptionen());
+                    if (!pr.getDescriptionRu().trim().isEmpty()) return new SimpleStringProperty(pr.getDescriptionRu());
+                    else if (!pr.getDescriptionEn().trim().isEmpty())
+                        return new SimpleStringProperty(pr.getDescriptionEn());
                     else return new SimpleStringProperty("");
                 });
             } else col.setCellValueFactory(new PropertyValueFactory<>(cols[i]));

@@ -81,7 +81,7 @@ public class ObjectsComparator {
 
                         if (obj1 instanceof Product) {
 //                            ((Product) obj1).setChangecodes(((Product) obj1).getChangecodes().concat(obj1Fields[i].getName()));
-                            ((Product) obj1).setChangecodes(Utils.addTextWithCommas(((Product) obj1).getChangecodes(), obj1Fields[i].getName()));
+//                            ((Product) obj1).setChangecodes(Utils.addTextWithCommas(((Product) obj1).getChangecodes(), obj1Fields[i].getName()));
 
 //                            ((Product) obj1).setLastImportcodes(((Product) obj1).getLastImportcodes().concat(obj1Fields[i].getName()));
                             ((Product) obj1).setLastImportcodes(Utils.addTextWithCommas(((Product) obj1).getLastImportcodes(), obj1Fields[i].getName()));

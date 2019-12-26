@@ -75,7 +75,7 @@ public class ProductData {
         });
         DATA_DESCRIPTION_EN.setExcelCellValueFactory(param -> {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
-            cell.setCellValue(param.getProduct().getDescriptionen());
+            cell.setCellValue(param.getProduct().getDescriptionEn());
             cell.setCellStyle(CELL_ALIGN_LEFT);
 
 
@@ -152,7 +152,7 @@ public class ProductData {
         });
         DATA_SERVICE_END.setExcelCellValueFactory(param -> {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
-            cell.setCellValue(param.getProduct().getEndofservice());
+            cell.setCellValue(param.getProduct().getEndOfService());
             cell.setCellStyle(CELL_ALIGN_RIGHT);
 
             return cell;

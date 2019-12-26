@@ -88,7 +88,7 @@ public class ProductEditorWindowController implements Initializable {
             comboBoxEqTypeSelector.refresh(prevType);
         });
 
-        initNotUsedSelector();
+//        initNotUsedSelector();
         initFamilySelector();
         initBlockSelector();
     }
@@ -113,7 +113,7 @@ public class ProductEditorWindowController implements Initializable {
         });
     }
 
-    private void initNotUsedSelector() {
+    /*private void initNotUsedSelector() {
         Product editedProduct = CoreModule.getProducts().getTableView().getSelectionModel().getSelectedItem();
         LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(
                 new ProductLgbk(editedProduct.getLgbk(), editedProduct.getHierarchy()));
@@ -131,7 +131,7 @@ public class ProductEditorWindowController implements Initializable {
         } else {
             cbxNotUsed.setSelected(false);
         }
-    }
+    }*/
 
     public void apply() {
         ProductEditorWindowActions.apply(apRoot, multiEditor);

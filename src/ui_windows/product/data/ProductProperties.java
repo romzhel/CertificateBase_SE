@@ -34,11 +34,11 @@ public class ProductProperties {
     public static final String FIELD_HIERARCHY = "hierarchy";
     public static final String FIELD_LGBK = "lgbk";
     public static final String FIELD_COUNTRY = "country";
-    public static final String FIELD_DESCRIPTION_RU = "descriptionru";
-    public static final String FIELD_DESCRIPTION_EN = "descriptionen";
+    public static final String FIELD_DESCRIPTION_RU = "descriptionRu";
+    public static final String FIELD_DESCRIPTION_EN = "descriptionEn";
     public static final String FIELD_LOGISTIC_LIMITATION = "dangerous";
     public static final String FIELD_VALID_FROM = "Доступно с";
-    public static final String FIELD_SERVICE_END = "endofservice";
+    public static final String FIELD_SERVICE_END = "endOfService";
     public static final String FIELD_DCHAIN = "dchain";
     public static final String FIELD_ORDER_NUMBER_PRINT = "productForPrint";
     public static final String FIELD_LOCAL_PRICE = "localPrice";
@@ -47,15 +47,12 @@ public class ProductProperties {
     public static final String FIELD_LEADTIME = "leadTime";
     public static final String FIELD_WEIGHT = "weight";
     public static final String FIELD_FAMILY = "family";
-    public static final String FIELD_END_OF_SERVICE = "endofservice";
+    public static final String FIELD_END_OF_SERVICE = "endOfService";
     public static final String FIELD_DCHAIN_COMMENT = "";
     public static final String FIELD_PRICE = "price";
     public static final String FIELD_COMMENT = "comments";
     public static final String FIELD_REPLACEMENT = "replacement";
     public static final String FIELD_TYPE = "type_id";
-
-
-
 
     public static String[] getAllNamesRu() {
         ArrayList<String> result = new ArrayList<>();
