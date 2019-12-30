@@ -75,7 +75,7 @@ public class ObjectsComparator2 {
 
 
 //                            ((Product) obj1).setLastImportcodes(((Product) obj1).getLastImportcodes().concat(obj1Fields[i].getName()));
-                                ((Product) obj1).setLastImportcodes(Utils.addTextWithCommas(((Product) obj1).getLastImportcodes(), existingField.getName()));
+                                ((Product) obj1).setLastImportCodes(Utils.addTextWithCommas(((Product) obj1).getLastImportCodes(), existingField.getName()));
                             }
                         }
                     }

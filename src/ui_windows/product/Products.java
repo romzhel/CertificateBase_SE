@@ -127,8 +127,8 @@ public class Products {
         ArrayList<Product> changedItems = new ArrayList<>();
 
         for (Product product : products) {
-            if (!product.getLastImportcodes().isEmpty()) {
-                product.setLastImportcodes("");
+            if (!product.getLastImportCodes().isEmpty()) {
+                product.setLastImportCodes("");
                 changedItems.add(product);
             }
         }
@@ -140,7 +140,7 @@ public class Products {
         ArrayList<Product> result = new ArrayList<>();
 
         for (Product product : products) {
-            if (!product.getLastImportcodes().isEmpty()) result.add(product);
+            if (!product.getLastImportCodes().isEmpty()) result.add(product);
         }
 
         return result;

@@ -66,7 +66,7 @@ public class ProductsComparator {
         for (Product pr : prs2.getItems()) {//add new items to existing
             if (pr.getArticle() != null && !pr.getArticle().trim().isEmpty()) {
 //                pr.setChangecodes("new");
-                pr.setLastImportcodes("new");
+                pr.setLastImportCodes("new");
 //                pr.setNeedaction(true);
                 pr.setHistory(pr.getHistory().concat(Utils.getDateTime().concat(", new")));// add back <<<<<<<
                 pr.setLastChangeDate(Utils.getDateTime());

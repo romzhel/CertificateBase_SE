@@ -1,6 +1,8 @@
 package ui_windows.product;
 
 import core.CoreModule;
+import database.se.DBSynced;
+import database.se.DbFieldIgnore;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import ui_windows.main_window.file_import_window.ColumnsMapper;
@@ -23,7 +25,8 @@ import static ui_windows.main_window.filter_window.FilterParameters.FILTER_ALL_I
 import static ui_windows.main_window.filter_window.FilterParameters.FILTER_PRICE_ITEMS;
 import static ui_windows.product.data.ProductProperties.*;
 
-public class Product {
+public class Product implements DBSynced {
+    @DbFieldIgnore
     public static final String NO_DATA = "нет данных";
     private int id;
     private String material;
@@ -38,7 +41,7 @@ public class Product {
     private String descriptionRu = "";
     private String descriptionEn = "";
     private boolean price = true;
-    private String lastImportcodes = "";
+    private String lastImportCodes = "";
 
     private int family;
     private int type_id;
@@ -68,7 +71,7 @@ public class Product {
         descriptionRu = Utils.getControlValue(root, "taDescription");
         descriptionEn = Utils.getControlValue(root, "taDescriptionEn");
         price = Utils.getControlValue(root, "cbxPrice") == "true";
-        lastImportcodes = "";
+        lastImportCodes = "";
 
         type_id = CoreModule.getProductTypes().getIDbyType(Utils.getControlValue(root, "cbType"));
         history = Utils.getControlValue(root, "lHistory");
@@ -129,7 +132,7 @@ public class Product {
         replacement = rs.getString("replacement");
 
         type_id = rs.getInt("type_id");
-        lastImportcodes = rs.getString("last_import_codes") == null ? "" : rs.getString("last_import_codes");
+        lastImportCodes = rs.getString("last_import_codes") == null ? "" : rs.getString("last_import_codes");
 
         normsList = new NormsList(rs.getString("norms_list"));
         normsMode = rs.getInt("norms_mode");
@@ -464,12 +467,12 @@ public class Product {
         this.productForPrint = productForPrint;
     }
 
-    public String getLastImportcodes() {
-        return lastImportcodes;
+    public String getLastImportCodes() {
+        return lastImportCodes;
     }
 
-    public void setLastImportcodes(String lastImportcodes) {
-        this.lastImportcodes = lastImportcodes;
+    public void setLastImportCodes(String lastImportCodes) {
+        this.lastImportCodes = lastImportCodes;
     }
 
     public String getDescriptionEn() {

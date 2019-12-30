@@ -50,7 +50,11 @@ public class MainWindow extends Application {
         mainStage = primaryStage;
 
 //        WaitingWindow ww = new WaitingWindow(null);
-        initOk = CoreModule.init();
+        try {
+            initOk = CoreModule.init();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 //        WaitingWindow.close();
 
         if (initOk) {

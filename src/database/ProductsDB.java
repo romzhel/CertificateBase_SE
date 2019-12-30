@@ -81,7 +81,7 @@ public class ProductsDB extends DbRequest {
                     updateData.setString(++count, alpr.get(j).getReplacement());
                     updateData.setInt(++count, alpr.get(j).getType_id());
                     updateData.setString(++count, alpr.get(j).getProductForPrint());
-                    updateData.setString(++count, alpr.get(j).getLastImportcodes());
+                    updateData.setString(++count, alpr.get(j).getLastImportCodes());
                     updateData.setString(++count, alpr.get(j).getNormsList().getStringLine());
                     updateData.setInt(++count, alpr.get(j).getNormsMode());
                     updateData.setInt(++count, alpr.get(j).getMinOrder());
@@ -151,7 +151,7 @@ public class ProductsDB extends DbRequest {
                     addData.setString(++count, alpr.get(j).getReplacement());
                     addData.setInt(++count, alpr.get(j).getType_id());
                     addData.setString(++count, alpr.get(j).getProductForPrint());
-                    addData.setString(++count, alpr.get(j).getLastImportcodes());
+                    addData.setString(++count, alpr.get(j).getLastImportCodes());
                     addData.setString(++count, alpr.get(j).getNormsList().getStringLine());
                     addData.setInt(++count, alpr.get(j).getNormsMode());
                     addData.setInt(++count, alpr.get(j).getMinOrder());

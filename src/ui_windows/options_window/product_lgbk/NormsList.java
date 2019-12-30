@@ -1,11 +1,12 @@
 package ui_windows.options_window.product_lgbk;
 
 import core.CoreModule;
+import database.se.DbCompound;
 import ui_windows.options_window.requirements_types_editor.RequirementType;
 
 import java.util.ArrayList;
 
-public class NormsList {
+public class NormsList implements DbCompound {
     public static final int ADD_TO_GLOBAL = 0;
     public static final int INSTEAD_GLOBAL = 1;
     private ArrayList<Integer> norms;
@@ -63,5 +64,10 @@ public class NormsList {
             result = result.concat(String.valueOf(normId).concat(","));
         }
         return result.replaceAll("\\,$", "");
+    }
+
+    @Override
+    public String getStringForDb() {
+        return "";
     }
 }

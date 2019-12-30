@@ -1,6 +1,7 @@
 package core;
 
 import database.DataBase;
+import database.se.DataBaseHelper;
 import files.Folders;
 import javafx.application.Platform;
 import javafx.scene.control.TableView;
@@ -33,6 +34,7 @@ import java.util.TreeSet;
 
 public class CoreModule {
     private static DataBase dataBase;
+    private static database.se.DataBase dataBase2;
     private static RequirementTypes requirementTypes;
     private static RequirementTypesTable requirementTypesTable;
     private static Certificates certificates;
@@ -54,7 +56,7 @@ public class CoreModule {
     private static ArrayList<Product> currentItems = new ArrayList<>();
     private static HashSet<Product> customItems = new HashSet<>();
 
-    public static boolean init() {
+    public static boolean init() throws Exception{
         folders = new Folders();
         if ((folders.getDbFile()) == null || (folders.getDbFile() != null && !folders.getDbFile().exists())) {
             Dialogs.showMessage("Файл данных", "Файл базы данных не найден.\n" +
@@ -64,6 +66,8 @@ public class CoreModule {
 
         dataBase = new DataBase();
         dataBase.connect(folders.getDbFile());
+
+        dataBase2 = new database.se.DataBase(folders.getDbFile());
 
         profiles = new Profiles().getFromDB();
         users = new Users().getFromDB();
@@ -81,7 +85,14 @@ public class CoreModule {
         productLgbks = new ProductLgbks().getFromDB();
 
         filter = new Filter();
-        products = new Products().getFromDB();
+//        products = new Products().getFromDB();
+
+        products = new Products();
+        DataBaseHelper<Product> productDbHelper = new DataBaseHelper<>(dataBase2, Product.class);
+        products.setItems(productDbHelper.connect().getFromDbAllItems());
+
+
+
         currentItems.addAll(products.getItems());
 
         productLgbkGroups = new ProductLgbkGroups().get();
