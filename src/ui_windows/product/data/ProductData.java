@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
+import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
 
@@ -83,23 +84,28 @@ public class ProductData {
         });
         DATA_LOCAL_PRICE.setExcelCellValueFactory(param -> {
             XSSFCell cell = null;
+            PriceListSheet pls = null;
+            if (param.getOptions() != null) {
+                pls = (PriceListSheet) param.getOptions().getOrDefault("priceListSheet", null);
+            }
+
             if (param.getProduct().getLocalPrice() > 0) {
                 cell = param.getRow().createCell(param.getIndex(), CellType.NUMERIC);
-                if (param.getPriceListSheet() != null) {
-                    double correction = 1D - ((double) param.getPriceListSheet().getDiscount() / 100);
+                if (pls != null) {
+                    double correction = 1D - ((double) pls.getDiscount() / 100);
                     if (correction > 0.4) {
                         cell.setCellValue(param.getProduct().getLocalPrice() * correction);
                     } else {
-                        System.out.println("price list sheet " + param.getPriceListSheet().getSheetName() + ", discount = " + ((int) correction * 100) + " %");
+                        System.out.println("price list sheet " + pls.getSheetName() + ", discount = " + ((int) correction * 100) + " %");
                         cell.setCellValue(param.getProduct().getLocalPrice());
                     }
                 } else {
                     cell.setCellValue(param.getProduct().getLocalPrice());
                 }
                 cell.setCellStyle(CELL_CURRENCY_FORMAT);
-            } else if (param.getPriceListSheet() != null) {
+            } else if (pls != null) {
                 cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
-                if (param.getPriceListSheet().getLanguage() == LANG_RU) {
+                if (pls.getLanguage() == LANG_RU) {
                     cell.setCellValue("По запросу");
                 } else {
                     cell.setCellValue("By request");

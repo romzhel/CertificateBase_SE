@@ -8,12 +8,14 @@ import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListShee
 import ui_windows.product.Product;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DataItem {
     private int id;
     private String displayingName;
     private Field field;
-    private Callback<Container, XSSFCell> excelCellValueFactory;
+    private Callback<Parameters, XSSFCell> excelCellValueFactory;
     private Callback<Product, T> valueFactory;
 
 
@@ -30,15 +32,15 @@ public class DataItem {
         }
     }
 
-    public XSSFCell createXssfCell(Product product, XSSFRow row, int index, PriceListSheet priceListSheet) {
-        return excelCellValueFactory == null ? null : excelCellValueFactory.call(new Container(product, row, index, priceListSheet));
+    public XSSFCell createXssfCell(Product product, XSSFRow row, int index, Map<String, Object> options) {
+        return excelCellValueFactory == null ? null : excelCellValueFactory.call(new Parameters(product, row, index, options));
     }
 
     public String getDisplayingName() {
         return displayingName;
     }
 
-    public void setExcelCellValueFactory(Callback<Container, XSSFCell> excelCellValueFactory) {
+    public void setExcelCellValueFactory(Callback<Parameters, XSSFCell> excelCellValueFactory) {
         this.excelCellValueFactory = excelCellValueFactory;
     }
 
@@ -46,17 +48,19 @@ public class DataItem {
         return valueFactory.call(product);
     }
 
-    public class Container {
+    public class Parameters {
         private Product product;
         private XSSFRow row;
         int index;
-        private PriceListSheet priceListSheet;
+//        private PriceListSheet priceListSheet;
+        private Map<String, Object> options;
 
-        public Container(Product product, XSSFRow row, int index, PriceListSheet priceListSheet) {
+        public Parameters(Product product, XSSFRow row, int index, /*PriceListSheet priceListSheet,*/ Map<String, Object> options) {
             this.product = product;
             this.row = row;
             this.index = index;
-            this.priceListSheet = priceListSheet;
+//            this.priceListSheet = priceListSheet;
+            this.options = options;
         }
 
         public Product getProduct() {
@@ -83,12 +87,8 @@ public class DataItem {
             this.index = index;
         }
 
-        public PriceListSheet getPriceListSheet() {
-            return priceListSheet;
-        }
-
-        public void setPriceListSheet(PriceListSheet priceListSheet) {
-            this.priceListSheet = priceListSheet;
+        public Map<String, Object> getOptions() {
+            return options;
         }
     }
 }
