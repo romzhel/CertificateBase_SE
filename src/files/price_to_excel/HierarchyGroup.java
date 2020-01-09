@@ -12,6 +12,8 @@ import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
 
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeSet;
 
 import static files.ExcelCellStyleFactory.*;
@@ -83,12 +85,15 @@ public class HierarchyGroup {
             firstRowForGroup--;
         }
 
+        Map<String, Object> options = new HashMap<>();
+        options.put("priceListSheet", priceListSheet);
+
         for (Product product : products) {
             row = sheet.createRow(rowIndex++);
 
             int colIndex = 0;
             for (DataItem plc : priceListSheet.getColumnsSelector().getSelectedItems()) {
-                plc.createXssfCell(product, row, colIndex++, priceListSheet);
+                plc.createXssfCell(product, row, colIndex++, options);
             }
         }
         sheet.groupRow(firstRowForGroup + 1, rowIndex - 1);

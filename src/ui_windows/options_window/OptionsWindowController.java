@@ -96,7 +96,7 @@ public class OptionsWindowController implements Initializable {
         CoreModule.setRequirementTypesTable(new RequirementTypesTable(tvCertificateTypes));//fill certificates types table
         CoreModule.setCertificatesTable(new CertificatesTable(tvCertificates));//fill certificates table
 
-        tvCertificateTypes.setOnMouseClicked(event -> {//double click on product
+        tvCertificateTypes.setOnMouseClicked(event -> {//double click on certificate type
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 2) {
                     actionEditCertificateType();//open certificate type editor window
@@ -104,7 +104,7 @@ public class OptionsWindowController implements Initializable {
             }
         });
 
-        tvCertificates.setOnMouseClicked(event -> {//double click on product
+        tvCertificates.setOnMouseClicked(event -> {//double click on certificate
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 2) {
                     actionEditCertificate();//open certificate editor window
@@ -324,9 +324,7 @@ public class OptionsWindowController implements Initializable {
     }
 
     public void actionCertCheckCountries() {
-        for (Certificate certificate : tvCertificates.getSelectionModel().getSelectedItems()) {
-            new CertificateContentChecker(certificate);
-        }
+        new CertificateContentChecker(tvCertificates.getSelectionModel().getSelectedItems());
     }
 
     public void actionCheckCertificates() {

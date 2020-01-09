@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
+import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
 
@@ -34,11 +35,13 @@ public class ProductData {
     public static final DataItem DATA_DCHAIN_COMMENT = new DataItem(DESC_DCHAIN_COMMENT, null);
     public static final DataItem DATA_PACKSIZE = new DataItem(DESC_PACKSIZE, FIELD_PACKSIZE);
     public static final DataItem DATA_FAMILY = new DataItem(DESC_FAMILY, FIELD_FAMILY);
+    public static final DataItem DATA_RESPONSIBLE = new DataItem("Ответственный", null);
     public static final DataItem DATA_IS_IN_PRICE = new DataItem(DESC_PRICE, FIELD_PRICE);
     public static final DataItem DATA_COMMENT = new DataItem(DESC_COMMENT, FIELD_COMMENT);
     public static final DataItem DATA_REPLACEMENT = new DataItem(DESC_REPLACEMENT, FIELD_REPLACEMENT);
     public static final DataItem DATA_TYPE = new DataItem(DESC_TYPE, FIELD_TYPE);
     public static final DataItem DATA_CERTIFICATE = new DataItem("Наличие сертификатов", null);
+    public static final DataItem DATA_DESCRIPTION = new DataItem("Описание", null);
 
     private static ProductData instance;
 
@@ -66,6 +69,7 @@ public class ProductData {
 
             return cell;
         });
+
         DATA_DESCRIPTION_RU.setExcelCellValueFactory(param -> {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
             cell.setCellValue(param.getProduct().getDescriptionRuEn());
@@ -83,23 +87,28 @@ public class ProductData {
         });
         DATA_LOCAL_PRICE.setExcelCellValueFactory(param -> {
             XSSFCell cell = null;
+            PriceListSheet pls = null;
+            if (param.getOptions() != null) {
+                pls = (PriceListSheet) param.getOptions().getOrDefault("priceListSheet", null);
+            }
+
             if (param.getProduct().getLocalPrice() > 0) {
                 cell = param.getRow().createCell(param.getIndex(), CellType.NUMERIC);
-                if (param.getPriceListSheet() != null) {
-                    double correction = 1D - ((double) param.getPriceListSheet().getDiscount() / 100);
+                if (pls != null) {
+                    double correction = 1D - ((double) pls.getDiscount() / 100);
                     if (correction > 0.4) {
                         cell.setCellValue(param.getProduct().getLocalPrice() * correction);
                     } else {
-                        System.out.println("price list sheet " + param.getPriceListSheet().getSheetName() + ", discount = " + ((int) correction * 100) + " %");
+                        System.out.println("price list sheet " + pls.getSheetName() + ", discount = " + ((int) correction * 100) + " %");
                         cell.setCellValue(param.getProduct().getLocalPrice());
                     }
                 } else {
                     cell.setCellValue(param.getProduct().getLocalPrice());
                 }
                 cell.setCellStyle(CELL_CURRENCY_FORMAT);
-            } else if (param.getPriceListSheet() != null) {
+            } else if (pls != null) {
                 cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
-                if (param.getPriceListSheet().getLanguage() == LANG_RU) {
+                if (pls.getLanguage() == LANG_RU) {
                     cell.setCellValue("По запросу");
                 } else {
                     cell.setCellValue("By request");
@@ -193,16 +202,38 @@ public class ProductData {
 
             return cell;
         });
+        DATA_RESPONSIBLE.setExcelCellValueFactory(param -> {
+            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+            ProductFamily pf = param.getProduct().getProductFamily();
+            if (pf != null) {
+                cell.setCellValue(pf.getResponsible());
+                cell.setCellStyle(CELL_ALIGN_RIGHT);
+            }
+
+            return cell;
+        });
         DATA_IS_IN_PRICE.setExcelCellValueFactory(param -> {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
-            cell.setCellValue(param.getProduct().isPrice());
+            cell.setCellValue(param.getProduct().isPrice() ? "В прайсе" : "Не в прайсе");
             cell.setCellStyle(CELL_ALIGN_RIGHT);
 
             return cell;
         });
         DATA_CERTIFICATE.setExcelCellValueFactory(param -> {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
-            cell.setCellValue(new CertificatesChecker(param.getProduct(), new CheckParameters()).getCheckStatusResult());
+            cell.setCellValue(new CertificatesChecker(param.getProduct(), new CheckParameters()).getCheckStatusResult().getText());
+
+            return cell;
+        });
+        DATA_DESCRIPTION.setExcelCellValueFactory(param -> {
+            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+            String descRu = param.getProduct().getDescriptionru();
+            String descEn = param.getProduct().getDescriptionen();
+            if (descRu != null && !descRu.isEmpty()) {
+                cell.setCellValue(param.getProduct().getDescriptionru());
+            } else if (descEn != null) {
+                cell.setCellValue(param.getProduct().getDescriptionen());
+            }
 
             return cell;
         });

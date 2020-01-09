@@ -7,22 +7,32 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
+import ui_windows.product.certificatesChecker.CheckStatusResult;
 
+import java.util.ArrayList;
 import java.util.TreeSet;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_FAMILY;
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_LGBK;
+import static ui_windows.product.certificatesChecker.CheckStatusResult.STATUS_NOT_OK;
 import static ui_windows.product.certificatesChecker.CheckStatusResult.STATUS_OK;
 
 public class PriceStructure {
     private PriceListSheet priceListSheet;
     private TreeSet<LgbkGroup> lgbkGroups;
+    private Vector<Product> problemItems;
 
     public PriceStructure(PriceListSheet priceListSheet) {
         this.priceListSheet = priceListSheet;
+        problemItems = new Vector<>();
+    }
+
+    public void analysePriceItems() {
+        problemItems.clear();
         lgbkGroups = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
 
         int contentMode = priceListSheet.getContentMode();
@@ -30,15 +40,17 @@ public class PriceStructure {
 
         ExecutorService executorService = Executors.newFixedThreadPool(5);
         for (Product product : CoreModule.getProducts().getItems()) {
-
-            Runnable check = () -> {
-                boolean checkCert = !priceListSheet.isCheckCert() ||
-                        new CertificatesChecker(product).getCheckStatusResult().equals(STATUS_OK.getText());
-                if (product.isPrice() && priceListSheet.isInPrice(product) && checkCert) {
-                    addProduct(product);
+            executorService.execute(() -> {
+                if (product.isPrice() && priceListSheet.isInPrice(product)) {
+                    CheckStatusResult checkingResult = new CertificatesChecker(product).getCheckStatusResult();
+                    if (priceListSheet.isCheckCert() && checkingResult.equals(STATUS_OK) ||
+                            !priceListSheet.isCheckCert() && !checkingResult.equals(STATUS_NOT_OK)) {
+                        addProduct(product);
+                    } else {
+                        problemItems.add(product);
+                    }
                 }
-            };
-            executorService.execute(check);
+            });
         }
 
         executorService.shutdown();
@@ -93,5 +105,9 @@ public class PriceStructure {
         }
 
         return rowIndex;
+    }
+
+    public Vector<Product> getProblemItems() {
+        return problemItems;
     }
 }

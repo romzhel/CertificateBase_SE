@@ -82,8 +82,10 @@ public class RequestWindowController implements Initializable {
                     }
                 }
 
-                CoreModule.getCustomItems().addAll(results);
-                MainWindow.getController().getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION);
+                /*CoreModule.getCustomItems().addAll(results);
+                MainWindow.getController().getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION);*/
+
+                CoreModule.setAndDisplayCustomItems(results);
 
                 ((Stage) btnApply.getScene().getWindow()).close();
             });

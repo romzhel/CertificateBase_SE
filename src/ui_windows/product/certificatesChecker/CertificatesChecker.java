@@ -260,8 +260,8 @@ public class CertificatesChecker {
         return productNeededNorms;
     }
 
-    public String getCheckStatusResult() {
-        return checkStatusResult.getText();
+    public CheckStatusResult getCheckStatusResult() {
+        return checkStatusResult;
     }
 
     public TreeSet<String> getProductTypes() {
