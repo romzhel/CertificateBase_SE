@@ -90,7 +90,7 @@ public class MainTable {
 
                                         Platform.runLater(() -> {
                                             getStyleClass().add(certificatesChecker.getCheckStatusResultStyle(getStyleClass()));
-                                            setTooltip(new Tooltip(certificatesChecker.getCheckStatusResult()));
+                                            setTooltip(new Tooltip(certificatesChecker.getCheckStatusResult().getText()));
                                         });
                                     };
 

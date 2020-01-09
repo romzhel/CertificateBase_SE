@@ -4,21 +4,21 @@ import core.CoreModule;
 import core.Dialogs;
 import files.ExcelCellStyleFactory;
 import javafx.application.Platform;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFDataFormat;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
+import ui_windows.product.Product;
 import utils.Utils;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Date;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -31,18 +31,39 @@ public class ExportPriceListToExcel_SE {
     private File tempFile;
     private File resultFile;
     private int itemCount;
+    private ArrayList<PriceStructure> priceStructures;
+    private ArrayList<Product> allProblemItems;
 
     public ExportPriceListToExcel_SE(PriceList priceList) {
         this.priceList = priceList;
+        Runnable endActions = () -> {
+            fillDoc();
+            saveToFile();
+            MainWindow.setProgress(0.0);
+        };
 
         if (loadTemplate()) {
             MainWindow.setProgress(-1);
 
             new Thread(() -> {
-                fillDoc();
-                saveToFile();
+                createPriceStructures();
 
-                Platform.runLater(() -> MainWindow.setProgress(0.0));
+                if (allProblemItems.size() > 0) {
+                    Platform.runLater(() -> {
+                        CoreModule.setAndDisplayCustomItems(allProblemItems);
+
+                        if (Dialogs.confirm("Формирование прайс-листа", "Найдены заказные" +
+                                " позиции, статус проверки сертификатов которых не позволяет добавить их в прайс-лист (" +
+                                allProblemItems.size() + "). Они будут отображены в наборе данных Запросы.\n\n" +
+                                "Продолжить формирование прайс-листа без данных позиций?")) {
+                            new Thread(endActions).start();
+                        } else {
+                            MainWindow.setProgress(0.0);
+                        }
+                    });
+                } else {
+                    endActions.run();
+                }
             }).start();
         }
     }
@@ -82,8 +103,9 @@ public class ExportPriceListToExcel_SE {
         return true;
     }
 
-    private void fillDoc() {
-        new ExcelCellStyleFactory(excelDoc);
+    private void createPriceStructures() {
+        allProblemItems = new ArrayList<>();
+        priceStructures = new ArrayList<>();
 
         int sheetIndex = 0;
         for (PriceListSheet priceListSheet : priceList.getSheets()) {
@@ -92,7 +114,19 @@ public class ExportPriceListToExcel_SE {
                 excelDoc.setSheetName(sheetIndex, sheetName);
             }
 
-            new PriceStructure(priceListSheet).export(excelDoc.getSheetAt(sheetIndex++));
+            PriceStructure priceStructure = new PriceStructure(priceListSheet);
+            priceStructure.analysePriceItems();
+            allProblemItems.addAll(priceStructure.getProblemItems());
+            priceStructures.add(priceStructure);
+        }
+    }
+
+    private void fillDoc() {
+        new ExcelCellStyleFactory(excelDoc);
+
+        int index = 0;
+        for (PriceStructure priceStructure : priceStructures) {
+            priceStructure.export(excelDoc.getSheetAt(index++));
         }
     }
 
@@ -116,13 +150,14 @@ public class ExportPriceListToExcel_SE {
             }
 
             Platform.runLater(() -> {
-                if (CoreModule.getUsers().getCurrentUser().getProfile().getName().toLowerCase().contains("полный")) {
+                if (resultFile.exists() /*&& CoreModule.getUsers().getCurrentUser().getProfile().getName().toLowerCase().contains("полный")*/) {
                     if (Dialogs.confirm("Формирование прайс листа", "Прайс лист сформирован. Желаете " +
                             "скопировать его в " + resultFile.getPath() + "?")) {
                         try {
                             Files.copy(tempFile.toPath(), resultFile.toPath(), REPLACE_EXISTING);
+                            Utils.openFile(resultFile.getParentFile());
                         } catch (IOException e) {
-                            Dialogs.showMessage("Формирование прайс-листа", e.getMessage());;
+                            Dialogs.showMessage("Формирование прайс-листа", e.getMessage());
                         }
                     }
                 }

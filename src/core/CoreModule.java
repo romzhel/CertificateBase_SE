@@ -4,6 +4,7 @@ import database.DataBase;
 import files.Folders;
 import javafx.application.Platform;
 import javafx.scene.control.TableView;
+import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.filter_window.Filter;
 import ui_windows.options_window.certificates_editor.Certificates;
@@ -214,5 +215,16 @@ public class CoreModule {
 
     public static void setCustomItems(HashSet<Product> customItems) {
         CoreModule.customItems = customItems;
+    }
+
+    public static void setCustomItems(ArrayList<Product> customItems) {
+        CoreModule.customItems.clear();
+        CoreModule.customItems.addAll(customItems);
+    }
+
+    public static void setAndDisplayCustomItems(ArrayList<Product> customItems) {
+        CoreModule.customItems.clear();
+        CoreModule.customItems.addAll(customItems);
+        MainWindow.getController().getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION);
     }
 }

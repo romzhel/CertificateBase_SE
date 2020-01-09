@@ -281,9 +281,11 @@ public class Utils {
 
         if (text == null) return temp;
 
-        String[] tempArr = text.split("\\,");
+        String[] tempArr = text.split("[\\,\\;]");
         for (String s : tempArr) {
-            temp.add(s.trim());
+            if (!s.trim().isEmpty()) {
+                temp.add(s.trim());
+            }
         }
         return temp;
     }

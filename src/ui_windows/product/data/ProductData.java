@@ -35,11 +35,13 @@ public class ProductData {
     public static final DataItem DATA_DCHAIN_COMMENT = new DataItem(DESC_DCHAIN_COMMENT, null);
     public static final DataItem DATA_PACKSIZE = new DataItem(DESC_PACKSIZE, FIELD_PACKSIZE);
     public static final DataItem DATA_FAMILY = new DataItem(DESC_FAMILY, FIELD_FAMILY);
+    public static final DataItem DATA_RESPONSIBLE = new DataItem("Ответственный", null);
     public static final DataItem DATA_IS_IN_PRICE = new DataItem(DESC_PRICE, FIELD_PRICE);
     public static final DataItem DATA_COMMENT = new DataItem(DESC_COMMENT, FIELD_COMMENT);
     public static final DataItem DATA_REPLACEMENT = new DataItem(DESC_REPLACEMENT, FIELD_REPLACEMENT);
     public static final DataItem DATA_TYPE = new DataItem(DESC_TYPE, FIELD_TYPE);
     public static final DataItem DATA_CERTIFICATE = new DataItem("Наличие сертификатов", null);
+    public static final DataItem DATA_DESCRIPTION = new DataItem("Описание", null);
 
     private static ProductData instance;
 
@@ -67,6 +69,7 @@ public class ProductData {
 
             return cell;
         });
+
         DATA_DESCRIPTION_RU.setExcelCellValueFactory(param -> {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
             cell.setCellValue(param.getProduct().getDescriptionRuEn());
@@ -199,16 +202,38 @@ public class ProductData {
 
             return cell;
         });
+        DATA_RESPONSIBLE.setExcelCellValueFactory(param -> {
+            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+            ProductFamily pf = param.getProduct().getProductFamily();
+            if (pf != null) {
+                cell.setCellValue(pf.getResponsible());
+                cell.setCellStyle(CELL_ALIGN_RIGHT);
+            }
+
+            return cell;
+        });
         DATA_IS_IN_PRICE.setExcelCellValueFactory(param -> {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
-            cell.setCellValue(param.getProduct().isPrice());
+            cell.setCellValue(param.getProduct().isPrice() ? "В прайсе" : "Не в прайсе");
             cell.setCellStyle(CELL_ALIGN_RIGHT);
 
             return cell;
         });
         DATA_CERTIFICATE.setExcelCellValueFactory(param -> {
             XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
-            cell.setCellValue(new CertificatesChecker(param.getProduct(), new CheckParameters()).getCheckStatusResult());
+            cell.setCellValue(new CertificatesChecker(param.getProduct(), new CheckParameters()).getCheckStatusResult().getText());
+
+            return cell;
+        });
+        DATA_DESCRIPTION.setExcelCellValueFactory(param -> {
+            XSSFCell cell = param.getRow().createCell(param.getIndex(), CellType.STRING);
+            String descRu = param.getProduct().getDescriptionru();
+            String descEn = param.getProduct().getDescriptionen();
+            if (descRu != null && !descRu.isEmpty()) {
+                cell.setCellValue(param.getProduct().getDescriptionru());
+            } else if (descEn != null) {
+                cell.setCellValue(param.getProduct().getDescriptionen());
+            }
 
             return cell;
         });

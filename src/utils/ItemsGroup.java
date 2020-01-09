@@ -1,18 +1,23 @@
 package utils;
 
-import ui_windows.options_window.product_lgbk.ProductLgbk;
-
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.TreeSet;
 
 public class ItemsGroup<T, S> {
     private T groupNode;
     private TreeSet<S> items;
-    private int level;
+
+    public ItemsGroup() {
+    }
+
+    public ItemsGroup(T groupNode) {
+        this.groupNode = groupNode;
+        items = new TreeSet<>();
+    }
 
     public ItemsGroup(T groupNode, Comparator<S> comparator) {
         this.groupNode = groupNode;
-//        this.level = level;
         items = new TreeSet<>(comparator);
     }
 
@@ -23,11 +28,21 @@ public class ItemsGroup<T, S> {
         } else return false;
     }
 
+    public void addItems(Collection<S> items) {
+        for (S item : items) {
+            this.items.add(item);
+        }
+    }
+
     public TreeSet<S> getItems() {
         return items;
     }
 
     public T getGroupNode() {
         return groupNode;
+    }
+
+    public void setComparator(Comparator<S> comparator) {
+        items = new TreeSet<>(comparator);
     }
 }

@@ -11,7 +11,7 @@ public class DataSelectorMenu extends Menu {
     private static final String SPACE = "     ";
     public static final DataSelectorMenuItem MENU_DATA_CUSTOM_SELECTION = new DataSelectorMenuItem(
             SPACE + "Запрос" + SPACE, new FilterParameters(), () -> new ArrayList<>(CoreModule.getCustomItems()),
-            MainTableContextMenuFactory::createContectMenuForCustomItems);
+            () -> MainTableContextMenuFactory.createContectMenuForCustomItems());
     public static final DataSelectorMenuItem MENU_DATA_LAST_IMPORT_RESULT = new DataSelectorMenuItem(
             SPACE + "Результаты последнего импорта" + SPACE, new FilterParameters(),
             () -> CoreModule.getProducts().getChangedPositions(), MainTableContextMenuFactory::createContextMenuForAllData);
