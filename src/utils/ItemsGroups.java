@@ -33,6 +33,14 @@ public class ItemsGroups<U, S, T> {
         return null;
     }
 
+    public void deleteGroup(S groupNode) {
+        /*for (ItemsGroup<S, T> group : this.groupNode.getItems()) {
+            if (group.getGroupNode().equals(groupNode)) {*/
+                this.groupNode.getItems().remove(groupNode);
+        /*    }
+        }*/
+    }
+
     public TreeSet<ItemsGroup<S, T>> getItems(){
         return groupNode.getItems();
     }

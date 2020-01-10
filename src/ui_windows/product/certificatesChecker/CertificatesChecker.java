@@ -7,12 +7,11 @@ import ui_windows.options_window.certificates_editor.certificate_content_editor.
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
+import utils.ItemsGroup;
+import utils.ItemsGroups;
 import utils.Utils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import static ui_windows.product.certificatesChecker.CheckStatusResult.*;
 
@@ -24,25 +23,21 @@ public class CertificatesChecker {
     public final static String CERT_NO_NEEDED = "Сертификаты не требуются";
     public final static String ALL_COUNTRIES = "--";
     private TreeSet<CertificateVerificationItem> resultTableItems;
-    private CheckStatusResult checkStatusResult = NO_DATA;
-    private ArrayList<Integer> satisfiedNorms;
-    private HashSet<Integer> globalNeededNorms;
-    private HashSet<Integer> productNeededNorms;
-    private int certsErr;
+    private CheckStatusResult checkStatusResult = STATUS_OK;
     private TreeSet<String> productTypes;
 
     public CertificatesChecker(Product product) {
         init();
 
         checkExistingCertificates(product, new CheckParameters());
-        checkNorms(product);
+        checkStatusResult = new NormsChecker(product, resultTableItems).getCheckStatusResult();
     }
 
     public CertificatesChecker(Product product, CheckParameters checkParameters) {
         init();
 
         checkExistingCertificates(product, checkParameters);
-        checkNorms(product);
+        checkStatusResult = new NormsChecker(product, resultTableItems).getCheckStatusResult();
     }
 
     public CertificatesChecker(ObservableList<Product> checkedProducts, CheckParameters checkParameters) {
@@ -50,24 +45,25 @@ public class CertificatesChecker {
 
         for (Product product : checkedProducts) {
             checkExistingCertificates(product, checkParameters);
-            checkNorms(product);
+
+            CheckStatusResult csr = new NormsChecker(product, resultTableItems).getCheckStatusResult();
+            if (csr.ordinal() > checkStatusResult.ordinal()) {
+                checkStatusResult = csr;
+            }
         }
     }
 
     private void init() {
         resultTableItems = new TreeSet<>((o1, o2) -> {
-            String o1c = o1.getNorm().concat(o1.getMatchedPart()).concat(o1.getFile()).concat(o1.getStatus());
-            String o2c = o2.getNorm().concat(o2.getMatchedPart()).concat(o2.getFile()).concat(o2.getStatus());
+            String o1c = o1.getFile().concat(o1.getProdType()).concat(o1.getMatchedPart()).concat(o1.getNorm()).concat(o1.getStatus());
+            String o2c = o2.getFile().concat(o1.getProdType()).concat(o2.getMatchedPart()).concat(o2.getNorm()).concat(o2.getStatus());
             return o1c.compareTo(o2c);
         });
-        satisfiedNorms = new ArrayList<>();
-        globalNeededNorms = new HashSet<>();
-        productNeededNorms = new HashSet<>();
         productTypes = new TreeSet<>();
     }
 
     private void checkExistingCertificates(Product product, CheckParameters checkParameters) {
-        ArrayList<String> prodNames = new ArrayList<>();
+        TreeSet<String> prodNames = new TreeSet<>();
 
         for (Certificate cert : CoreModule.getCertificates().getCertificates()) {//check all certificates
 
@@ -75,19 +71,15 @@ public class CertificatesChecker {
             prodNames.add(Utils.toEN(product.getArticle()).toUpperCase());
             if (cert.isMaterialMatch()) prodNames.add(Utils.toEN(product.getMaterial()).toUpperCase());
 
-            int contentTypeId;
-
             for (CertificateContent content : cert.getContent()) {//check all content
-                contentTypeId = CoreModule.getProductTypes().getIDbyType(content.getEquipmentType());
-
                 boolean fullNameMatch = cert.isFullNameMatch();
                 boolean productTypeNotDefined = product.getType_id() == 0;
-                boolean productTypeMatches = product.getType_id() > 0 && product.getType_id() == contentTypeId;
-                boolean changedProductTypeMatch = checkParameters.getTemporaryTypeId() > 0 && checkParameters.getTemporaryTypeId() == contentTypeId;
+                boolean productTypeDefinedAndMatches = product.getType_id() > 0 && product.getType_id() == content.getEqTypeId();
                 boolean changedProductTypeNotDefined = checkParameters.getTemporaryTypeId() == 0;
+                boolean changedProductTypeDefinedAndMatch = checkParameters.getTemporaryTypeId() > 0 && checkParameters.getTemporaryTypeId() == content.getEqTypeId();
 
-                boolean usualWay = !checkParameters.isUseTemporaryTypeId() && (productTypeNotDefined || productTypeMatches);
-                boolean temporaryWay = checkParameters.isUseTemporaryTypeId() && (changedProductTypeNotDefined || changedProductTypeMatch);
+                boolean usualWay = !checkParameters.isUseTemporaryTypeId() && (productTypeNotDefined || productTypeDefinedAndMatches);
+                boolean temporaryWay = checkParameters.isUseTemporaryTypeId() && (changedProductTypeNotDefined || changedProductTypeDefinedAndMatch);
 
                 if (fullNameMatch || usualWay || temporaryWay) {
                     for (String contentName : Utils.stringToList(content.getEquipmentName())) {//check all content names
@@ -97,22 +89,28 @@ public class CertificatesChecker {
                             String contentValue = getContentValueForComparing(cert, contentName);
                             prod = prod.replaceAll("\\s", "");
 
-                            if (prod.matches(contentValue)) {
+                            if (prod.matches(contentValue)) {//add prod type from certificate for allowing of selection
                                 if (content.getEquipmentType() != null && !content.getEquipmentType().isEmpty()) {
                                     productTypes.add(content.getEquipmentType());
                                 }
 
                                 boolean typeNotDefined = (!checkParameters.isUseTemporaryTypeId() && productTypeNotDefined) ||
                                         (checkParameters.isUseTemporaryTypeId() && changedProductTypeNotDefined);
-                                if (!content.getEquipmentName().isEmpty() && !fullNameMatch && typeNotDefined && checkParameters.isEqTypeFiltered() && !isMatchEquipTypeName(product, content))
+                                if (!content.getEquipmentName().isEmpty() && !fullNameMatch && typeNotDefined &&
+                                        checkParameters.isEqTypeFiltered() && !isMatchEquipTypeName(product, content))
                                     continue;
 
                                 String status = getStatusString(product, cert);
 
-                                satisfiedNorms.addAll(Utils.getNumberALfromStringEnum(cert.getNorms()));
+//                                foundNorms.addAll(Utils.getNumberALfromStringEnum(cert.getNorms()));
                                 String norms = CoreModule.getRequirementTypes().getNormsShortNamesByIds(cert.getNorms());
-                                resultTableItems.add(new CertificateVerificationItem(norms, contentName, content.getEquipmentType(),
-                                        cert.getFileName(), status, cert.getExpirationDate(), cert, product));
+
+                                for (String normName : norms.split("\\,")) {
+                                    resultTableItems.add(new CertificateVerificationItem(normName.trim(), contentName,
+                                            content.getEquipmentType(), cert.getFileName(), status,
+                                            cert.getExpirationDate(), cert, product));
+
+                                }
                             }
                         }
                     }
@@ -125,17 +123,16 @@ public class CertificatesChecker {
         String status = "";
         if ((new Date()).after(Utils.getDate(cert.getExpirationDate()))) {//expired
             status = NOT_OK + EXPIRED + cert.getExpirationDate();
-            certsErr++;
         }
 
-        boolean productHasCert = !product.getCountry().trim().isEmpty();
+        boolean productHasCountry = !product.getCountry().trim().isEmpty();
         boolean certCountryMatch = cert.getCountries().toLowerCase().contains(product.getCountry().toLowerCase());
         boolean certAllCountries = cert.getCountries().contains(ALL_COUNTRIES);
 
-        if (!certAllCountries && productHasCert && !certCountryMatch) {//no country
-            status = status.isEmpty() ? NOT_OK + BAD_COUNTRY + " (" + product.getCountry().toUpperCase() + ")"
-                    : status + BAD_COUNTRY + " (" + product.getCountry().toUpperCase() + ")";
-            certsErr++;
+        if (!certAllCountries && productHasCountry && !certCountryMatch) {//no country
+            status = status.isEmpty() ?
+                    NOT_OK + BAD_COUNTRY + " (" + product.getCountry().toUpperCase() + ")" :
+                    status + BAD_COUNTRY + " (" + product.getCountry().toUpperCase() + ")";
         }
 
         if (status.isEmpty()) {
@@ -145,7 +142,7 @@ public class CertificatesChecker {
     }
 
     private boolean isMatchEquipTypeName(Product product, CertificateContent content) {
-        String[] productDescriptionParts = product.getDescriptionru().replaceAll("[\\(\\)\\[\\]]", "").split("\\s");
+        String[] productDescriptionParts = product.getDescriptionru().replaceAll("[\\(\\)\\[\\]]", "").split("[\\s\\,]");
         String certEqType = content.getEquipmentType().toLowerCase();
 
         for (String partOfDesc : productDescriptionParts) {
@@ -174,55 +171,16 @@ public class CertificatesChecker {
         return contentValue;
     }
 
-    private void checkNorms(Product product) {
-        globalNeededNorms.clear();
-        productNeededNorms.clear();
+    public TreeSet<CertificateVerificationItem> getResultTableItems() {
+        return resultTableItems;
+    }
 
-        HashSet<Integer> normsForChecking = new HashSet<>();
+    public CheckStatusResult getCheckStatusResult() {
+        return checkStatusResult;
+    }
 
-        productNeededNorms.addAll(product.getNormsList().getIntegerItems());
-        globalNeededNorms.addAll(CoreModule.getProductLgbkGroups().getGlobalNormIds(
-                new ProductLgbk(product.getLgbk(), product.getHierarchy())));
-
-        if (product.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
-            normsForChecking.addAll(globalNeededNorms);
-
-            if (product.getArticle().endsWith("-EX")) {
-                int normExId = CoreModule.getRequirementTypes().getExNormId();
-                if (normExId > 0) normsForChecking.add(normExId);
-            }
-        }
-
-        normsForChecking.addAll(productNeededNorms);
-        int normsForCheckingCount = normsForChecking.size();
-
-        boolean certNotNeeded = false;
-
-        normsForChecking.removeAll(satisfiedNorms);
-        if (satisfiedNorms.contains(1)) normsForChecking.remove(9);//НВО СС заменяет НВО ДС
-        if (satisfiedNorms.contains(3)) normsForChecking.remove(11);//ЭМС СС заменяет ЭМС ДС
-
-        for (int normIndex : normsForChecking) {
-            String shortName = CoreModule.getRequirementTypes().getRequirementByID(normIndex).getShortName();
-            CertificateVerificationItem cvi = new CertificateVerificationItem(shortName);
-            if (shortName.equals(CERT_NO_NEEDED)) {
-                cvi.setStatus(OK);
-                certNotNeeded = true;
-            } else {
-                certsErr++;
-            }
-            resultTableItems.add(cvi);
-        }
-
-        if (certNotNeeded) {
-            checkStatusResult = STATUS_OK;
-        } else if (certsErr > 0) {
-            checkStatusResult = STATUS_NOT_OK;
-        } else if (normsForCheckingCount > 0) {
-            checkStatusResult = STATUS_OK;
-        } else {
-            checkStatusResult = NO_DATA;
-        }
+    public TreeSet<String> getProductTypes() {
+        return productTypes;
     }
 
     public String getCheckStatusResultStyle(ObservableList<String> styles) {
@@ -242,29 +200,5 @@ public class CertificatesChecker {
             default:
                 return "itemStrikethroughBlack";
         }
-    }
-
-    public TreeSet<CertificateVerificationItem> getResultTableItems() {
-        return resultTableItems;
-    }
-
-    public ArrayList<Integer> getSatisfiedNorms() {
-        return satisfiedNorms;
-    }
-
-    public HashSet<Integer> getGlobalNeededNorms() {
-        return globalNeededNorms;
-    }
-
-    public HashSet<Integer> getProductNeededNorms() {
-        return productNeededNorms;
-    }
-
-    public CheckStatusResult getCheckStatusResult() {
-        return checkStatusResult;
-    }
-
-    public TreeSet<String> getProductTypes() {
-        return productTypes;
     }
 }

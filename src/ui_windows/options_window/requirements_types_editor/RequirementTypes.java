@@ -139,8 +139,7 @@ public class RequirementTypes {
 
     public int getExNormId() {
         for (RequirementType reqType : requirementTypes) {
-            if (reqType.getShortName().toUpperCase().endsWith("EX") ||
-                    reqType.getFullName().contains("взрывозащ")) {
+            if (reqType.getShortName().toUpperCase().endsWith("EX") || reqType.getFullName().contains("взрывозащ")) {
                 return reqType.getId();
             }
         }
