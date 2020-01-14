@@ -9,9 +9,6 @@ import javafx.stage.Stage;
 import ui_windows.main_window.file_import_window.ColumnsMapper;
 import ui_windows.main_window.file_import_window.FileImportTableItem;
 import ui_windows.main_window.file_import_window.ObjectsComparator2;
-import ui_windows.options_window.families_editor.ProductFamily;
-import ui_windows.options_window.product_lgbk.LgbkAndParent;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
 import utils.Utils;
@@ -89,8 +86,9 @@ public class ProductEditorWindowActions {
                     productsToUpdate.add(pr);
                 }
             } else {
-                multiEditor.save();
-                productsToUpdate.addAll(multiEditor.getEditedItems());
+                if (multiEditor.checkAndApplyChanges()) {
+                    productsToUpdate.addAll(multiEditor.getEditedItems());
+                }
             }
 //            new Thread(() -> new ProductsDB().updateData(new ArrayList<Product>(productsToUpdate))).start(); //update in DB
             boolean saveToDbResult = new ProductsDB().updateData(productsToUpdate); //update in DB

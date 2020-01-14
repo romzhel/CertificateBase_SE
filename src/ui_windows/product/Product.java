@@ -1,8 +1,6 @@
 package ui_windows.product;
 
 import core.CoreModule;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.StringProperty;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import ui_windows.main_window.file_import_window.ColumnsMapper;
