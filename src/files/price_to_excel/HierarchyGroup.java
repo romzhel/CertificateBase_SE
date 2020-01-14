@@ -9,7 +9,7 @@ import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListShee
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
-import ui_windows.product.data.DataItem;
+import ui_windows.product.data.DataItemEnum;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -92,9 +92,12 @@ public class HierarchyGroup {
             row = sheet.createRow(rowIndex++);
 
             int colIndex = 0;
-            for (DataItem plc : priceListSheet.getColumnsSelector().getSelectedItems()) {
-                plc.createXssfCell(product, row, colIndex++, options);
+            for (DataItemEnum die : priceListSheet.getColumnsSelector().getSelectedItems()) {
+//                die.createXssfCell(product, row, colIndex++, options);
+                cell = row.createCell(colIndex++);
+                die.fillExcelCell(cell, product, options);
             }
+
         }
         sheet.groupRow(firstRowForGroup + 1, rowIndex - 1);
 //            sheet.setRowGroupCollapsed(rowIndex - 1, true);

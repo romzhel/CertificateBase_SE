@@ -13,7 +13,7 @@ import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.product.Product;
-import ui_windows.product.data.DataItem;
+import ui_windows.product.data.DataItemEnum;
 import utils.ItemsGroup;
 import utils.ItemsGroups;
 import utils.Utils;
@@ -23,7 +23,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import static ui_windows.product.data.ProductData.*;
+import static ui_windows.product.data.DataItemEnum.*;
 
 public class CertificateContentChecker {
     private XSSFWorkbook workbook;
@@ -131,12 +131,14 @@ public class CertificateContentChecker {
     }
 
     private void addProductInfo(int column, Product product) {
-        DataItem[] dataItems = new DataItem[]{DATA_ARTICLE, DATA_DESCRIPTION,
+        DataItemEnum[] dataItems = new DataItemEnum[]{DATA_ARTICLE, DATA_DESCRIPTION,
                 DATA_COUNTRY, DATA_FAMILY, DATA_RESPONSIBLE, DATA_IS_IN_PRICE, DATA_DCHAIN, DATA_DCHAIN_COMMENT};
 
         XSSFRow row = sheet.createRow(rowIndex++);
-        for (DataItem dataItem : dataItems) {
-            dataItem.createXssfCell(product, row, column++, null);
+        XSSFCell cell;
+        for (DataItemEnum dataItem : dataItems) {
+            cell = row.createCell(column++);
+            dataItem.fillExcelCell(cell, product,null);
         }
     }
 }

@@ -8,7 +8,7 @@ import utils.DoublesPreprocessor;
 import utils.Utils;
 
 public class ProductsComparator {
-    ProductsComparatorResult result;
+    private ProductsComparatorResult result;
 
     public ProductsComparator(Products prs1, Products prs2nt, ColumnsMapper.FieldForImport... fieldsForUpdate) {
         result = new ProductsComparatorResult();

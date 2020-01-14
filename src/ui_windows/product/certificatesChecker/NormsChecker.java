@@ -51,9 +51,6 @@ public class NormsChecker {
                 faultNorms.add(CoreModule.getRequirementTypes().getRequirementByShortName(singleNorm.getGroupNode()).getId());
             }
         }
-
-        System.out.println();
-
     }
 
     private void checkNorms(Product product) {

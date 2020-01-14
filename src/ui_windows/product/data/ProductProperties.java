@@ -28,6 +28,8 @@ public class ProductProperties {
     public static final String DESC_COMMENT = "Комментарий";
     public static final String DESC_REPLACEMENT = "Замена";
     public static final String DESC_TYPE = "Тип";
+    public static final String DESC_NORMS_MODE = "Добавление/замещение норм";
+    public static final String DESC_NORMS_LIST = "Список норм";
 
     public static final String FIELD_ORDER_NUMBER = "material";
     public static final String FIELD_ARTICLE = "article";
@@ -53,9 +55,8 @@ public class ProductProperties {
     public static final String FIELD_COMMENT = "comments";
     public static final String FIELD_REPLACEMENT = "replacement";
     public static final String FIELD_TYPE = "type_id";
-
-
-
+    public static final String FIELD_NORMS_MODE = "normsMode";
+    public static final String FIELD_NORMS_LIST = "normsList";
 
     public static String[] getAllNamesRu() {
         ArrayList<String> result = new ArrayList<>();
