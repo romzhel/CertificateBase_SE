@@ -149,18 +149,10 @@ public class MultiEditor {
     }
 
     public class FieldsAndControls {
-        //        private Field field;
         private DataItemEnum dataItem;
         private Node control;
         private boolean isAllTheSame;
         private boolean canBeSaved;
-
-//        public FieldsAndControls(Field field, Node control, boolean allTheSame, boolean canBeSaved) {
-//            this.field = field;
-//            this.control = control;
-//            this.isAllTheSame = allTheSame;
-//            this.canBeSaved = canBeSaved;
-//        }
 
         public FieldsAndControls(DataItemEnum dataItem, Node control, boolean isAllTheSame, boolean canBeSaved) {
             this.dataItem = dataItem;

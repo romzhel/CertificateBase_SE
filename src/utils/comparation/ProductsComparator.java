@@ -48,7 +48,6 @@ public class ProductsComparator {
                                 pr1.setHistory(pr1.getHistory().concat(Utils.getDateTime()).concat(ocr.getHistoryComment()));
                             }
                         }
-                        pr1.setNeedaction(true);
                     }
 
                     prs2.getItems().remove(pr2);//remove compared item
