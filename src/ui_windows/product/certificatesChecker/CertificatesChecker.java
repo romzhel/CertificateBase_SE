@@ -47,7 +47,7 @@ public class CertificatesChecker {
             checkExistingCertificates(product, checkParameters);
 
             CheckStatusResult csr = new NormsChecker(product, resultTableItems).getCheckStatusResult();
-            if (csr.ordinal() > checkStatusResult.ordinal()) {
+            if (csr.getPrio() > checkStatusResult.getPrio()) {
                 checkStatusResult = csr;
             }
         }

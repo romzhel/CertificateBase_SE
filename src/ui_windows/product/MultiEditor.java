@@ -23,9 +23,9 @@ public class MultiEditor {
         fieldsAndControls.add(new MultiEditorItem(DATA_IS_IN_PRICE, pewc.cbxPrice, CAN_BE_SAVED));
         fieldsAndControls.add(new MultiEditorItem(DATA_LGBK, pewc.tfLgbk, CAN_NOT_BE_SAVED));
         fieldsAndControls.add(new MultiEditorItem(DATA_HIERARCHY, pewc.tfHierarchy, CAN_NOT_BE_SAVED));
-        fieldsAndControls.add(new MultiEditorItem(DATA_DCHAIN, pewc.tfAccessibility, CAN_NOT_BE_SAVED));//пишется в базу с расшифровкой, НЕ ВКЛЮЧАТЬ
+        fieldsAndControls.add(new MultiEditorItem(DATA_DCHAIN_WITH_COMMENT, pewc.tfAccessibility, CAN_NOT_BE_SAVED));//пишется в базу с расшифровкой, НЕ ВКЛЮЧАТЬ
         fieldsAndControls.add(new MultiEditorItem(DATA_SERVICE_END, pewc.tfEndOfService, CAN_NOT_BE_SAVED));
-        fieldsAndControls.add(new MultiEditorItem(DATA_COUNTRY, pewc.tfCountry, CAN_NOT_BE_SAVED));//пишется в базу с расшифровкой, НЕ ВКЛЮЧАТЬ
+        fieldsAndControls.add(new MultiEditorItem(DATA_COUNTRY_WITH_COMMENTS, pewc.tfCountry, CAN_NOT_BE_SAVED));//пишется в базу с расшифровкой, НЕ ВКЛЮЧАТЬ
         fieldsAndControls.add(new MultiEditorItem(DATA_COMMENT, pewc.taComments, CAN_BE_SAVED));
         fieldsAndControls.add(new MultiEditorItem(DATA_TYPE, pewc.cbType, CAN_BE_SAVED));
         fieldsAndControls.add(new MultiEditorItem(DATA_DESCRIPTION_EN, pewc.taDescription, CAN_BE_SAVED));

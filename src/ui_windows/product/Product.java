@@ -160,29 +160,6 @@ public class Product {
         }
     }
 
-    public String getOrderableStatus() {
-        OrderAccessibility oa = CoreModule.getOrdersAccessibility().getOrderAccessibilityByStatusCode(getDchain());
-        String result = "";
-
-        if (oa != null) {
-            if (oa.getStatus().trim().length() > 0) result = oa.getStatus();
-            else {
-                if (oa.getDescriptionRu().trim().length() > 0) result = oa.getDescriptionRu();
-                else {
-                    if (oa.getDescriptionEn().trim().length() > 0) result = oa.getDescriptionEn();
-                }
-            }
-
-            if (result.length() > 0) result = "(" + getDchain() + ") " + result;
-            else result = "(" + getDchain() + ")";
-
-        } else {
-            if (getDchain().trim().length() > 0) result = "(" + getDchain() + ")";
-        }
-
-        return result;
-    }
-
     public void displayInEditorWindow(AnchorPane root) {
         Utils.setControlValue(root, "tfMaterial", getMaterial());
         Utils.setControlValue(root, "tfProductPrint", getProductForPrint());
@@ -194,7 +171,7 @@ public class Product {
         Utils.setControlValue(root, "tfEndOfService", getEndofservice());
         Utils.setControlValue(root, "tfDangerous", getDangerous());
         Utils.setControlValue(root, "tfCountry", Countries.getCombinedName(getCountry()));
-        Utils.setControlValue(root, "tfAccessibility", getOrderableStatus());
+        Utils.setControlValue(root, "tfAccessibility", CoreModule.getOrdersAccessibility().getCombineOrderAccessibility(dchain));
         Utils.setControlValue(root, "cbxOrderable", isOrderableCalculated());
         Utils.setControlValue(root, "tfDescription", getDescriptionru());
         Utils.setControlValue(root, "cbxPrice", isPrice());

@@ -42,6 +42,16 @@ public class OrdersAccessibility {
         return null;
     }
 
+    public String getCombineOrderAccessibility(String dchain) {
+        String result = "(" + dchain + ")";
+        for (OrderAccessibility oa : ordersAccessibility) {
+            if (oa.getStatusCode().equals(dchain)) {
+                return result.concat(" ").concat(oa.getDescription());
+            }
+        }
+        return result;
+    }
+
     public OrdersAccessibilityTable getTable() {
         return table;
     }
