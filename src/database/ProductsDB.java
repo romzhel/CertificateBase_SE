@@ -66,7 +66,7 @@ public class ProductsDB extends DbRequest {
                     updateData.setString(++count, alpr.get(j).getArticle());
                     updateData.setString(++count, alpr.get(j).getHierarchy());
                     updateData.setString(++count, alpr.get(j).getLgbk());
-                    updateData.setInt(++count, alpr.get(j).getFamily());
+                    updateData.setInt(++count, alpr.get(j).getFamily_id());
                     updateData.setString(++count, alpr.get(j).getEndofservice());
                     updateData.setString(++count, alpr.get(j).getDangerous());
                     updateData.setString(++count, alpr.get(j).getCountry());
@@ -137,7 +137,7 @@ public class ProductsDB extends DbRequest {
                     addData.setString(++count, alpr.get(j).getArticle());
                     addData.setString(++count, alpr.get(j).getHierarchy());
                     addData.setString(++count, alpr.get(j).getLgbk());
-                    addData.setInt(++count, alpr.get(j).getFamily());
+                    addData.setInt(++count, alpr.get(j).getFamily_id());
                     addData.setString(++count, alpr.get(j).getEndofservice());
                     addData.setString(++count, alpr.get(j).getDangerous());
                     addData.setString(++count, alpr.get(j).getCountry());

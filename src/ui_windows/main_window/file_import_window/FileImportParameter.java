@@ -1,31 +1,29 @@
 package ui_windows.main_window.file_import_window;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
+import ui_windows.product.data.DataItem;
 
-public class FileImportTableItem {
+public class FileImportParameter {
     private StringProperty tableTitle;
-    private StringProperty productField;
+    private ObjectProperty<DataItem> dataItem;
     private BooleanProperty importValue;
     private BooleanProperty logHistory;
     private int columnIndex;
     private boolean logLastImportCodes;
 
-    public FileImportTableItem(String tableTitle, String productProperty, boolean importValue, boolean logHistory,
+    public FileImportParameter(String tableTitle, DataItem dataItem, boolean importValue, boolean logHistory,
                                int columnIndex, boolean logLastImportCodes) {
         this.tableTitle = new SimpleStringProperty(tableTitle);
-        this.productField = new SimpleStringProperty(productProperty);
+        this.dataItem = new SimpleObjectProperty<>(dataItem);
         this.importValue = new SimpleBooleanProperty(importValue);
         this.logHistory = new SimpleBooleanProperty(logHistory);
         this.columnIndex = columnIndex;
         this.logLastImportCodes = logLastImportCodes;
     }
 
-    public FileImportTableItem(String fieldName, String productProperty) {
+    public FileImportParameter(String fieldName, DataItem dataItem) {
         this.tableTitle = new SimpleStringProperty(fieldName);
-        this.productField = new SimpleStringProperty(productProperty);
+        this.dataItem = new SimpleObjectProperty<>(dataItem);
     }
 
     public String getTableTitle() {
@@ -38,18 +36,6 @@ public class FileImportTableItem {
 
     public void setTableTitle(String tableTitle) {
         this.tableTitle.set(tableTitle);
-    }
-
-    public String getProductField() {
-        return productField.get();
-    }
-
-    public StringProperty productFieldProperty() {
-        return productField;
-    }
-
-    public void setProductField(String productField) {
-        this.productField.set(productField);
     }
 
     public boolean isImportValue() {
@@ -92,8 +78,20 @@ public class FileImportTableItem {
         this.logLastImportCodes = logLastImportCodes;
     }
 
+    public DataItem getDataItem() {
+        return dataItem.get();
+    }
+
+    public ObjectProperty<DataItem> dataItemProperty() {
+        return dataItem;
+    }
+
+    public void setDataItem(DataItem dataItem) {
+        this.dataItem.set(dataItem);
+    }
+
     @Override
     public String toString() {
-        return tableTitle + ", " + productField + ", " + isImportValue() + ", " + logHistory;
+        return tableTitle + ", " + dataItem.get().getField().getName() + ", " + isImportValue() + ", " + logHistory;
     }
 }

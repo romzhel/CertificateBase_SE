@@ -45,15 +45,11 @@ public class NormsList {
 
     public String getStringLine() {
         if (norms == null || norms.size() == 0) return "";
+        return toString();
+    }
 
-        String stringLine = "";
-        for (int i = 0; i < norms.size() - 1; i++) {
-            stringLine = stringLine.concat(String.valueOf(norms.get(i))).concat(",");
-        }
-
-        stringLine = stringLine.concat(String.valueOf(norms.get(norms.size() - 1)));
-
-        return stringLine;
+    public String getNormNamesLine(){
+        return CoreModule.getRequirementTypes().getNormsShortNamesByIds(toString());
     }
 
     @Override

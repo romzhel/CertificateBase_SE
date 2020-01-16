@@ -1,7 +1,7 @@
 package utils.comparation;
 
-import ui_windows.main_window.file_import_window.ColumnsMapper;
-import ui_windows.main_window.file_import_window.ObjectsComparator2;
+import ui_windows.main_window.file_import_window.FileImportParameter;
+import ui_windows.main_window.file_import_window.singleProductsComparator;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
 import utils.DoublesPreprocessor;
@@ -10,7 +10,7 @@ import utils.Utils;
 public class ProductsComparator {
     private ProductsComparatorResult result;
 
-    public ProductsComparator(Products prs1, Products prs2nt, ColumnsMapper.FieldForImport... fieldsForUpdate) {
+    public ProductsComparator(Products prs1, Products prs2nt, FileImportParameter... parameters) {
         result = new ProductsComparatorResult();
         Products prs2 = new Products();
         prs2.setItems(new DoublesPreprocessor(prs2nt.getItems()).getTreatedItems());
@@ -34,7 +34,7 @@ public class ProductsComparator {
                 if (pr1t.equals(pr2t)) {//product exists
                     pr1.setLastChangeDate(Utils.getDateTime());//set last update time
 
-                    ObjectsComparator2 pc = new ObjectsComparator2(pr1, pr2, true, fieldsForUpdate);
+                    singleProductsComparator pc = new singleProductsComparator(pr1, pr2, true, parameters);
                     ObjectsComparatorResult ocr = pc.getResult();
 
                     if (ocr.isNeedUpdateInDB()) {//product changed
@@ -48,6 +48,7 @@ public class ProductsComparator {
                                 pr1.setHistory(pr1.getHistory().concat(Utils.getDateTime()).concat(ocr.getHistoryComment()));
                             }
                         }
+                        result.addToReport(ocr.getReportLines());
                     }
 
                     prs2.getItems().remove(pr2);//remove compared item
@@ -71,6 +72,7 @@ public class ProductsComparator {
                 pr.setLastChangeDate(Utils.getDateTime());
                 prs1.getItems().add(pr);
                 result.getNewItems().add(pr);
+                result.addToReport(pr, "new");
             } else {
                 System.out.println(pr.getMaterial() + " was not added due empty Article!");
             }

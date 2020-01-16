@@ -3,20 +3,20 @@ package ui_windows.product;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.TextInputControl;
-import ui_windows.product.data.DataItemEnum;
+import ui_windows.product.data.DataItem;
 
 import java.util.List;
 
 public class MultiEditorItem {
     public static final boolean CAN_BE_SAVED = true;
     public static final boolean CAN_NOT_BE_SAVED = false;
-    private DataItemEnum dataItem;
+    private DataItem dataItem;
     private Control control;
     private boolean canBeSaved;
     private Object commonValue;
     private Object newValue;
 
-    public MultiEditorItem(DataItemEnum dataItem, Control control, boolean canBeSaved) {
+    public MultiEditorItem(DataItem dataItem, Control control, boolean canBeSaved) {
         this.dataItem = dataItem;
         this.control = control;
         this.canBeSaved = canBeSaved;
@@ -24,7 +24,7 @@ public class MultiEditorItem {
         newValue = null;
     }
 
-    public DataItemEnum getDataItem() {
+    public DataItem getDataItem() {
         return dataItem;
     }
 

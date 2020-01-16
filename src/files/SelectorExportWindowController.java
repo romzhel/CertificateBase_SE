@@ -9,7 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import ui_windows.main_window.MainWindow;
-import ui_windows.product.data.DataItemEnum;
+import ui_windows.product.data.DataItem;
 import utils.twin_list_views.TwinListViews;
 
 import java.net.URL;
@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class SelectorExportWindowController implements Initializable {
-    private TwinListViews<DataItemEnum> columnsSelector;
+    private TwinListViews<DataItem> columnsSelector;
 
     @FXML
     public Pane pColsSelector;
@@ -42,15 +42,15 @@ public class SelectorExportWindowController implements Initializable {
     }
 
     private void initTwinListsView() {
-        ArrayList<DataItemEnum> columns = new ArrayList<>();
-        columns.addAll(Arrays.asList(DataItemEnum.values()));
+        ArrayList<DataItem> columns = new ArrayList<>();
+        columns.addAll(Arrays.asList(DataItem.values()));
         columnsSelector = new TwinListViews<>(pColsSelector, columns);
-        columnsSelector.setListViewsCellFactory(new Callback<ListView<DataItemEnum>, ListCell<DataItemEnum>>() {
+        columnsSelector.setListViewsCellFactory(new Callback<ListView<DataItem>, ListCell<DataItem>>() {
             @Override
-            public ListCell call(ListView<DataItemEnum> param) {
-                return new ListCell<DataItemEnum>() {
+            public ListCell call(ListView<DataItem> param) {
+                return new ListCell<DataItem>() {
                     @Override
-                    protected void updateItem(DataItemEnum item, boolean empty) {
+                    protected void updateItem(DataItem item, boolean empty) {
                         super.updateItem(item, empty);
 
                         if (item != null && !empty) {
@@ -67,19 +67,19 @@ public class SelectorExportWindowController implements Initializable {
         columnsSelector.setListViewsSelectedComparator(null);
         columnsSelector.setConvertToText(param -> {
             String result = "";
-            for (DataItemEnum item : param) {
+            for (DataItem item : param) {
                 result = result.concat(item.getDisplayingName()).concat(",");
             }
             result = result.replaceAll("\\,$", "");
 
             return result;
         });
-        columnsSelector.setConvertFromText(new Callback<String, ArrayList<DataItemEnum>>() {
+        columnsSelector.setConvertFromText(new Callback<String, ArrayList<DataItem>>() {
             @Override
-            public ArrayList<DataItemEnum> call(String param) {
-                ArrayList<DataItemEnum> result = new ArrayList<>();
+            public ArrayList<DataItem> call(String param) {
+                ArrayList<DataItem> result = new ArrayList<>();
                 for (String columnName : param.split("\\,")) {
-                    for (DataItemEnum die : columns) {
+                    for (DataItem die : columns) {
                         if (die.getDisplayingName().equals(columnName)) {
                             result.add(die);
                             break;

@@ -6,36 +6,48 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
-import ui_windows.product.data.ProductProperties;
+import javafx.util.StringConverter;
+import ui_windows.product.data.DataItem;
+import ui_windows.product.data.DataSets;
 
 public class FileImportTable {
-    private TableView<FileImportTableItem> tableView;
+    private TableView<FileImportParameter> tableView;
 
-    public FileImportTable(TableView<FileImportTableItem> tableView) {
+    public FileImportTable(TableView<FileImportParameter> tableView) {
         this.tableView = tableView;
-        TableColumn<FileImportTableItem, String> titleNameCol = new TableColumn<>("Столбец");
+        TableColumn<FileImportParameter, String> titleNameCol = new TableColumn<>("Столбец");
         titleNameCol.setCellValueFactory(new PropertyValueFactory<>("tableTitle"));
         titleNameCol.setPrefWidth(300);
 
-        TableColumn<FileImportTableItem, String> productFieldCol = new TableColumn<>("Назначение");
+        TableColumn<FileImportParameter, DataItem> productFieldCol = new TableColumn<>("Назначение");
+        productFieldCol.setCellFactory(ComboBoxTableCell.forTableColumn(new StringConverter<DataItem>() {
+            @Override
+            public String toString(DataItem object) {
+                return object != null ?  object.getDisplayingName() : "";
+            }
+
+            @Override
+            public DataItem fromString(String string) {
+                return DataItem.getByDisplayingName(string);
+            }
+        }, DataSets.getDataItemsForNowImport()));
         productFieldCol.setCellValueFactory(param -> {
-            param.getValue().productFieldProperty().addListener((observable, oldValue, newValue) -> {
-//                param.getValue().setProductField(newValue);
-                if (!newValue.isEmpty()){
+            param.getValue().dataItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != DataItem.DATA_EMPTY) {
                     param.getValue().setImportValue(true);
                     param.getValue().setLogHistory(true);
                 } else {
                     param.getValue().setImportValue(false);
                     param.getValue().setLogHistory(false);
                 }
+
             });
-            return param.getValue().productFieldProperty();
+            return param.getValue().dataItemProperty();
         });
         productFieldCol.setPrefWidth(300);
-        productFieldCol.setCellFactory(ComboBoxTableCell.forTableColumn(ProductProperties.getAllNamesRu()));
         productFieldCol.setEditable(true);
 
-        TableColumn<FileImportTableItem, Boolean> importCol = new TableColumn<>("Импорт");
+        TableColumn<FileImportParameter, Boolean> importCol = new TableColumn<>("Импорт");
         importCol.setCellValueFactory(param -> {
             BooleanProperty booleanProperty = param.getValue().importValueProperty();
             booleanProperty.addListener((observable, oldValue, newValue) -> {
@@ -46,7 +58,8 @@ public class FileImportTable {
         });
         importCol.setCellFactory(CheckBoxTableCell.forTableColumn(importCol));
 
-        TableColumn<FileImportTableItem, Boolean> historyCol = new TableColumn<>("Журнал");
+        TableColumn<FileImportParameter, Boolean> historyCol = new TableColumn<>("Журнал");
+        historyCol.setCellFactory(CheckBoxTableCell.forTableColumn(importCol));
         historyCol.setCellValueFactory(param -> {
             BooleanProperty booleanProperty = param.getValue().logHistoryProperty();
             booleanProperty.addListener((observable, oldValue, newValue) -> {
@@ -55,13 +68,12 @@ public class FileImportTable {
             });
             return booleanProperty;
         });
-        historyCol.setCellFactory(CheckBoxTableCell.forTableColumn(importCol));
 
         tableView.getColumns().addAll(titleNameCol, productFieldCol, importCol, historyCol);
         tableView.setEditable(true);
     }
 
-    public TableView<FileImportTableItem> getTableView() {
+    public TableView<FileImportParameter> getTableView() {
         return tableView;
     }
 }

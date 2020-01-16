@@ -14,7 +14,7 @@ import ui_windows.product.productEditorWindow.ProductEditorWindowActions;
 
 import java.util.ArrayList;
 
-import static ui_windows.product.data.DataItemEnum.DATA_NORMS_MODE;
+import static ui_windows.product.data.DataItem.DATA_NORMS_MODE;
 
 public class ConfigNormsWindow extends OrdinalWindow {
     public ConfigNormsWindow(Stage parentStage, MultiEditor multiEditor, CertificateVerificationTable certificateVerificationTable) {

@@ -84,15 +84,16 @@ public class RequirementTypes {
     }
 
     public String getNormsShortNamesByIds(String ids) {
+        if (ids == null || ids.trim().isEmpty()) return "n/a";
+
         String[] adArr = ids.split("\\,");
-
-        String result = adArr.length > 0 ? getRequirementByID(Integer.parseInt(adArr[0])).getShortName() : "n/a";
-
-        for (int i = 1; i < adArr.length; i++) {
-            result = result.concat(", ").concat(getRequirementByID(Integer.parseInt(adArr[i])).getShortName());
+        String result = "";
+        for (String id : adArr) {
+            if (id.matches("\\d+")) {
+                result = result.concat(getRequirementByID(Integer.parseInt(id.trim())).getShortName()).concat(", ");
+            }
         }
-
-        return result;
+        return result.replaceAll("(\\,\\s)+$", "");
     }
 
     public ArrayList<Integer> getReqTypesIdsALbyShortNamesEnum(String shortNamesEnum) {

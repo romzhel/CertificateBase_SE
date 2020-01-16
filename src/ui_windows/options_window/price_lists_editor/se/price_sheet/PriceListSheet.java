@@ -1,6 +1,7 @@
 package ui_windows.options_window.price_lists_editor.se.price_sheet;
 
 import core.CoreModule;
+import core.Dialogs;
 import files.price_to_excel.HierarchyGroup;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListCell;
@@ -9,11 +10,12 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
 import javafx.util.Callback;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
-import ui_windows.product.data.DataItemEnum;
+import ui_windows.product.data.DataItem;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTable;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
+import ui_windows.product.data.DataSets;
 import utils.twin_list_views.TwinListViews;
 
 import java.io.IOException;
@@ -25,12 +27,12 @@ import java.util.Comparator;
 
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_FAMILY;
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_LGBK;
-import static ui_windows.product.data.DataItemEnum.*;
+import static ui_windows.product.data.DataItem.*;
 
 public class PriceListSheet extends Tab {
     public static final int LANG_RU = 0;
     public static final int LANG_EN = 1;
-    private TwinListViews<DataItemEnum> columnsSelector;
+    private TwinListViews<DataItem> columnsSelector;
     private TwinListViews<OrderAccessibility> dchainSelector;
     private PriceListContentTable contentTable;
     private int sheetId = -1;
@@ -157,18 +159,16 @@ public class PriceListSheet extends Tab {
     }
 
     private void initColumnsSelector() {
-        DataItemEnum[] priceColumns = new DataItemEnum[] {DATA_ORDER_NUMBER_PRINT, DATA_ARTICLE, DATA_DESCRIPTION_RU,
-                DATA_DESCRIPTION_EN, DATA_LOCAL_PRICE_LIST, DATA_LEAD_TIME_RU, DATA_MIN_ORDER, DATA_LGBK, DATA_WEIGHT};
-        ArrayList<DataItemEnum> columns = new ArrayList<>();
-        columns.addAll(Arrays.asList(priceColumns));
+        ArrayList<DataItem> columns = new ArrayList<>();
+        columns.addAll(Arrays.asList(DataSets.getDataItemsForPriceList()));
 
         columnsSelector = new TwinListViews<>(controller.pPriceColumns, columns);
-        columnsSelector.setListViewsCellFactory(new Callback<ListView<DataItemEnum>, ListCell<DataItemEnum>>() {
+        columnsSelector.setListViewsCellFactory(new Callback<ListView<DataItem>, ListCell<DataItem>>() {
             @Override
-            public ListCell call(ListView<DataItemEnum> param) {
-                return new ListCell<DataItemEnum>() {
+            public ListCell call(ListView<DataItem> param) {
+                return new ListCell<DataItem>() {
                     @Override
-                    protected void updateItem(DataItemEnum item, boolean empty) {
+                    protected void updateItem(DataItem item, boolean empty) {
                         super.updateItem(item, empty);
 
                         if (item != null && !empty) {
@@ -184,27 +184,19 @@ public class PriceListSheet extends Tab {
         columnsSelector.setListViewsSelectedComparator(null);
         columnsSelector.setConvertToText(param -> {
             String result = "";
-            for (DataItemEnum item : param) {
-                result = result.concat(item.getDisplayingName()).concat(",");
+            for (DataItem item : param) {
+                result = result.concat(String.valueOf(item.getId())).concat(",");
             }
-            result = result.replaceAll("\\,$", "");
-
-            return result;
+            return result.replaceAll("\\,$", "");
         });
-        columnsSelector.setConvertFromText(new Callback<String, ArrayList<DataItemEnum>>() {
-            @Override
-            public ArrayList<DataItemEnum> call(String param) {
-                ArrayList<DataItemEnum> result = new ArrayList<>();
-                for (String columnName : param.split("\\,")) {
-                    for (DataItemEnum die : columns) {
-                        if (die.getDisplayingName().equals(columnName)) {
-                            result.add(die);
-                            break;
-                        }
-                    }
+        columnsSelector.setConvertFromText(param -> {
+            ArrayList<DataItem> result = new ArrayList<>();
+            for (String dataItemId : param.split("\\,")) {
+                if (dataItemId.trim().matches("\\d+")) {
+                    result.add(DataItem.getDataItemById(Integer.parseInt(dataItemId.trim())));
                 }
-                return result;
             }
+            return result;
         });
     }
 
@@ -254,9 +246,7 @@ public class PriceListSheet extends Tab {
             for (OrderAccessibility oa : param) {
                 result = result.concat(oa.getStatusCode()).concat(",");
             }
-            result = result.replaceAll("\\,$", "");
-
-            return result;
+            return result.replaceAll("\\,$", "");
         });
     }
 
@@ -361,11 +351,11 @@ public class PriceListSheet extends Tab {
         this.controller = controller;
     }
 
-    public TwinListViews<DataItemEnum> getColumnsSelector() {
+    public TwinListViews<DataItem> getColumnsSelector() {
         return columnsSelector;
     }
 
-    public void setColumnsSelector(TwinListViews<DataItemEnum> columnsSelector) {
+    public void setColumnsSelector(TwinListViews<DataItem> columnsSelector) {
         this.columnsSelector = columnsSelector;
     }
 

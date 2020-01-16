@@ -11,6 +11,7 @@ import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.product.data.DataItem;
 import utils.Countries;
 import utils.Utils;
 
@@ -21,7 +22,6 @@ import java.util.ArrayList;
 
 import static ui_windows.main_window.filter_window.FilterParameters.FILTER_ALL_ITEMS;
 import static ui_windows.main_window.filter_window.FilterParameters.FILTER_PRICE_ITEMS;
-import static ui_windows.product.data.ProductProperties.*;
 
 public class Product {
     public static final String NO_DATA = "нет данных";
@@ -41,7 +41,7 @@ public class Product {
     private String changecodes = "";
     private String lastImportcodes = "";
 
-    private int family;
+    private int family_id = -1;
     private int type_id;
     private int productLine_id;
     private String history = "";
@@ -66,8 +66,8 @@ public class Product {
         material = Utils.getControlValue(root, "tfMaterial");
         productForPrint = Utils.getControlValue(root, "tfProductPrint");
         article = Utils.getControlValue(root, "tfArticle");
-        family = CoreModule.getProductFamilies().getFamilyIdByName(Utils.getControlValue(root, "cbFamily"));
-        ;
+        family_id = CoreModule.getProductFamilies().getFamilyIdByName(Utils.getControlValue(root, "cbFamily"));
+
         descriptionru = Utils.getControlValue(root, "taDescription");
         descriptionen = Utils.getControlValue(root, "taDescriptionEn");
         price = Utils.getControlValue(root, "cbxPrice") == "true";
@@ -84,29 +84,29 @@ public class Product {
     public Product(RowData rowData, ColumnsMapper mapper) {
         String cellValue;
         id = 0;
-        material = rowData.get(mapper.getFieldIndexByName(DESC_ORDER_NUMBER)).replaceAll("\\,", ".");
-        productForPrint = rowData.get(mapper.getFieldIndexByName(DESC_ORDER_NUMBER_PRINT)).replaceAll("\\,", ".");
-        article = rowData.get(mapper.getFieldIndexByName(DESC_ARTICLE)).replaceAll("\\,", ".");
-        hierarchy = rowData.get(mapper.getFieldIndexByName(DESC_HIERARCHY));
-        lgbk = rowData.get(mapper.getFieldIndexByName(DESC_LGBK));
+        material = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_ORDER_NUMBER)).replaceAll("\\,", ".");
+        productForPrint = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_ORDER_NUMBER_PRINT)).replaceAll("\\,", ".");
+        article = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_ARTICLE)).replaceAll("\\,", ".");
+        hierarchy = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_HIERARCHY));
+        lgbk = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_LGBK));
 
-        cellValue = rowData.get(mapper.getFieldIndexByName(DESC_SERVICE_END)).replaceAll("\\,", ".");
+        cellValue = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_SERVICE_END)).replaceAll("\\,", ".");
         endofservice = cellValue.matches("00.00.0000") ? "" : cellValue;
-        dangerous = rowData.get(mapper.getFieldIndexByName(DESC_LOGISTIC_LIMITATION));
-        country = rowData.get(mapper.getFieldIndexByName(DESC_COUNTRY));
-        dchain = rowData.get(mapper.getFieldIndexByName(DESC_DCHAIN));
+        dangerous = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_LOGISTIC_NOTES));
+        country = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_COUNTRY));
+        dchain = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_DCHAIN));
 
         price = false;
-        descriptionru = rowData.get(mapper.getFieldIndexByName(DESC_DESCRIPTION_RU));
-        descriptionen = rowData.get(mapper.getFieldIndexByName(DESC_DESCRIPTION_EN));
+        descriptionru = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_DESCRIPTION_RU));
+        descriptionen = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_DESCRIPTION_EN));
 
-        normsList = new NormsList(new ArrayList<Integer>());
+        normsList = new NormsList(new ArrayList<>());
 
-        minOrder = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByName(DESC_MIN_ORDER)));
-        packetSize = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByName(DESC_PACKSIZE)));
-        leadTime = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByName(DESC_LEADTIME)));
-        weight = getDoubleFromString(rowData.get(mapper.getFieldIndexByName(DESC_WEIGHT)));
-        localPrice = getDoubleFromString(rowData.get(mapper.getFieldIndexByName(DESC_LOCAL_PRICE)));
+        minOrder = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_MIN_ORDER)));
+        packetSize = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_PACKSIZE)).replaceAll("\\.", ""));
+        leadTime = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_LEAD_TIME_EU)));
+        weight = getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_WEIGHT)));
+        localPrice = getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_LOCAL_PRICE)));
     }
 
     public Product(ResultSet rs) throws SQLException {
@@ -116,7 +116,7 @@ public class Product {
         article = rs.getString("article");
         hierarchy = rs.getString("hierarchy");
         lgbk = rs.getString("lgbk");
-        family = rs.getInt("family");
+        family_id = rs.getInt("family");
         endofservice = rs.getString("end_of_service");
         dangerous = rs.getString("dangerous");
         country = rs.getString("country");
@@ -153,6 +153,8 @@ public class Product {
     private double getDoubleFromString(String text) {
         if (text == null || text.isEmpty()) return 0;
         try {
+            text = text.replaceAll("\\.", "");
+            text = text.replaceAll("\\,", ".");
             return Double.parseDouble(text);
         } catch (Exception e) {
             System.out.println(article + ", bad double: " + text);
@@ -313,7 +315,7 @@ public class Product {
     }
 
     public void setLgbk(String lgbk) {
-        this.lgbk =lgbk;
+        this.lgbk = lgbk;
     }
 
     public String getEndofservice() {
@@ -428,17 +430,17 @@ public class Product {
         this.replacement = replacement;
     }
 
-    public int getFamily() {
-        return family;
+    public int getFamily_id() {
+        return family_id;
     }
 
-    public void setFamily(int family) {
-        this.family = family;
+    public void setFamily_id(int family_id) {
+        this.family_id = family_id;
     }
 
     public ProductFamily getProductFamily() {
-        if (family > 0) {
-            return CoreModule.getProductFamilies().getFamilyById(family);
+        if (family_id > 0) {
+            return CoreModule.getProductFamilies().getFamilyById(family_id);
         } else {
             LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
             return lgbkAndParent != null ? lgbkAndParent.getProductFamily() : null;
@@ -520,5 +522,9 @@ public class Product {
 
     public String getDescriptionRuEn() {
         return getDescriptionru().isEmpty() ? getDescriptionen() : getDescriptionru();
+    }
+
+    public ArrayList<Integer> getGlobalNorms() {
+        return new ArrayList<Integer>(CoreModule.getProductLgbkGroups().getGlobalNormIds(new ProductLgbk(this)));
     }
 }

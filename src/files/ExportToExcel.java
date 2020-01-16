@@ -13,7 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.certificates_editor.CertificateCheckingResult;
 import ui_windows.product.Product;
-import ui_windows.product.data.DataItemEnum;
+import ui_windows.product.data.DataItem;
 import ui_windows.request.CertificateRequestResult;
 import utils.Utils;
 
@@ -177,7 +177,7 @@ public class ExportToExcel {
         saveToExcelFile();*/
     }
 
-    public ExportToExcel(ArrayList<DataItemEnum> columns, ArrayList<Product> items) {
+    public ExportToExcel(ArrayList<DataItem> columns, ArrayList<Product> items) {
         MainWindow.setProgress(-1);
 
         workbook = new XSSFWorkbook();
@@ -189,7 +189,7 @@ public class ExportToExcel {
         XSSFCell xssfCell;
 
         int colIndex = 0;
-        for (DataItemEnum die : columns) {
+        for (DataItem die : columns) {
             xssfCell = xssfRow.createCell(colIndex++, CellType.STRING);
             xssfCell.setCellValue(die.getDisplayingName());
             xssfSheet.autoSizeColumn(colIndex - 1);
@@ -199,7 +199,7 @@ public class ExportToExcel {
             xssfRow = xssfSheet.createRow(rowIndex++);
 
             colIndex = 0;
-            for (DataItemEnum die : columns) {
+            for (DataItem die : columns) {
                 xssfCell = xssfRow.createCell(colIndex++);
                 die.fillExcelCell(xssfCell, product, null);
             }

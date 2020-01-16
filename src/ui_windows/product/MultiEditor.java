@@ -2,7 +2,7 @@ package ui_windows.product;
 
 import core.CoreModule;
 import javafx.collections.ObservableList;
-import ui_windows.product.data.DataItemEnum;
+import ui_windows.product.data.DataItem;
 import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 import utils.Utils;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static ui_windows.product.MultiEditorItem.*;
-import static ui_windows.product.data.DataItemEnum.*;
+import static ui_windows.product.data.DataItem.*;
 
 public class MultiEditor {
     private ObservableList<Product> editedItems;
@@ -86,7 +86,7 @@ public class MultiEditor {
         return editedItems;
     }
 
-    public MultiEditorItem getMultiEditorItem(DataItemEnum dataItem) {
+    public MultiEditorItem getMultiEditorItem(DataItem dataItem) {
         for (MultiEditorItem fac : fieldsAndControls) {
             if (fac.getDataItem().equals(dataItem)) {
                 return fac;

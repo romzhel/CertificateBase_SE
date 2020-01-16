@@ -3,6 +3,7 @@ package ui_windows.product.certificatesChecker;
 import core.CoreModule;
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.options_window.requirements_types_editor.RequirementType;
 import ui_windows.product.Product;
 import utils.ItemsGroup;
 import utils.ItemsGroups;
@@ -45,10 +46,13 @@ public class NormsChecker {
         }
 
         for (ItemsGroup<String, String> singleNorm : results.getItems()) {
-            if (singleNorm.getItems().contains(OK)) {
-                correctNorms.add(CoreModule.getRequirementTypes().getRequirementByShortName(singleNorm.getGroupNode()).getId());
-            } else if (!singleNorm.getItems().contains(OK) && singleNorm.getItems().contains(NOT_OK)) {
-                faultNorms.add(CoreModule.getRequirementTypes().getRequirementByShortName(singleNorm.getGroupNode()).getId());
+            RequirementType rt = CoreModule.getRequirementTypes().getRequirementByShortName(singleNorm.getGroupNode());
+            if (rt != null) {
+                if (singleNorm.getItems().contains(OK)) {
+                    correctNorms.add(rt.getId());
+                } else if (!singleNorm.getItems().contains(OK) && singleNorm.getItems().contains(NOT_OK)) {
+                    faultNorms.add(CoreModule.getRequirementTypes().getRequirementByShortName(singleNorm.getGroupNode()).getId());
+                }
             }
         }
     }
@@ -60,8 +64,7 @@ public class NormsChecker {
         HashSet<Integer> normsForChecking = new HashSet<>();
 
         productNeededNorms.addAll(product.getNormsList().getIntegerItems());
-        globalNeededNorms.addAll(CoreModule.getProductLgbkGroups().getGlobalNormIds(
-                new ProductLgbk(product.getLgbk(), product.getHierarchy())));
+        globalNeededNorms.addAll(CoreModule.getProductLgbkGroups().getGlobalNormIds(new ProductLgbk(product)));
 
         if (product.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
             normsForChecking.addAll(globalNeededNorms);
