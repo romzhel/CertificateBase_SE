@@ -137,10 +137,13 @@ public class ExportPriceListToExcel_SE {
             fos.close();
             excelDoc.close();
 
-            if (priceList.getDestination() != null) resultFile = new File(priceList.getDestination().getPath() +
-                    "\\" + tempFile.getName());
-            else resultFile = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор места сохранения",
-                    Dialogs.EXCEL_FILES, tempFile.getName());
+            if (priceList.getDestination() != null) {
+                resultFile = new File(priceList.getDestination().getPath() + "\\" + tempFile.getName());
+            } else {
+                resultFile = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор места сохранения",
+                        Dialogs.EXCEL_FILES, tempFile.getName());
+            }
+
             if (resultFile == null) {
                 Platform.runLater(() -> {
                     Dialogs.showMessage("Выбор места сохранения", "Операция отменена, так как не было выбрано " +
@@ -150,7 +153,7 @@ public class ExportPriceListToExcel_SE {
             }
 
             Platform.runLater(() -> {
-                if (resultFile.exists() /*&& CoreModule.getUsers().getCurrentUser().getProfile().getName().toLowerCase().contains("полный")*/) {
+                if (resultFile.getParentFile().exists() /*&& CoreModule.getUsers().getCurrentUser().getProfile().getName().toLowerCase().contains("полный")*/) {
                     if (Dialogs.confirm("Формирование прайс листа", "Прайс лист сформирован. Желаете " +
                             "скопировать его в " + resultFile.getPath() + "?")) {
                         try {

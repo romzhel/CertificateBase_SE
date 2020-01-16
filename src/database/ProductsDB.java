@@ -16,14 +16,14 @@ public class ProductsDB extends DbRequest {
         try {
             addData = connection.prepareStatement("INSERT INTO " +
                             "products (material, article, hierarchy, lgbk, family, end_of_service, dangerous, " +
-                            "country, dchain, description_ru, description_en, price, archive, need_action, not_used, history, " +
+                            "country, dchain, description_ru, description_en, price, history, " +
                             "last_change_date, file_name, comments, replacement, type_id, change_codes, product_print," +
                             "last_import_codes, norms_list, norms_mode, min_order, packet_size, lead_time, weight, local_price) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = connection.prepareStatement("UPDATE products " +
                     "SET article = ?, hierarchy = ?, lgbk = ?, family = ?, end_of_service = ?, dangerous = ?, country = ?, " +
-                    "dchain = ?, description_ru = ?, description_en = ?, price = ?, archive = ?, need_action = ?, not_used = ?, history = ?," +
+                    "dchain = ?, description_ru = ?, description_en = ?, price = ?, history = ?," +
                     "last_change_date = ?, file_name = ?, comments = ?, replacement = ?, type_id = ?, change_codes = ?, " +
                     "product_print = ?, last_import_codes = ?, norms_list = ?, norms_mode = ?, min_order = ?, packet_size = ?, " +
                     "lead_time = ?, weight = ?, local_price = ? WHERE material = ?");
@@ -66,7 +66,7 @@ public class ProductsDB extends DbRequest {
                     updateData.setString(++count, alpr.get(j).getArticle());
                     updateData.setString(++count, alpr.get(j).getHierarchy());
                     updateData.setString(++count, alpr.get(j).getLgbk());
-                    updateData.setInt(++count, alpr.get(j).getFamily());
+                    updateData.setInt(++count, alpr.get(j).getFamily_id());
                     updateData.setString(++count, alpr.get(j).getEndofservice());
                     updateData.setString(++count, alpr.get(j).getDangerous());
                     updateData.setString(++count, alpr.get(j).getCountry());
@@ -74,9 +74,6 @@ public class ProductsDB extends DbRequest {
                     updateData.setString(++count, alpr.get(j).getDescriptionru());
                     updateData.setString(++count, alpr.get(j).getDescriptionen());
                     updateData.setBoolean(++count, alpr.get(j).isPrice());
-                    updateData.setBoolean(++count, alpr.get(j).isArchive());
-                    updateData.setBoolean(++count, alpr.get(j).isNeedaction());
-                    updateData.setBoolean(++count, alpr.get(i).isNotused());
                     updateData.setString(++count, alpr.get(j).getHistory());
                     updateData.setString(++count, alpr.get(j).getLastChangeDate());
                     updateData.setString(++count, alpr.get(j).getFileName());
@@ -140,7 +137,7 @@ public class ProductsDB extends DbRequest {
                     addData.setString(++count, alpr.get(j).getArticle());
                     addData.setString(++count, alpr.get(j).getHierarchy());
                     addData.setString(++count, alpr.get(j).getLgbk());
-                    addData.setInt(++count, alpr.get(j).getFamily());
+                    addData.setInt(++count, alpr.get(j).getFamily_id());
                     addData.setString(++count, alpr.get(j).getEndofservice());
                     addData.setString(++count, alpr.get(j).getDangerous());
                     addData.setString(++count, alpr.get(j).getCountry());
@@ -148,9 +145,6 @@ public class ProductsDB extends DbRequest {
                     addData.setString(++count, alpr.get(j).getDescriptionru());
                     addData.setString(++count, alpr.get(j).getDescriptionen());
                     addData.setBoolean(++count, alpr.get(j).isPrice());
-                    addData.setBoolean(++count, alpr.get(j).isArchive());
-                    addData.setBoolean(++count, alpr.get(j).isNeedaction());
-                    addData.setBoolean(++count, alpr.get(j).isNotused());
                     addData.setString(++count, alpr.get(j).getHistory());
                     addData.setString(++count, alpr.get(j).getLastChangeDate());
                     addData.setString(++count, alpr.get(j).getFileName());

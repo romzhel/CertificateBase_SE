@@ -5,6 +5,7 @@ import core.Dialogs;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
@@ -71,7 +72,8 @@ public class MainTable {
                 });
 
             } else if (cols[i] == "dchain") {
-                col.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getOrderableStatus()));
+                col.setCellValueFactory(param -> new SimpleStringProperty(CoreModule.getOrdersAccessibility()
+                        .getCombineOrderAccessibility(param.getValue().getDchain())));
                 col.setCellFactory(new Callback<TableColumn<Product, String>, TableCell<Product, String>>() {
                     @Override
                     public TableCell<Product, String> call(TableColumn<Product, String> param) {

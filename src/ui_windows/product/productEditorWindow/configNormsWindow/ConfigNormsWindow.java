@@ -7,9 +7,14 @@ import ui_windows.OrdinalWindow;
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.requirements_types_editor.RequirementTypesListViews;
 import ui_windows.product.MultiEditor;
+import ui_windows.product.MultiEditorItem;
 import ui_windows.product.Product;
 import ui_windows.product.productEditorWindow.CertificateVerificationTable;
 import ui_windows.product.productEditorWindow.ProductEditorWindowActions;
+
+import java.util.ArrayList;
+
+import static ui_windows.product.data.DataItem.DATA_NORMS_MODE;
 
 public class ConfigNormsWindow extends OrdinalWindow {
     public ConfigNormsWindow(Stage parentStage, MultiEditor multiEditor, CertificateVerificationTable certificateVerificationTable) {
@@ -43,15 +48,22 @@ public class ConfigNormsWindow extends OrdinalWindow {
                 requirementTypesListViews.display();
             });
         } else {
-            multiEditor.compare("normsMode", cnwc.rbInsteadGlobal, MultiEditor.CAN_NOT_BE_SAVED);
-            multiEditor.compare("normsList", cnwc.lvSelectedNorms, MultiEditor.CAN_NOT_BE_SAVED);
-            cnwc.setNormsModeSaved(multiEditor.getEditedItems().get(0).getNormsMode());
+            ArrayList<Integer> normsModesForSave = new ArrayList<>();
+            for (Product product : multiEditor.getEditedItems()) {
+                normsModesForSave.add(product.getNormsMode());
+            }
+            cnwc.setNormsModesSaved(normsModesForSave);
 
-            if (multiEditor.getFieldAndControl("normsMode").isAllTheSame() &&
-                    multiEditor.getEditedItems().get(0).getNormsMode() == NormsList.ADD_TO_GLOBAL) {
+            MultiEditorItem multiEditorItem = new MultiEditorItem(DATA_NORMS_MODE, cnwc.rbInsteadGlobal, MultiEditorItem.CAN_NOT_BE_SAVED);
+            multiEditorItem.compare(multiEditor.getEditedItems());
+
+            if (multiEditorItem.getCommonValue() != null && (int) multiEditorItem.getCommonValue() == NormsList.ADD_TO_GLOBAL) {
                 cnwc.rbAddToGlobal.setSelected(true);
-            } else {
+            } else if (multiEditorItem.getCommonValue() != null && (int) multiEditorItem.getCommonValue() == NormsList.INSTEAD_GLOBAL) {
                 cnwc.rbInsteadGlobal.setSelected(true);
+            } else {
+                cnwc.rbAddToGlobal.setSelected(false);
+                cnwc.rbInsteadGlobal.setSelected(false);
             }
             /*MultiEditor.FieldsAndControls fac = multiEditor.getFieldAndControl(cnwc.rbInsteadGlobal);
             cnwc.rbInsteadGlobal.setSelected(true);

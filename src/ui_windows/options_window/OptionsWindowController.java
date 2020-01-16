@@ -107,7 +107,8 @@ public class OptionsWindowController implements Initializable {
         tvCertificates.setOnMouseClicked(event -> {//double click on certificate
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 2) {
-                    actionEditCertificate();//open certificate editor window
+//                    actionEditCertificate();//open certificate editor window
+                    actionOpenCertificateFile();
                 }
             }
         });

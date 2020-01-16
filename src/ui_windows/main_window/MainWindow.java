@@ -15,6 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import ui_windows.main_window.filter_window.FilterParameters;
 import ui_windows.options_window.profile_editor.Profile;
+import ui_windows.product.data.DataItem;
 import utils.SearchBox;
 import utils.Utils;
 
@@ -25,7 +26,7 @@ import java.util.concurrent.Executors;
 import static ui_windows.options_window.profile_editor.SimpleRight.HIDE;
 
 public class MainWindow extends Application {
-    private String version = "1.1.0.9 от 26.12.2019";
+    private String version = "1.2.0.1 от 16.01.2019";
     private static Stage mainStage;
     private static AnchorPane rootAnchorPane;
     private static ProgressBar progressBar;

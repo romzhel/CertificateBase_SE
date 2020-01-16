@@ -2,18 +2,17 @@ package files;
 
 import core.CoreModule;
 import core.Dialogs;
-import javafx.application.Platform;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import ui_windows.main_window.MainWindow;
-import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.CertificateCheckingResult;
 import ui_windows.product.Product;
-import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.product.data.DataItem;
 import ui_windows.request.CertificateRequestResult;
 import utils.Utils;
@@ -190,9 +189,9 @@ public class ExportToExcel {
         XSSFCell xssfCell;
 
         int colIndex = 0;
-        for (DataItem column : columns) {
+        for (DataItem die : columns) {
             xssfCell = xssfRow.createCell(colIndex++, CellType.STRING);
-            xssfCell.setCellValue(column.getDisplayingName());
+            xssfCell.setCellValue(die.getDisplayingName());
             xssfSheet.autoSizeColumn(colIndex - 1);
         }
 
@@ -200,8 +199,9 @@ public class ExportToExcel {
             xssfRow = xssfSheet.createRow(rowIndex++);
 
             colIndex = 0;
-            for (DataItem column : columns) {
-                column.createXssfCell(product, xssfRow, colIndex++, null);
+            for (DataItem die : columns) {
+                xssfCell = xssfRow.createCell(colIndex++);
+                die.fillExcelCell(xssfCell, product, null);
             }
         }
 
@@ -216,7 +216,7 @@ public class ExportToExcel {
 
     private CellStyle getHyperLinkStyle() {
         CellStyle style = workbook.createCellStyle();
-       Font font = workbook.createFont();
+        Font font = workbook.createFont();
         font.setUnderline(Font.U_SINGLE);
         font.setColor(IndexedColors.BLUE.index);
         style.setFont(font);
@@ -286,7 +286,7 @@ public class ExportToExcel {
     private boolean saveToExcelFile() {
         String fileExtension = workbook instanceof HSSFWorkbook ? ".xls" : ".xlsx";
         file = new File(CoreModule.getFolders().getTempFolder().getPath() + "\\" +
-                "Сертификаты_" + Utils.getDateTime().replaceAll(":", "-") + fileExtension);
+                "Отчет_" + Utils.getDateTime().replaceAll(":", "-") + fileExtension);
 
         try {
             FileOutputStream outFile = new FileOutputStream(file);

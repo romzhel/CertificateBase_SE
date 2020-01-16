@@ -10,11 +10,11 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import ui_windows.main_window.MainWindow;
 import ui_windows.product.data.DataItem;
-import ui_windows.product.data.ProductData;
 import utils.twin_list_views.TwinListViews;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class SelectorExportWindowController implements Initializable {
@@ -42,7 +42,8 @@ public class SelectorExportWindowController implements Initializable {
     }
 
     private void initTwinListsView() {
-        ArrayList<DataItem> columns = ProductData.getColumnsForCustomExportToExcel();
+        ArrayList<DataItem> columns = new ArrayList<>();
+        columns.addAll(Arrays.asList(DataItem.values()));
         columnsSelector = new TwinListViews<>(pColsSelector, columns);
         columnsSelector.setListViewsCellFactory(new Callback<ListView<DataItem>, ListCell<DataItem>>() {
             @Override
@@ -61,7 +62,8 @@ public class SelectorExportWindowController implements Initializable {
                 };
             }
         });
-        columnsSelector.setListViewsAllComparator((o1, o2) -> o1.getDisplayingName().compareToIgnoreCase(o2.getDisplayingName()));
+//        columnsSelector.setListViewsAllComparator((o1, o2) -> o1.getDisplayingName().compareToIgnoreCase(o2.getDisplayingName()));
+        columnsSelector.setListViewsAllComparator(null);
         columnsSelector.setListViewsSelectedComparator(null);
         columnsSelector.setConvertToText(param -> {
             String result = "";
@@ -77,9 +79,9 @@ public class SelectorExportWindowController implements Initializable {
             public ArrayList<DataItem> call(String param) {
                 ArrayList<DataItem> result = new ArrayList<>();
                 for (String columnName : param.split("\\,")) {
-                    for (DataItem plc : columns) {
-                        if (plc.getDisplayingName().equals(columnName)) {
-                            result.add(plc);
+                    for (DataItem die : columns) {
+                        if (die.getDisplayingName().equals(columnName)) {
+                            result.add(die);
                             break;
                         }
                     }

@@ -88,7 +88,6 @@ public class ProductEditorWindowController implements Initializable {
             comboBoxEqTypeSelector.refresh(prevType);
         });
 
-        initNotUsedSelector();
         initFamilySelector();
         initBlockSelector();
     }
@@ -111,26 +110,6 @@ public class ProductEditorWindowController implements Initializable {
             if (pf != null) tfPm.setText(pf.getResponsible());
             else tfPm.setText("");
         });
-    }
-
-    private void initNotUsedSelector() {
-        Product editedProduct = CoreModule.getProducts().getTableView().getSelectionModel().getSelectedItem();
-        LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(
-                new ProductLgbk(editedProduct.getLgbk(), editedProduct.getHierarchy()));
-        boolean globalNotUsed = lgbkAndParent.getLgbkItem().isNotUsed() || lgbkAndParent.getLgbkParent().isNotUsed();
-
-        cbxNotUsed.getStyleClass().removeAll("global", "both");
-        if (editedProduct.isNotused() && globalNotUsed) {
-            cbxNotUsed.setSelected(true);
-            cbxNotUsed.getStyleClass().add("both");
-        } else if (globalNotUsed) {
-            cbxNotUsed.setSelected(true);
-            cbxNotUsed.getStyleClass().add("global");
-        } else if (editedProduct.isNotused()) {
-            cbxNotUsed.setSelected(true);
-        } else {
-            cbxNotUsed.setSelected(false);
-        }
     }
 
     public void apply() {

@@ -1,6 +1,7 @@
 package ui_windows.options_window.price_lists_editor.se.price_sheet;
 
 import core.CoreModule;
+import core.Dialogs;
 import files.price_to_excel.HierarchyGroup;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListCell;
@@ -10,21 +11,23 @@ import javafx.scene.control.TreeItem;
 import javafx.util.Callback;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.product.data.DataItem;
-import ui_windows.product.data.ProductData;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTable;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
+import ui_windows.product.data.DataSets;
 import utils.twin_list_views.TwinListViews;
 
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_FAMILY;
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_LGBK;
+import static ui_windows.product.data.DataItem.*;
 
 public class PriceListSheet extends Tab {
     public static final int LANG_RU = 0;
@@ -156,7 +159,8 @@ public class PriceListSheet extends Tab {
     }
 
     private void initColumnsSelector() {
-        ArrayList<DataItem> columns = ProductData.getColumnsForPriceList();
+        ArrayList<DataItem> columns = new ArrayList<>();
+        columns.addAll(Arrays.asList(DataSets.getDataItemsForPriceList()));
 
         columnsSelector = new TwinListViews<>(controller.pPriceColumns, columns);
         columnsSelector.setListViewsCellFactory(new Callback<ListView<DataItem>, ListCell<DataItem>>() {
@@ -181,26 +185,18 @@ public class PriceListSheet extends Tab {
         columnsSelector.setConvertToText(param -> {
             String result = "";
             for (DataItem item : param) {
-                result = result.concat(item.getDisplayingName()).concat(",");
+                result = result.concat(String.valueOf(item.getId())).concat(",");
             }
-            result = result.replaceAll("\\,$", "");
-
-            return result;
+            return result.replaceAll("\\,$", "");
         });
-        columnsSelector.setConvertFromText(new Callback<String, ArrayList<DataItem>>() {
-            @Override
-            public ArrayList<DataItem> call(String param) {
-                ArrayList<DataItem> result = new ArrayList<>();
-                for (String columnName : param.split("\\,")) {
-                    for (DataItem plc : columns) {
-                        if (plc.getDisplayingName().equals(columnName)) {
-                            result.add(plc);
-                            break;
-                        }
-                    }
+        columnsSelector.setConvertFromText(param -> {
+            ArrayList<DataItem> result = new ArrayList<>();
+            for (String dataItemId : param.split("\\,")) {
+                if (dataItemId.trim().matches("\\d+")) {
+                    result.add(DataItem.getDataItemById(Integer.parseInt(dataItemId.trim())));
                 }
-                return result;
             }
+            return result;
         });
     }
 
@@ -250,9 +246,7 @@ public class PriceListSheet extends Tab {
             for (OrderAccessibility oa : param) {
                 result = result.concat(oa.getStatusCode()).concat(",");
             }
-            result = result.replaceAll("\\,$", "");
-
-            return result;
+            return result.replaceAll("\\,$", "");
         });
     }
 

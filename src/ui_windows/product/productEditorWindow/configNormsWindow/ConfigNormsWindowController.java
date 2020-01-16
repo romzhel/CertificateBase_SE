@@ -15,6 +15,7 @@ import ui_windows.product.productEditorWindow.ProductEditorWindowActions;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class ConfigNormsWindowController implements Initializable {
@@ -31,6 +32,7 @@ public class ConfigNormsWindowController implements Initializable {
     //    private Product editedProduct;
     private MultiEditor multiEditor;
     private int normsModeSaved;
+    private ArrayList<Integer> normsModesSaved;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -70,8 +72,8 @@ public class ConfigNormsWindowController implements Initializable {
         if (multiEditor == null) {
             ProductEditorWindowActions.getEditedItem().setNormsMode(normsModeSaved);
         } else {
-            for (Product product : multiEditor.getEditedItems()) {
-                product.setNormsMode(normsModeSaved);
+            for (int i = 0; i < multiEditor.getEditedItems().size(); i++) {
+                multiEditor.getEditedItems().get(i).setNormsMode(normsModesSaved.get(i));
             }
         }
 
@@ -152,5 +154,9 @@ public class ConfigNormsWindowController implements Initializable {
 
     public void setNormsModeSaved(int normsModeSaved) {
         this.normsModeSaved = normsModeSaved;
+    }
+
+    public void setNormsModesSaved(ArrayList<Integer> normsModesSaved) {
+        this.normsModesSaved = normsModesSaved;
     }
 }

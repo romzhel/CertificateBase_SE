@@ -92,9 +92,11 @@ public class HierarchyGroup {
             row = sheet.createRow(rowIndex++);
 
             int colIndex = 0;
-            for (DataItem plc : priceListSheet.getColumnsSelector().getSelectedItems()) {
-                plc.createXssfCell(product, row, colIndex++, options);
+            for (DataItem die : priceListSheet.getColumnsSelector().getSelectedItems()) {
+                cell = row.createCell(colIndex++);
+                die.fillExcelCell(cell, product, options);
             }
+
         }
         sheet.groupRow(firstRowForGroup + 1, rowIndex - 1);
 //            sheet.setRowGroupCollapsed(rowIndex - 1, true);

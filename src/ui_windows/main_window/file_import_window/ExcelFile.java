@@ -7,12 +7,16 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import ui_windows.product.Product;
+import ui_windows.product.data.DataItem;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static ui_windows.product.data.DataItem.DATA_EMPTY;
+import static ui_windows.product.data.DataItem.DATA_ORDER_NUMBER;
 
 public class ExcelFile {
     private File file;
@@ -22,9 +26,10 @@ public class ExcelFile {
     private DataSize sheetDataSize;
     private int curRow;
     private ColumnsMapper mapper;
+    private FileImport fileImport;
 
-    public ExcelFile() {
-        mapper = new ColumnsMapper();
+    public ExcelFile(ColumnsMapper mapper) {
+        this.mapper = mapper;
     }
 
     public boolean open(File fileForOpening) {
@@ -79,7 +84,7 @@ public class ExcelFile {
 
             if (row != null) {
                 titles = new RowData(row, sheetDataSize.getCols());//get titles in Excel file
-                isTitleRow = mapper.isRowHasTitles(titles);//get mapping using title line
+                isTitleRow = isRowHasTitles(titles);//get mapping using title line
             }
 
         } while ((row == null || !isTitleRow) && sheetDataSize.getRows() > curRow);
@@ -107,7 +112,9 @@ public class ExcelFile {
             }
 
             data = new RowData(row, sheetDataSize.getCols());
-            if (mapper.isRowHasData(data)) products.add(new Product(data, mapper));
+            if (isRowHasData(data)) {
+                products.add(new Product(data, mapper));
+            }
 //            else System.out.println("no data in " + row.getCell(5).getStringCellValue());
 
         }
@@ -160,7 +167,39 @@ public class ExcelFile {
         file = null;
     }
 
-    public ColumnsMapper getMapper() {
-        return mapper;
+    public boolean isRowHasTitles(RowData rowData) {
+        int matchesCount = 0;
+        boolean hasOrderNumberValue = false;
+        for (String tableCellValue : rowData.getAll()) {
+            DataItem die = new ColumnsMapper().getDataItemByTitle(tableCellValue);
+            if (die != DATA_EMPTY) {
+                if (die == DATA_ORDER_NUMBER) {
+                    hasOrderNumberValue = true;
+                } else {
+                    matchesCount++;
+                }
+            }
+        }
+        return hasOrderNumberValue && matchesCount > 0;
+    }
+
+    public boolean isRowHasData(RowData rowData) {
+        int matchesCount = 0;
+        boolean hasOrderNumberValue = false;
+
+        if (mapper == null) return false;
+
+        for (FileImportParameter fiti : mapper.getColumnsForComparing()) {
+            String cellValue = rowData.get(fiti.getColumnIndex());
+
+            if (cellValue != null && !cellValue.trim().isEmpty()) {
+                if (fiti.getDataItem() == DATA_ORDER_NUMBER) {
+                    hasOrderNumberValue = true;
+                } else {
+                    matchesCount++;
+                }
+            }
+        }
+        return hasOrderNumberValue && matchesCount > 0;
     }
 }

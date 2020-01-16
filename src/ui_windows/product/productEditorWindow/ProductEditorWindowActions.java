@@ -7,11 +7,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import ui_windows.main_window.file_import_window.ColumnsMapper;
-import ui_windows.main_window.file_import_window.FileImportTableItem;
-import ui_windows.main_window.file_import_window.ObjectsComparator2;
-import ui_windows.options_window.families_editor.ProductFamily;
-import ui_windows.options_window.product_lgbk.LgbkAndParent;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.main_window.file_import_window.FileImportParameter;
+import ui_windows.main_window.file_import_window.singleProductsComparator;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
 import utils.Utils;
@@ -20,7 +17,7 @@ import java.util.ArrayList;
 
 import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
-import static ui_windows.product.data.ProductProperties.DESC_ORDER_NUMBER;
+import static ui_windows.product.data.DataItem.*;
 
 public class ProductEditorWindowActions {
     private static CertificateVerificationTable certificateVerificationTable;
@@ -47,25 +44,20 @@ public class ProductEditorWindowActions {
                 Product changedProduct = new Product(root);
 
                 //avoiding changing of automatically calculated family
-                if (pr.getFamily() < 1 && pr.getProductFamily() != null && changedProduct.getFamily() == pr.getProductFamily().getId()) {
-                    changedProduct.setFamily(0);
+                if (pr.getFamily_id() < 1 && pr.getProductFamily() != null && changedProduct.getFamily_id() == pr.getProductFamily().getId()) {
+                    changedProduct.setFamily_id(0);
                 }
 
-                boolean productWasNeedAction = pr.isNeedaction() && !changedProduct.isNeedaction();
-
-                ObservableList<FileImportTableItem> fiti = FXCollections.observableArrayList();
-                fiti.add(new FileImportTableItem("", DESC_ORDER_NUMBER, true, false, -1, false));
-                fiti.add(new FileImportTableItem("", "descriptionru", true, true, -1, false));
-                fiti.add(new FileImportTableItem("", "descriptionen", true, true, -1, false));
-                fiti.add(new FileImportTableItem("", "type_id", true, true, -1, false));
-                fiti.add(new FileImportTableItem("", "family", true, true, -1, false));
-                fiti.add(new FileImportTableItem("", "fileName", true, false, -1, false));
-                fiti.add(new FileImportTableItem("", "replacement", true, false, -1, false));
-                fiti.add(new FileImportTableItem("", "comments", true, false, -1, false));
-                fiti.add(new FileImportTableItem("", "price", true, true, -1, false));
-                fiti.add(new FileImportTableItem("", "archive", true, true, -1, false));
-                fiti.add(new FileImportTableItem("", "needaction", true, true, -1, false));
-
+                ObservableList<FileImportParameter> parameters = FXCollections.observableArrayList();
+                parameters.add(new FileImportParameter("", DATA_ORDER_NUMBER, true, false, -1, false));
+                parameters.add(new FileImportParameter("", DATA_DESCRIPTION_RU, true, true, -1, false));
+                parameters.add(new FileImportParameter("", DATA_DESCRIPTION_EN, true, true, -1, false));
+                parameters.add(new FileImportParameter("", DATA_TYPE, true, true, -1, false));
+                parameters.add(new FileImportParameter("", DATA_FAMILY_ID, true, true, -1, false));
+                parameters.add(new FileImportParameter("", DATA_MANUAL_FILE, true, false, -1, false));
+                parameters.add(new FileImportParameter("", DATA_REPLACEMENT, true, false, -1, false));
+                parameters.add(new FileImportParameter("", DATA_COMMENT, true, false, -1, false));
+                parameters.add(new FileImportParameter("", DATA_IS_IN_PRICE, true, true, -1, false));
 
                 /*LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(pr));
                 boolean globalDisabled = lap.getLgbkItem().isNotUsed() || lap.getLgbkParent().isNotUsed();
@@ -74,7 +66,7 @@ public class ProductEditorWindowActions {
                 }*/
 
                 ColumnsMapper mapper = new ColumnsMapper();
-                ObjectsComparator2 comparator = new ObjectsComparator2(pr, changedProduct, false, mapper.getFieldsForImport(fiti));
+                singleProductsComparator comparator = new singleProductsComparator(pr, changedProduct, true, parameters.toArray(new FileImportParameter[]{}));
 
                 if (comparator.getResult().isNeedUpdateInDB()) {//was changed
                     String oldHistory = pr.getHistory() == null ? "" : pr.getHistory().trim();
@@ -88,13 +80,12 @@ public class ProductEditorWindowActions {
 
                     System.out.println("result = " + comparator.getResult().getHistoryComment());
 
-                    if (productWasNeedAction) pr.setChangecodes("");
-
                     productsToUpdate.add(pr);
                 }
             } else {
-                multiEditor.save();
-                productsToUpdate.addAll(multiEditor.getEditedItems());
+                if (multiEditor.checkAndApplyChanges()) {
+                    productsToUpdate.addAll(multiEditor.getEditedItems());
+                }
             }
 //            new Thread(() -> new ProductsDB().updateData(new ArrayList<Product>(productsToUpdate))).start(); //update in DB
             boolean saveToDbResult = new ProductsDB().updateData(productsToUpdate); //update in DB
