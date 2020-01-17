@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import ui_windows.main_window.MainWindow;
 import ui_windows.product.data.DataItem;
+import ui_windows.product.data.DataSets;
 import utils.twin_list_views.TwinListViews;
 
 import java.net.URL;
@@ -43,7 +44,7 @@ public class SelectorExportWindowController implements Initializable {
 
     private void initTwinListsView() {
         ArrayList<DataItem> columns = new ArrayList<>();
-        columns.addAll(Arrays.asList(DataItem.values()));
+        columns.addAll(Arrays.asList(DataSets.getDataItemsForExcelExport()));
         columnsSelector = new TwinListViews<>(pColsSelector, columns);
         columnsSelector.setListViewsCellFactory(new Callback<ListView<DataItem>, ListCell<DataItem>>() {
             @Override
