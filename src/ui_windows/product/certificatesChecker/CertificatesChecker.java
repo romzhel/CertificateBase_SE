@@ -4,11 +4,7 @@ import core.CoreModule;
 import javafx.collections.ObservableList;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
-import ui_windows.options_window.product_lgbk.NormsList;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
-import utils.ItemsGroup;
-import utils.ItemsGroups;
 import utils.Utils;
 
 import java.util.*;
@@ -64,9 +60,7 @@ public class CertificatesChecker {
 
     private void checkExistingCertificates(Product product, CheckParameters checkParameters) {
         TreeSet<String> prodNames = new TreeSet<>();
-
         for (Certificate cert : CoreModule.getCertificates().getCertificates()) {//check all certificates
-
             prodNames.clear();//forming comparing product values (article / material)
             prodNames.add(Utils.toEN(product.getArticle()).toUpperCase());
             if (cert.isMaterialMatch()) prodNames.add(Utils.toEN(product.getMaterial()).toUpperCase());
@@ -86,10 +80,7 @@ public class CertificatesChecker {
 
                         for (String prod : prodNames) {//compare product article / material with certificate content
 
-                            String contentValue = getContentValueForComparing(cert, contentName);
-                            prod = prod.replaceAll("\\s", "");
-
-                            if (prod.matches(contentValue)) {//add prod type from certificate for allowing of selection
+                            if (isNamesMatches(prod, cert, contentName)) {//add prod type from certificate for allowing of selection
                                 if (content.getEquipmentType() != null && !content.getEquipmentType().isEmpty()) {
                                     productTypes.add(content.getEquipmentType());
                                 }
@@ -158,17 +149,24 @@ public class CertificatesChecker {
         return false;
     }
 
-    private String getContentValueForComparing(Certificate cert, String contentName) {
+    private boolean isNamesMatches(String prodName, Certificate cert, String contentName) {
+        prodName = prodName.replaceAll("[\\s\\-\\/]", "").toUpperCase();
+        contentName = contentName.replaceAll("[\\s\\-\\/]", "").toUpperCase();
         String contentValue;
+
         if (contentName.matches(".+[x]{2,}.*")) {
             contentValue = contentName.replaceAll("[x]{2,}", ".*").trim().toUpperCase();
-        } else if (!cert.isFullNameMatch()) {
-            contentValue = contentName.trim().toUpperCase() + "\\s*\\d+.*";
-        } else contentValue = contentName.trim().replaceAll("\\s", "").toUpperCase();
+        } else {
+            contentValue = contentName.trim().toUpperCase() + "\\d+.*";
+        }
 
-        contentValue = contentValue.replaceAll("\\(", "\\\\(")
-                .replaceAll("\\)", "\\\\)");
-        return contentValue;
+        contentValue = contentValue.replaceAll("\\(", "\\\\(").replaceAll("\\)", "\\\\)");
+
+        boolean namesWithNumbersAndMatches = prodName.matches(".*\\d+.*") && prodName.matches(contentValue);
+        boolean namesTheSame = prodName.equals(contentName);
+        boolean namesOnlyTextAndHaveTheSameBegin = prodName.matches("[A-Z]+") && prodName.startsWith(contentName);
+
+        return namesTheSame || namesOnlyTextAndHaveTheSameBegin || namesWithNumbersAndMatches;
     }
 
     public TreeSet<CertificateVerificationItem> getResultTableItems() {

@@ -80,7 +80,7 @@ public class NormsChecker {
         boolean certNotNeeded = false;
 
         normsForChecking.removeAll(correctNorms);
-        normsForChecking.removeAll(faultNorms);
+//        normsForChecking.removeAll(faultNorms);
         if (correctNorms.contains(1)) {
             normsForChecking.remove(9);//НВО СС заменяет НВО ДС
             faultNorms.remove(9);
@@ -90,7 +90,7 @@ public class NormsChecker {
             faultNorms.remove(11);
         }
 
-        if (normsForCheckingCount > 0) {
+        if (normsForChecking.size() > 0) {
             for (int normIndex : normsForChecking) {
                 String shortName = CoreModule.getRequirementTypes().getRequirementByID(normIndex).getShortName();
                 CertificateVerificationItem cvi = new CertificateVerificationItem(shortName);
@@ -104,12 +104,14 @@ public class NormsChecker {
             }
         }
 
-        if (certNotNeeded) {
+        boolean isNormsDetermined = normsForCheckingCount > 0;
+        boolean isAllNormsExists = normsForChecking.size() == 0;
+        boolean isFaultNorms = faultNorms.size() > 0;
+
+        if (certNotNeeded || isNormsDetermined && isAllNormsExists) {
             checkStatusResult = STATUS_OK;
-        } else if (faultNorms.size() > 0) {
+        } else if (!isAllNormsExists || isFaultNorms) {
             checkStatusResult = STATUS_NOT_OK;
-        } else if (normsForCheckingCount > 0) {
-            checkStatusResult = STATUS_OK;
         } else {
             checkStatusResult = NO_DATA;
         }
