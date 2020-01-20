@@ -196,12 +196,12 @@ public enum DataItem {
     DATA_LEAD_TIME_RU(11, "Время доставки (Россия)", null) {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
-            cell.setCellValue(product.getPreparedLeadTime());
+            cell.setCellValue(product.getLeadTimeRu());
             cell.setCellStyle(CELL_ALIGN_CENTER);
         }
 
         public Object getValue(Product product) {
-            return product.getPreparedLeadTime();
+            return product.getLeadTimeRu();
         }
     },
     DATA_MIN_ORDER(12, "Минимальный заказ", "minOrder") {

@@ -21,14 +21,22 @@ import ui_windows.product.certificatesChecker.CheckParameters;
 import ui_windows.product.productEditorWindow.configNormsWindow.ConfigNormsWindow;
 import utils.Utils;
 
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class ProductEditorWindowController implements Initializable {
+    @FXML
+    public TextField tfMaterial;
+    @FXML
+    public TextField tfArticle;
+    @FXML
+    public TextField tfDangerous;
     @FXML
     public ComboBox<String> cbType;
     @FXML
@@ -60,15 +68,33 @@ public class ProductEditorWindowController implements Initializable {
     @FXML
     TableView<CertificateVerificationItem> tvCertVerification;
     @FXML
-    ComboBox<String> cbFamily;
+    public ComboBox<String> cbFamily;
     @FXML
-    TextField tfPm;
+    public TextField tfPm;
     @FXML
     Button btnApply;
     @FXML
     CheckBox cbxOrderable;
     @FXML
     ContextMenu cmCertActions;
+    @FXML
+    public ListView<String> lHistory;
+    @FXML
+    public TextField tfManHier;
+    @FXML
+    public TextField tfFileName;
+    @FXML
+    public TextField tfReplacement;
+    @FXML
+    public TextField tfMinOrder;
+    @FXML
+    public TextField tfPacketSize;
+    @FXML
+    public TextField tfLeadTime;
+    @FXML
+    public TextField tfWeight;
+    @FXML
+    public TextField tfLocalPrice;
     private MultiEditor multiEditor = null;
     private CertificateVerificationTable certificateVerificationTable;
     private ComboBoxEqTypeSelector comboBoxEqTypeSelector;
@@ -113,9 +139,10 @@ public class ProductEditorWindowController implements Initializable {
     }
 
     public void apply() {
-        ProductEditorWindowActions.apply(apRoot, multiEditor);
+        ProductEditorWindowActions.apply(this, multiEditor);
         ProductEditorWindowActions.setMultiEditor(null);
         multiEditor = null;
+        ((Stage) tvCertVerification.getScene().getWindow()).close();
     }
 
     public void cancel() {

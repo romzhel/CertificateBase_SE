@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.stage.Stage;
+import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.requirements_types_editor.RequirementTypesListViews;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
@@ -33,6 +34,7 @@ public class ConfigNormsWindowController implements Initializable {
     private MultiEditor multiEditor;
     private int normsModeSaved;
     private ArrayList<Integer> normsModesSaved;
+    private ArrayList<String> normsValuesSaved;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -45,11 +47,12 @@ public class ConfigNormsWindowController implements Initializable {
             editedProduct.setNormsList(requirementTypesListViews.getProductNormsListForSave(editedProduct));
             alp.add(editedProduct);
         } else {
-            for (Product product : multiEditor.getEditedItems()) {
-                product.setNormsList(requirementTypesListViews.getProductNormsListForSave(product));
+            if (rbAddToGlobal.isSelected() || rbInsteadGlobal.isSelected()) {
+                for (Product product : multiEditor.getEditedItems()) {
+                    product.setNormsList(requirementTypesListViews.getProductNormsListForSave(product));
+                }
+                alp.addAll(multiEditor.getEditedItems());
             }
-
-            alp.addAll(multiEditor.getEditedItems());
         }
 
         boolean saveToDbResult = true;
@@ -69,13 +72,14 @@ public class ConfigNormsWindowController implements Initializable {
     }
 
     public void close() {
-        if (multiEditor == null) {
-            ProductEditorWindowActions.getEditedItem().setNormsMode(normsModeSaved);
-        } else {
-            for (int i = 0; i < multiEditor.getEditedItems().size(); i++) {
-                multiEditor.getEditedItems().get(i).setNormsMode(normsModesSaved.get(i));
+            if (multiEditor == null) {
+                ProductEditorWindowActions.getEditedItem().setNormsMode(normsModeSaved);
+            } else {
+                for (int i = 0; i < multiEditor.getEditedItems().size(); i++) {
+                    multiEditor.getEditedItems().get(i).setNormsMode(normsModesSaved.get(i));
+                    multiEditor.getEditedItems().get(i).setNormsList(new NormsList(normsValuesSaved.get(i)));
+                }
             }
-        }
 
         closeWindow();
     }
@@ -158,5 +162,9 @@ public class ConfigNormsWindowController implements Initializable {
 
     public void setNormsModesSaved(ArrayList<Integer> normsModesSaved) {
         this.normsModesSaved = normsModesSaved;
+    }
+
+    public void setNormsValuesSaved(ArrayList<String> normsValuesSaved) {
+        this.normsValuesSaved = normsValuesSaved;
     }
 }

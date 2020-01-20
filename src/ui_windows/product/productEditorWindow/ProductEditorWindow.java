@@ -39,7 +39,7 @@ public class ProductEditorWindow extends OrdinalWindow {
                 Product product = selectedProducts.get(0);
                 String lastUpdate = product.getLastChangeDate() == null ? "нет данных" : product.getLastChangeDate();
                 stage.setTitle("Продукт " + product.getArticle() + " (посл. обновление: " + lastUpdate + ")");
-                product.displayInEditorWindow(rootAnchorPane);
+                product.displayInEditorWindow(pewc);
             } else if (selectedProducts.size() > 1) {
                 stage.setTitle("Элементов выбрано: " + selectedProducts.size());
 

@@ -8,7 +8,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import ui_windows.main_window.file_import_window.ColumnsMapper;
 import ui_windows.main_window.file_import_window.FileImportParameter;
-import ui_windows.main_window.file_import_window.singleProductsComparator;
+import ui_windows.main_window.file_import_window.SingleProductsComparator;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
 import utils.Utils;
@@ -31,7 +31,7 @@ public class ProductEditorWindowActions {
         } else return null;
     }
 
-    public static void apply(AnchorPane root, MultiEditor multiEditor) {
+    public static void apply(ProductEditorWindowController pewc, MultiEditor multiEditor) {
         Product pr;
         ArrayList<Product> productsToUpdate = new ArrayList<>();
 
@@ -41,7 +41,7 @@ public class ProductEditorWindowActions {
             if (multiEditor == null) {
                 //comparing the changes, track in history
                 pr = getEditedItem();
-                Product changedProduct = new Product(root);
+                Product changedProduct = new Product(pewc);
 
                 //avoiding changing of automatically calculated family
                 if (pr.getFamily_id() < 1 && pr.getProductFamily() != null && changedProduct.getFamily_id() == pr.getProductFamily().getId()) {
@@ -66,7 +66,7 @@ public class ProductEditorWindowActions {
                 }*/
 
                 ColumnsMapper mapper = new ColumnsMapper();
-                singleProductsComparator comparator = new singleProductsComparator(pr, changedProduct, true, parameters.toArray(new FileImportParameter[]{}));
+                SingleProductsComparator comparator = new SingleProductsComparator(pr, changedProduct, true, parameters.toArray(new FileImportParameter[]{}));
 
                 if (comparator.getResult().isNeedUpdateInDB()) {//was changed
                     String oldHistory = pr.getHistory() == null ? "" : pr.getHistory().trim();
@@ -83,7 +83,7 @@ public class ProductEditorWindowActions {
                     productsToUpdate.add(pr);
                 }
             } else {
-                if (multiEditor.checkAndApplyChanges()) {
+                if (multiEditor.checkAndSaveChanges()) {
                     productsToUpdate.addAll(multiEditor.getEditedItems());
                 }
             }
@@ -92,7 +92,6 @@ public class ProductEditorWindowActions {
 
             if (saveToDbResult) {
                 CoreModule.getFilter().apply();
-                ((Stage) root.getScene().getWindow()).close();
             }
         }
     }

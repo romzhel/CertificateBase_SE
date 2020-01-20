@@ -49,17 +49,21 @@ public class ConfigNormsWindow extends OrdinalWindow {
             });
         } else {
             ArrayList<Integer> normsModesForSave = new ArrayList<>();
+            ArrayList<String> normsValuesForSave = new ArrayList<>();
             for (Product product : multiEditor.getEditedItems()) {
                 normsModesForSave.add(product.getNormsMode());
+                normsValuesForSave.add(product.getNormsList().getStringLine());
             }
             cnwc.setNormsModesSaved(normsModesForSave);
+            cnwc.setNormsValuesSaved(normsValuesForSave);
 
-            MultiEditorItem multiEditorItem = new MultiEditorItem(DATA_NORMS_MODE, cnwc.rbInsteadGlobal, MultiEditorItem.CAN_NOT_BE_SAVED);
+            MultiEditorItem multiEditorItem = new MultiEditorItem(DATA_NORMS_MODE, MultiEditorItem.CAN_NOT_BE_SAVED);
             multiEditorItem.compare(multiEditor.getEditedItems());
+            Object commonValue = multiEditorItem.getCommonValue();
 
-            if (multiEditorItem.getCommonValue() != null && (int) multiEditorItem.getCommonValue() == NormsList.ADD_TO_GLOBAL) {
+            if (commonValue != null && (int) commonValue == NormsList.ADD_TO_GLOBAL) {
                 cnwc.rbAddToGlobal.setSelected(true);
-            } else if (multiEditorItem.getCommonValue() != null && (int) multiEditorItem.getCommonValue() == NormsList.INSTEAD_GLOBAL) {
+            } else if (commonValue != null && (int) commonValue == NormsList.INSTEAD_GLOBAL) {
                 cnwc.rbInsteadGlobal.setSelected(true);
             } else {
                 cnwc.rbAddToGlobal.setSelected(false);
@@ -71,6 +75,7 @@ public class ConfigNormsWindow extends OrdinalWindow {
 
             requirementTypesListViews = new RequirementTypesListViews(multiEditor, cnwc.lvAllNorms, cnwc.lvSelectedNorms);
             cnwc.setRequirementTypesListViews(requirementTypesListViews);
+            requirementTypesListViews.display();
 
             group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
                 for (Product prod : multiEditor.getEditedItems()) {

@@ -190,6 +190,8 @@ public class ProductLgbkGroups {
     }
 
     public String getFullDescription(ProductLgbk productLgbk) {
+        if (productLgbk == null || productLgbk.getLgbk() == null || productLgbk.getHierarchy() == null) return "";
+
         LgbkAndParent lgbkAndParent = getLgbkAndParent(productLgbk);
         if (lgbkAndParent == null) return "";
 

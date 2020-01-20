@@ -1,7 +1,7 @@
 package utils.comparation;
 
 import ui_windows.main_window.file_import_window.FileImportParameter;
-import ui_windows.main_window.file_import_window.singleProductsComparator;
+import ui_windows.main_window.file_import_window.SingleProductsComparator;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
 import utils.DoublesPreprocessor;
@@ -34,7 +34,7 @@ public class ProductsComparator {
                 if (pr1t.equals(pr2t)) {//product exists
                     pr1.setLastChangeDate(Utils.getDateTime());//set last update time
 
-                    singleProductsComparator pc = new singleProductsComparator(pr1, pr2, true, parameters);
+                    SingleProductsComparator pc = new SingleProductsComparator(pr1, pr2, true, parameters);
                     ObjectsComparatorResult ocr = pc.getResult();
 
                     if (ocr.isNeedUpdateInDB()) {//product changed
