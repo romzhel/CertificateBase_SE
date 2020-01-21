@@ -1,10 +1,8 @@
 package ui_windows.main_window.file_import_window;
 
-import core.CoreModule;
-import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.product.Product;
 import utils.Utils;
-import utils.comparation.ObjectsComparatorResult;
+import utils.comparation.products.ObjectsComparatorResult;
 
 import java.lang.reflect.Field;
 

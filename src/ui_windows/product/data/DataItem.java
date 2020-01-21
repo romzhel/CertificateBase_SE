@@ -526,6 +526,19 @@ public enum DataItem {
         public Object getValue(Product product) {
             return product.getGlobalNorms();
         }
+    },
+    DATA_ORDER_NUMBER_PRINT_NOT_EMPTY(39,"Заказной номер для печати (или заказной номер)", null) {
+        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(product.getProductForPrint() == null || product.getProductForPrint().isEmpty() ?
+                    product.getMaterial() : product.getProductForPrint());
+            cell.setCellStyle(CELL_ALIGN_LEFT);
+        }
+
+        public Object getValue(Product product) {
+            return product.getProductForPrint() == null || product.getProductForPrint().isEmpty() ?
+                    product.getMaterial() : product.getProductForPrint();
+        }
     };
 
     private int id;

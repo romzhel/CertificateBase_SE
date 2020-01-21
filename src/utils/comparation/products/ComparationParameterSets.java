@@ -1,4 +1,4 @@
-package utils.comparation;
+package utils.comparation.products;
 
 import ui_windows.product.MultiEditorItem;
 

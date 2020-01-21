@@ -1,4 +1,4 @@
-package utils.comparation;
+package utils.comparation.products;
 
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.main_window.file_import_window.SingleProductsComparator;

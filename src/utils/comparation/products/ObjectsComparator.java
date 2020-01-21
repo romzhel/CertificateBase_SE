@@ -1,4 +1,4 @@
-package utils.comparation;
+package utils.comparation.products;
 
 import javafx.beans.property.StringProperty;
 import ui_windows.options_window.product_lgbk.NormsList;

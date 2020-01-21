@@ -2,7 +2,6 @@ package ui_windows.product.productEditorWindow;
 
 import core.CoreModule;
 import core.Dialogs;
-import core.SharedData;
 import database.ProductsDB;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,9 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
 import ui_windows.options_window.families_editor.ProductFamily;
-import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
-import ui_windows.options_window.product_lgbk.LgbkAndParent;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.profile_editor.Profile;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
@@ -23,15 +19,12 @@ import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.product.certificatesChecker.CheckParameters;
 import ui_windows.product.productEditorWindow.configNormsWindow.ConfigNormsWindow;
 import utils.Utils;
-import utils.comparation.ComparationParameterSets;
 
-import javax.xml.bind.annotation.XmlAnyAttribute;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static core.SharedData.SHD_SELECTED_PRODUCTS;

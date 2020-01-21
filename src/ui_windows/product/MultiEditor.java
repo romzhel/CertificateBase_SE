@@ -8,7 +8,7 @@ import ui_windows.main_window.file_import_window.SingleProductsComparator;
 import ui_windows.product.data.DataItem;
 import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 import utils.Utils;
-import utils.comparation.ComparationParameterSets;
+import utils.comparation.products.ComparationParameterSets;
 
 import java.util.ArrayList;
 import java.util.Arrays;

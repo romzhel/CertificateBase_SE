@@ -6,7 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import utils.comparation.ObjectsComparator;
+import utils.comparation.products.ObjectsComparator;
 import utils.Utils;
 
 import java.net.URL;
