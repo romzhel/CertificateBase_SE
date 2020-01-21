@@ -66,7 +66,13 @@ public class Product {
         id = 0;
         material = pewc.tfMaterial.getText();
         article = pewc.tfArticle.getText();
-        family_id = CoreModule.getProductFamilies().getFamilyIdByName(pewc.cbFamily.getValue());
+
+        lgbk = pewc.tfLgbk.getText();
+        hierarchy = pewc.tfHierarchy.getText();
+        LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
+        int calcFamilyId = lap.getProductFamily().getId();
+        int uiFamilyId = CoreModule.getProductFamilies().getFamilyIdByName(pewc.cbFamily.getValue());
+        family_id = calcFamilyId == uiFamilyId ? 0 : uiFamilyId;
 
         descriptionru = pewc.taDescription.getText();
         descriptionen = pewc.taDescriptionEn.getText();

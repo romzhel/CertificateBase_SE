@@ -128,9 +128,12 @@ public class ProductLgbks {
     }
 
     public ProductLgbk getLgbkByLgbk(ProductLgbk findingLgbk) {
+        String compHier = "";
         for (ProductLgbk currLgbk : productLgbks) {
+            compHier = currLgbk.getHierarchy().replaceAll("\\.", "").trim();
             if (currLgbk.getId() == findingLgbk.getId() ||
-                    currLgbk.getLgbk().equals(findingLgbk.getLgbk()) && currLgbk.getHierarchy().equals(findingLgbk.getHierarchy())) {
+                    currLgbk.getLgbk().equals(findingLgbk.getLgbk()) && findingLgbk.getHierarchy()
+                            .contains(compHier) && !compHier.isEmpty()) {
                 return currLgbk;
             }
         }

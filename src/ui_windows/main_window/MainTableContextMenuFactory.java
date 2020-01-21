@@ -38,6 +38,7 @@ public class MainTableContextMenuFactory {
         MENU_DELETE_ITEMS_FROM_LIST.setOnAction(event -> {
             ObservableList<Product> itemsForDelete = MainWindow.getMainTable().getSelectedItems();
             CoreModule.getCustomItems().removeAll(itemsForDelete);
+            CoreModule.getCurrentItems().removeAll(itemsForDelete);
             CoreModule.getProducts().getTableView().getItems().removeAll(itemsForDelete);
             mainTable.refresh();
         });
