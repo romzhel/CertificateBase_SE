@@ -196,12 +196,12 @@ public enum DataItem {
     DATA_LEAD_TIME_RU(11, "Время доставки (Россия)", null) {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
-            cell.setCellValue(product.getPreparedLeadTime());
+            cell.setCellValue(product.getLeadTimeRu());
             cell.setCellStyle(CELL_ALIGN_CENTER);
         }
 
         public Object getValue(Product product) {
-            return product.getPreparedLeadTime();
+            return product.getLeadTimeRu();
         }
     },
     DATA_MIN_ORDER(12, "Минимальный заказ", "minOrder") {
@@ -503,6 +503,41 @@ public enum DataItem {
 
         public Object getValue(Product product) {
             return product.getFileName();
+        }
+    },
+    DATA_NORMS_ID(37, "Список норм для продукта (коды)", null) {
+        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(product.getNormsList().getStringLine());
+            cell.setCellStyle(CELL_ALIGN_LEFT);
+        }
+
+        public Object getValue(Product product) {
+            return product.getNormsList().getIntegerItems();
+        }
+    },
+    DATA_GLOBAL_MORMS_ID(38, "Список глобальных норм для продукта", null) {
+        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(new NormsList(product.getGlobalNorms()).getStringLine());
+            cell.setCellStyle(CELL_ALIGN_LEFT);
+        }
+
+        public Object getValue(Product product) {
+            return product.getGlobalNorms();
+        }
+    },
+    DATA_ORDER_NUMBER_PRINT_NOT_EMPTY(39,"Заказной номер для печати (или заказной номер)", null) {
+        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(product.getProductForPrint() == null || product.getProductForPrint().isEmpty() ?
+                    product.getMaterial() : product.getProductForPrint());
+            cell.setCellStyle(CELL_ALIGN_LEFT);
+        }
+
+        public Object getValue(Product product) {
+            return product.getProductForPrint() == null || product.getProductForPrint().isEmpty() ?
+                    product.getMaterial() : product.getProductForPrint();
         }
     };
 

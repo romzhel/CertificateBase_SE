@@ -1,6 +1,7 @@
 package ui_windows.main_window.file_import_window;
 
 import javafx.beans.property.*;
+import ui_windows.product.MultiEditorItem;
 import ui_windows.product.data.DataItem;
 
 public class FileImportParameter {
@@ -19,6 +20,13 @@ public class FileImportParameter {
         this.logHistory = new SimpleBooleanProperty(logHistory);
         this.columnIndex = columnIndex;
         this.logLastImportCodes = logLastImportCodes;
+    }
+
+    public FileImportParameter(MultiEditorItem multiEditorItem) {
+        this.dataItem = new SimpleObjectProperty<>(multiEditorItem.getDataItem());
+        importValue = new SimpleBooleanProperty(multiEditorItem.getCommonValue() != null && multiEditorItem.isCanBeSaved());
+        logHistory = new SimpleBooleanProperty(true);
+        logLastImportCodes = true;
     }
 
     public FileImportParameter(String fieldName, DataItem dataItem) {

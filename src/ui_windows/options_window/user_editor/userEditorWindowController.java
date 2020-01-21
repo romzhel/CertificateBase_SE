@@ -8,7 +8,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.MouseButton;
-import utils.comparation.ObjectsComparator;
+import utils.comparation.products.ObjectsComparator;
 import utils.Utils;
 
 

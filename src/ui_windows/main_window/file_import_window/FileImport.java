@@ -11,8 +11,8 @@ import ui_windows.main_window.MainWindowsController;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
 import ui_windows.product.data.DataItem;
-import utils.comparation.ProductsComparator;
-import utils.comparation.ProductsComparatorResult;
+import utils.comparation.products.ProductsComparator;
+import utils.comparation.products.ProductsComparatorResult;
 
 import java.util.ArrayList;
 import java.util.HashSet;

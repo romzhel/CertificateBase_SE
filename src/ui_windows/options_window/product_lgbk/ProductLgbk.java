@@ -90,8 +90,10 @@ public class ProductLgbk implements PriceListContentItem {
     }
 
     public ProductLgbk(Product product) {
-        lgbk = new SimpleStringProperty(product.getLgbk());
-        hierarchy = new SimpleStringProperty(product.getHierarchy());
+        lgbk = new SimpleStringProperty(product.getLgbk() == null ? "nnn" : product.getLgbk());
+        hierarchy = new SimpleStringProperty(product.getHierarchy() == null ? "nnn" : product.getHierarchy());
+        normsList = new NormsList("");
+        nodeType = ITEM_NODE;
     }
 
     public void showInEditorWindow(AnchorPane root) {

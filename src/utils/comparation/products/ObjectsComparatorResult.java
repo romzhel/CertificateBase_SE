@@ -1,4 +1,4 @@
-package utils.comparation;
+package utils.comparation.products;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import ui_windows.options_window.families_editor.ProductFamily;

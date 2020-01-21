@@ -31,26 +31,15 @@ public class ProductEditorWindow extends OrdinalWindow {
         ProductEditorWindowController pewc = (ProductEditorWindowController) loader.getController();
         rootAnchorPane = pewc.apRoot;
 
-        if (mode == ADD) {
-
-        } else if (mode == EDIT) {//put data into fields
-
             if (selectedProducts.size() == 1) {
                 Product product = selectedProducts.get(0);
                 String lastUpdate = product.getLastChangeDate() == null ? "нет данных" : product.getLastChangeDate();
                 stage.setTitle("Продукт " + product.getArticle() + " (посл. обновление: " + lastUpdate + ")");
-                product.displayInEditorWindow(rootAnchorPane);
+                product.displayInEditorWindow(pewc);
             } else if (selectedProducts.size() > 1) {
                 stage.setTitle("Элементов выбрано: " + selectedProducts.size());
-
-                MultiEditor multiEditor = new MultiEditor(selectedProducts, pewc);
-                pewc.setMultiEditor(multiEditor);
-                ProductEditorWindowActions.setMultiEditor(multiEditor);
             }
 
-        } else if (mode == DELETE) {
-
-        }
 
         applyProfileSimple(CoreModule.getUsers().getCurrentUser().getProfile().getProducts());
 

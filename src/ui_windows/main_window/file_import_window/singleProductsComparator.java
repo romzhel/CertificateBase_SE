@@ -1,24 +1,24 @@
 package ui_windows.main_window.file_import_window;
 
-import core.CoreModule;
-import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.product.Product;
 import utils.Utils;
-import utils.comparation.ObjectsComparatorResult;
+import utils.comparation.products.ObjectsComparatorResult;
 
 import java.lang.reflect.Field;
 
 import static ui_windows.product.data.DataItem.*;
 
-public class singleProductsComparator {
+public class SingleProductsComparator {
     private ObjectsComparatorResult comparatorResult;
 
-    public singleProductsComparator(Product obj1, Product obj2, boolean emptyTextProtection, FileImportParameter... parameters) {
+    public SingleProductsComparator(Product obj1, Product obj2, boolean emptyTextProtection, FileImportParameter... parameters) {
         comparatorResult = new ObjectsComparatorResult();
         Object value1;
         Object value2;
         try {
             for (FileImportParameter parameter : parameters) {
+                if (!parameter.isImportValue()) continue;
+
                 value1 = parameter.getDataItem().getValue(obj1);
                 value2 = parameter.getDataItem().getValue(obj2);
 
@@ -63,11 +63,6 @@ public class singleProductsComparator {
                                 (value1 == null ? "" : value1.toString()) + " -> " + value2.toString());
 
                         if (parameter.isLogLastImportCodes()) {
-//                            ((Product) obj1).setChangecodes(((Product) obj1).getChangecodes().concat(obj1Fields[i].getName()));
-//                               obj1.setChangecodes(Utils.addTextWithCommas(obj1.getChangecodes(), field.getName()));
-
-
-//                            ((Product) obj1).setLastImportcodes(((Product) obj1).getLastImportcodes().concat(obj1Fields[i].getName()));
                             obj1.setLastImportcodes(Utils.addTextWithCommas(obj1.getLastImportcodes(), field.getName()));
                         }
 

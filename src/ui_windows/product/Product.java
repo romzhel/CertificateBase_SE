@@ -1,8 +1,8 @@
 package ui_windows.product;
 
+import com.sun.istack.internal.NotNull;
 import core.CoreModule;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import ui_windows.main_window.file_import_window.ColumnsMapper;
 import ui_windows.main_window.file_import_window.RowData;
 import ui_windows.main_window.filter_window.Filter;
@@ -12,6 +12,7 @@ import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.data.DataItem;
+import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 import utils.Countries;
 import utils.Utils;
 
@@ -19,6 +20,7 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 import static ui_windows.main_window.filter_window.FilterParameters.FILTER_ALL_ITEMS;
 import static ui_windows.main_window.filter_window.FilterParameters.FILTER_PRICE_ITEMS;
@@ -37,13 +39,12 @@ public class Product {
     private String dchain;
     private String descriptionru = "";
     private String descriptionen = "";
-    private boolean price = true;
+    private Boolean price = false;
     private String changecodes = "";
     private String lastImportcodes = "";
 
-    private int family_id = -1;
-    private int type_id;
-    private int productLine_id;
+    private Integer family_id = -1;
+    private Integer type_id;
     private String history = "";
     private String lastChangeDate = "";
     //    private last
@@ -51,34 +52,39 @@ public class Product {
     private String comments = "";
     private String replacement = "";
     private NormsList normsList;
-    private int normsMode = NormsList.ADD_TO_GLOBAL;
-    private int minOrder;
-    private int packetSize;
-    private int leadTime;
-    private double weight;
-    private double localPrice;
+    private Integer normsMode = NormsList.ADD_TO_GLOBAL;
+    private Integer minOrder;
+    private Integer packetSize;
+    private Integer leadTime;
+    private Double weight;
+    private Double localPrice;
 
     public Product() {
     }
 
-    public Product(AnchorPane root) {
+    public Product(ProductEditorWindowController pewc) {
         id = 0;
-        material = Utils.getControlValue(root, "tfMaterial");
-        productForPrint = Utils.getControlValue(root, "tfProductPrint");
-        article = Utils.getControlValue(root, "tfArticle");
-        family_id = CoreModule.getProductFamilies().getFamilyIdByName(Utils.getControlValue(root, "cbFamily"));
+        material = pewc.tfMaterial.getText();
+        article = pewc.tfArticle.getText();
 
-        descriptionru = Utils.getControlValue(root, "taDescription");
-        descriptionen = Utils.getControlValue(root, "taDescriptionEn");
-        price = Utils.getControlValue(root, "cbxPrice") == "true";
+        lgbk = pewc.tfLgbk.getText();
+        hierarchy = pewc.tfHierarchy.getText();
+        LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
+        int calcFamilyId = lap.getProductFamily().getId();
+        int uiFamilyId = CoreModule.getProductFamilies().getFamilyIdByName(pewc.cbFamily.getValue());
+        family_id = calcFamilyId == uiFamilyId ? 0 : uiFamilyId;
+
+        descriptionru = pewc.taDescription.getText();
+        descriptionen = pewc.taDescriptionEn.getText();
+        price = pewc.cbxPrice.isSelected();
         changecodes = "";
         lastImportcodes = "";
 
-        type_id = CoreModule.getProductTypes().getIDbyType(Utils.getControlValue(root, "cbType"));
-        history = Utils.getControlValue(root, "lHistory");
+        type_id = CoreModule.getProductTypes().getIDbyType(pewc.cbType.getValue() == null ? "" : pewc.cbType.getValue());
+//        history = pewc.lHistory.toString();///!!!!!! check
         lastChangeDate = "";
-        comments = Utils.getControlValue(root, "taComments");
-        replacement = Utils.getControlValue(root, "tfReplacement");
+        comments = pewc.taComments.getText();
+        replacement = pewc.tfReplacement.getText();
     }
 
     public Product(RowData rowData, ColumnsMapper mapper) {
@@ -162,54 +168,61 @@ public class Product {
         }
     }
 
-    public void displayInEditorWindow(AnchorPane root) {
-        Utils.setControlValue(root, "tfMaterial", getMaterial());
-        Utils.setControlValue(root, "tfProductPrint", getProductForPrint());
-        Utils.setControlValue(root, "taDescription", getDescriptionru());
-        Utils.setControlValue(root, "taDescriptionEn", getDescriptionen());
-        Utils.setControlValue(root, "tfArticle", getArticle());
-        Utils.setControlValue(root, "tfHierarchy", getHierarchy());
-        Utils.setControlValue(root, "tfLgbk", getLgbk());
-        Utils.setControlValue(root, "tfEndOfService", getEndofservice());
-        Utils.setControlValue(root, "tfDangerous", getDangerous());
-        Utils.setControlValue(root, "tfCountry", Countries.getCombinedName(getCountry()));
-        Utils.setControlValue(root, "tfAccessibility", CoreModule.getOrdersAccessibility().getCombineOrderAccessibility(dchain));
-        Utils.setControlValue(root, "cbxOrderable", isOrderableCalculated());
-        Utils.setControlValue(root, "tfDescription", getDescriptionru());
-        Utils.setControlValue(root, "cbxPrice", isPrice());
-        Utils.setControlValue(root, "lHistory", getHistory());
-        Utils.setControlValue(root, "tfManHier", CoreModule.getProductLgbkGroups().getFullDescription(
-                new ProductLgbk(getLgbk(), getHierarchy())));
-
-        String fileName = getFileName().isEmpty() ? getMaterial().replaceAll("[\\\\/:*?\"<>|]+", "") +
-                "_" + getArticle().replaceAll("[\\\\/:*?\"<>|]+", "") + ".pdf" : getFileName();
-
-        Utils.setControlValue(root, "tfFileName", fileName);
-        if (new File(CoreModule.getFolders().getManualsFolder().getPath() + "\\" + fileName).exists()) {
-            Utils.setColor(root, "tfFileName", Color.GREEN);
+    public void displayInEditorWindow(ProductEditorWindowController pewc) {
+        pewc.tfMaterial.setText(material);
+        pewc.taDescription.setText(descriptionru);
+        pewc.taDescription.setEditable(descriptionru != null);
+        pewc.taDescriptionEn.setText(descriptionen);
+        pewc.taDescriptionEn.setEditable(descriptionen != null);
+        pewc.tfArticle.setText(article);
+        pewc.tfHierarchy.setText(hierarchy);
+        pewc.tfLgbk.setText(lgbk);
+        pewc.tfEndOfService.setText(endofservice);
+        pewc.tfDangerous.setText(dangerous);
+        pewc.tfCountry.setText(Countries.getCombinedName(country));
+        if (dchain != null )pewc.tfAccessibility.setText(CoreModule.getOrdersAccessibility().getCombineOrderAccessibility(dchain));
+        if (price != null) {
+            pewc.cbxPrice.setSelected(price);
         } else {
-            Utils.setColor(root, "tfFileName", Color.RED);
+            pewc.cbxPrice.setIndeterminate(true);
+            pewc.cbxPrice.setDisable(true);
+        }
+        pewc.lHistory.getItems().clear();
+        pewc.lHistory.getItems().addAll(history.split("\\|"));
+        ProductLgbk pl = new ProductLgbk(this);
+        if (pl !=null) pewc.tfManHier.setText(CoreModule.getProductLgbkGroups().getFullDescription(pl));
+
+        String manualFile = "";
+        if (fileName == null) {
+            pewc.tfFileName.setText("");
+        } else if (fileName.isEmpty() && material != null && article != null) {
+            manualFile = (material +"_" + article + ".pdf").replaceAll("[\\\\/:*?\"<>|]+", "");
+            pewc.tfFileName.setText(manualFile);
+            pewc.tfFileName.setStyle(new File(manualFile).exists() ? "-fx-text-inner-color: green;" : "-fx-text-inner-color: red;");
+        } else {
+            pewc.tfFileName.setText(fileName);
+            pewc.tfFileName.setStyle(new File(fileName).exists() ? "-fx-text-inner-color: green;" : "-fx-text-inner-color: red;");
         }
 
-        Utils.setControlValue(root, "taComments", getComments());
-        Utils.setControlValue(root, "tfReplacement", getReplacement());
-
-//        Utils.setControlValue(root, "cbType", CoreModule.getProductTypes().getPreparedTypes());
-        Utils.setControlValue(root, "cbType", CoreModule.getProductTypes().getTypeById(getType_id()));
+        pewc.taComments.setText(comments);
+        pewc.taComments.setEditable(comments != null);
+        pewc.tfReplacement.setText(replacement);
+        pewc.tfReplacement.setEditable(replacement != null);
+        if (type_id != null) pewc.cbType.setValue(CoreModule.getProductTypes().getTypeById(type_id));
+        pewc.cbType.setDisable(type_id == null);
+        if (minOrder != null) pewc.tfMinOrder.setText(minOrder == 0 ? NO_DATA : String.valueOf(minOrder));
+        if (packetSize != null) pewc.tfPacketSize.setText(packetSize == 0 ? NO_DATA : String.valueOf(packetSize));
+        if (leadTime != null) pewc.tfLeadTime.setText(leadTime == 0 ? NO_DATA : String.valueOf(getLeadTimeRu()));
+        if (weight != null) pewc.tfWeight.setText(weight == 0 ? NO_DATA : String.valueOf(weight));
+        if (localPrice != null) pewc.tfLocalPrice.setText(localPrice == 0 ? NO_DATA : String.format("%,.2f", localPrice));
 
         ArrayList<String> items = CoreModule.getProductFamilies().getFamiliesNames();//add all families and display value
         items.add(0, "");
-        Utils.setControlValue(root, "cbFamily", items);
-        Utils.setControlValue(root, "tfMinOrder", minOrder == 0 ? NO_DATA : String.valueOf(minOrder));
-        Utils.setControlValue(root, "tfPacketSize", packetSize == 0 ? NO_DATA : String.valueOf(packetSize));
-        Utils.setControlValue(root, "tfLeadTime", leadTime == 0 ? NO_DATA : String.valueOf(leadTime + 14));
-        Utils.setControlValue(root, "tfWeight", weight == 0 ? NO_DATA : String.valueOf(weight));
-        Utils.setControlValue(root, "tfLocalPrice", localPrice == 0 ? NO_DATA : String.format("%,.2f", localPrice));
-
+        pewc.cbFamily.getItems().addAll(items);
         ProductFamily productFamily = getProductFamily();
         if (productFamily != null) {
-            Utils.setControlValue(root, "cbFamily", productFamily.getName());
-            Utils.setControlValue(root, "tfPm", productFamily.getResponsible());
+            pewc.cbFamily.setValue(productFamily.getName());
+            pewc.tfPm.setText(productFamily.getResponsible());
         }
     }
 
@@ -382,14 +395,6 @@ public class Product {
         this.type_id = type_id;
     }
 
-    public int getProductLine_id() {
-        return productLine_id;
-    }
-
-    public void setProductLine_id(int productLine_id) {
-        this.productLine_id = productLine_id;
-    }
-
     public String getHistory() {
         return history;
     }
@@ -439,7 +444,7 @@ public class Product {
     }
 
     public ProductFamily getProductFamily() {
-        if (family_id > 0) {
+        if (family_id != null && family_id > 0) {
             return CoreModule.getProductFamilies().getFamilyById(family_id);
         } else {
             LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
@@ -516,7 +521,7 @@ public class Product {
         return localPrice;
     }
 
-    public int getPreparedLeadTime() {
+    public int getLeadTimeRu() {
         return getLeadTime() > 0 ? getLeadTime() + 14 : 0;
     }
 

@@ -8,11 +8,12 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseButton;
 import javafx.util.Callback;
-import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.MultiEditor;
+import ui_windows.product.MultiEditorItem;
 import ui_windows.product.Product;
+import ui_windows.product.data.DataItem;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,16 +22,13 @@ import java.util.TreeSet;
 public class RequirementTypesListViews {
     private ListView<String> lvAllNorms;
     private ListView<String> lvSelectedNorms;
-    private HashSet<String> selectedGlobalNorms = new HashSet<>();
-    private Product product;
+    private HashSet<Integer> globalNorms = new HashSet<>();
     private ProductLgbk lgbk;
     private MultiEditor multiEditor;
-    boolean normsModeAdd;
 
     public RequirementTypesListViews(ProductLgbk pl, ListView<String> lvAllNorms, ListView<String> lvSelectedNorms) {
         this.lvAllNorms = lvAllNorms;
         this.lvSelectedNorms = lvSelectedNorms;
-        product = null;
         lgbk = pl;
         initListViews();
         display();
@@ -44,43 +42,75 @@ public class RequirementTypesListViews {
         display();
     }
 
-    public RequirementTypesListViews(Product product, ListView<String> lvAllNorms, ListView<String> lvSelectedNorms) {
+/*    public RequirementTypesListViews(Product product, ListView<String> lvAllNorms, ListView<String> lvSelectedNorms) {
         this.lvAllNorms = lvAllNorms;
         this.lvSelectedNorms = lvSelectedNorms;
         this.product = product;
-        lgbk = new ProductLgbk(product.getLgbk(), product.getHierarchy());
+        lgbk = new ProductLgbk(product);
         initListViews();
         display();
-    }
+    }*/
 
     public void display() {
+        HashSet<Integer> normsForDisplaying = new HashSet<>();
+
         lvAllNorms.getItems().clear();
         lvSelectedNorms.getItems().clear();
 
         lvAllNorms.getItems().addAll(CoreModule.getRequirementTypes().getAllRequirementTypesShortNames());
 
-        if (multiEditor == null) {
-            ArrayList<Integer> productNormList = product == null ? new ArrayList<>() : product.getNormsList().getIntegerItems();
+        if (multiEditor != null) {
+            MultiEditorItem multiEditorItem = new MultiEditorItem(DataItem.DATA_NORMS_MODE, MultiEditorItem.CAN_NOT_BE_SAVED);
+            multiEditorItem.compare(multiEditor.getEditedItems());
 
-            lvSelectedNorms.getItems().addListener(new ListChangeListener<String>() {
-                @Override
-                public void onChanged(Change<? extends String> c) {
-                    lvSelectedNorms.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
-                        @Override
-                        public ListCell<String> call(ListView<String> param) {
-                            return new ListCell<String>() {
-                                @Override
-                                protected void updateItem(String item, boolean empty) {
-                                    super.updateItem(item, empty);
+//            HashSet<Integer> globalNorms = new HashSet<>();
+            HashSet<Integer> productNorms = new HashSet<>();
+            for (Product product : multiEditor.getEditedItems()) {
+                globalNorms.addAll(product.getGlobalNorms());
+                productNorms.addAll(product.getNormsList().getIntegerItems());
+            }
 
-                                    if (!isEmpty()) {
-                                        setText(item);
+            if (multiEditorItem.getCommonValue() == null || (int) multiEditorItem.getCommonValue() == NormsList.ADD_TO_GLOBAL) {
+                normsForDisplaying.addAll(globalNorms);
+            }
+            normsForDisplaying.addAll(productNorms);
 
-                                        int reqId = CoreModule.getRequirementTypes().getRequirementByShortName(item).getId();
+
+        } else if (lgbk != null) {
+            TreeItem<ProductLgbk> selectedTreeItem = CoreModule.getProductLgbkGroups().getTreeItem(lgbk);
+            normsForDisplaying.addAll(selectedTreeItem.getValue().getNormsList().getIntegerItems());
+
+        }
+        initItemChangeListener(new ArrayList<>(normsForDisplaying));
+
+        lvSelectedNorms.getItems().addAll(CoreModule.getRequirementTypes().getReqTypeShortNamesByIds(new ArrayList<>(normsForDisplaying)));
+        lvAllNorms.getItems().removeAll(lvSelectedNorms.getItems());
+        sortLV(lvSelectedNorms);
+    }
+
+    private void initItemChangeListener(ArrayList<Integer> productNormList) {
+        lvSelectedNorms.getItems().addListener(new ListChangeListener<String>() {
+            @Override
+            public void onChanged(Change<? extends String> c) {
+                lvSelectedNorms.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+                    @Override
+                    public ListCell<String> call(ListView<String> param) {
+                        return new ListCell<String>() {
+                            @Override
+                            protected void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+
+                                if (!isEmpty()) {
+                                    setText(item);
+
+                                    int reqId = CoreModule.getRequirementTypes().getRequirementByShortName(item).getId();
+
+                                    if (lgbk != null) {
                                         TreeItem<ProductLgbk> selectedTreeItem = CoreModule.getProductLgbkGroups().getTreeItem(lgbk);
 
                                         while (selectedTreeItem != null) {
                                             ProductLgbk currentPrLgbk = selectedTreeItem.getValue();
+
                                             if (currentPrLgbk.getNormsList().getIntegerItems().contains(reqId)) {
                                                 if (currentPrLgbk.getNodeType() == 0) {
                                                     setStyle("-fx-font-weight: bold; -fx-text-fill: blue;");
@@ -90,67 +120,24 @@ public class RequirementTypesListViews {
                                                     setStyle("-fx-text-fill: brown;");
                                                 }
                                             }
-
                                             selectedTreeItem = selectedTreeItem.getParent();
                                         }
-
-                                        if (productNormList.contains(reqId)) {
-                                            setStyle("-fx-text-fill: red;");
+                                    } else if (multiEditor != null) {
+                                        if (globalNorms.contains(reqId)) {
+                                            setStyle("-fx-font-weight: bold; -fx-text-fill: brown;");
                                         }
-
-                                    } else {
-                                        setText(null);
-                                        setStyle("");
                                     }
+
+                                } else {
+                                    setText(null);
+                                    setStyle("");
                                 }
-                            };
-                        }
-                    });
-                }
-            });
-
-            selectedGlobalNorms.addAll(CoreModule.getRequirementTypes().getReqTypeShortNamesByIds(
-                    new ArrayList<>(CoreModule.getProductLgbkGroups().getGlobalNormIds(lgbk))));
-
-            if (product == null || (product != null && product.getNormsMode() == NormsList.ADD_TO_GLOBAL)) {
-                lvSelectedNorms.getItems().addAll(selectedGlobalNorms);
-                normsModeAdd = true;
-            } else if (product != null && product.getNormsMode() == NormsList.INSTEAD_GLOBAL) {
-
+                            }
+                        };
+                    }
+                });
             }
-
-            lvSelectedNorms.getItems().addAll(CoreModule.getRequirementTypes().getReqTypeShortNamesByIds(productNormList));
-        } else {
-            ArrayList<Integer> productNormList = new ArrayList<>();
-            for (Product prod : multiEditor.getEditedItems()) {
-                productNormList.addAll(prod.getNormsList().getIntegerItems());
-                lvSelectedNorms.getItems().addAll(CoreModule.getRequirementTypes().getReqTypeShortNamesByIds(productNormList));
-
-                LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(prod.getLgbk(), prod.getHierarchy()));
-
-                selectedGlobalNorms.addAll(CoreModule.getRequirementTypes().getReqTypeShortNamesByIds(
-                        new ArrayList<>(CoreModule.getProductLgbkGroups().getGlobalNormIds(lap.getLgbkItem()))));
-
-                if (multiEditor.getEditedItems().get(0).getNormsMode() == NormsList.ADD_TO_GLOBAL) {
-                    lvSelectedNorms.getItems().addAll(selectedGlobalNorms);
-                    normsModeAdd = true;
-                } else {
-
-                }
-            }
-
-
-
-
-        }
-
-
-
-
-
-        lvAllNorms.getItems().removeAll(lvSelectedNorms.getItems());
-
-        sortLV(lvSelectedNorms);
+        });
     }
 
     private void initListViews() {
@@ -188,16 +175,22 @@ public class RequirementTypesListViews {
 
     public void removeNorm() {
         int selectedIndex = lvSelectedNorms.getSelectionModel().getSelectedIndex();
-        if (selectedIndex > -1) {
+        boolean isGlobalNorm = globalNorms.contains(CoreModule.getRequirementTypes().getRequirementByShortName(lvSelectedNorms.getSelectionModel().getSelectedItem()).getId());
+        if (selectedIndex > -1 && !isGlobalNorm) {
             lvAllNorms.getItems().add(lvSelectedNorms.getItems().remove(selectedIndex));
             sortLV(lvAllNorms);
         }
     }
 
     public void removeAllNorms() {
-        lvAllNorms.getItems().addAll(lvSelectedNorms.getItems());
+        for (String normName : lvSelectedNorms.getItems()) {
+            boolean isGlobalNorm = globalNorms.contains(CoreModule.getRequirementTypes().getRequirementByShortName(normName).getId());
+            if (!isGlobalNorm) {
+                lvAllNorms.getItems().add(normName);
+            }
+        }
+        lvSelectedNorms.getItems().removeAll(lvAllNorms.getItems());
         sortLV(lvAllNorms);
-        lvSelectedNorms.getItems().clear();
     }
 
     private void sortLV(ListView<String> listView) {
@@ -212,7 +205,7 @@ public class RequirementTypesListViews {
 
 //        if (product.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
         if (product.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
-            onlyProduct.removeAll(selectedGlobalNorms);
+            onlyProduct.removeAll(CoreModule.getRequirementTypes().getReqTypeShortNamesByIds(new ArrayList<>(globalNorms)));
         }
 
         return new NormsList(CoreModule.getRequirementTypes().getReqTypeIdsByShortNames(onlyProduct));

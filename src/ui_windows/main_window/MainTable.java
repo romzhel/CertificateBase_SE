@@ -2,45 +2,69 @@ package ui_windows.main_window;
 
 import core.CoreModule;
 import core.Dialogs;
+import core.Module;
+import core.SharedData;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
-import javafx.scene.control.Label;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.util.Callback;
 import ui_windows.options_window.families_editor.ProductFamily;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
 import ui_windows.product.productEditorWindow.ProductEditorWindow;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static ui_windows.Mode.EDIT;
 import static ui_windows.main_window.DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION;
 
-public class MainTable {
+public class MainTable implements Module {
     private static TableView<Product> tvTable;
     private ExecutorService executorService;
 
     public MainTable(TableView<Product> tvTable) {
         MainTable.tvTable = tvTable;
-        initContextMenu();
         init();
+    }
+
+    public static void setContextMenu(ContextMenu contextMenu) {
+        tvTable.setContextMenu(contextMenu);
+    }
+
+    public static TableView<Product> getTvTable() {
+        return tvTable;
     }
 
     private void init() {
         executorService = Executors.newFixedThreadPool(10);
+        initTable(tvTable);
         initContextMenu();
-        initTable();
+        initTableColumns();
+    }
+
+    private void initTable(TableView<Product> tvTable) {
+        tvTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        tvTable.setOnMouseClicked(event -> {//double click on product
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                if (event.getClickCount() == 1) {
+                    if (getSelectedItems().size() > 0) {
+                        SharedData.SHD_SELECTED_PRODUCTS.setData(getSelectedItems());
+                    }
+                } else if (event.getClickCount() == 2) {
+                    displayEditorWindow();//open product editor window
+                }
+            }
+        });
+        tvTable.setPlaceholder(new Label("Нет данных для отображения"));
     }
 
     private void initContextMenu() {
@@ -48,7 +72,7 @@ public class MainTable {
 //        switchContextMenuData();
     }
 
-    private void initTable() {
+    private void initTableColumns() {
         String[] cols = new String[]{"material", "article", "description", "family", "endofservice",
                 "country", "dchain"};
         String[] titles = new String[]{"Заказной номер", "Артикул", "Описание", "Направление", "Окончание",
@@ -66,7 +90,7 @@ public class MainTable {
                     ProductFamily pf = pr.getProductFamily();
                     if (pf != null) {
                         return new SimpleStringProperty(pf.getName());
-                    }  else {
+                    } else {
                         return new SimpleStringProperty(pr.getLgbk().concat(" (").concat(pr.getHierarchy()).concat(")"));
                     }
                 });
@@ -125,20 +149,10 @@ public class MainTable {
         boolCol.setPrefWidth(50);
         boolCol.setStyle("-fx-alignment: CENTER");
         tvTable.getColumns().add(boolCol);
-
-        tvTable.setOnMouseClicked(event -> {//double click on product
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
-                if (event.getClickCount() == 2) {
-                    displayEditorWindow();//open product editor window
-                }
-            }
-        });
-        tvTable.setPlaceholder(new Label("Нет данных для отображения"));
-        tvTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     public void displayEditorWindow() {
-        if (tvTable.getSelectionModel().getSelectedIndex() < 0) Dialogs.showMessage("Выбор строки",
+        if (((List<Product>)SharedData.SHD_SELECTED_PRODUCTS.getData()).size() == 0) Dialogs.showMessage("Выбор строки",
                 "Нужно выбрать строку");
         else new ProductEditorWindow(EDIT, tvTable.getSelectionModel().getSelectedItems());
     }
@@ -160,15 +174,11 @@ public class MainTable {
         }
     }
 
-    public static void setContextMenu(ContextMenu contextMenu) {
-        tvTable.setContextMenu(contextMenu);
-    }
-
-    public static TableView<Product> getTvTable() {
-        return tvTable;
-    }
-
     public ObservableList<Product> getSelectedItems() {
         return tvTable.getSelectionModel().getSelectedItems();
+    }
+
+    @Override
+    public void refreshSubscribedData(SharedData sharedData, Object data) {
     }
 }

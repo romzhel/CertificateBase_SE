@@ -15,6 +15,7 @@ import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.user_editor.User;
 import ui_windows.product.Product;
 import ui_windows.request.RequestWindow;
+import utils.comparation.prices.PriceComparationWindow;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -76,6 +77,10 @@ public class MainWindowsController implements Initializable {
 
     public void openNow() {
         fileImport = new FileImport();
+    }
+
+    public void comparePriceLists(){
+        new PriceComparationWindow();
     }
 
     public void openOptionsWindow() {

@@ -190,6 +190,8 @@ public class ProductLgbkGroups {
     }
 
     public String getFullDescription(ProductLgbk productLgbk) {
+        if (productLgbk == null || productLgbk.getLgbk() == null || productLgbk.getHierarchy() == null) return "";
+
         LgbkAndParent lgbkAndParent = getLgbkAndParent(productLgbk);
         if (lgbkAndParent == null) return "";
 
@@ -197,7 +199,7 @@ public class ProductLgbkGroups {
     }
 
     public TreeItem<ProductLgbk> getTreeItem(ProductLgbk lookingForLgbk) {
-        if (treeItemRoot == null) return null;
+        if (treeItemRoot == null || lookingForLgbk == null) return null;
         if (treeItemRoot.getValue().equals(lookingForLgbk)) return treeItemRoot;
 
         for (TreeItem<ProductLgbk> groupTreeItem : treeItemRoot.getChildren()) {

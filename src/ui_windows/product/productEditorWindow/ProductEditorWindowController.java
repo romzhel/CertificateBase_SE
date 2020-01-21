@@ -2,6 +2,8 @@ package ui_windows.product.productEditorWindow;
 
 import core.CoreModule;
 import core.Dialogs;
+import database.ProductsDB;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -10,9 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
 import ui_windows.options_window.families_editor.ProductFamily;
-import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
-import ui_windows.options_window.product_lgbk.LgbkAndParent;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.profile_editor.Profile;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
@@ -28,7 +27,15 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import static core.SharedData.SHD_SELECTED_PRODUCTS;
+
 public class ProductEditorWindowController implements Initializable {
+    @FXML
+    public TextField tfMaterial;
+    @FXML
+    public TextField tfArticle;
+    @FXML
+    public TextField tfDangerous;
     @FXML
     public ComboBox<String> cbType;
     @FXML
@@ -60,25 +67,51 @@ public class ProductEditorWindowController implements Initializable {
     @FXML
     TableView<CertificateVerificationItem> tvCertVerification;
     @FXML
-    ComboBox<String> cbFamily;
+    public ComboBox<String> cbFamily;
     @FXML
-    TextField tfPm;
+    public TextField tfPm;
     @FXML
     Button btnApply;
     @FXML
     CheckBox cbxOrderable;
     @FXML
     ContextMenu cmCertActions;
-    private MultiEditor multiEditor = null;
+    @FXML
+    public ListView<String> lHistory;
+    @FXML
+    public TextField tfManHier;
+    @FXML
+    public TextField tfFileName;
+    @FXML
+    public TextField tfReplacement;
+    @FXML
+    public TextField tfMinOrder;
+    @FXML
+    public TextField tfPacketSize;
+    @FXML
+    public TextField tfLeadTime;
+    @FXML
+    public TextField tfWeight;
+    @FXML
+    public TextField tfLocalPrice;
+    private MultiEditor multiEditor;
     private CertificateVerificationTable certificateVerificationTable;
     private ComboBoxEqTypeSelector comboBoxEqTypeSelector;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ObservableList<Product> editedItems = null;
+        if (SHD_SELECTED_PRODUCTS.getData() instanceof ObservableList) {
+            editedItems = SHD_SELECTED_PRODUCTS.getData();
+        } else {
+            Dialogs.showMessage("Подробные сведения", "Ошибка определения открываемых элементов");
+        }
+
         certificateVerificationTable = new CertificateVerificationTable(this);
-        certificateVerificationTable.display(CoreModule.getProducts().getTableView().getSelectionModel().getSelectedItems(),
-                new CheckParameters());
+        certificateVerificationTable.display(editedItems, new CheckParameters());
         comboBoxEqTypeSelector = new ComboBoxEqTypeSelector(cbType, certificateVerificationTable);
+
+        multiEditor = new MultiEditor(editedItems, this);
 
         cmCertActions.getItems().get(3).setDisable(CoreModule.getUsers().getCurrentUser().getProfile().getName().equals(Profile.COMMON_ACCESS));
 
@@ -89,18 +122,6 @@ public class ProductEditorWindowController implements Initializable {
         });
 
         initFamilySelector();
-        initBlockSelector();
-    }
-
-    private void initBlockSelector() {
-        cbxOrderable.setOnMouseClicked(event -> {
-            Product pr = ProductEditorWindowActions.getEditedItem();
-            OrderAccessibility oa = CoreModule.getOrdersAccessibility().getOrderAccessibilityByStatusCode(pr.getDchain());
-
-            boolean isOrderable = oa == null ? false : oa.isOrderable();
-            cbxOrderable.setSelected(isOrderable);
-            cbxOrderable.setIndeterminate(!isOrderable);
-        });
     }
 
     private void initFamilySelector() {
@@ -113,14 +134,17 @@ public class ProductEditorWindowController implements Initializable {
     }
 
     public void apply() {
-        ProductEditorWindowActions.apply(apRoot, multiEditor);
-        ProductEditorWindowActions.setMultiEditor(null);
-        multiEditor = null;
+        if (multiEditor.checkAndSaveChanges()) {
+            if (new ProductsDB().updateData(multiEditor.getEditedItems())) {
+                CoreModule.getFilter().apply();
+                ((Stage) tvCertVerification.getScene().getWindow()).close();
+            }
+        } else {
+            ((Stage) tvCertVerification.getScene().getWindow()).close();
+        }
     }
 
     public void cancel() {
-        ProductEditorWindowActions.setMultiEditor(null);
-        multiEditor = null;
         ((Stage) tvCertVerification.getScene().getWindow()).close();
     }
 

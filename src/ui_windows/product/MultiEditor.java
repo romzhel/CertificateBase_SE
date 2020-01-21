@@ -1,85 +1,81 @@
 package ui_windows.product;
 
 import core.CoreModule;
+import core.Dialogs;
 import javafx.collections.ObservableList;
+import ui_windows.main_window.file_import_window.FileImportParameter;
+import ui_windows.main_window.file_import_window.SingleProductsComparator;
 import ui_windows.product.data.DataItem;
 import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 import utils.Utils;
+import utils.comparation.products.ComparationParameterSets;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static ui_windows.product.MultiEditorItem.*;
-import static ui_windows.product.data.DataItem.*;
-
 public class MultiEditor {
+    public static int MODE_NO_ITEMS = 0;
+    public static int MODE_SINGLE = 1;
+    public static int MODE_MULTI = 2;
     private ObservableList<Product> editedItems;
-    private ArrayList<MultiEditorItem> fieldsAndControls;
+    private ArrayList<MultiEditorItem> comparedFields;
+    private Product resultProduct;
+    private ProductEditorWindowController pewc;
 
     public MultiEditor(ObservableList<Product> editedItems, ProductEditorWindowController pewc) {
+        this.pewc = pewc;
         this.editedItems = editedItems;
-        fieldsAndControls = new ArrayList<>();
-        fieldsAndControls.add(new MultiEditorItem(DATA_IS_IN_PRICE, pewc.cbxPrice, CAN_BE_SAVED));
-        fieldsAndControls.add(new MultiEditorItem(DATA_LGBK, pewc.tfLgbk, CAN_NOT_BE_SAVED));
-        fieldsAndControls.add(new MultiEditorItem(DATA_HIERARCHY, pewc.tfHierarchy, CAN_NOT_BE_SAVED));
-        fieldsAndControls.add(new MultiEditorItem(DATA_DCHAIN_WITH_COMMENT, pewc.tfAccessibility, CAN_NOT_BE_SAVED));//пишется в базу с расшифровкой, НЕ ВКЛЮЧАТЬ
-        fieldsAndControls.add(new MultiEditorItem(DATA_SERVICE_END, pewc.tfEndOfService, CAN_NOT_BE_SAVED));
-        fieldsAndControls.add(new MultiEditorItem(DATA_COUNTRY_WITH_COMMENTS, pewc.tfCountry, CAN_NOT_BE_SAVED));//пишется в базу с расшифровкой, НЕ ВКЛЮЧАТЬ
-        fieldsAndControls.add(new MultiEditorItem(DATA_COMMENT, pewc.taComments, CAN_BE_SAVED));
-        fieldsAndControls.add(new MultiEditorItem(DATA_TYPE, pewc.cbType, CAN_BE_SAVED));
-        fieldsAndControls.add(new MultiEditorItem(DATA_DESCRIPTION_EN, pewc.taDescription, CAN_BE_SAVED));
-        fieldsAndControls.add(new MultiEditorItem(DATA_DESCRIPTION_RU, pewc.taDescriptionEn, CAN_BE_SAVED));
-
-        compareAndDisplay();
-    }
-
-    public MultiEditor(ObservableList<Product> editedItems, MultiEditorItem... fieldsAndControls) {
-        this.editedItems = editedItems;
-        this.fieldsAndControls = new ArrayList<>();
-        this.fieldsAndControls.addAll(Arrays.asList(fieldsAndControls));
-
+        this.comparedFields = new ArrayList<>();
+        comparedFields.addAll(editedItems.size() > 1 ?
+                Arrays.asList(ComparationParameterSets.getMultiProductComparationParameters()) :
+                Arrays.asList(ComparationParameterSets.getSingleProductComparationParameters()));
         compareAndDisplay();
     }
 
     public void compareAndDisplay() {
-        for (MultiEditorItem fac : fieldsAndControls) {
+        resultProduct = new Product();
+        for (MultiEditorItem fac : comparedFields) {
             fac.compare(editedItems);
-            fac.display();
+            fac.getDataItem().getField().setAccessible(true);
+            try {
+                fac.getDataItem().getField().set(resultProduct, fac.getCommonValue());
+            } catch (IllegalAccessException e) {
+                Dialogs.showMessage("Мультиредактор", "Ошибка сохранения результатов сравнения " + e.getMessage());
+            }
+//            fac.setUiAccessibility();
+        }
+        if (editedItems.size() == 1) {
+            editedItems.get(0).displayInEditorWindow(pewc);
+        } else if (editedItems.size() > 1) {
+            resultProduct.displayInEditorWindow(pewc);
         }
     }
 
-    public boolean checkAndApplyChanges() {
-        String changesHistory = "";
-        for (MultiEditorItem fac : fieldsAndControls) {
-            if (fac.isValueChanged()) {
-                changesHistory = changesHistory.concat(fac.getDataItem().getField().getName().concat(": "))
-                        .concat(String.valueOf(fac.getCommonValue())).concat(" -> ").concat(String.valueOf(fac.getNewValue()));
-            }
+    public boolean checkAndSaveChanges() {
+        resultProduct = new Product(pewc);
+        boolean haveChanges = false;
+        FileImportParameter[] parameters = new FileImportParameter[comparedFields.size()];
+        int index = 0;
+        for (MultiEditorItem mei : comparedFields) {
+            parameters[index++] = new FileImportParameter(mei);
         }
 
-        if (!changesHistory.isEmpty()) {
-            changesHistory = Utils.getDateTime().concat(", ").concat(changesHistory).concat(", ")
-                    .concat(CoreModule.getUsers().getCurrentUser().getSurname());
+        SingleProductsComparator comparator;
+        for (Product product : editedItems) {
+            comparator = new SingleProductsComparator(product, resultProduct, true, parameters);
+            haveChanges |= comparator.getResult().isNeedUpdateInDB();
 
-            for (Product product : editedItems) {
-                for (MultiEditorItem fac : fieldsAndControls) {
-                    if (fac.isCanBeSaved() && fac.isValueChanged()) {
-                        Field field = fac.getDataItem().getField();
-                        field.setAccessible(true);
-                        try {
-                            field.set(product, fac.getNewValue());
-                            product.setHistory(product.getHistory().isEmpty() ? changesHistory :
-                                    product.getHistory().concat("|").concat(changesHistory));
-                        } catch (IllegalAccessException e) {
-                            System.out.println("Multieditor, exeption of saving " + field.getName() + " = " + fac.getCommonValue());
-                        }
-                    }
-                }
+            if (haveChanges) {
+                String oldHistory = product.getHistory();
+                String newHistory = Utils.getDateTime().concat(comparator.getResult().getHistoryComment().concat(", ")
+                        .concat(CoreModule.getUsers().getCurrentUser().getSurname()));
+
+                product.setHistory(oldHistory != null && !oldHistory.isEmpty() ?
+                        oldHistory.concat("|").concat(newHistory) :
+                        newHistory);
             }
         }
-
-        return !changesHistory.isEmpty();
+        return haveChanges;
     }
 
     public ObservableList<Product> getEditedItems() {
@@ -87,11 +83,20 @@ public class MultiEditor {
     }
 
     public MultiEditorItem getMultiEditorItem(DataItem dataItem) {
-        for (MultiEditorItem fac : fieldsAndControls) {
+        for (MultiEditorItem fac : comparedFields) {
             if (fac.getDataItem().equals(dataItem)) {
                 return fac;
             }
         }
         return null;
+    }
+
+    public int getMode() {
+        return editedItems.size() == 0 ? MODE_NO_ITEMS :
+                editedItems.size() == 1 ? MODE_SINGLE : MODE_MULTI;
+    }
+
+    public Product getSingleEditedItem() {
+        return editedItems.get(0);
     }
 }

@@ -23,7 +23,7 @@ import java.util.HashSet;
 
 public class MainTableContextMenuFactory {
     private static final String SPACE = "     ";
-    public static final MenuItem MENU_OPEN_ITEM = new MenuItem(SPACE + "Подробные сведения" + SPACE);
+    public static final MenuItem MENU_OPEN_ITEM = new MenuItem(SPACE + "Редактировать" + SPACE);
     public static final MenuItem MENU_DELETE_ITEMS_FROM_LIST = new MenuItem(SPACE + "Удалить из списка" + SPACE);
     public static final MenuItem MENU_DELETE_ALL_ITEMS = new MenuItem(SPACE + "Очистить список" + SPACE);
     public static final MenuItem MENU_ADD_ITEM_TO_CUSTOM = new MenuItem(SPACE + "Добавить к выбору" + SPACE);
@@ -38,6 +38,7 @@ public class MainTableContextMenuFactory {
         MENU_DELETE_ITEMS_FROM_LIST.setOnAction(event -> {
             ObservableList<Product> itemsForDelete = MainWindow.getMainTable().getSelectedItems();
             CoreModule.getCustomItems().removeAll(itemsForDelete);
+            CoreModule.getCurrentItems().removeAll(itemsForDelete);
             CoreModule.getProducts().getTableView().getItems().removeAll(itemsForDelete);
             mainTable.refresh();
         });
