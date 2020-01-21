@@ -4,7 +4,7 @@ package core;
 import java.util.ArrayList;
 
 public enum SharedData {
-    DATA_SET, DISPLAYED_DATA, FILTER_PARAMETERS, SELECTED_PRODUCTS;
+    SHD_DATA_SET, SHD_DISPLAYED_DATA, SHD_FILTER_PARAMETERS, SHD_SELECTED_PRODUCTS;
 
     private Object data;
     private ArrayList<Module> subscribers;

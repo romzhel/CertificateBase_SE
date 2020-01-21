@@ -20,6 +20,7 @@ import ui_windows.product.certificatesChecker.CheckParameters;
 import ui_windows.product.productEditorWindow.ProductEditorWindow;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -56,7 +57,7 @@ public class MainTable implements Module {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 1) {
                     if (getSelectedItems().size() > 0) {
-                        SharedData.SELECTED_PRODUCTS.setData(getSelectedItems());
+                        SharedData.SHD_SELECTED_PRODUCTS.setData(getSelectedItems());
                     }
                 } else if (event.getClickCount() == 2) {
                     displayEditorWindow();//open product editor window
@@ -151,7 +152,7 @@ public class MainTable implements Module {
     }
 
     public void displayEditorWindow() {
-        if (tvTable.getSelectionModel().getSelectedIndex() < 0) Dialogs.showMessage("Выбор строки",
+        if (((List<Product>)SharedData.SHD_SELECTED_PRODUCTS.getData()).size() == 0) Dialogs.showMessage("Выбор строки",
                 "Нужно выбрать строку");
         else new ProductEditorWindow(EDIT, tvTable.getSelectionModel().getSelectedItems());
     }

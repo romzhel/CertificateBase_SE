@@ -1,5 +1,7 @@
 package ui_windows.product.productEditorWindow.configNormsWindow;
 
+import core.SharedData;
+import javafx.collections.ObservableList;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -10,7 +12,6 @@ import ui_windows.product.MultiEditor;
 import ui_windows.product.MultiEditorItem;
 import ui_windows.product.Product;
 import ui_windows.product.productEditorWindow.CertificateVerificationTable;
-import ui_windows.product.productEditorWindow.ProductEditorWindowActions;
 
 import java.util.ArrayList;
 
@@ -31,8 +32,8 @@ public class ConfigNormsWindow extends OrdinalWindow {
 
         RequirementTypesListViews requirementTypesListViews;
 
-        if (multiEditor == null) {
-            Product editedProduct = ProductEditorWindowActions.getEditedItem();
+        if (multiEditor.getMode() == MultiEditor.MODE_SINGLE) {
+            Product editedProduct = multiEditor.getEditedItems().get(0);
             cnwc.setNormsModeSaved(editedProduct.getNormsMode());
 
             if (editedProduct.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
@@ -69,9 +70,6 @@ public class ConfigNormsWindow extends OrdinalWindow {
                 cnwc.rbAddToGlobal.setSelected(false);
                 cnwc.rbInsteadGlobal.setSelected(false);
             }
-            /*MultiEditor.FieldsAndControls fac = multiEditor.getFieldAndControl(cnwc.rbInsteadGlobal);
-            cnwc.rbInsteadGlobal.setSelected(true);
-            cnwc.rbInsteadGlobal.setDisable(true);*/
 
             requirementTypesListViews = new RequirementTypesListViews(multiEditor, cnwc.lvAllNorms, cnwc.lvSelectedNorms);
             cnwc.setRequirementTypesListViews(requirementTypesListViews);

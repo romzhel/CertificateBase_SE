@@ -175,8 +175,12 @@ public class Product {
         pewc.tfDangerous.setText(dangerous);
         pewc.tfCountry.setText(Countries.getCombinedName(country));
         if (dchain != null )pewc.tfAccessibility.setText(CoreModule.getOrdersAccessibility().getCombineOrderAccessibility(dchain));
-        if (price != null) pewc.cbxPrice.setSelected(price);
-        else pewc.cbxPrice.setIndeterminate(true);
+        if (price != null) {
+            pewc.cbxPrice.setSelected(price);
+        } else {
+            pewc.cbxPrice.setIndeterminate(true);
+            pewc.cbxPrice.setDisable(true);
+        }
         pewc.lHistory.getItems().clear();
         pewc.lHistory.getItems().addAll(history.split("\\|"));
         ProductLgbk pl = new ProductLgbk(this);
@@ -434,7 +438,7 @@ public class Product {
     }
 
     public ProductFamily getProductFamily() {
-        if (family_id > 0) {
+        if (family_id != null && family_id > 0) {
             return CoreModule.getProductFamilies().getFamilyById(family_id);
         } else {
             LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));

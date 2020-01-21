@@ -2,6 +2,9 @@ package ui_windows.product.productEditorWindow;
 
 import core.CoreModule;
 import core.Dialogs;
+import core.SharedData;
+import database.ProductsDB;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -20,6 +23,7 @@ import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.product.certificatesChecker.CheckParameters;
 import ui_windows.product.productEditorWindow.configNormsWindow.ConfigNormsWindow;
 import utils.Utils;
+import utils.comparation.ComparationParameterSets;
 
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import java.io.File;
@@ -29,6 +33,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static core.SharedData.SHD_SELECTED_PRODUCTS;
 
 public class ProductEditorWindowController implements Initializable {
     @FXML
@@ -95,16 +101,24 @@ public class ProductEditorWindowController implements Initializable {
     public TextField tfWeight;
     @FXML
     public TextField tfLocalPrice;
-    private MultiEditor multiEditor = null;
+    private MultiEditor multiEditor;
     private CertificateVerificationTable certificateVerificationTable;
     private ComboBoxEqTypeSelector comboBoxEqTypeSelector;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ObservableList<Product> editedItems = null;
+        if (SHD_SELECTED_PRODUCTS.getData() instanceof ObservableList) {
+            editedItems = SHD_SELECTED_PRODUCTS.getData();
+        } else {
+            Dialogs.showMessage("Подробные сведения", "Ошибка определения открываемых элементов");
+        }
+
         certificateVerificationTable = new CertificateVerificationTable(this);
-        certificateVerificationTable.display(CoreModule.getProducts().getTableView().getSelectionModel().getSelectedItems(),
-                new CheckParameters());
+        certificateVerificationTable.display(editedItems, new CheckParameters());
         comboBoxEqTypeSelector = new ComboBoxEqTypeSelector(cbType, certificateVerificationTable);
+
+        multiEditor = new MultiEditor(editedItems, this);
 
         cmCertActions.getItems().get(3).setDisable(CoreModule.getUsers().getCurrentUser().getProfile().getName().equals(Profile.COMMON_ACCESS));
 
@@ -115,18 +129,6 @@ public class ProductEditorWindowController implements Initializable {
         });
 
         initFamilySelector();
-        initBlockSelector();
-    }
-
-    private void initBlockSelector() {
-        cbxOrderable.setOnMouseClicked(event -> {
-            Product pr = ProductEditorWindowActions.getEditedItem();
-            OrderAccessibility oa = CoreModule.getOrdersAccessibility().getOrderAccessibilityByStatusCode(pr.getDchain());
-
-            boolean isOrderable = oa == null ? false : oa.isOrderable();
-            cbxOrderable.setSelected(isOrderable);
-            cbxOrderable.setIndeterminate(!isOrderable);
-        });
     }
 
     private void initFamilySelector() {
@@ -139,15 +141,17 @@ public class ProductEditorWindowController implements Initializable {
     }
 
     public void apply() {
-        ProductEditorWindowActions.apply(this, multiEditor);
-        ProductEditorWindowActions.setMultiEditor(null);
-        multiEditor = null;
-        ((Stage) tvCertVerification.getScene().getWindow()).close();
+        if (multiEditor.checkAndSaveChanges()) {
+            if (new ProductsDB().updateData(multiEditor.getEditedItems())) {
+                CoreModule.getFilter().apply();
+                ((Stage) tvCertVerification.getScene().getWindow()).close();
+            }
+        } else {
+            ((Stage) tvCertVerification.getScene().getWindow()).close();
+        }
     }
 
     public void cancel() {
-        ProductEditorWindowActions.setMultiEditor(null);
-        multiEditor = null;
         ((Stage) tvCertVerification.getScene().getWindow()).close();
     }
 

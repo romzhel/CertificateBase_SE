@@ -1,7 +1,9 @@
 package ui_windows.product.productEditorWindow.configNormsWindow;
 
 import core.CoreModule;
+import core.SharedData;
 import database.ProductsDB;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
@@ -12,7 +14,6 @@ import ui_windows.options_window.requirements_types_editor.RequirementTypesListV
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
 import ui_windows.product.productEditorWindow.CertificateVerificationTable;
-import ui_windows.product.productEditorWindow.ProductEditorWindowActions;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class ConfigNormsWindowController implements Initializable {
     public void apply() {
         ArrayList<Product> alp = new ArrayList<>();
         if (multiEditor == null) {
-            Product editedProduct = ProductEditorWindowActions.getEditedItem();
+            Product editedProduct = ((ObservableList<Product>) SharedData.SHD_SELECTED_PRODUCTS.getData()).get(0);
             editedProduct.setNormsList(requirementTypesListViews.getProductNormsListForSave(editedProduct));
             alp.add(editedProduct);
         } else {
@@ -73,7 +74,7 @@ public class ConfigNormsWindowController implements Initializable {
 
     public void close() {
             if (multiEditor == null) {
-                ProductEditorWindowActions.getEditedItem().setNormsMode(normsModeSaved);
+                ((ObservableList<Product>) SharedData.SHD_SELECTED_PRODUCTS.getData()).get(0).setNormsMode(normsModeSaved);
             } else {
                 for (int i = 0; i < multiEditor.getEditedItems().size(); i++) {
                     multiEditor.getEditedItems().get(i).setNormsMode(normsModesSaved.get(i));
