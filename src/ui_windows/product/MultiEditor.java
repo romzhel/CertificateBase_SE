@@ -95,4 +95,8 @@ public class MultiEditor {
         return editedItems.size() == 0 ? MODE_NO_ITEMS :
                 editedItems.size() == 1 ? MODE_SINGLE : MODE_MULTI;
     }
+
+    public Product getSingleEditedItem() {
+        return editedItems.get(0);
+    }
 }

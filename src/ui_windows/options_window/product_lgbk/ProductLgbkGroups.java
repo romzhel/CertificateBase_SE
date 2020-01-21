@@ -199,7 +199,7 @@ public class ProductLgbkGroups {
     }
 
     public TreeItem<ProductLgbk> getTreeItem(ProductLgbk lookingForLgbk) {
-        if (treeItemRoot == null) return null;
+        if (treeItemRoot == null || lookingForLgbk == null) return null;
         if (treeItemRoot.getValue().equals(lookingForLgbk)) return treeItemRoot;
 
         for (TreeItem<ProductLgbk> groupTreeItem : treeItemRoot.getChildren()) {

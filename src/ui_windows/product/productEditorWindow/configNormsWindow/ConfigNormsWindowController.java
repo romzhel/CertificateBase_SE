@@ -1,24 +1,25 @@
 package ui_windows.product.productEditorWindow.configNormsWindow;
 
 import core.CoreModule;
-import core.SharedData;
 import database.ProductsDB;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.requirements_types_editor.RequirementTypesListViews;
 import ui_windows.product.MultiEditor;
+import ui_windows.product.MultiEditorItem;
 import ui_windows.product.Product;
 import ui_windows.product.productEditorWindow.CertificateVerificationTable;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.ResourceBundle;
+
+import static ui_windows.product.data.DataItem.DATA_NORMS_MODE;
 
 public class ConfigNormsWindowController implements Initializable {
     @FXML
@@ -31,9 +32,7 @@ public class ConfigNormsWindowController implements Initializable {
     RadioButton rbInsteadGlobal;
     private CertificateVerificationTable certificateVerificationTable;
     private RequirementTypesListViews requirementTypesListViews;
-    //    private Product editedProduct;
     private MultiEditor multiEditor;
-    private int normsModeSaved;
     private ArrayList<Integer> normsModesSaved;
     private ArrayList<String> normsValuesSaved;
 
@@ -41,17 +40,46 @@ public class ConfigNormsWindowController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
     }
 
+    public void init(MultiEditor multiEditor, CertificateVerificationTable certificateVerificationTable) {
+        this.multiEditor = multiEditor;
+        this.certificateVerificationTable = certificateVerificationTable;
+
+        ToggleGroup group = new ToggleGroup();
+        rbAddToGlobal.setToggleGroup(group);
+        rbInsteadGlobal.setToggleGroup(group);
+        saveExistingParameters();
+
+        requirementTypesListViews = new RequirementTypesListViews(multiEditor, lvAllNorms, lvSelectedNorms);
+        requirementTypesListViews.display();
+
+        group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            for (Product prod : multiEditor.getEditedItems()) {
+                prod.setNormsMode(rbAddToGlobal.isSelected() ? NormsList.ADD_TO_GLOBAL : NormsList.INSTEAD_GLOBAL);
+            }
+            requirementTypesListViews.display();
+        });
+
+        MultiEditorItem multiEditorItem = new MultiEditorItem(DATA_NORMS_MODE, MultiEditorItem.CAN_NOT_BE_SAVED);
+        multiEditorItem.compare(multiEditor.getEditedItems());
+        Object commonValue = multiEditorItem.getCommonValue();
+
+        if (commonValue != null && (int) commonValue == NormsList.ADD_TO_GLOBAL) {
+            rbAddToGlobal.setSelected(true);
+        } else if (commonValue != null && (int) commonValue == NormsList.INSTEAD_GLOBAL) {
+            rbInsteadGlobal.setSelected(true);
+        } else {
+            rbAddToGlobal.setSelected(false);
+            rbInsteadGlobal.setSelected(false);
+        }
+    }
+
     public void apply() {
         ArrayList<Product> alp = new ArrayList<>();
-        if (multiEditor == null) {
-            Product editedProduct = ((ObservableList<Product>) SharedData.SHD_SELECTED_PRODUCTS.getData()).get(0);
-            editedProduct.setNormsList(requirementTypesListViews.getProductNormsListForSave(editedProduct));
-            alp.add(editedProduct);
-        } else {
-            if (rbAddToGlobal.isSelected() || rbInsteadGlobal.isSelected()) {
-                for (Product product : multiEditor.getEditedItems()) {
-                    product.setNormsList(requirementTypesListViews.getProductNormsListForSave(product));
-                }
+
+        if (rbAddToGlobal.isSelected() || rbInsteadGlobal.isSelected()) {
+            for (Product product : multiEditor.getEditedItems()) {
+                product.setNormsMode(rbAddToGlobal.isSelected() ? NormsList.ADD_TO_GLOBAL : NormsList.INSTEAD_GLOBAL);
+                product.setNormsList(requirementTypesListViews.getProductNormsListForSave(product));
                 alp.addAll(multiEditor.getEditedItems());
             }
         }
@@ -63,8 +91,6 @@ public class ConfigNormsWindowController implements Initializable {
         }
 
         if (saveToDbResult) {
-            /*boolean isEqTypeFilter = ((ProductEditorWindowController) ProductEditorWindow.getLoader().getController()).rmiTypeFilter.isSelected();
-            ProductEditorWindowActions.fillCertificateVerificationTable(isEqTypeFilter);*/
             CoreModule.getProducts().getTableView().refresh();
             closeWindow();
         }
@@ -73,16 +99,20 @@ public class ConfigNormsWindowController implements Initializable {
     }
 
     public void close() {
-            if (multiEditor == null) {
-                ((ObservableList<Product>) SharedData.SHD_SELECTED_PRODUCTS.getData()).get(0).setNormsMode(normsModeSaved);
-            } else {
-                for (int i = 0; i < multiEditor.getEditedItems().size(); i++) {
-                    multiEditor.getEditedItems().get(i).setNormsMode(normsModesSaved.get(i));
-                    multiEditor.getEditedItems().get(i).setNormsList(new NormsList(normsValuesSaved.get(i)));
-                }
-            }
-
+        for (int i = 0; i < multiEditor.getEditedItems().size(); i++) {
+            multiEditor.getEditedItems().get(i).setNormsMode(normsModesSaved.get(i));
+            multiEditor.getEditedItems().get(i).setNormsList(new NormsList(normsValuesSaved.get(i)));
+        }
         closeWindow();
+    }
+
+    private void saveExistingParameters() {
+        normsModesSaved = new ArrayList<>();
+        normsValuesSaved = new ArrayList<>();
+        for (Product product : multiEditor.getEditedItems()) {
+            normsModesSaved.add(product.getNormsMode());
+            normsValuesSaved.add(product.getNormsList().getStringLine());
+        }
     }
 
     public void closeWindow() {
@@ -103,69 +133,5 @@ public class ConfigNormsWindowController implements Initializable {
 
     public void removeAllNorms() {
         requirementTypesListViews.removeAllNorms();
-    }
-
-    public MultiEditor getMultiEditor() {
-        return multiEditor;
-    }
-
-    public void setMultiEditor(MultiEditor multiEditor) {
-        this.multiEditor = multiEditor;
-    }
-
-    public RequirementTypesListViews getRequirementTypesListViews() {
-        return requirementTypesListViews;
-    }
-
-    public void setRequirementTypesListViews(RequirementTypesListViews requirementTypesListViews) {
-        this.requirementTypesListViews = requirementTypesListViews;
-    }
-
-    public ListView<String> getLvAllNorms() {
-        return lvAllNorms;
-    }
-
-    public void setLvAllNorms(ListView<String> lvAllNorms) {
-        this.lvAllNorms = lvAllNorms;
-    }
-
-    public ListView<String> getLvSelectedNorms() {
-        return lvSelectedNorms;
-    }
-
-    public void setLvSelectedNorms(ListView<String> lvSelectedNorms) {
-        this.lvSelectedNorms = lvSelectedNorms;
-    }
-
-    public RadioButton getRbAddToGlobal() {
-        return rbAddToGlobal;
-    }
-
-    public void setRbAddToGlobal(RadioButton rbAddToGlobal) {
-        this.rbAddToGlobal = rbAddToGlobal;
-    }
-
-    public RadioButton getRbInsteadGlobal() {
-        return rbInsteadGlobal;
-    }
-
-    public void setRbInsteadGlobal(RadioButton rbInsteadGlobal) {
-        this.rbInsteadGlobal = rbInsteadGlobal;
-    }
-
-    public void setCertificateVerificationTable(CertificateVerificationTable certificateVerificationTable) {
-        this.certificateVerificationTable = certificateVerificationTable;
-    }
-
-    public void setNormsModeSaved(int normsModeSaved) {
-        this.normsModeSaved = normsModeSaved;
-    }
-
-    public void setNormsModesSaved(ArrayList<Integer> normsModesSaved) {
-        this.normsModesSaved = normsModesSaved;
-    }
-
-    public void setNormsValuesSaved(ArrayList<String> normsValuesSaved) {
-        this.normsValuesSaved = normsValuesSaved;
     }
 }

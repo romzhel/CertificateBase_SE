@@ -504,6 +504,28 @@ public enum DataItem {
         public Object getValue(Product product) {
             return product.getFileName();
         }
+    },
+    DATA_NORMS_ID(37, "Список норм для продукта (коды)", null) {
+        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(product.getNormsList().getStringLine());
+            cell.setCellStyle(CELL_ALIGN_LEFT);
+        }
+
+        public Object getValue(Product product) {
+            return product.getNormsList().getIntegerItems();
+        }
+    },
+    DATA_GLOBAL_MORMS_ID(38, "Список глобальных норм для продукта", null) {
+        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(new NormsList(product.getGlobalNorms()).getStringLine());
+            cell.setCellStyle(CELL_ALIGN_LEFT);
+        }
+
+        public Object getValue(Product product) {
+            return product.getGlobalNorms();
+        }
     };
 
     private int id;
