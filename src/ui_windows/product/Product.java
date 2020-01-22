@@ -69,8 +69,8 @@ public class Product {
 
         lgbk = pewc.tfLgbk.getText();
         hierarchy = pewc.tfHierarchy.getText();
-        LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
-        int calcFamilyId = lap.getProductFamily().getId();
+        ProductFamily pf = getProductFamily();
+        int calcFamilyId = pf != null ? pf.getId() : -1;
         int uiFamilyId = CoreModule.getProductFamilies().getFamilyIdByName(pewc.cbFamily.getValue());
         family_id = calcFamilyId == uiFamilyId ? 0 : uiFamilyId;
 
