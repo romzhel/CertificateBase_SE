@@ -69,8 +69,8 @@ public class Product {
 
         lgbk = pewc.tfLgbk.getText();
         hierarchy = pewc.tfHierarchy.getText();
-        LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
-        int calcFamilyId = lap.getProductFamily().getId();
+        ProductFamily pf = getProductFamily();
+        int calcFamilyId = pf != null ? pf.getId() : -1;
         int uiFamilyId = CoreModule.getProductFamilies().getFamilyIdByName(pewc.cbFamily.getValue());
         family_id = calcFamilyId == uiFamilyId ? 0 : uiFamilyId;
 
@@ -158,8 +158,11 @@ public class Product {
 
     private double getDoubleFromString(String text) {
         if (text == null || text.isEmpty()) return 0;
+
+        boolean textHasDevider = text.matches("\\d+\\.+\\d+[.,]+\\d+");
+        if (textHasDevider) text = text.replaceFirst("\\.", "");
+
         try {
-            text = text.replaceAll("\\.", "");
             text = text.replaceAll("\\,", ".");
             return Double.parseDouble(text);
         } catch (Exception e) {
