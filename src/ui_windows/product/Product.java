@@ -158,8 +158,11 @@ public class Product {
 
     private double getDoubleFromString(String text) {
         if (text == null || text.isEmpty()) return 0;
+
+        boolean textHasDevider = text.matches("\\d+\\.+\\d+[.,]+\\d+");
+        if (textHasDevider) text = text.replaceFirst("\\.", "");
+
         try {
-            text = text.replaceAll("\\.", "");
             text = text.replaceAll("\\,", ".");
             return Double.parseDouble(text);
         } catch (Exception e) {
