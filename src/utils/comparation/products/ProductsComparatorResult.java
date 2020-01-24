@@ -134,4 +134,34 @@ public class ProductsComparatorResult {
         });
     }
 
+    public void setGoneItems(ArrayList<Product> goneItems) {
+        this.goneItems = goneItems;
+
+        for (Product product:goneItems) {
+            XSSFRow row = sheet.createRow(rowNum++);
+
+            int colIndex = 0;
+            XSSFCellStyle style = workbook.createCellStyle();
+            style.setAlignment(HorizontalAlignment.LEFT);
+//            for (String text : line) {
+            ProductFamily pf = product.getProductFamily();
+            XSSFCell cell = row.createCell(colIndex++, CellType.STRING);
+            cell.setCellStyle(style);
+            cell.setCellValue(pf != null ? pf.getName() : "");
+
+            colIndex++;
+
+            cell = row.createCell(colIndex++, CellType.STRING);
+            cell.setCellStyle(style);
+            cell.setCellValue(product.getMaterial());
+
+            cell = row.createCell(colIndex++, CellType.STRING);
+            cell.setCellStyle(style);
+            cell.setCellValue(product.getArticle());
+
+            cell = row.createCell(colIndex++, CellType.STRING);
+            cell.setCellStyle(style);
+            cell.setCellValue("gone");
+        }
+    }
 }

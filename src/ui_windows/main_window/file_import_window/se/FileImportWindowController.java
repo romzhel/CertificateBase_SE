@@ -1,19 +1,25 @@
 package ui_windows.main_window.file_import_window.se;
 
 import core.Dialogs;
-import javafx.collections.ObservableList;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
-import ui_windows.main_window.file_import_window.FileImport;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.main_window.file_import_window.FileImportTable;
+import ui_windows.product.data.DataItem;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+
+import static ui_windows.product.data.DataItem.DATA_EMPTY;
+import static ui_windows.product.data.DataItem.DATA_ORDER_NUMBER;
 
 public class FileImportWindowController implements Initializable {
     private FileImport fileImport;
@@ -31,13 +37,30 @@ public class FileImportWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         new FileImportTable(tvFields);
+    }
 
-        cbSheetNames.valueProperty().addListener((observable, oldValue, newValue) ->
-                fileImport.displayTitlesAndMapping(cbSheetNames.getItems().indexOf(newValue)));
+    public void init(FileImport fileImport){
+        this.fileImport = fileImport;
+        cbSheetNames.getItems().addAll(fileImport.getExcelFile().getSheetsName());
+        cbSheetNames.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                tvFields.getItems().clear();
+                int sheetIndex = cbSheetNames.getItems().indexOf(newValue);
+                ArrayList<FileImportParameter> parameters = fileImport.getExcelFile().getImportParameters(sheetIndex);
+                tvFields.getItems().addAll(parameters);
+            }
+        });
+        cbSheetNames.getSelectionModel().select(0);
+        cbxDelPrevStat.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != oldValue) {
+                fileImport.setDeleteOldStatistic(newValue);
+            }
+        });
     }
 
     public void startImport() {
-        if (fileImport.checkNameDoubles()) {
+        if (checkNameDoubles()) {
             Dialogs.showMessage("Выбор столбцов", "Не допускается импортировать данные с разных столбцов" +
                     " в одно свойство, должен быть выбран столбец с заказным номером и минимум два столбца.");
             return;
@@ -48,9 +71,8 @@ public class FileImportWindowController implements Initializable {
             return;
         }
 
-        ObservableList<FileImportParameter> parameters = tvFields.getItems();
         ((Stage) tvFields.getScene().getWindow()).close();
-        fileImport.startImport(parameters);
+        fileImport.getSelectionListener().selectionEvent(tvFields.getItems());
     }
 
     public void cancelImport() {
@@ -58,9 +80,20 @@ public class FileImportWindowController implements Initializable {
     }
 
     public void close() {
-        fileImport.getExcelFile().close();
-        fileImport.setExcelFile(null);
+        fileImport = null;
         ((Stage) tvFields.getScene().getWindow()).close();
+    }
+
+    public boolean checkNameDoubles() {
+        boolean hasntMaterial = true;
+        ArrayList<DataItem> selectedItems = new ArrayList<>();
+        for (FileImportParameter fiti : tvFields.getItems()) {
+            if (fiti.getDataItem() != DATA_EMPTY) selectedItems.add(fiti.getDataItem());
+            if (fiti.getDataItem() == DATA_ORDER_NUMBER) hasntMaterial = false;
+        }
+
+        HashSet<DataItem> singlesNames = new HashSet<>(selectedItems);
+        return selectedItems.size() != singlesNames.size() || selectedItems.size() < 2 || hasntMaterial;
     }
 
     public void setFileImport(FileImport fileImport) {

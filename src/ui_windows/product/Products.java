@@ -16,6 +16,10 @@ public class Products {
         products = new ArrayList<>();
     }
 
+    public Products(ArrayList<Product> items) {
+        products = items;
+    }
+
     public ArrayList<Product> getItems() {
         return products;
     }

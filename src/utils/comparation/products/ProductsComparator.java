@@ -7,11 +7,14 @@ import ui_windows.product.Products;
 import utils.DoublesPreprocessor;
 import utils.Utils;
 
+import java.util.ArrayList;
+
 public class ProductsComparator {
     private ProductsComparatorResult result;
 
     public ProductsComparator(Products prs1, Products prs2nt, FileImportParameter... parameters) {
         result = new ProductsComparatorResult();
+        ArrayList<Product> goneItems = new ArrayList<>(prs1.getItems());
         Products prs2 = new Products();
         prs2.setItems(new DoublesPreprocessor(prs2nt.getItems()).getTreatedItems());
 
@@ -51,6 +54,7 @@ public class ProductsComparator {
                         result.addToReport(ocr.getReportLines());
                     }
 
+                    goneItems.remove(pr1);
                     prs2.getItems().remove(pr2);//remove compared item
                     break;//found go to next pr1
                 } else if (pr1.getMaterial().substring(1).equals(pr2.getMaterial().substring(1))) {//Vanderbilt
@@ -78,7 +82,10 @@ public class ProductsComparator {
             }
         }
 
-        System.out.println("new \\ changed items: " + result.getNewItems().size() + " \\ " + result.getChangedItems().size());
+        result.setGoneItems(goneItems);
+
+        System.out.println("new \\ changed \\ not found items: " + result.getNewItems().size() + " \\ "
+                + result.getChangedItems().size() + " \\ " + result.getGoneItems().size());
     }
 
     public ProductsComparatorResult getResult() {

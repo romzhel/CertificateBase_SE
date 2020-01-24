@@ -17,6 +17,7 @@
                         <MenuItem fx:id="mniOpenNow" mnemonicParsing="false" onAction="#openNow" text="     Обновить данные     " />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <Menu fx:id="mPriceList" mnemonicParsing="false" text="     Сгенерировать прайс лист     " />
+                  <MenuItem mnemonicParsing="false" onAction="#comparePriceLists" text="     Сравнить прайс-листы     " />
                     </items>
                 </Menu>
                 <Menu fx:id="miOptions" mnemonicParsing="false" text="   Настройки  ">

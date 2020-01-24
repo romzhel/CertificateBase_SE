@@ -17,7 +17,7 @@ public class SingleProductsComparator {
         Object value2;
         try {
             for (FileImportParameter parameter : parameters) {
-                if (!parameter.isImportValue()) continue;
+                if (!parameter.isImportValue() || parameter.getDataItem() == DATA_ORDER_NUMBER) continue;
 
                 value1 = parameter.getDataItem().getValue(obj1);
                 value2 = parameter.getDataItem().getValue(obj2);
