@@ -72,7 +72,7 @@ public class SingleProductsComparator {
                 }
             }
         } catch (Exception e) {
-            System.out.println("exception" + e.getMessage());
+            System.out.println("exception " + e.getMessage());
         }
     }
 

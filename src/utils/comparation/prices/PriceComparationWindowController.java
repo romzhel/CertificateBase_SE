@@ -43,13 +43,13 @@ public class PriceComparationWindowController implements Initializable {
         rbUseExistPrice.setToggleGroup(price1source);
 
         price1source.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            tfPriceName1.setDisable(rbUseNewPrice.isSelected());
-            btnSelectPrice1.setDisable(rbUseNewPrice.isSelected());
+            tfPriceName2.setDisable(rbUseNewPrice.isSelected());
+            btnSelectPrice2.setDisable(rbUseNewPrice.isSelected());
         });
         rbUseNewPrice.setSelected(true);
 
         btnSelectPrice1.setOnAction(event -> {
-            file1 = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор файла",
+            file1 = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор первого файла",
                     Dialogs.EXCEL_FILES, null);
             if (file1 != null && file1.exists()) {
                 tfPriceName1.setText(file1.getName());
@@ -59,7 +59,7 @@ public class PriceComparationWindowController implements Initializable {
         });
 
         btnSelectPrice2.setOnAction(event -> {
-            file2 = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор файла",
+            file2 = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор воторого файла",
                     Dialogs.EXCEL_FILES, null);
             if (file2 != null && file2.exists()) {
                 tfPriceName2.setText(file2.getName());
@@ -68,11 +68,9 @@ public class PriceComparationWindowController implements Initializable {
             }
         });
 
-        btnOk.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                new PricesComparator(rbUseNewPrice.isSelected() ? null : file1, file2);
-            }
+        btnOk.setOnAction(event -> {
+            ((Stage) btnOk.getParent().getScene().getWindow()).close();
+            new PricesComparator(file1, rbUseNewPrice.isSelected() ? null : file2);
         });
 
         btnCancel.setOnAction(event -> ((Stage) btnOk.getParent().getScene().getWindow()).close());

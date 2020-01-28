@@ -40,7 +40,7 @@ public class ImportNowFile {
                     lastComparationResult.saveReport();
                 }
 
-                changedItemsForDB.addAll(lastComparationResult.getChangedItems());
+                changedItemsForDB.addAll(lastComparationResult.getChangedProducts());
 
                 if ((lastComparationResult.getNewItems().size() + lastComparationResult.getChangedItems().size()) > 0) {
                     MainWindowsController mwc = MainWindow.getFxmlLoader().getController();
@@ -48,7 +48,7 @@ public class ImportNowFile {
                 }
 
                 if (lastComparationResult.getNewItems().size() > 0)
-                    new ProductsDB().putData(lastComparationResult.getNewItems());// save new items to db
+                    new ProductsDB().putData(lastComparationResult.getNewProducts());// save new items to db
                 if (changedItemsForDB.size() > 0)
                     new ProductsDB().updateData(new ArrayList<>(changedItemsForDB));//save changed items to db
 

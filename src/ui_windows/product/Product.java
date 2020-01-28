@@ -40,7 +40,7 @@ public class Product {
     private String lastImportcodes = "";
 
     private Integer family_id = -1;
-    private Integer type_id;
+    private Integer type_id = 0;
     private String history = "";
     private String lastChangeDate = "";
     //    private last
@@ -49,9 +49,9 @@ public class Product {
     private String replacement = "";
     private NormsList normsList;
     private Integer normsMode = NormsList.ADD_TO_GLOBAL;
-    private Integer minOrder;
-    private Integer packetSize;
-    private Integer leadTime;
+    private Integer minOrder = 0;
+    private Integer packetSize = 0;
+    private Integer leadTime = 0;
     private Double weight;
     private Double localPrice;
 
@@ -153,7 +153,7 @@ public class Product {
     }
 
     private double getDoubleFromString(String text) {
-        if (text == null || text.isEmpty()) return 0;
+        if (text == null || text.isEmpty() || text.equals("По запросу")) return 0.0;
 
         boolean textHasDevider = text.matches("\\d+\\.+\\d+[.,]+\\d+");
         if (textHasDevider) text = text.replaceFirst("\\.", "");
@@ -448,6 +448,15 @@ public class Product {
         if (family_id != null && family_id > 0) {
             return CoreModule.getProductFamilies().getFamilyById(family_id);
         } else {
+            if (hierarchy == null || hierarchy.isEmpty()) {
+                try {
+                    hierarchy = CoreModule.getProducts().getItemByMaterialOrArticle(
+                            material.replaceAll("(VBPZ\\:)*(BPZ\\:)*", "")).hierarchy;
+                } catch (Exception e){
+                    System.out.println("product for material: " + material + " not found");
+                }
+            }
+
             LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
             return lgbkAndParent != null ? lgbkAndParent.getProductFamily() : null;
         }

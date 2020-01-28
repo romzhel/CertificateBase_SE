@@ -17,9 +17,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class ProductsComparatorResult {
-    private ArrayList<Product> changedItems;
-    private ArrayList<Product> newItems;
-    private ArrayList<Product> goneItems;
+    private ArrayList<ProductsComparatorResultItem> changedItems;
+    private ArrayList<ProductsComparatorResultItem> newItems;
+    private ArrayList<ProductsComparatorResultItem> goneItems;
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
     private int rowNum;
@@ -33,16 +33,38 @@ public class ProductsComparatorResult {
         rowNum = 1;
     }
 
-    public ArrayList<Product> getChangedItems() {
+
+
+    public ArrayList<ProductsComparatorResultItem> getChangedItems() {
         return changedItems;
     }
 
-    public ArrayList<Product> getNewItems() {
+    public ArrayList<ProductsComparatorResultItem> getNewItems() {
         return newItems;
     }
 
-    public ArrayList<Product> getGoneItems() {
+    public ArrayList<ProductsComparatorResultItem> getGoneItems() {
         return goneItems;
+    }
+
+    public ArrayList<Product> getChangedProducts() {
+        return getProducts(changedItems);
+    }
+
+    public ArrayList<Product> getNewProducts() {
+        return getProducts(newItems);
+    }
+
+    public ArrayList<Product> getGoneProducts() {
+        return getProducts(goneItems);
+    }
+
+    private ArrayList<Product> getProducts(ArrayList<ProductsComparatorResultItem> reportItems) {
+        ArrayList<Product> result = new ArrayList<>();
+        for (ProductsComparatorResultItem pcri:reportItems) {
+            result.add(pcri.getProduct());
+        }
+        return result;
     }
 
     public void clear() {
@@ -135,33 +157,6 @@ public class ProductsComparatorResult {
     }
 
     public void setGoneItems(ArrayList<Product> goneItems) {
-        this.goneItems = goneItems;
 
-        for (Product product:goneItems) {
-            XSSFRow row = sheet.createRow(rowNum++);
-
-            int colIndex = 0;
-            XSSFCellStyle style = workbook.createCellStyle();
-            style.setAlignment(HorizontalAlignment.LEFT);
-//            for (String text : line) {
-            ProductFamily pf = product.getProductFamily();
-            XSSFCell cell = row.createCell(colIndex++, CellType.STRING);
-            cell.setCellStyle(style);
-            cell.setCellValue(pf != null ? pf.getName() : "");
-
-            colIndex++;
-
-            cell = row.createCell(colIndex++, CellType.STRING);
-            cell.setCellStyle(style);
-            cell.setCellValue(product.getMaterial());
-
-            cell = row.createCell(colIndex++, CellType.STRING);
-            cell.setCellStyle(style);
-            cell.setCellValue(product.getArticle());
-
-            cell = row.createCell(colIndex++, CellType.STRING);
-            cell.setCellStyle(style);
-            cell.setCellValue("gone");
-        }
     }
 }

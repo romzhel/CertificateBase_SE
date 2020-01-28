@@ -57,7 +57,7 @@ public class Mapper {
                 {"Мин зак", DATA_MIN_ORDER},
                 {"packsize", DATA_PACKSIZE},
                 {"leadtime", DATA_LEAD_TIME_EU},
-                {"ВрД", DATA_LEAD_TIME_EU},
+//                {"ВрД", DATA_LEAD_TIME_EU},
                 {"вес", DATA_WEIGHT},
                 {"weight", DATA_WEIGHT}
         }).collect(Collectors.toMap(data -> (String) data[0], data -> (DataItem) data[1]));
