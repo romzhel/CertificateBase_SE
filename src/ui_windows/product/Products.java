@@ -16,6 +16,10 @@ public class Products {
         products = new ArrayList<>();
     }
 
+    public Products(ArrayList<Product> items) {
+        products = items;
+    }
+
     public ArrayList<Product> getItems() {
         return products;
     }
@@ -124,8 +128,9 @@ public class Products {
         ArrayList<Product> changedItems = new ArrayList<>();
 
         for (Product product : products) {
-            if (!product.getLastImportcodes().isEmpty()) {
+            if (!product.getLastImportcodes().isEmpty() || !product.getChangecodes().isEmpty()) {
                 product.setLastImportcodes("");
+                product.setChangecodes("");
                 changedItems.add(product);
             }
         }

@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="utils.comparation.prices.PriceComparationWindowController"
-            prefHeight="400.0" prefWidth="600.0">
-
+<AnchorPane prefHeight="301.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="utils.comparation.prices.PriceComparationWindowController">
+   <children>
+      <Label layoutX="29.0" layoutY="20.0" text="Первый прайс для сравнения">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="29.0" layoutY="125.0" text="Второй прайс для сравнения">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <RadioButton fx:id="rbUseNewPrice" contentDisplay="GRAPHIC_ONLY" layoutX="29.0" layoutY="158.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="16.0" text="RadioButton" />
+      <RadioButton fx:id="rbUseExistPrice" contentDisplay="GRAPHIC_ONLY" layoutX="29.0" layoutY="194.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="16.0" text="RadioButton" />
+      <TextField fx:id="tfPriceName2" editable="false" layoutX="64.0" layoutY="190.0" prefHeight="25.0" prefWidth="427.0" />
+      <Button fx:id="btnSelectPrice2" layoutX="491.0" layoutY="190.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="95.0" text="Обзор..." />
+      <Button fx:id="btnSelectPrice1" layoutX="491.0" layoutY="61.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="95.0" text="Обзор..." />
+      <TextField fx:id="tfPriceName1" editable="false" layoutX="64.0" layoutY="61.0" prefHeight="25.0" prefWidth="427.0" />
+      <Label layoutX="64.0" layoutY="158.0" text="Сгенерировать новый прайс" />
+      <Button fx:id="btnOk" layoutX="72.0" layoutY="249.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="180.0" text="ОК" />
+      <Button fx:id="btnCancel" layoutX="331.0" layoutY="249.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="180.0" text="Отмена" />
+   </children>
 </AnchorPane>

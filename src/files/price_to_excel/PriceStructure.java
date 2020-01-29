@@ -1,6 +1,5 @@
 package files.price_to_excel;
 
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import core.CoreModule;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFTable;
@@ -26,10 +25,12 @@ public class PriceStructure {
     private PriceListSheet priceListSheet;
     private TreeSet<LgbkGroup> lgbkGroups;
     private Vector<Product> problemItems;
+    private ArrayList<Product> correctItems;
 
     public PriceStructure(PriceListSheet priceListSheet) {
         this.priceListSheet = priceListSheet;
         problemItems = new Vector<>();
+        correctItems = new ArrayList<>();
     }
 
     public void analysePriceItems() {
@@ -65,6 +66,7 @@ public class PriceStructure {
     }
 
     public synchronized void addProduct(Product product) {
+        correctItems.add(product);
         for (LgbkGroup group : lgbkGroups) {
             String l = product.getLgbk();
             String n = group.getName();
@@ -110,5 +112,9 @@ public class PriceStructure {
 
     public Vector<Product> getProblemItems() {
         return problemItems;
+    }
+
+    public ArrayList<Product> getCorrectProducts() {
+        return correctItems;
     }
 }

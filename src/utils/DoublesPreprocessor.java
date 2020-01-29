@@ -9,7 +9,7 @@ public class DoublesPreprocessor {
     private ArrayList<Product> result;
 
     public DoublesPreprocessor(ArrayList<Product> items) {
-        System.out.println("preprocessing...");
+        System.out.println("preprocessing doubles...");
 
         ArrayList<String> orderNumbersS = new ArrayList<>();
         result = items;

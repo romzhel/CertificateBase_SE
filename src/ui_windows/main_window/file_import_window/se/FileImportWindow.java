@@ -1,4 +1,4 @@
-package ui_windows.main_window.file_import_window;
+package ui_windows.main_window.file_import_window.se;
 
 import javafx.stage.Modality;
 import ui_windows.OrdinalWindow;
@@ -11,9 +11,7 @@ public class FileImportWindow extends OrdinalWindow {
                 "Назначение столбцов");
 
         FileImportWindowController controller = loader.getController();
-        fileImport.setController(controller);
-        controller.setFileImport(fileImport);
-
+        controller.init(fileImport);
         stage.show();
     }
 }

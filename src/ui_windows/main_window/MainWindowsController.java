@@ -8,7 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import ui_windows.login_window.LoginWindow;
-import ui_windows.main_window.file_import_window.FileImport;
+import ui_windows.main_window.file_import_window.se.ImportNowFile;
 import ui_windows.main_window.filter_window.FilterWindow;
 import ui_windows.options_window.OptionsWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
@@ -17,8 +17,8 @@ import ui_windows.product.Product;
 import ui_windows.request.RequestWindow;
 import utils.comparation.prices.PriceComparationWindow;
 
+import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class MainWindowsController implements Initializable {
@@ -47,8 +47,6 @@ public class MainWindowsController implements Initializable {
     @FXML
     public ImageView ivFilter;
 
-    private FileImport fileImport;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         mainTable = new MainTable(tvTable);
@@ -76,10 +74,11 @@ public class MainWindowsController implements Initializable {
     }
 
     public void openNow() {
-        fileImport = new FileImport();
+        new ImportNowFile(new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор файла с выгрузкой",
+                Dialogs.EXCEL_FILES, null));
     }
 
-    public void comparePriceLists(){
+    public void comparePriceLists() {
         new PriceComparationWindow();
     }
 
