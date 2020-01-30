@@ -448,17 +448,25 @@ public class Product {
         if (family_id != null && family_id > 0) {
             return CoreModule.getProductFamilies().getFamilyById(family_id);
         } else {
-            if (hierarchy == null || hierarchy.isEmpty()) {
-                try {
-                    hierarchy = CoreModule.getProducts().getItemByMaterialOrArticle(
-                            material.replaceAll("(VBPZ\\:)*(BPZ\\:)*", "")).hierarchy;
-                } catch (Exception e){
-                    System.out.println("product for material: " + material + " not found");
-                }
-            }
+            if (lgbk == null) return null;
 
             LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
+            if (lgbkAndParent != null) return lgbkAndParent.getProductFamily();
+
+            if (hierarchy == null || hierarchy.isEmpty()) {
+                Product product = CoreModule.getProducts().getItemByMaterialOrArticle(
+                        material.replaceAll("(VBPZ\\:)*(BPZ\\:)*", ""));
+
+                if (product != null) {
+                    hierarchy = product.hierarchy;
+                    lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
+                }
+
+//                System.out.println("product for material: " + material + " not found");
+            }
+
             return lgbkAndParent != null ? lgbkAndParent.getProductFamily() : null;
+
         }
     }
 

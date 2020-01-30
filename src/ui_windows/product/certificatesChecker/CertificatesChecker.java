@@ -150,12 +150,12 @@ public class CertificatesChecker {
     }
 
     private boolean isNamesMatches(String prodName, Certificate cert, String contentName) {
-        prodName = prodName.replaceAll("[\\s\\-\\/]", "").toUpperCase();
-        contentName = contentName.replaceAll("[\\s\\-\\/]", "").toUpperCase();
+        prodName = prodName.replaceAll("[\\s\\-\\/]", "")/*.toUpperCase()*/;
+        contentName = contentName.replaceAll("[\\s\\-\\/]", "")/*.toUpperCase()*/;
         String contentValue;
 
-        if (contentName.matches(".+[xX]{2,}.*")) {
-            contentValue = contentName.replaceAll("[xX]{2,}", ".*").trim().toUpperCase();
+        if (contentName.matches(".+[x]{2,}.*")) {
+            contentValue = contentName.replaceAll("[x]{2,}", ".*").trim().toUpperCase();
         } else {
             contentValue = contentName.trim().toUpperCase() + "\\d+.*";
         }
