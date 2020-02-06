@@ -32,7 +32,7 @@ public enum DataItem {
             return null;
         }
     },
-    DATA_ORDER_NUMBER(1,"Заказной номер", "material") {
+    DATA_ORDER_NUMBER(1, "Заказной номер", "material") {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getMaterial());
@@ -43,7 +43,7 @@ public enum DataItem {
             return product.getMaterial();
         }
     },
-    DATA_ORDER_NUMBER_PRINT(2,"Заказной номер для печати", "productForPrint") {
+    DATA_ORDER_NUMBER_PRINT(2, "Заказной номер для печати", "productForPrint") {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getProductForPrint());
@@ -87,7 +87,7 @@ public enum DataItem {
             return product.getDescriptionen();
         }
     },
-    DATA_DESCRIPTION(6,"Описание", null) {
+    DATA_DESCRIPTION(6, "Описание", null) {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getDescriptionRuEn());
@@ -98,7 +98,7 @@ public enum DataItem {
             return product.getDescriptionRuEn();
         }
     },
-    DATA_LOCAL_PRICE(7,"Локальный прайс (Без скидок)", "localPrice") {
+    DATA_LOCAL_PRICE(7, "Локальный прайс (Без скидок)", "localPrice") {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(product.getLocalPrice());
@@ -109,7 +109,7 @@ public enum DataItem {
             return product.getLocalPrice();
         }
     },
-    DATA_LOCAL_PRICE_LIST(8,"Локальный прайс (В прайс-листе)", null) {
+    DATA_LOCAL_PRICE_LIST(8, "Локальный прайс (В прайс-листе)", null) {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
 
@@ -159,7 +159,7 @@ public enum DataItem {
             return null;
         }
     },
-    DATA_IN_WHICH_PRICE_LIST(9,"В каком прайс-листе", null) {
+    DATA_IN_WHICH_PRICE_LIST(9, "В каком прайс-листе", null) {
         private String getPriceSheetName(Product product) {
             String result = "";
             for (PriceList priceList : CoreModule.getPriceLists().getItems()) {
@@ -527,7 +527,7 @@ public enum DataItem {
             return product.getGlobalNorms();
         }
     },
-    DATA_ORDER_NUMBER_PRINT_NOT_EMPTY(39,"Заказной номер для печати (или заказной номер)", null) {
+    DATA_ORDER_NUMBER_PRINT_NOT_EMPTY(39, "Заказной номер для печати (или заказной номер)", null) {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getProductForPrint() == null || product.getProductForPrint().isEmpty() ?
@@ -588,8 +588,17 @@ public enum DataItem {
     }
 
     public static DataItem getDataItemById(int id) {
-        for (DataItem dataItem:values()        ) {
+        for (DataItem dataItem : values()) {
             if (dataItem.id == id) {
+                return dataItem;
+            }
+        }
+        return DATA_EMPTY;
+    }
+
+    public static DataItem getDataItemByField(Field field) {
+        for (DataItem dataItem : values()) {
+            if (dataItem.getField() != null && dataItem.getField().equals(field)) {
                 return dataItem;
             }
         }

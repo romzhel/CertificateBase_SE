@@ -3,29 +3,33 @@ package utils.comparation.products;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.main_window.file_import_window.SingleProductsComparator;
 import ui_windows.product.Product;
-import ui_windows.product.Products;
 import utils.DoublesPreprocessor;
 import utils.Utils;
+import utils.comparation.se.*;
 
 import java.util.ArrayList;
 
 public class ProductsComparator {
     private ProductsComparatorResult result;
 
-    public ProductsComparator(Products prs1, Products prs2nt, FileImportParameter... parameters) {
+    public ProductsComparator(ArrayList<Product> prs1, ArrayList<Product> prs2nt, FileImportParameter... parameters) {
         result = new ProductsComparatorResult();
-        ArrayList<Product> goneItems = new ArrayList<>(prs1.getItems());
-        Products prs2 = new Products(new DoublesPreprocessor(prs2nt.getItems()).getTreatedItems());
+        ArrayList<Product> goneItems = new ArrayList<>(prs1);
+        ArrayList<Product> prs2 = new DoublesPreprocessor(prs2nt).getTreatedItems();
 
-        System.out.println("comparing: existing items \\ importing items : " + prs1.getItems().size() + " \\ " +
-                prs2.getItems().size());
+        ObjectsComparatorSe<Product> ocse = new ObjectsComparatorSe<>();
+        ProductsCompareResultsSe<Product> pscr = new ProductsCompareResultsSe<>();
+
+        System.out.println("comparing: existing items \\ importing items : " + prs1.size() + " \\ " + prs2.size());
+
+        ComparingParameters oscp /*= new Adapter().convert(parameters)*/ = null;
 
         int dou = 0;
         String pr1t = "";
         String pr2t = "";
-        for (Product pr1 : prs1.getItems()) {//go throw all the existing items
+        for (Product pr1 : prs1) {//go throw all the existing items
 
-            for (Product pr2 : prs2.getItems()) {//go throw all the updating item
+            for (Product pr2 : prs2) {//go throw all the updating item
                 pr1t = pr1.getMaterial().replaceAll("(\\-)*(\\:)*(VBPZ)*(BPZ)*", "");
                 pr2t = pr2.getMaterial().replaceAll("(\\-)*(\\:)*(VBPZ)*(BPZ)*", "");
 
@@ -37,10 +41,15 @@ public class ProductsComparator {
                     pr1.setLastChangeDate(Utils.getDateTime());//set last update time
 
                     SingleProductsComparator pc = new SingleProductsComparator(pr1, pr2, true, parameters);
-                    ObjectsComparatorResult ocr = pc.getResult();
+//                    ObjectsComparatorResult ocr = pc.getResult();
 
-                    if (ocr.isNeedUpdateInDB()) {//product changed
-                        result.getChangedItems().add(new ProductsComparatorResultItem(pr1, ocr.getLogComment()));//add product to changed list
+                    ObjectsComparatorResultSe<Product> res = ocse.compare(pr1, pr2, oscp);
+
+//                    if (ocr.isNeedUpdateInDB()) {//product changed
+                    if (res.isChanged()) {//product changed
+                        pscr.addNewItems(res);
+
+                        /*result.getChangedItems().add(new ProductsComparatorResultItem(pr1, ocr.getLogComment()));//add product to changed list
                         System.out.println(pr1.getMaterial() + ", (" + pr1.getArticle() + ") changed " + ocr.getLogComment());
 
                         if (!ocr.getHistoryComment().isEmpty()) {
@@ -50,11 +59,11 @@ public class ProductsComparator {
                                 pr1.setHistory(pr1.getHistory().concat(Utils.getDateTime()).concat(ocr.getHistoryComment()));
                             }
                         }
-                        result.addToReport(ocr.getReportLines());
+                        result.addToReport(ocr.getReportLines());*/
                     }
 
                     goneItems.remove(pr1);
-                    prs2.getItems().remove(pr2);//remove compared item
+                    prs2.remove(pr2);//remove compared item
                     break;//found go to next pr1
                 } else if (pr1.getMaterial().substring(1).equals(pr2.getMaterial().substring(1))) {//Vanderbilt
 
@@ -66,21 +75,25 @@ public class ProductsComparator {
             }
         }
 
-        for (Product pr : prs2.getItems()) {//add new items to existing
+        for (Product pr : prs2) {//add new items to existing
             if (pr.getArticle() != null && !pr.getArticle().trim().isEmpty()) {
-                pr.setLastImportcodes("new");
+                /*pr.setLastImportcodes("new");
                 pr.setHistory(pr.getHistory().concat(Utils.getDateTime().concat(", new")));// add back <<<<<<<
                 pr.setLastChangeDate(Utils.getDateTime());
                 prs1.getItems().add(pr);
                 result.getNewItems().add(new ProductsComparatorResultItem(pr, "добавилась"));
-                result.addToReport(pr, "new");
+                result.addToReport(pr, "new");*/
+
+                pscr.addNewItems(new ObjectsComparatorResultSe<>(null, pr));
             } else {
                 System.out.println(pr.getMaterial() + " was not added due empty Article!");
             }
         }
 
-        for (Product goneProduct:goneItems) {
+        for (Product goneProduct : goneItems) {
             result.getGoneItems().add(new ProductsComparatorResultItem(goneProduct, "удалена"));
+
+            pscr.addGoneItems(new ObjectsComparatorResultSe<>(goneProduct, null));
         }
 
         System.out.println("new \\ changed \\ not found items: " + result.getNewItems().size() + " \\ "

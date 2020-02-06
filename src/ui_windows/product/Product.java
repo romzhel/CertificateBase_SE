@@ -12,8 +12,10 @@ import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.data.DataItem;
 import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 import utils.Countries;
+import utils.comparation.se.Cloneable;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,8 +23,9 @@ import java.util.ArrayList;
 import static ui_windows.main_window.filter_window.FilterParameters.FILTER_ALL_ITEMS;
 import static ui_windows.main_window.filter_window.FilterParameters.FILTER_PRICE_ITEMS;
 
-public class Product {
-    public static final String NO_DATA = "нет данных";
+public class Product implements Cloneable {
+    public final String NO_DATA = "нет данных";
+
     private int id;
     private String material;
     private String productForPrint;
@@ -146,10 +149,6 @@ public class Product {
         leadTime = rs.getInt("lead_time");
         weight = rs.getDouble("weight");
         localPrice = rs.getDouble("local_price");
-    }
-
-    public static String getNO_DATA() {
-        return NO_DATA;
     }
 
     private double getDoubleFromString(String text) {
@@ -292,6 +291,21 @@ public class Product {
         return material + ", " + article;
     }
 
+    @Override
+    public Product clone() {
+        Product cloneItem = new Product();
+        try {
+            for (Field field : this.getClass().getDeclaredFields()) {
+                field.setAccessible(true);
+                field.set(cloneItem, field.get(this));
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return cloneItem;
+    }
+
     public int getId() {
         return id;
     }
@@ -402,6 +416,14 @@ public class Product {
 
     public void setHistory(String history) {
         this.history = history;
+    }
+
+    public void addHistory(String comment) {
+        if (history.isEmpty()) {
+            history = comment;
+        } else {
+            history = history.concat("|").concat(comment);
+        }
     }
 
     public String getLastChangeDate() {
@@ -550,4 +572,6 @@ public class Product {
     public ArrayList<Integer> getGlobalNorms() {
         return new ArrayList<Integer>(CoreModule.getProductLgbkGroups().getGlobalNormIds(new ProductLgbk(this)));
     }
+
+
 }

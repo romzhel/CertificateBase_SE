@@ -4,18 +4,23 @@ import core.CoreModule;
 import core.Dialogs;
 import database.ProductsDB;
 import javafx.application.Platform;
+import javafx.util.Callback;
 import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.MainWindowsController;
 import ui_windows.main_window.file_import_window.FileImportParameter;
+import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
 import utils.comparation.products.ProductsComparator;
 import utils.comparation.products.ProductsComparatorResult;
+import utils.comparation.se.*;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import static utils.comparation.se.ComparingParameters.WITHOUT_GONE;
 
 public class ImportNowFile {
 
@@ -29,11 +34,21 @@ public class ImportNowFile {
                 ArrayList<Product> resetedItems = fileImport.isDeleteOldStatistic() ? CoreModule.getProducts().resetLastImportCodes() : new ArrayList<>();
                 HashSet<Product> changedItemsForDB = new HashSet<>(resetedItems);
 
-                Products compProducts = new Products();
-                compProducts.setItems(fileImport.getResult());
                 FileImportParameter[] importParameters = fileImport.getExcelFile().getMapper().getParameters().toArray(new FileImportParameter[]{});
 
-                ProductsComparator pc = new ProductsComparator(CoreModule.getProducts(), compProducts, importParameters);
+
+                Comparator<Product> comparator = new Comparator<>();
+                comparator.compare(CoreModule.getProducts().getItems(), fileImport.getResult(),
+                        new ComparingParameters(new Adapter<Product>().convert(importParameters), new ComparingRulesProducts(), WITHOUT_GONE));
+
+                comparator.fixChanges();
+
+                System.out.println();
+
+
+
+
+                /*ProductsComparator pc = new ProductsComparator(CoreModule.getProducts().getItems(), fileImport.getResult(), importParameters);
                 ProductsComparatorResult lastComparationResult = pc.getResult();
 
                 if (lastComparationResult.getNewItems().size() + lastComparationResult.getChangedItems().size() > 0) {
@@ -58,7 +73,7 @@ public class ImportNowFile {
 
                 Platform.runLater(() -> Dialogs.showMessage("Результаты импорта", "Новых позиций: " +
                         lastComparationResult.getNewItems().size() + "\nИзменённых позиций: " +
-                        lastComparationResult.getChangedItems().size()));
+                        lastComparationResult.getChangedItems().size()));*/
             }).start();
         });
     }

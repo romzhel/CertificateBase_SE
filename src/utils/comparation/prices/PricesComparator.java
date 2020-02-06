@@ -45,8 +45,7 @@ public class PricesComparator {
 
                 FileImportParameter[] params = oldPriceFi.getExcelFile().getMapper().getParameters().toArray(new FileImportParameter[]{});
 
-                ProductsComparator productsComparator = new ProductsComparator(new Products(oldPriceItems),
-                        new Products(newPriceItems), params);
+                ProductsComparator productsComparator = new ProductsComparator(oldPriceItems, newPriceItems, params);
 
                 addToComparationResult(productsComparator.getResult().getChangedItems(), sheetIndex);
                 addToComparationResult(productsComparator.getResult().getNewItems(), sheetIndex);
