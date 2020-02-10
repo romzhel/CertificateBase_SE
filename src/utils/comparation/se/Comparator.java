@@ -1,22 +1,15 @@
 package utils.comparation.se;
 
-import javafx.util.Callback;
-
 import java.util.ArrayList;
 
 public class Comparator<T extends Cloneable> {
-//    private ObjectsComparatorSe<T> objectsComparator;
     private ComparingParameters comparingParameters;
-    //    private ObjectsComparatorResultSe<T> comparisonResult;
     private ComparisonResult<T> comparisonResult;
     private ChangesFixer<T> changesFixer;
-    private Logger<T> logger;
 
     public Comparator() {
-//        objectsComparator = new ObjectsComparatorSe<>();
         comparisonResult = new ComparisonResult<>();
         changesFixer = new ChangesFixer<>();
-        logger = new Logger<>();
     }
 
     public ComparisonResult<T> compare(T object1, T object2, ComparingParameters parameters) {
@@ -50,30 +43,29 @@ public class Comparator<T extends Cloneable> {
         }
 
         for (T item : items2) {
-            comparisonResult.addNewItemResult(new ObjectsComparatorResultSe<>(null, item, parameters.getFields()));
+            if (parameters.getComparingRules().addNewItem(item, parameters.getFields())) {
+                comparisonResult.addNewItemResult(new ObjectsComparatorResultSe<>(null, item, parameters.getFields()));
+            }
         }
 
         for (T item : goneItems) {
             comparisonResult.addGoneItemResult(new ObjectsComparatorResultSe<>(item, null, parameters.getFields()));
         }
-
-
         return comparisonResult;
     }
 
     public void fixChanges() {
-        ArrayList<ObjectsComparatorResultSe<T>> allResults[] = new ArrayList[] {
-                comparisonResult.getChangedItemsResult(),
-                comparisonResult.getNewItemsResult(),
-                comparisonResult.getGoneItemsResult()
-        };
-
-        for (ArrayList<ObjectsComparatorResultSe<T>> results:allResults) {
-            for (ObjectsComparatorResultSe<T> result : results) {
-                if (changesFixer.fixChanges(result)) {
-                    comparingParameters.getComparingRules().addHistoryComment(result);
-                }
+        for (ObjectsComparatorResultSe<T> result : comparisonResult.getChangedItemsResult()) {
+            if (changesFixer.fixChanges(result)) {
+                comparingParameters.getComparingRules().addHistoryComment(result);
             }
+        }
+        for (ObjectsComparatorResultSe<T> result : comparisonResult.getNewItemsResult()) {
+            comparingParameters.getComparingRules().addHistoryComment(result);
+
+        }
+        for (ObjectsComparatorResultSe<T> result : comparisonResult.getGoneItemsResult()) {
+            comparingParameters.getComparingRules().addHistoryComment(result);
         }
     }
 

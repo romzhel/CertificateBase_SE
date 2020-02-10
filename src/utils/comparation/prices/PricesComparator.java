@@ -2,7 +2,7 @@ package utils.comparation.prices;
 
 import core.CoreModule;
 import core.Dialogs;
-import files.price_comparator_result_to_excel.PriceComparatorResultToExcel;
+import files.reports.PriceComparatorResultToExcel;
 import files.price_to_excel.PriceStructure;
 import javafx.application.Platform;
 import ui_windows.main_window.MainWindow;
@@ -10,7 +10,6 @@ import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.main_window.file_import_window.se.FileImport;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.product.Product;
-import ui_windows.product.Products;
 import utils.comparation.products.ProductsComparator;
 import utils.comparation.products.ProductsComparatorResultItem;
 

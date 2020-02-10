@@ -46,8 +46,8 @@ public class ComparisonResult<T> {
     public ArrayList<T> getNewItems() {
         ArrayList<T> items = new ArrayList<>();
         for (ObjectsComparatorResultSe<T> res : newItemsResult) {
-            if (res.getItem_before() != null) {
-                items.add(res.getItem_before());
+            if (res.getItem_after() != null) {
+                items.add(res.getItem_after());
             }
         }
         return items;

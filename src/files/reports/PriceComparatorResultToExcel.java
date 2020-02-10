@@ -1,4 +1,4 @@
-package files.price_comparator_result_to_excel;
+package files.reports;
 
 import core.Dialogs;
 import org.apache.poi.ss.usermodel.CellType;

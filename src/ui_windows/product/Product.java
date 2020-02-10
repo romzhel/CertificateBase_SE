@@ -513,6 +513,14 @@ public class Product implements Cloneable {
         this.lastImportcodes = lastImportcodes;
     }
 
+    public void addLastImportCodes(String codes) {
+        if (lastImportcodes.isEmpty()) {
+            lastImportcodes = codes;
+        } else {
+            lastImportcodes = lastImportcodes.concat(",").concat(codes);
+        }
+    }
+
     public String getDescriptionen() {
         return descriptionen;
     }
