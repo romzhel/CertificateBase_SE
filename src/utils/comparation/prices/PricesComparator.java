@@ -1,23 +1,23 @@
 package utils.comparation.prices;
 
 import core.CoreModule;
-import core.Dialogs;
-import files.reports.PriceComparatorResultToExcel;
 import files.price_to_excel.PriceStructure;
-import javafx.application.Platform;
+import files.reports.PriceComparisonMergerResultToExcel;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.main_window.file_import_window.se.FileImport;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.product.Product;
-import utils.comparation.products.ProductsComparator;
-import utils.comparation.products.ProductsComparatorResultItem;
+import utils.comparation.merger.ComparisonResultMerger;
+import utils.comparation.se.Adapter;
+import utils.comparation.se.Comparator;
+import utils.comparation.se.ComparingParameters;
+import utils.comparation.se.ComparingRulesPricesComparison;
 
 import java.io.File;
 import java.util.ArrayList;
 
 public class PricesComparator {
-    private PriceComparatorResult comparationResult;
 
     public PricesComparator(final File file1, final File file2) {
         new Thread(() -> {
@@ -29,7 +29,7 @@ public class PricesComparator {
             ArrayList<Product> oldPriceItems;
             ArrayList<Product> newPriceItems;
 
-            comparationResult = new PriceComparatorResult();
+            ComparisonResultMerger<Product> merger = new ComparisonResultMerger<>((o1, o2) -> o1.getMaterial().equals(o2.getMaterial()) ? 0 : 1);
             for (int sheetIndex = 0; sheetIndex < priceList.getSheets().size(); sheetIndex++) {
                 oldPriceItems = oldPriceFi.getProductsInAutoMode(file1, sheetIndex);
                 if (file2 == null) {
@@ -40,28 +40,22 @@ public class PricesComparator {
                     newPriceItems = new FileImport().getProductsInAutoMode(file2, sheetIndex);
                 }
 
-                comparationResult.addSheetName(oldPriceFi.getExcelFile().getSheetsName().get(sheetIndex));
-
                 FileImportParameter[] params = oldPriceFi.getExcelFile().getMapper().getParameters().toArray(new FileImportParameter[]{});
 
-                ProductsComparator productsComparator = new ProductsComparator(oldPriceItems, newPriceItems, params);
+                Comparator<Product> comparator = new Comparator<>();
+                comparator.compare(oldPriceItems, newPriceItems, new ComparingParameters(new Adapter<Product>().convert(params),
+                        new ComparingRulesPricesComparison(), ComparingParameters.WITH_GONE));
 
-                addToComparationResult(productsComparator.getResult().getChangedItems(), sheetIndex);
-                addToComparationResult(productsComparator.getResult().getNewItems(), sheetIndex);
-                addToComparationResult(productsComparator.getResult().getGoneItems(), sheetIndex);
-
+                merger.addForMerging(comparator.getComparisonResult());
             }
-            PriceComparatorResultToExcel pcte = new PriceComparatorResultToExcel();
+
+            merger.merge();
+            PriceComparisonMergerResultToExcel exporterToExcel = new PriceComparisonMergerResultToExcel();
+            String firstName = file1.getName();
+            String secondName = file2 != null ? file2.getName() : "online price";
+            String name = String.format("PriceComparisonResult %s vs %s", secondName, firstName);
+            exporterToExcel.export(oldPriceFi.getExcelFile().getSheetsName(), merger.getResult(), name);
             MainWindow.setProgress(0.0);
-
-            Platform.runLater(() -> pcte.export(new Dialogs().selectAnyFile(MainWindow.getMainStage(),
-                    "Выбор файла", Dialogs.EXCEL_FILES,"отчёт.xlsx"), comparationResult));
         }).start();
-    }
-
-    private void addToComparationResult(ArrayList<ProductsComparatorResultItem> resultItems, int sheetIndex) {
-        for (ProductsComparatorResultItem pcri : resultItems) {
-            comparationResult.addItem(new PriceComparatorResultItem(pcri.getProduct(), sheetIndex, pcri.getChangeComment()));
-        }
     }
 }

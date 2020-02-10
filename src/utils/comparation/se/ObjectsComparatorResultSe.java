@@ -9,6 +9,9 @@ public class ObjectsComparatorResultSe<T> {
     private T item_after;
     private ArrayList<Field> changedFields;
 
+    public ObjectsComparatorResultSe() {
+    }
+
     public ObjectsComparatorResultSe(T object1, T object2) {
         changedFields = new ArrayList<>();
         this.item = object1;

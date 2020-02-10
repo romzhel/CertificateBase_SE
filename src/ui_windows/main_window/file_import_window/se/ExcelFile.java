@@ -154,4 +154,8 @@ public class ExcelFile {
     public int getSheetsCount() {
         return workbook.getNumberOfSheets();
     }
+
+    public File getFile() {
+        return file;
+    }
 }

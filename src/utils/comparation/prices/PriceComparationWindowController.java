@@ -40,15 +40,11 @@ public class PriceComparationWindowController implements Initializable {
         rbUseNewPrice.setToggleGroup(price2source);
         rbUseExistPrice.setToggleGroup(price2source);
 
-        rbUseExistPrice.setSelected(true);////
-        rbUseExistPrice.setDisable(true);/////
-        rbUseNewPrice.setDisable(true);/////// temporary
-
-        /*price2source.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+        price2source.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             tfPriceName2.setDisable(rbUseNewPrice.isSelected());
             btnSelectPrice2.setDisable(rbUseNewPrice.isSelected());
         });
-        rbUseNewPrice.setSelected(true);*/
+        rbUseNewPrice.setSelected(true);
 
         btnSelectPrice1.setOnAction(event -> {
             file1 = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор файла первого прайса",
