@@ -8,10 +8,12 @@ import java.util.Comparator;
 public class MergerResult<T> {
     private ArrayList<MergerResultItem<T>> resultItems;
     private Comparator<T> itemsComparator;
+    private int detailsCount;
 
-    public MergerResult(Comparator<T> itemsComparator) {
+    public MergerResult(Comparator<T> itemsComparator, int detailsCount) {
         this.itemsComparator = itemsComparator;
         resultItems = new ArrayList<>();
+        this.detailsCount = detailsCount;
     }
 
     public void addItem(T item, ObjectsComparatorResultSe<T> detail, int detailIndex) {
@@ -24,7 +26,7 @@ public class MergerResult<T> {
         }
 
         if (isAbsent) {
-            resultItems.add(new MergerResultItem<>(item, detail, detailIndex));
+            resultItems.add(new MergerResultItem<>(item, detail, detailsCount, detailIndex));
         }
     }
 

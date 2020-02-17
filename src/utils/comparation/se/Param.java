@@ -1,5 +1,7 @@
 package utils.comparation.se;
 
+import ui_windows.product.Product;
+
 import java.lang.reflect.Field;
 
 public class Param<T> {
@@ -23,5 +25,9 @@ public class Param<T> {
 
     public Field getField() {
         return field;
+    }
+
+    public void setObject2 (T object2) {
+        this.object2 = object2;
     }
 }

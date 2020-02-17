@@ -581,5 +581,7 @@ public class Product implements Cloneable {
         return new ArrayList<Integer>(CoreModule.getProductLgbkGroups().getGlobalNormIds(new ProductLgbk(this)));
     }
 
-
+    public void setLocalPrice(Double localPrice) {
+        this.localPrice = localPrice;
+    }
 }

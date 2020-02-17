@@ -4,13 +4,13 @@ import core.CoreModule;
 import javafx.scene.layout.AnchorPane;
 import ui_windows.options_window.price_lists_editor.se.PriceListEditorWindowControllerv2;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
+import ui_windows.product.Product;
 import utils.Utils;
 
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class PriceList {
     private int id = -1;
@@ -99,6 +99,22 @@ public class PriceList {
 
         return result;
     }
+
+    /*public PriceListSheet getPriceListSheet(Product product) {
+        for (PriceListSheet priceListSheet : sheets) {
+            if (priceListSheet.isInPrice(product)) {
+                return priceListSheet;
+            }
+        }
+        return null;
+    }
+
+    public double getCostFromPrice(Product product) {
+        PriceListSheet pls = getPriceListSheet(product);
+        double cost = product.getLocalPrice();
+
+        return pls == null || cost == 0.0 ? 0.0 : cost * (1.0 - (double) pls.getDiscount() / 100);
+    }*/
 
 
     public String getName() {

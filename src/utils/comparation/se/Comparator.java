@@ -1,11 +1,14 @@
 package utils.comparation.se;
 
+import javafx.util.Callback;
+
 import java.util.ArrayList;
 
 public class Comparator<T extends Cloneable> {
     private ComparingParameters comparingParameters;
     private ComparisonResult<T> comparisonResult;
     private ChangesFixer<T> changesFixer;
+    private Callback<Param<T>, Param<T>> customComparingRule;
 
     public Comparator() {
         comparisonResult = new ComparisonResult<>();
@@ -22,8 +25,8 @@ public class Comparator<T extends Cloneable> {
     }
 
     public ComparisonResult<T> compare(ArrayList<T> items1, ArrayList<T> items2, ComparingParameters parameters) {
-        comparingParameters = parameters;
         ObjectsComparatorSe<T> objectsComparator = new ObjectsComparatorSe<>();
+        comparingParameters = parameters;
 
         ArrayList<T> goneItems = new ArrayList<>();
         if (parameters.isCheckGoneItems()) goneItems.addAll(items1);
@@ -31,7 +34,8 @@ public class Comparator<T extends Cloneable> {
         for (T item1 : items1) {
             for (T item2 : items2) {
 
-                if (parameters.getComparingRules().isTheSameItem(new Param<>(item1, item2, null))) {
+                Param<T> params = new Param<>(item1, item2, null);
+                if (parameters.getComparingRules().isTheSameItem(params)) {
                     comparisonResult.addChangedItemResult(objectsComparator.compare(item1, item2, parameters));
 
                     goneItems.remove(item1);

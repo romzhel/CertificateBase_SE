@@ -1,7 +1,6 @@
 package ui_windows.options_window.price_lists_editor.se.price_sheet;
 
 import core.CoreModule;
-import core.Dialogs;
 import files.price_to_excel.HierarchyGroup;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListCell;
@@ -10,11 +9,11 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
 import javafx.util.Callback;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
-import ui_windows.product.data.DataItem;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTable;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
+import ui_windows.product.data.DataItem;
 import ui_windows.product.data.DataSets;
 import utils.twin_list_views.TwinListViews;
 
@@ -27,7 +26,6 @@ import java.util.Comparator;
 
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_FAMILY;
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_LGBK;
-import static ui_windows.product.data.DataItem.*;
 
 public class PriceListSheet extends Tab {
     public static final int LANG_RU = 0;

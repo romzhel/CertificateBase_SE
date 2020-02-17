@@ -3,30 +3,20 @@ package utils.comparation.merger;
 import utils.comparation.se.ObjectsComparatorResultSe;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MergerResultItem<T> {
     private T item;
-    private ArrayList<ObjectsComparatorResultSe<T>> details;
+    private ObjectsComparatorResultSe<T>[] details;
 
-    public MergerResultItem(T item, ObjectsComparatorResultSe<T> detail, int index) {
+    public MergerResultItem(T item, ObjectsComparatorResultSe<T> detail, int resultCount, int resultIndex) {
         this.item = item;
-        addToIndex(detail, index);
+        details = new ObjectsComparatorResultSe[resultCount];
+        details[resultIndex] = detail;
     }
 
     public void addDetail(ObjectsComparatorResultSe<T> detail, int index) {
-        addToIndex(detail, index);
-    }
-
-    private void addToIndex(ObjectsComparatorResultSe<T> detail, int index) {
-        if (details == null) {
-            details = new ArrayList<>();
-        }
-
-        while(details.size() <= index) {
-            details.add(null);
-        }
-
-        details.set(index, detail);
+        details[index] = detail;
     }
 
     public T getItem() {
@@ -34,6 +24,6 @@ public class MergerResultItem<T> {
     }
 
     public ArrayList<ObjectsComparatorResultSe<T>> getDetails() {
-        return details;
+        return new ArrayList<>(Arrays.asList(details));
     }
 }

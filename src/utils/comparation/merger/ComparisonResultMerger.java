@@ -8,11 +8,12 @@ import java.util.Comparator;
 
 public class ComparisonResultMerger<T> {
     private ArrayList<ComparisonResult<T>> resultsForMerging;
+    private Comparator<T> itemsComparator;
     private MergerResult<T> result;
 
     public ComparisonResultMerger(Comparator<T> itemsComparator) {
         resultsForMerging = new ArrayList<>();
-        result = new MergerResult<>(itemsComparator);
+        this.itemsComparator = itemsComparator;
     }
 
     public void addForMerging(ComparisonResult<T> resultForMerging) {
@@ -20,6 +21,7 @@ public class ComparisonResultMerger<T> {
     }
 
     public MergerResult<T> merge() {
+        result = new MergerResult<>(itemsComparator, resultsForMerging.size());
         int index = 0;
         for (ComparisonResult<T> comparisonResult : resultsForMerging) {
 
@@ -37,7 +39,7 @@ public class ComparisonResultMerger<T> {
             index++;
         }
 
-        return null;
+        return result;
     }
 
     public MergerResult<T> getResult() {
