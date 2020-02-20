@@ -180,6 +180,8 @@ public class PriceComparisonMergerResultToExcel {
                     fillCell(row.createCell(colIndex++), "Цена в прайсе");
                     if ((double) field.get(resultItem.getItem_before()) == 0.0) {
                         fillCell(row.createCell(colIndex++), "По запросу");
+                    } else {
+                        fillCell(row.createCell(colIndex++), field.get(resultItem.getItem_before()));
                     }
                 } else {
                     fillCell(row.createCell(colIndex++), DataItem.getDataItemByField(field).getDisplayingName());

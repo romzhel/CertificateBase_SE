@@ -22,6 +22,7 @@ public class ImportNowFile {
 
     public ImportNowFile(File file) {
         if (file == null || !file.exists()) return;
+
         FileImport fileImport = new FileImport();
         fileImport.getProductsInManualMode(file, () -> {
             MainWindow.setProgress(-1);

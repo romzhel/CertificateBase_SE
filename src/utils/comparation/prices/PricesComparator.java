@@ -71,7 +71,6 @@ public class PricesComparator {
                                 new ComparingRulesPricesComparison(param -> {
                                     if (file2 == null) {//online price
                                         if (param.getField() == DATA_LOCAL_PRICE.getField()) {
-
                                             Product clone = param.getObject2().clone();
                                             double cost = param.getObject2().getLocalPrice() * (1.0 - (double) priceListSheet.getDiscount() / 100);
                                             clone.setLocalPrice(cost);
