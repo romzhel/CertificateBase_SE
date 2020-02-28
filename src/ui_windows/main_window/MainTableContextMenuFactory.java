@@ -2,8 +2,9 @@ package ui_windows.main_window;
 
 import core.CoreModule;
 import core.Dialogs;
-import files.ExportToExcel;
 import files.SelectorExportWindow;
+import files.reports.CertificateMatrixReportToExcel;
+import files.reports.ReportToExcel;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -12,6 +13,7 @@ import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
+import ui_windows.product.data.DataItem;
 import ui_windows.request.CertificateRequestResult;
 import utils.Utils;
 
@@ -20,6 +22,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import static core.SharedData.SHD_SELECTED_PRODUCTS;
 
 public class MainTableContextMenuFactory {
     private static final String SPACE = "     ";
@@ -53,12 +57,18 @@ public class MainTableContextMenuFactory {
         });
         MENU_CHECK_CERTIFICATES.setOnAction(event -> {
 //            new Thread(() -> {
-                MainWindow.setProgress(-1);
-                startCertsReport(mainTable);
-                MainWindow.setProgress(0);
+            MainWindow.setProgress(-1);
+            startCertsReport(mainTable);
+            MainWindow.setProgress(0);
 //            }).start();
         });
-        MENU_EXPORT.setOnAction(event -> new SelectorExportWindow(MainWindow.getMainStage()));
+        MENU_EXPORT.setOnAction(event -> {
+            ArrayList<DataItem> columns = new SelectorExportWindow(MainWindow.getMainStage()).getColumns();
+            new Thread(() -> {
+                File file = new ReportToExcel().export(columns, SHD_SELECTED_PRODUCTS.getData(), null);
+                Utils.openFile(file);
+            }).start();
+        });
     }
 
     private static void startCertsReport(MainTable mainTable) {
@@ -103,7 +113,7 @@ public class MainTableContextMenuFactory {
         }
 
 //        File excelFile = ExcelFile.exportToFile(results);
-        File excelFile = new ExportToExcel(results).getFile();
+        File excelFile = new CertificateMatrixReportToExcel(results).getFile();
 
         if (excelFile == null) {
             Dialogs.showMessage("Ошибка создания файла Excel", "Не удалось создать файл сводного отчёта" +

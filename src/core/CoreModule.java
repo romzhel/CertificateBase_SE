@@ -214,15 +214,18 @@ public class CoreModule {
     }
 
     public static void setCustomItems(HashSet<Product> customItems) {
+        SharedData.SHD_CUSTOM_DATA.setData(new ArrayList<>(customItems));
         CoreModule.customItems = customItems;
     }
 
     public static void setCustomItems(ArrayList<Product> customItems) {
+        SharedData.SHD_CUSTOM_DATA.setData(customItems);
         CoreModule.customItems.clear();
         CoreModule.customItems.addAll(customItems);
     }
 
     public static void setAndDisplayCustomItems(ArrayList<Product> customItems) {
+        SharedData.SHD_CUSTOM_DATA.setData(customItems);
         CoreModule.customItems.clear();
         CoreModule.customItems.addAll(customItems);
         MainWindow.getController().getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION);
