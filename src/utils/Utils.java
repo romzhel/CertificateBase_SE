@@ -1,6 +1,7 @@
 package utils;
 
 import core.Dialogs;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -24,6 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 
 public class Utils {
@@ -237,11 +239,15 @@ public class Utils {
     }
 
     public static String getDateTime() {
-        return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date());
+        return new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date());
+    }
+
+    public static String getDateTimeForFileName() {
+        return getDateTime().replaceAll("\\:", "-");
     }
 
     public static String getDate(Date date) {
-        return new SimpleDateFormat("dd.MM.yyyy").format(date);
+        return new SimpleDateFormat("yyyy.MM.dd").format(date);
     }
 
     public static Date getDate(String date) {
@@ -342,7 +348,7 @@ public class Utils {
     }
 
     public static void openFile(File file) {
-        if (Desktop.isDesktopSupported() && file.exists()) {
+        if (Desktop.isDesktopSupported() && file != null && file.exists()) {
             try {
                 Desktop.getDesktop().open(file);
             } catch (IOException e) {
@@ -386,14 +392,20 @@ public class Utils {
         }
     }
 
-    public static void copyFilesToClipboard(ArrayList<File> files) {
+    public static void copyFilesToClipboard(List<File> files) {
         if (files.size() > 0) {
             Clipboard clipboard = Clipboard.getSystemClipboard();
 
             HashSet<File> resFiles = new HashSet<>(files);
-            ArrayList<File> filesForCopy = new ArrayList<>(resFiles);
+            ArrayList<File> filesForCopy = new ArrayList<>();
 
             ClipboardContent cc = new ClipboardContent();
+            for (File file:resFiles) {
+                if (file != null) {
+                    filesForCopy.add(file);
+                }
+            }
+
             cc.putFiles(filesForCopy);
             clipboard.setContent(cc);
             String filesName = "";
@@ -404,6 +416,25 @@ public class Utils {
                     "Следующие файлы были вставлены в буфер обмена:\n" + filesName, 800);
         } else {
             Dialogs.showMessage("Буфер обмена", "Нет подходящих файлов для копирования в буфер обмена.");
+        }
+    }
+
+    public static void copyFilesToClipboardTS(List<File> files) {
+        if (!Thread.currentThread().getName().equals("JavaFX Application Thread")) {
+            CountDownLatch inputWaiting = new CountDownLatch(1);
+
+            Platform.runLater(() -> {
+                copyFilesToClipboard(files);
+                inputWaiting.countDown();
+            });
+
+            try {
+                inputWaiting.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            copyFilesToClipboard(files);
         }
     }
 
