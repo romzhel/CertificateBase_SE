@@ -5,6 +5,7 @@ import ui_windows.main_window.file_import_window.RowData;
 import ui_windows.product.data.DataItem;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,7 +14,7 @@ import static ui_windows.product.data.DataItem.*;
 
 public class Mapper {
     private Map<String, DataItem> nameToDataItemMapping;
-    private ArrayList<FileImportParameter> parameters;
+    private List<FileImportParameter> parameters;
 
     public Mapper() {
         initMapping();
@@ -143,11 +144,11 @@ public class Mapper {
         }
     }
 
-    public ArrayList<FileImportParameter> getParameters() {
+    public List<FileImportParameter> getParameters() {
         return parameters;
     }
 
-    public void setParameters(ArrayList<FileImportParameter> parameters) {
+    public void setParameters(List<FileImportParameter> parameters) {
         this.parameters = parameters;
     }
 }

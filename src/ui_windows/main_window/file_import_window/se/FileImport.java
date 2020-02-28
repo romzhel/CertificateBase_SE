@@ -1,18 +1,19 @@
 package ui_windows.main_window.file_import_window.se;
 
-import javafx.collections.ObservableList;
+import javafx.application.Platform;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.product.Product;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FileImport {
     private ExcelFile excelFile;
     private boolean deleteOldStatistic;
-    private SelectionListener selectionListener;
-    private ActionsToDoListener actionsToDoListener;
-    private ArrayList<Product> result;
+    private ArrayList<Product> productItems;
 
     public FileImport() {
 
@@ -22,24 +23,39 @@ public class FileImport {
         excelFile = new ExcelFile(file);
         if (excelFile.open()) {
             excelFile.getImportParameters(sheetIndex);
-            return excelFile.getData();
+            productItems = excelFile.getData();
+            return productItems;
         }
         return null;
     }
 
-    public void getProductsInManualMode(File file, ActionsToDoListener actionsToDoListener) {
-        this.selectionListener = selectionListener;
+    public ArrayList<Product> getProductsInManualMode(File file) {
         excelFile = new ExcelFile(file);
         deleteOldStatistic = false;
         if (excelFile.open()) {
-            new FileImportWindow(this);
+            AtomicReference<List<FileImportParameter>> parameters = new AtomicReference<>();
+            if (!Thread.currentThread().getName().equals("JavaFX Application Thread")) {
+                CountDownLatch inputWaiting = new CountDownLatch(1);
 
-            selectionListener = parameters -> {
-                excelFile.getMapper().setParameters(new ArrayList<>(parameters));
-                result = excelFile.getData();
-                actionsToDoListener.ActionToDoEvent();
-            };
+                Platform.runLater(() -> {
+                    parameters.set(new FileImportWindow(FileImport.this).getParameters());
+                    inputWaiting.countDown();
+                });
+
+                try {
+                    inputWaiting.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                parameters.set(new FileImportWindow(FileImport.this).getParameters());
+            }
+
+            excelFile.getMapper().setParameters(parameters.get());
+            productItems = excelFile.getData();
+            return productItems;
         }
+        return null;
     }
 
     public ExcelFile getExcelFile() {
@@ -54,27 +70,11 @@ public class FileImport {
         return deleteOldStatistic;
     }
 
-    interface SelectionListener {
-        void selectionEvent(ObservableList<FileImportParameter> parameters);
-    }
-
-    public SelectionListener getSelectionListener() {
-        return selectionListener;
-    }
-
-    interface ActionsToDoListener {
-        void ActionToDoEvent();
-    }
-
-    public void setActionsToDoListener(ActionsToDoListener actionsToDoListener) {
-        this.actionsToDoListener = actionsToDoListener;
-    }
-
-    public ArrayList<FileImportParameter> getParameters() {
+    public List<FileImportParameter> getParameters() {
         return excelFile.getMapper().getParameters();
     }
 
-    public ArrayList<Product> getResult() {
-        return result;
+    public ArrayList<Product> getProductItems() {
+        return productItems;
     }
 }

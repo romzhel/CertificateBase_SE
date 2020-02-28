@@ -12,7 +12,6 @@ public class Comparator<T extends Cloneable> {
 
     public Comparator() {
         comparisonResult = new ComparisonResult<>();
-        changesFixer = new ChangesFixer<>();
     }
 
     public ComparisonResult<T> compare(T object1, T object2, ComparingParameters parameters) {
@@ -59,6 +58,7 @@ public class Comparator<T extends Cloneable> {
     }
 
     public void fixChanges() {
+        changesFixer = new ChangesFixer<>();
         for (ObjectsComparatorResultSe<T> result : comparisonResult.getChangedItemsResult()) {
             if (changesFixer.fixChanges(result)) {
                 comparingParameters.getComparingRules().addHistoryComment(result);

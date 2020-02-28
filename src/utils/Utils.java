@@ -239,11 +239,11 @@ public class Utils {
     }
 
     public static String getDateTime() {
-        return new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date());
+        return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date());
     }
 
     public static String getDateTimeForFileName() {
-        return getDateTime().replaceAll("\\:", "-");
+        return new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date()).replaceAll("\\:", "-");
     }
 
     public static String getDate(Date date) {
@@ -355,7 +355,7 @@ public class Utils {
                 System.out.println("open file exception " + e.getMessage());
             }
         } else {
-            Dialogs.showMessage("Открытие файла", "Не удалось открыть файл \n" + file.getPath());
+            Dialogs.showMessageTS("Открытие файла", "Не удалось открыть файл \n" + file.getPath());
         }
     }
 

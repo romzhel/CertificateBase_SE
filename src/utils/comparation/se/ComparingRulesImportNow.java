@@ -53,8 +53,11 @@ public class ComparingRulesImportNow extends ProductComparingRulesTemplate imple
     @Override
     public void addHistoryComment(ObjectsComparatorResultSe<Product> result) {
         String comment = Utils.getDateTime().concat(", ");
+        StringBuilder consoleComment = new StringBuilder(comment);
+
         if (result.getItem() == null) {//new
             result.getItem_after().addHistory(comment.concat("new (file)"));
+            consoleComment.append("new (file)");
             result.getItem_after().addLastImportCodes("new");
         } else if (result.getItem_after() == null) {//gone
 
@@ -62,8 +65,11 @@ public class ComparingRulesImportNow extends ProductComparingRulesTemplate imple
             String impCodes = "";
             for (Field field : result.getChangedFields()) {
                 try {
-                    comment = comment.concat(String.format("%s: %s -> %s, ", field.getName(),
-                            field.get(result.getItem_before()), field.get(result.getItem_after())));
+                    String infoPart = String.format("%s: %s -> %s, ", field.getName(),
+                            field.get(result.getItem_before()), field.get(result.getItem_after()));
+                    comment = comment.concat(infoPart);
+                    consoleComment.append(result.getItem().getArticle()).append(" (").
+                            append(result.getItem().getMaterial()).append(")").append(infoPart);
                     impCodes = impCodes.concat(field.getName()).concat(",");
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -73,7 +79,7 @@ public class ComparingRulesImportNow extends ProductComparingRulesTemplate imple
             result.getItem().addHistory(comment.concat("file"));
             result.getItem().addLastImportCodes(impCodes);
 
-            System.out.println(comment.concat("file"));
+            System.out.println(consoleComment.append("file").toString());
         }
     }
 

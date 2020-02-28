@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ExcelFile {
     private Workbook workbook;
@@ -52,7 +53,7 @@ public class ExcelFile {
         this.workbook = workbook;
     }
 
-    public ArrayList<FileImportParameter> getImportParameters(int sheetIndex) {
+    public List<FileImportParameter> getImportParameters(int sheetIndex) {
         sheet = workbook.getSheetAt(sheetIndex);
         dataSize = getSheetDataSize();
         mapper = new Mapper();
@@ -98,7 +99,7 @@ public class ExcelFile {
             }
 
             data = new RowData(row, dataSize.getCols());
-            if (mapper.isDataRow (data)) {
+            if (mapper.isDataRow(data)) {
                 products.add(new Product(data, mapper));
             }
 //            else System.out.println("no data in " + row.getCell(5).getStringCellValue());

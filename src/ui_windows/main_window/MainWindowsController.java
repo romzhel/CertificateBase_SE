@@ -81,8 +81,24 @@ public class MainWindowsController implements Initializable {
     }
 
     public void openNow() {
-        new ImportNowFile(new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор файла с выгрузкой",
-                Dialogs.EXCEL_FILES, null));
+        new Thread(() -> {
+            boolean isFullPackage = Dialogs.confirmTS("Формирование полного пакета отчётов",
+                    "Желаете сформировать полный пакет отчётов?");
+
+            ImportNowFile importNowFile = new ImportNowFile(new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
+                    "Выбор файла с выгрузкой", Dialogs.EXCEL_FILES, null));
+
+            if (isFullPackage) {
+                File importReportFile = new File(CoreModule.getFolders().getTempFolder().getPath() + "\\" +
+                        "import_report_" + Utils.getDateTimeForFileName() + ".xlsx");
+                importReportFile = importNowFile.getReportFile(importReportFile);
+                new PriceGenerationScript().run(0, PriceGenerationScript.REPORTS_FOR_CHECK);
+                Utils.openFile(importReportFile.getParentFile());
+            } else {
+                Utils.openFile(importNowFile.getReportFile(null));
+            }
+
+        }).start();
     }
 
     public void comparePriceLists() {

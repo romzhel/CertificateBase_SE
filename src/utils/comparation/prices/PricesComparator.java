@@ -28,7 +28,7 @@ public class PricesComparator {
     private File comparisonResultFile;
     private ComparisonResultMerger<Product> merger;
     private FileImport oldPriceFi;
-    private final PriceList COMPARED_PRICE_LIST = CoreModule.getPriceLists().getItems().get(0);//internal price list
+    public static final PriceList COMPARED_PRICE_LIST = CoreModule.getPriceLists().getItems().get(0);//internal price list
 
     public void compare(ArrayList<File> priceListFiles) {
         if (priceListFiles != null) {

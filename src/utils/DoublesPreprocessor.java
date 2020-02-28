@@ -9,7 +9,7 @@ public class DoublesPreprocessor {
     private ArrayList<Product> result;
 
     public DoublesPreprocessor(ArrayList<Product> items) {
-        System.out.println("preprocessing doubles...");
+        System.out.print("preprocessing doubles.... ");
 
         ArrayList<String> orderNumbersS = new ArrayList<>();
         result = items;
@@ -21,7 +21,10 @@ public class DoublesPreprocessor {
             orderNumbersS.add(pr.getMaterial());
         }
 
-        if (items.size() == orderNumbers.size()) return;
+        if (items.size() == orderNumbers.size()) {
+            System.out.println("no doubles were found");
+            return;
+        }
 
         int index = 0;
         int firstPos;

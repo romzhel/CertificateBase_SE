@@ -16,13 +16,14 @@ import ui_windows.product.data.DataItem;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static ui_windows.product.data.DataItem.DATA_EMPTY;
 import static ui_windows.product.data.DataItem.DATA_ORDER_NUMBER;
 
 public class FileImportWindowController implements Initializable {
-    private FileImport fileImport;
+    private List<FileImportParameter> parameters;
 
     @FXML
     TableView<FileImportParameter> tvFields;
@@ -39,15 +40,14 @@ public class FileImportWindowController implements Initializable {
         new FileImportTable(tvFields);
     }
 
-    public void init(FileImport fileImport){
-        this.fileImport = fileImport;
+    public void init(FileImport fileImport) {
         cbSheetNames.getItems().addAll(fileImport.getExcelFile().getSheetsName());
         cbSheetNames.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 tvFields.getItems().clear();
                 int sheetIndex = cbSheetNames.getItems().indexOf(newValue);
-                ArrayList<FileImportParameter> parameters = fileImport.getExcelFile().getImportParameters(sheetIndex);
+                List<FileImportParameter> parameters = fileImport.getExcelFile().getImportParameters(sheetIndex);
                 tvFields.getItems().addAll(parameters);
             }
         });
@@ -72,7 +72,8 @@ public class FileImportWindowController implements Initializable {
         }
 
         ((Stage) tvFields.getScene().getWindow()).close();
-        fileImport.getSelectionListener().selectionEvent(tvFields.getItems());
+//        fileImport.getSelectionListener().selectionEvent(tvFields.getItems());
+        parameters = tvFields.getItems();
     }
 
     public void cancelImport() {
@@ -80,7 +81,7 @@ public class FileImportWindowController implements Initializable {
     }
 
     public void close() {
-        fileImport = null;
+        parameters = null;
         ((Stage) tvFields.getScene().getWindow()).close();
     }
 
@@ -96,7 +97,7 @@ public class FileImportWindowController implements Initializable {
         return selectedItems.size() != singlesNames.size() || selectedItems.size() < 2 || hasntMaterial;
     }
 
-    public void setFileImport(FileImport fileImport) {
-        this.fileImport = fileImport;
+    public List<FileImportParameter> getParameters() {
+        return parameters;
     }
 }

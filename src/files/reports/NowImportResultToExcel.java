@@ -2,7 +2,6 @@ package files.reports;
 
 import core.Dialogs;
 import files.ExcelCellStyleFactory;
-import javafx.application.Platform;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.*;
@@ -33,41 +32,42 @@ public class NowImportResultToExcel {
         sheet = workbook.createSheet("ImportReport_".concat(Utils.getDateTime().replaceAll("\\:", "_")));
     }
 
-    public void export(ComparisonResult<Product> result) {
-        Platform.runLater(() -> {
+    public File export(ComparisonResult<Product> result, File targetFile) {
+//        Platform.runLater(() -> {
+        File reportFile = targetFile != null ? targetFile : new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
+                "Сохранение результатов импорта", Dialogs.EXCEL_FILES, "ImportReport_" +
+                        Utils.getDateTime().replaceAll("\\:", "-") + ".xlsx");
 
-            File reportFile = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Сохранение результатов импорта",
-                    Dialogs.EXCEL_FILES, "ImportReport_" + Utils.getDateTime().replaceAll("\\:", "-") + ".xlsx");
+        if ((reportFile != null)) {
+//                new Thread(() -> {
+            rowNum = 0;
+            try {
+                style = workbook.createCellStyle();
+                style.setAlignment(HorizontalAlignment.LEFT);
 
-            if ((reportFile != null)) {
-                new Thread(() -> {
-                    rowNum = 0;
-                    try {
-                        style = workbook.createCellStyle();
-                        style.setAlignment(HorizontalAlignment.LEFT);
+                fillTitles();
 
-                        fillTitles();
+                fillValues(result.getNewItemsResult());
+                fillValues(result.getChangedItemsResult());
 
-                        fillValues(result.getNewItemsResult());
-                        fillValues(result.getChangedItemsResult());
+                FileOutputStream fos = new FileOutputStream(reportFile);
+                workbook.write(fos);
 
-                        FileOutputStream fos = new FileOutputStream(reportFile);
-                        workbook.write(fos);
+                fos.close();
 
-                        fos.close();
-                        Utils.openFile(reportFile);
-                    } catch (Exception e) {
-                        Platform.runLater(() -> Dialogs.showMessage("Ошибка сохранения отчёта", e.getMessage()));
-                    } finally {
-                        try {
-                            workbook.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+            } catch (Exception e) {
+                Dialogs.showMessageTS("Ошибка сохранения отчёта", e.getMessage());
+            } finally {
+                try {
+                    workbook.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        });
+//                }).start();
+        }
+//        });
+        return reportFile;
     }
 
     private void fillTitles() {
@@ -137,14 +137,7 @@ public class NowImportResultToExcel {
         } else if (object instanceof Long) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue((long) object);
-        }
-
-
-        /*else if (text.matches("^\\d+\\.*\\d+$")) {
-            cell.setCellType(CellType.NUMERIC);
-            cell.setCellValue(Double.parseDouble(text));
-        }*/
-        else {
+        } else {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(object.toString());
         }
