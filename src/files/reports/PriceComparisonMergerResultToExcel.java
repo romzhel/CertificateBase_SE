@@ -32,10 +32,12 @@ public class PriceComparisonMergerResultToExcel {
     private DataItem[] values = new DataItem[]{DATA_FAMILY_NAME, DATA_ORDER_NUMBER, DATA_ARTICLE, DATA_DESCRIPTION};
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
+    private File reportFile;
     private int rowNum;
     private int colIndex;
 
-    public void export(PricesComparator pricesComparator) {
+    public File export(PricesComparator pricesComparator, File reportFile) {
+        this.reportFile = reportFile;
         String firstName = pricesComparator.getFile1().getName();
         String secondName = pricesComparator.getFile2() != null ? pricesComparator.getFile2().getName() : "online price";
         String name = String.format("PriceComparisonResult %s vs %s", secondName, firstName);
@@ -44,85 +46,87 @@ public class PriceComparisonMergerResultToExcel {
         new ExcelCellStyleFactory(workbook);
         sheet = workbook.createSheet(Utils.getDateTime().replaceAll("\\:", "_").concat("_").concat(name));
 
-        Platform.runLater(() -> {
-            File reportFile = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Сохранение результатов сравнения",
+//        Platform.runLater(() -> {
+        if (reportFile == null) {
+            reportFile = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(), "Сохранение результатов сравнения",
                     Dialogs.EXCEL_FILES, name + ".xlsx");
+        }
 
-            if ((reportFile != null)) {
-                new Thread(() -> {
-                    MainWindow.setProgress(-1);
-                    XSSFRow row;
+        if ((reportFile != null)) {
+//                new Thread(() -> {
+            MainWindow.setProgress(-1);
+            XSSFRow row;
 
-                    fillTitles(pricesComparator.getOldPriceFi().getExcelFile().getSheetsName());
+            fillTitles(pricesComparator.getOldPriceFi().getExcelFile().getSheetsName());
 
-                    for (MergerResultItem<Product> resultItem : pricesComparator.getMerger().getResult().getResultItems()) {
-                        row = sheet.createRow(rowNum++);
+            for (MergerResultItem<Product> resultItem : pricesComparator.getMerger().getResult().getResultItems()) {
+                row = sheet.createRow(rowNum++);
 
-                        boolean isGone = false;
-                        for (ObjectsComparatorResultSe<Product> objCompRes : resultItem.getDetails()) {
-                            if (objCompRes == null) {
-                                fillCell(row.createCell(colIndex++), " ");
-                                fillCell(row.createCell(colIndex++), " ");
-                                fillCell(row.createCell(colIndex++), " ");
-                                fillCell(row.createCell(colIndex++), " ");
-                                continue;
-                            }
+                boolean isGone = false;
+                for (ObjectsComparatorResultSe<Product> objCompRes : resultItem.getDetails()) {
+                    if (objCompRes == null) {
+                        fillCell(row.createCell(colIndex++), " ");
+                        fillCell(row.createCell(colIndex++), " ");
+                        fillCell(row.createCell(colIndex++), " ");
+                        fillCell(row.createCell(colIndex++), " ");
+                        continue;
+                    }
 
-                            int index = resultItem.getDetails().indexOf(objCompRes);
+                    int index = resultItem.getDetails().indexOf(objCompRes);
 
-                            if (objCompRes.getItem() != null && objCompRes.getItem_after() != null) {//changed
-                                fillChangeDetails(objCompRes, index);
-                            } else {//new or gone
-                                fillItemDetails(resultItem.getItem(), row);
-                                colIndex += sheetTitles.length * index;
+                    if (objCompRes.getItem() != null && objCompRes.getItem_after() != null) {//changed
+                        fillChangeDetails(objCompRes, index);
+                    } else {//new or gone
+                        fillItemDetails(resultItem.getItem(), row);
+                        colIndex += sheetTitles.length * index;
 
-                                if (objCompRes.getItem() == null && objCompRes.getItem_after() != null) {//new
-                                    fillCell(row.createCell(colIndex++), "добавлена");
+                        if (objCompRes.getItem() == null && objCompRes.getItem_after() != null) {//new
+                            fillCell(row.createCell(colIndex++), "добавлена");
 
-                                    if (isGone) {//moved from main to service positions
-                                        fillCell(row.createCell(colIndex - sheetTitles.length), "Цена в прайсе");
-                                        fillCell(row.createCell(colIndex++), "Цена в прайсе");
-                                        fillCell(row.createCell(colIndex++ - sheetTitles.length), DATA_LOCAL_PRICE.getValue(resultItem.getItem()));
-                                        fillCell(row.createCell(colIndex - sheetTitles.length), "->");
-                                        fillCell(row.createCell(colIndex++), "->");
+                            if (isGone) {//moved from main to service positions
+                                fillCell(row.createCell(colIndex - sheetTitles.length), "Цена в прайсе");
+                                fillCell(row.createCell(colIndex++), "Цена в прайсе");
+                                fillCell(row.createCell(colIndex++ - sheetTitles.length), DATA_LOCAL_PRICE.getValue(resultItem.getItem()));
+                                fillCell(row.createCell(colIndex - sheetTitles.length), "->");
+                                fillCell(row.createCell(colIndex++), "->");
 
-                                        if (pricesComparator.getFile2() == null) {
-                                            int discount = pricesComparator.getCOMPARED_PRICE_LIST().getSheets().get(resultItem.getDetails().indexOf(objCompRes)).getDiscount();
-                                            double costInPrice = (double) DATA_LOCAL_PRICE.getValue(objCompRes.getItem_after()) * (1 - (double) discount / 100);
-                                            fillCell(row.createCell(colIndex++), costInPrice);
-                                        } else {
-                                            fillCell(row.createCell(colIndex++), DATA_LOCAL_PRICE.getValue(objCompRes.getItem_after()));
-                                        }
-                                    }
-
-                                } else if ((objCompRes.getItem() != null && objCompRes.getItem_after() == null)) {// gone
-                                    fillCell(row.createCell(colIndex++), "удалена");
-                                    isGone = true;
+                                if (pricesComparator.getFile2() == null) {
+                                    int discount = pricesComparator.getCOMPARED_PRICE_LIST().getSheets().get(resultItem.getDetails().indexOf(objCompRes)).getDiscount();
+                                    double costInPrice = (double) DATA_LOCAL_PRICE.getValue(objCompRes.getItem_after()) * (1 - (double) discount / 100);
+                                    fillCell(row.createCell(colIndex++), costInPrice);
+                                } else {
+                                    fillCell(row.createCell(colIndex++), DATA_LOCAL_PRICE.getValue(objCompRes.getItem_after()));
                                 }
                             }
+
+                        } else if ((objCompRes.getItem() != null && objCompRes.getItem_after() == null)) {// gone
+                            fillCell(row.createCell(colIndex++), "удалена");
+                            isGone = true;
                         }
                     }
-
-                    try {
-                        FileOutputStream fos = new FileOutputStream(reportFile);
-                        workbook.write(fos);
-
-                        fos.close();
-                        Utils.openFile(reportFile);
-                    } catch (Exception e) {
-                        Platform.runLater(() -> Dialogs.showMessage("Ошибка сохранения отчёта", e.getMessage()));
-                    } finally {
-                        try {
-                            workbook.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        MainWindow.setProgress(0.0);
-                    }
-
-                }).start();
+                }
             }
-        });
+
+            try {
+                FileOutputStream fos = new FileOutputStream(reportFile);
+                workbook.write(fos);
+
+                fos.close();
+            } catch (Exception e) {
+                Platform.runLater(() -> Dialogs.showMessage("Ошибка сохранения отчёта", e.getMessage()));
+            } finally {
+                try {
+                    workbook.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                MainWindow.setProgress(0.0);
+            }
+
+//                }).start();
+        }
+//        });
+        return reportFile;
     }
 
     private void fillTitles(ArrayList<String> sheetsNames) {

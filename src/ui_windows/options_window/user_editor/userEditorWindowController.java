@@ -8,9 +8,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.MouseButton;
-import utils.comparation.products.ObjectsComparator;
+import javafx.stage.Stage;
 import utils.Utils;
-
+import utils.comparation.products.ObjectsComparator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -96,7 +96,7 @@ public class userEditorWindowController implements Initializable {
     }
 
     public void actionClose() {
-        UserEditorWindow.close();
+        ((Stage) lvFamilies.getScene().getWindow()).close();
     }
 
     public void moveFamily() {

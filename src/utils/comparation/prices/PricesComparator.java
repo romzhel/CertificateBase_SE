@@ -25,69 +25,82 @@ import static ui_windows.product.data.DataItem.DATA_LOCAL_PRICE;
 public class PricesComparator {
     private File file1;
     private File file2;
+    private File comparisonResultFile;
     private ComparisonResultMerger<Product> merger;
     private FileImport oldPriceFi;
     private final PriceList COMPARED_PRICE_LIST = CoreModule.getPriceLists().getItems().get(0);//internal price list
 
-    public PricesComparator(final File file1, final File file2) {
+    public void compare(ArrayList<File> priceListFiles) {
+        if (priceListFiles != null) {
+            file1 = priceListFiles.get(0);
+            file2 = priceListFiles.get(1);
+
+            compare();
+        }
+    }
+
+    public void compare(File file1, File file2) {
         this.file1 = file1;
         this.file2 = file2;
 
-        new Thread(() -> {
-            MainWindow.setProgress(-1.0);
+        compare();
+    }
 
-            oldPriceFi = new FileImport();
+    private void compare() {
+//        new Thread(() -> {
+        MainWindow.setProgress(-1.0);
 
-            ArrayList<Product> oldPriceItems;
-            ArrayList<Product> newPriceItems;
+        oldPriceFi = new FileImport();
 
-            merger = new ComparisonResultMerger<>((o1, o2) -> {
-                String prod1 = o1.getMaterial().replaceAll("(\\-)*(\\:)*(VBPZ)*(BPZ)*", "");
-                String prod2 = o2.getMaterial().replaceAll("(\\-)*(\\:)*(VBPZ)*(BPZ)*", "");
-                return prod1.equals(prod2) ? 0 : 1;
-            });
-            for (int sheetIndex = 0; sheetIndex < COMPARED_PRICE_LIST.getSheets().size(); sheetIndex++) {
+        ArrayList<Product> oldPriceItems;
+        ArrayList<Product> newPriceItems;
 
-                PriceListSheet priceListSheet = COMPARED_PRICE_LIST.getSheets().get(sheetIndex);
+        merger = new ComparisonResultMerger<>((o1, o2) -> {
+            String prod1 = o1.getMaterial().replaceAll("(\\-)*(\\:)*(VBPZ)*(BPZ)*", "");
+            String prod2 = o2.getMaterial().replaceAll("(\\-)*(\\:)*(VBPZ)*(BPZ)*", "");
+            return prod1.equals(prod2) ? 0 : 1;
+        });
+        for (int sheetIndex = 0; sheetIndex < COMPARED_PRICE_LIST.getSheets().size(); sheetIndex++) {
 
-                oldPriceItems = oldPriceFi.getProductsInAutoMode(file1, sheetIndex);
-                if (file2 == null) {
-                    PriceStructure priceStructure = new PriceStructure(priceListSheet);
-                    priceStructure.analysePriceItems();
-                    newPriceItems = priceStructure.getCorrectProducts();
+            PriceListSheet priceListSheet = COMPARED_PRICE_LIST.getSheets().get(sheetIndex);
 
-                    if (priceListSheet.getContentMode() == CONTENT_MODE_FAMILY) {
-                        priceListSheet.getContentTable().switchContentMode(CONTENT_MODE_LGBK);
-                    }
-                } else {
-                    newPriceItems = new FileImport().getProductsInAutoMode(file2, sheetIndex);
+            oldPriceItems = oldPriceFi.getProductsInAutoMode(file1, sheetIndex);
+            if (file2 == null) {
+                PriceStructure priceStructure = new PriceStructure(priceListSheet);
+                priceStructure.analysePriceItems();
+                newPriceItems = priceStructure.getCorrectProducts();
+
+                if (priceListSheet.getContentMode() == CONTENT_MODE_FAMILY) {
+                    priceListSheet.getContentTable().switchContentMode(CONTENT_MODE_LGBK);
                 }
-
-                FileImportParameter[] params = oldPriceFi.getExcelFile().getMapper().getParameters().toArray(new FileImportParameter[]{});
-
-                Comparator<Product> comparator = new Comparator<>();
-                comparator.compare(oldPriceItems, newPriceItems,
-                        new ComparingParameters(new Adapter<Product>().convert(params),
-                                new ComparingRulesPricesComparison(param -> {
-                                    if (file2 == null) {//online price
-                                        if (param.getField() == DATA_LOCAL_PRICE.getField()) {
-                                            Product clone = param.getObject2().clone();
-                                            double cost = param.getObject2().getLocalPrice() * (1.0 - (double) priceListSheet.getDiscount() / 100);
-                                            clone.setLocalPrice(cost);
-                                            param.setObject2(clone);
-                                        }
-                                    }
-                                    return param;
-                                }), ComparingParameters.WITH_GONE));
-
-                merger.addForMerging(comparator.getComparisonResult());
+            } else {
+                newPriceItems = new FileImport().getProductsInAutoMode(file2, sheetIndex);
             }
 
-            merger.merge();
-            PriceComparisonMergerResultToExcel exporterToExcel = new PriceComparisonMergerResultToExcel();
-            exporterToExcel.export(this);
-            MainWindow.setProgress(0.0);
-        }).start();
+            FileImportParameter[] params = oldPriceFi.getExcelFile().getMapper().getParameters().toArray(new FileImportParameter[]{});
+
+            Comparator<Product> comparator = new Comparator<>();
+            comparator.compare(oldPriceItems, newPriceItems,
+                    new ComparingParameters(new Adapter<Product>().convert(params),
+                            new ComparingRulesPricesComparison(param -> {
+                                if (file2 == null) {//online price
+                                    if (param.getField() == DATA_LOCAL_PRICE.getField()) {
+                                        Product clone = param.getObject2().clone();
+                                        double cost = param.getObject2().getLocalPrice() * (1.0 - (double) priceListSheet.getDiscount() / 100);
+                                        clone.setLocalPrice(cost);
+                                        param.setObject2(clone);
+                                    }
+                                }
+                                return param;
+                            }), ComparingParameters.WITH_GONE));
+
+            merger.addForMerging(comparator.getComparisonResult());
+        }
+
+        merger.merge();
+
+        MainWindow.setProgress(0.0);
+//        }).start();
     }
 
     public File getFile1() {
@@ -108,5 +121,15 @@ public class PricesComparator {
 
     public PriceList getCOMPARED_PRICE_LIST() {
         return COMPARED_PRICE_LIST;
+    }
+
+    public File exportToExcel(File file) {
+        PriceComparisonMergerResultToExcel exporterToExcel = new PriceComparisonMergerResultToExcel();
+        comparisonResultFile = exporterToExcel.export(this, file);
+        return comparisonResultFile;
+    }
+
+    public File getComparisonResultFile() {
+        return comparisonResultFile;
     }
 }

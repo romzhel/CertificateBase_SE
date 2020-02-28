@@ -1,20 +1,24 @@
 package files;
 
-import javafx.fxml.FXML;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ui_windows.OrdinalWindow;
+import ui_windows.product.data.DataItem;
 
-public class SelectorExportWindow extends OrdinalWindow {
-    @FXML
-    AnchorPane apRoot;
+import java.util.ArrayList;
 
-
+public class SelectorExportWindow extends OrdinalWindow<SelectorExportWindowController> {
+    private ArrayList<DataItem> columns;
 
     public SelectorExportWindow(Stage parentStage) {
         super(parentStage, Modality.APPLICATION_MODAL, null, "selectorExportWindow.fxml", "Выбор столбцов");
 
-        stage.show();
+        stage.showAndWait();
+
+        columns = controller.getColumnsSelector().getSelectedItems();
+    }
+
+    public ArrayList<DataItem> getColumns() {
+        return columns;
     }
 }

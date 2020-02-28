@@ -8,7 +8,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import ui_windows.main_window.MainWindow;
 import ui_windows.product.data.DataItem;
 import ui_windows.product.data.DataSets;
 import utils.twin_list_views.TwinListViews;
@@ -35,11 +34,8 @@ public class SelectorExportWindowController implements Initializable {
     }
 
     private void initButtons() {
-        btnOk.setOnAction(event -> {
-            new Thread(() -> new ExportToExcel(columnsSelector.getSelectedItems(), MainWindow.getMainTable().getItemsForReport())).start();
-            ((Stage)btnOk.getScene().getWindow()).close();
-        });
-        btnCancel.setOnAction(event -> ((Stage)btnOk.getScene().getWindow()).close());
+        btnOk.setOnAction(event -> ((Stage) btnOk.getScene().getWindow()).close());
+        btnCancel.setOnAction(event -> ((Stage) btnOk.getScene().getWindow()).close());
     }
 
     private void initTwinListsView() {
@@ -91,5 +87,9 @@ public class SelectorExportWindowController implements Initializable {
             }
         });
         columnsSelector.setSelectedItems(columns);
+    }
+
+    public TwinListViews<DataItem> getColumnsSelector() {
+        return columnsSelector;
     }
 }

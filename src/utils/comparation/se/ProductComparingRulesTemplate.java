@@ -3,11 +3,7 @@ package utils.comparation.se;
 import javafx.util.Callback;
 import ui_windows.product.Product;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-
 import static ui_windows.product.data.DataItem.*;
-import static ui_windows.product.data.DataItem.DATA_DESCRIPTION;
 
 public abstract class ProductComparingRulesTemplate implements ComparingRules<Product> {
     protected Callback<Param<Product>, Param<Product>> customComparisonRule;

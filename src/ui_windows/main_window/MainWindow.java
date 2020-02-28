@@ -48,6 +48,8 @@ public class MainWindow extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+//        Application.setUserAgentStylesheet(Application.STYLESHEET_CASPIAN);
+
         mainStage = primaryStage;
 
 //        WaitingWindow ww = new WaitingWindow(null);
@@ -175,7 +177,7 @@ public class MainWindow extends Application {
 
         Platform.runLater(() -> {
             if (progressBar != null) {
-                progressBar.setVisible(progressBarValue == 0 ? false : true);
+                progressBar.setVisible(progressBarValue != 0);
                 progressBar.setProgress(value);
             }
         });
@@ -206,6 +208,6 @@ public class MainWindow extends Application {
     }
 
     public static MainTable getMainTable() {
-        return controller.mainTable;
+        return controller.getMainTable();
     }
 }

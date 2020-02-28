@@ -1,16 +1,24 @@
 package ui_windows.options_window.price_lists_editor;
 
 import core.CoreModule;
+import core.Dialogs;
+import files.price_to_excel.PriceStructure;
+import javafx.application.Platform;
 import javafx.scene.layout.AnchorPane;
+import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.se.PriceListEditorWindowControllerv2;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.product.Product;
 import utils.Utils;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class PriceList {
     private int id = -1;
@@ -20,6 +28,8 @@ public class PriceList {
     private File destination;
     private ArrayList<PriceListSheet> sheets = new ArrayList<>();
     private ArrayList<String> lgbks;
+    private ArrayList<PriceStructure> priceStructures;
+    private ArrayList<Product> problemItems;
 
     public PriceList() {
     }
@@ -116,6 +126,19 @@ public class PriceList {
         return pls == null || cost == 0.0 ? 0.0 : cost * (1.0 - (double) pls.getDiscount() / 100);
     }*/
 
+    public ArrayList<PriceStructure> generate() {
+        priceStructures = new ArrayList<>(2);
+        problemItems = new ArrayList<>();
+
+        for (PriceListSheet priceListSheet : sheets) {
+            PriceStructure priceStructure = new PriceStructure(priceListSheet);
+            priceStructure.analysePriceItems();
+            problemItems.addAll(priceStructure.getProblemItems());
+            priceStructures.add(priceStructure);
+        }
+
+        return priceStructures;
+    }
 
     public String getName() {
         return name;
@@ -171,5 +194,13 @@ public class PriceList {
 
     public void setDestination(File destination) {
         this.destination = destination;
+    }
+
+    public ArrayList<PriceStructure> getPriceStructures() {
+        return priceStructures;
+    }
+
+    public ArrayList<Product> getProblemItems() {
+        return problemItems;
     }
 }

@@ -14,7 +14,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class PriceComparationWindowController implements Initializable {
+public class SelectPricesForComparisonWindowController implements Initializable {
     private File file1;
     private File file2;
     @FXML
@@ -67,12 +67,24 @@ public class PriceComparationWindowController implements Initializable {
         });
 
         btnOk.setOnAction(event -> {
-            if (file1 != null || file2 != null) {
+            if (file1 != null && (file2 != null || rbUseNewPrice.isSelected())) {
+
+                if (rbUseNewPrice.isSelected()) {
+                    file2 = null;
+                }
+
                 ((Stage) btnOk.getParent().getScene().getWindow()).close();
-                new PricesComparator(file1, rbUseNewPrice.isSelected() ? null : file2);
             }
         });
 
         btnCancel.setOnAction(event -> ((Stage) btnOk.getParent().getScene().getWindow()).close());
+    }
+
+    public File getFile1() {
+        return file1;
+    }
+
+    public File getFile2() {
+        return file2;
     }
 }

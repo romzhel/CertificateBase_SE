@@ -54,7 +54,7 @@ public class MainTable implements Module {
     private void initTable(TableView<Product> tvTable) {
         tvTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         tvTable.setOnMouseClicked(event -> {//double click on product
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
+            if (event.getButton().equals(MouseButton.PRIMARY) || event.getButton().equals(MouseButton.SECONDARY)) {
                 if (event.getClickCount() == 1) {
                     if (getSelectedItems().size() > 0) {
                         SharedData.SHD_SELECTED_PRODUCTS.setData(getSelectedItems());

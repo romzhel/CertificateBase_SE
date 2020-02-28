@@ -9,6 +9,8 @@ import ui_windows.product.data.DataItem;
 import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 import utils.Utils;
 import utils.comparation.products.ComparationParameterSets;
+import utils.comparation.se.Comparator;
+import utils.comparation.se.ComparingParameters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +66,9 @@ public class MultiEditor {
         for (Product product : editedItems) {
             comparator = new SingleProductsComparator(product, resultProduct, true, parameters);
             haveChanges |= comparator.getResult().isNeedUpdateInDB();
+
+//            Comparator<Product> comparator1 = new Comparator<>();
+//            comparator1.compare(product, resultProduct, new ComparingParameters(comparedFields, new Rules));
 
             if (haveChanges) {
                 String oldHistory = product.getHistory();

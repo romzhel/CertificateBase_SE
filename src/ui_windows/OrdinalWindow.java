@@ -15,14 +15,14 @@ import java.io.IOException;
 
 import static ui_windows.options_window.profile_editor.SimpleRight.FULL;
 
-public class OrdinalWindow {
+public abstract class OrdinalWindow<T> {
     protected static Stage stage;
     protected static Mode mode;
     protected static AnchorPane rootAnchorPane;
     protected static FXMLLoader loader;
-    protected static T controller;
+    protected T controller;
 
-    public OrdinalWindow(Stage parentStage, Modality modality, Mode mode, String resourceName, String title, T... controller) {
+    public OrdinalWindow(Stage parentStage, Modality modality, Mode mode, String resourceName, String title) {
         this.mode = mode;
         loader = new FXMLLoader(getClass().getResource(resourceName));
         try {
@@ -38,6 +38,8 @@ public class OrdinalWindow {
         stage.initModality(modality);
         stage.setTitle(title);
         stage.setResizable(false);
+
+        controller = loader.getController();
     }
 
     public static Stage getStage() {

@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="301.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="utils.comparation.prices.PriceComparationWindowController">
+<AnchorPane prefHeight="301.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="utils.comparation.prices.SelectPricesForComparisonWindowController">
    <children>
       <Label layoutX="29.0" layoutY="20.0" text="Первый прайс для сравнения">
          <font>
