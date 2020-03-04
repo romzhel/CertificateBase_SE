@@ -36,7 +36,7 @@ public class NowImportResultToExcel {
 //        Platform.runLater(() -> {
         File reportFile = targetFile != null ? targetFile : new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
                 "Сохранение результатов импорта", Dialogs.EXCEL_FILES, "ImportReport_" +
-                        Utils.getDateTime().replaceAll("\\:", "-") + ".xlsx");
+                        Utils.getDateTime().replaceAll("\\:", "-") + ".xlsx").get(0);
 
         if ((reportFile != null)) {
 //                new Thread(() -> {

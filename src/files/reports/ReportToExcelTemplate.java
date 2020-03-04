@@ -24,7 +24,7 @@ public abstract class ReportToExcelTemplate implements Callable<File> {
             Platform.runLater(() -> {
                 reportFile = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор места сохранения",
                         Dialogs.EXCEL_FILES, "report_" + Utils.getDateTime().replaceAll(":", "-")
-                                + fileExtension);
+                                + fileExtension).get(0);
 
                 waitingDialog.countDown();
             });

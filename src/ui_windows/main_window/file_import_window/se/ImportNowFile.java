@@ -10,11 +10,13 @@ import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.MainWindowsController;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.product.Product;
+import utils.DoublesPreprocessor;
 import utils.comparation.se.*;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import static utils.comparation.se.ComparingParameters.WITHOUT_GONE;
@@ -22,24 +24,44 @@ import static utils.comparation.se.ComparingParameters.WITHOUT_GONE;
 public class ImportNowFile implements Callable<File> {
     private ComparisonResult<Product> result;
     private File reportFile;
+    private Comparator<Product> comparator;
+    private FileImport fileImport;
 
-    public ImportNowFile(File file) {
-        if (file == null || !file.exists()) return;
+    public ImportNowFile() {
+        comparator = new Comparator<>();
+        fileImport = new FileImport();
+    }
 
-        MainWindow.setProgress(-1);
+    public boolean treat(List<File> files) {
+        if (files == null) {
+            return false;
+        }
 
-        FileImport fileImport = new FileImport();
-        fileImport.getProductsInManualMode(file);
+        HashSet<Product> changedItemsForDB = new HashSet<>();
 
-        ArrayList<Product> resetedItems = fileImport.isDeleteOldStatistic() ? CoreModule.getProducts().resetLastImportCodes() : new ArrayList<>();
-        HashSet<Product> changedItemsForDB = new HashSet<>(resetedItems);
+        boolean isThereFiles = false;
+        for (File file : files) {
+            if (file == null) {
+                continue;
+            }
+            isThereFiles = true;
 
-        FileImportParameter[] importParameters = fileImport.getExcelFile().getMapper().getParameters().toArray(new FileImportParameter[]{});
+            fileImport.getProductsInManualMode(file);
 
-        Comparator<Product> comparator = new Comparator<>();
-        comparator.compare(CoreModule.getProducts().getItems(), fileImport.getProductItems(),
-                new ComparingParameters(new Adapter<Product>().convert(importParameters), new ComparingRulesImportNow(), WITHOUT_GONE));
+            if (fileImport.isDeleteOldStatistic() && files.indexOf(file) < 1) {
+                changedItemsForDB.addAll(CoreModule.getProducts().resetLastImportCodes());
+            }
+
+            FileImportParameter[] importParameters = fileImport.getExcelFile().getMapper().getParameters().toArray(new FileImportParameter[]{});
+
+            comparator.compare(CoreModule.getProducts().getItems(), new DoublesPreprocessor(fileImport.getProductItems()).getTreatedItems(),
+                    new ComparingParameters(new Adapter<Product>().convert(importParameters), new ComparingRulesImportNow(), WITHOUT_GONE));
+        }
         comparator.fixChanges();
+
+        if (!isThereFiles) {
+            return false;
+        }
 
         result = comparator.getComparisonResult();
 
@@ -58,14 +80,9 @@ public class ImportNowFile implements Callable<File> {
             if (changedItemsForDB.size() > 0)
                 new ProductsDB().updateData(new ArrayList<>(changedItemsForDB));//save changed items to db
 
-            System.out.println("writing to DB finished");
+            System.out.println("DB updating is finished");
         }
-
-        MainWindow.setProgress(0);
-
-
-//            }).start();
-
+        return true;
     }
 
     @Override

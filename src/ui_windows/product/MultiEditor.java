@@ -2,29 +2,27 @@ package ui_windows.product;
 
 import core.CoreModule;
 import core.Dialogs;
-import javafx.collections.ObservableList;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.main_window.file_import_window.SingleProductsComparator;
 import ui_windows.product.data.DataItem;
 import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 import utils.Utils;
 import utils.comparation.products.ComparationParameterSets;
-import utils.comparation.se.Comparator;
-import utils.comparation.se.ComparingParameters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MultiEditor {
     public static int MODE_NO_ITEMS = 0;
     public static int MODE_SINGLE = 1;
     public static int MODE_MULTI = 2;
-    private ObservableList<Product> editedItems;
-    private ArrayList<MultiEditorItem> comparedFields;
+    private List<Product> editedItems;
+    private List<MultiEditorItem> comparedFields;
     private Product resultProduct;
     private ProductEditorWindowController pewc;
 
-    public MultiEditor(ObservableList<Product> editedItems, ProductEditorWindowController pewc) {
+    public MultiEditor(List<Product> editedItems, ProductEditorWindowController pewc) {
         this.pewc = pewc;
         this.editedItems = editedItems;
         this.comparedFields = new ArrayList<>();
@@ -46,6 +44,7 @@ public class MultiEditor {
             }
 //            fac.setUiAccessibility();
         }
+
         if (editedItems.size() == 1) {
             editedItems.get(0).displayInEditorWindow(pewc);
         } else if (editedItems.size() > 1) {
@@ -83,7 +82,7 @@ public class MultiEditor {
         return haveChanges;
     }
 
-    public ObservableList<Product> getEditedItems() {
+    public List<Product> getEditedItems() {
         return editedItems;
     }
 

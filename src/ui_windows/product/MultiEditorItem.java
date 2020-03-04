@@ -1,9 +1,5 @@
 package ui_windows.product;
 
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
-import javafx.scene.control.TextInputControl;
 import ui_windows.product.data.DataItem;
 
 import java.util.List;
@@ -12,7 +8,7 @@ public class MultiEditorItem {
     public static final boolean CAN_BE_SAVED = true;
     public static final boolean CAN_NOT_BE_SAVED = false;
     private DataItem dataItem;
-//    private Control control;
+    //    private Control control;
     private boolean canBeSaved;
     private Object commonValue;
     private Object newValue;
@@ -74,7 +70,9 @@ public class MultiEditorItem {
                 compRes &= tempValue.equals(value);
             }
         }
-        if (compRes) commonValue = dataItem.getValue(items.get(0));
+
+        commonValue = compRes ? dataItem.getValue(items.get(0)) : null;
+
         return compRes;
     }
 

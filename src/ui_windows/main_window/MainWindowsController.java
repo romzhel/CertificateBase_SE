@@ -82,11 +82,17 @@ public class MainWindowsController implements Initializable {
 
     public void openNow() {
         new Thread(() -> {
+            MainWindow.setProgress(-1);
             boolean isFullPackage = Dialogs.confirmTS("Формирование полного пакета отчётов",
                     "Желаете сформировать полный пакет отчётов?");
 
-            ImportNowFile importNowFile = new ImportNowFile(new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
+            ImportNowFile importNowFile = new ImportNowFile();
+            boolean isTreatedData = importNowFile.treat(new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
                     "Выбор файла с выгрузкой", Dialogs.EXCEL_FILES, null));
+
+            if (!isTreatedData) {
+                return;
+            }
 
             if (isFullPackage) {
                 File importReportFile = new File(CoreModule.getFolders().getTempFolder().getPath() + "\\" +
@@ -97,7 +103,7 @@ public class MainWindowsController implements Initializable {
             } else {
                 Utils.openFile(importNowFile.getReportFile(null));
             }
-
+            MainWindow.setProgress(0.0);
         }).start();
     }
 
@@ -105,9 +111,11 @@ public class MainWindowsController implements Initializable {
         ArrayList<File> priceListFiles = new SelectPricesForComparisonWindow().getPriceListFiles();
         if (priceListFiles.get(0) != null) {
             new Thread(() -> {
+                MainWindow.setProgress(-1);
                 PricesComparator pricesComparator = new PricesComparator();
                 pricesComparator.compare(priceListFiles);
                 Utils.openFile(pricesComparator.exportToExcel(null));
+                MainWindow.setProgress(0.0);
             }).start();
         }
     }

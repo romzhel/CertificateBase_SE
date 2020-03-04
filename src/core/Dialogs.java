@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
@@ -73,7 +74,7 @@ public class Dialogs {
         return file;
     }
 
-    public File selectAnyFile(Stage stage, String windowTitle, FileChooser.ExtensionFilter fileFilter, String fileName) {
+    public List<File> selectAnyFile(Stage stage, String windowTitle, FileChooser.ExtensionFilter fileFilter, String fileName) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(windowTitle);
         if (fileFilter != null) fileChooser.getExtensionFilters().add(fileFilter);
@@ -86,12 +87,13 @@ public class Dialogs {
             }
         }
 
-        return fileName == null || fileName.contains("\\") ? fileChooser.showOpenDialog(stage) : fileChooser.showSaveDialog(stage);
+        return fileName == null || fileName.contains("\\") ? fileChooser.showOpenMultipleDialog(stage) :
+                Arrays.asList(fileChooser.showSaveDialog(stage));
     }
 
-    public File selectAnyFileTS(Stage stage, String windowTitle, FileChooser.ExtensionFilter fileFilter, String fileName) {
+    public List<File> selectAnyFileTS(Stage stage, String windowTitle, FileChooser.ExtensionFilter fileFilter, String fileName) {
         if (!Thread.currentThread().getName().equals("JavaFX Application Thread")) {
-            AtomicReference<File> result = new AtomicReference<>(null);
+            AtomicReference<List<File>> result = new AtomicReference<>(null);
             CountDownLatch inputWaiting = new CountDownLatch(1);
 
             Platform.runLater(() -> {

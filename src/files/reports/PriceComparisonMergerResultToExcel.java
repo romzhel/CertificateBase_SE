@@ -49,7 +49,7 @@ public class PriceComparisonMergerResultToExcel {
 //        Platform.runLater(() -> {
         if (reportFile == null) {
             reportFile = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(), "Сохранение результатов сравнения",
-                    Dialogs.EXCEL_FILES, name + ".xlsx");
+                    Dialogs.EXCEL_FILES, name + ".xlsx").get(0);
         }
 
         if ((reportFile != null)) {

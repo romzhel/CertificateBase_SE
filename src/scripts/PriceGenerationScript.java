@@ -77,7 +77,7 @@ public class PriceGenerationScript {
 
                         File previousPriceList = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
                                 "Выберите прайс для сравнения", Dialogs.EXCEL_FILES,
-                                priceList.getDestination().getPath());
+                                priceList.getDestination().getPath()).get(0);
 
                         if (previousPriceList != null) {
                             pricesComparator.compare(previousPriceList, priceListFile);
@@ -97,11 +97,11 @@ public class PriceGenerationScript {
 
                 executorService.shutdown();
 
-                Utils.copyFilesToClipboardTS(Arrays.asList(priceListFile, outOfPriceFile, priceComparisonFile));
+//                Utils.copyFilesToClipboardTS(Arrays.asList(priceListFile, outOfPriceFile, priceComparisonFile));
                 Utils.openFile(priceListFile.getParentFile());
 
-                OutlookEmailSender outlookEmailSender = new OutlookEmailSender();
-                outlookEmailSender.send();
+//                OutlookEmailSender outlookEmailSender = new OutlookEmailSender();
+//                outlookEmailSender.send();
             } catch (Exception e) {
                 System.out.println(e.getMessage() + "\n" + e.getStackTrace());
             }
@@ -115,7 +115,7 @@ public class PriceGenerationScript {
             resultFile = new File(priceList.getDestination().getPath() + "\\" + tempFile.getName());
         } else {
             resultFile = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(), "Выбор места сохранения",
-                    Dialogs.EXCEL_FILES, tempFile.getName());
+                    Dialogs.EXCEL_FILES, tempFile.getName()).get(0);
         }
 
         if (resultFile == null) {
