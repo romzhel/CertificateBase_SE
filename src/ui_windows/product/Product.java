@@ -475,7 +475,7 @@ public class Product implements Cloneable {
             LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
             if (lgbkAndParent != null) return lgbkAndParent.getProductFamily();
 
-            if (hierarchy == null || hierarchy.isEmpty()) {
+            if ((hierarchy == null || hierarchy.isEmpty()) && material != null) {
                 Product product = CoreModule.getProducts().getItemByMaterialOrArticle(
                         material.replaceAll("(VBPZ\\:)*(BPZ\\:)*", ""));
 
