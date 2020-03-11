@@ -19,11 +19,7 @@ public enum SharedData {
 
     public <T> void setData(T data) {
         this.data = data;
-        if (subscribers != null) {
-            for (Module subscriber : subscribers) {
-                subscriber.refreshSubscribedData(this, this.data);
-            }
-        }
+        refresh();
     }
 
     public <T> void setData(T data, Module module) {
@@ -31,8 +27,16 @@ public enum SharedData {
         if (subscribers != null) {
             for (Module subscriber : subscribers) {
                 if (!subscriber.equals(module)) {
-                    module.refreshSubscribedData(this, this.data);
+                    subscriber.refreshSubscribedData(this, this.data);
                 }
+            }
+        }
+    }
+
+    public void refresh() {
+        if (subscribers != null) {
+            for (Module subscriber : subscribers) {
+                subscriber.refreshSubscribedData(this, this.data);
             }
         }
     }

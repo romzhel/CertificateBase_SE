@@ -13,7 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static ui_windows.main_window.filter_window.FilterParameters.*;
+import static ui_windows.main_window.filter_window.FilterParameters.FILTER_VALUE_ALL_ITEMS;
+import static ui_windows.main_window.filter_window.FilterParameters.FILTER_VALUE_ALL_LGBKS;
 
 public class ProductLgbk implements PriceListContentItem {
     public static final int ROOT_NODE = 0;
@@ -147,6 +148,27 @@ public class ProductLgbk implements PriceListContentItem {
     public String getCombineDescription() {
         return this.equals(FILTER_VALUE_ALL_LGBKS) ? FILTER_VALUE_ALL_ITEMS :
                 "[".concat(getLgbk()).concat("] ").concat(getDescriptionRuEn());
+    }
+
+    public String getCombineLgbkDescription() {
+        String lgbkName = "";
+        if (CoreModule.getProductLgbkGroups().getLgbkAndParent(this) != null &&
+                CoreModule.getProductLgbkGroups().getLgbkAndParent(this).getLgbkParent() != null) {
+
+            lgbkName = CoreModule.getProductLgbkGroups().getLgbkAndParent(this)
+                    .getLgbkParent().getLgbk();
+        }
+
+        return String.format("[%s] %s", lgbkName, getDescriptionRuEn());
+    }
+
+    public String getCombineHierarchyDescription() {
+        return String.format("[%s] %s", getHierarchy(), getDescriptionRuEn());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s / %s", getLgbk(), getHierarchy());
     }
 
     public boolean compare(ProductLgbk anotherInstance) {

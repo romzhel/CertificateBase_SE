@@ -67,6 +67,11 @@ public class ProductLgbks {
         return false;
     }
 
+    public ProductLgbk getByLgbkNameDefValue(String lgbkName, ProductLgbk defValue) {
+        ProductLgbk productLgbk = getByLgbkName(lgbkName);
+        return productLgbk == null ? defValue : productLgbk;
+    }
+
     public ProductLgbk getByLgbkName(String lgbkName) {
         for (ProductLgbk plgbk : productLgbks) {
             if (plgbk.getLgbk().equals(lgbkName) && plgbk.getHierarchy().equals("Все")) {

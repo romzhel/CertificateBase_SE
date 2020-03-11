@@ -1,6 +1,7 @@
 package ui_windows.main_window.filter_window;
 
 import core.CoreModule;
+import core.SharedData;
 import javafx.application.Platform;
 import javafx.scene.control.TableView;
 import ui_windows.main_window.MainWindow;
@@ -11,6 +12,7 @@ import utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.TreeSet;
 
 import static ui_windows.main_window.filter_window.FilterParameters.*;
@@ -84,12 +86,12 @@ public class Filter {
         boolean familyMatch = false;
         boolean lgbkMatch = false;
 
-        for (Product p : CoreModule.getCurrentItems()) {
+        for (Product p : (List<Product>) SharedData.SHD_DATA_SET.getData()) {
             articleMatch = p.getArticle().toUpperCase().matches("^(" + find.toUpperCase() + ").*");
             materialMatch = p.getMaterial().toUpperCase().matches("^(" + find.toUpperCase() + ").*");
             descriptionMatch = p.getDescriptionru().toLowerCase().contains(find.toLowerCase()) /*||
                 p.getDescriptionen().toLowerCase().matches(".*(" + find.toLowerCase() + ").*")*/;
-            filterMatch = p.matchFilter(CoreModule.getFilter());
+            filterMatch = false;
 
             ProductFamily productFamily = (ProductFamily) FILTER_FAMILY.getValue();
             if (productFamily.equals(FILTER_VALUE_ALL_FAMILIES) || productFamily == null) {

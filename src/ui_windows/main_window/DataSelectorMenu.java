@@ -4,20 +4,24 @@ import core.CoreModule;
 import javafx.scene.control.*;
 import ui_windows.main_window.filter_window.DataSelectorMenuItem;
 import ui_windows.main_window.filter_window.FilterParameters;
+import ui_windows.main_window.filter_window_se.FilterParameters_SE;
+import ui_windows.main_window.filter_window_se.ItemsSelection;
 
 import java.util.ArrayList;
+
+import static ui_windows.main_window.filter_window_se.ItemsSelection.PRICE_ITEMS;
 
 public class DataSelectorMenu extends Menu {
     private static final String SPACE = "     ";
     public static final DataSelectorMenuItem MENU_DATA_CUSTOM_SELECTION = new DataSelectorMenuItem(
-            SPACE + "Запрос" + SPACE, new FilterParameters(), () -> new ArrayList<>(CoreModule.getCustomItems()),
-            () -> MainTableContextMenuFactory.createContectMenuForCustomItems());
+            SPACE + "Запрос" + SPACE, new FilterParameters_SE(), () -> new ArrayList<>(CoreModule.getCustomItems()),
+            MainTableContextMenuFactory::createContectMenuForCustomItems);
     public static final DataSelectorMenuItem MENU_DATA_LAST_IMPORT_RESULT = new DataSelectorMenuItem(
-            SPACE + "Результаты последнего импорта" + SPACE, new FilterParameters(),
-            () -> CoreModule.getProducts().getChangedPositions(), MainTableContextMenuFactory::createContextMenuForAllData);
+            SPACE + "Результаты последнего импорта" + SPACE, new FilterParameters_SE(),
+            CoreModule.getProducts()::getChangedPositions, MainTableContextMenuFactory::createContextMenuForAllData);
     private static final DataSelectorMenuItem MENU_DATA_ALL_ITEMS = new DataSelectorMenuItem(
-            SPACE + "Все позиции" + SPACE, new FilterParameters().setPriceItems(true),
-            () -> CoreModule.getProducts().getItems(), () -> MainTableContextMenuFactory.createContextMenuForAllData());
+            SPACE + "Все позиции" + SPACE, new FilterParameters_SE().setItems(PRICE_ITEMS),
+            CoreModule.getProducts()::getItems, MainTableContextMenuFactory::createContextMenuForAllData);
     private Menu menu;
 
     public DataSelectorMenu(Menu menu) {
@@ -42,15 +46,18 @@ public class DataSelectorMenu extends Menu {
 
         dataSelector.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {//
             DataSelectorMenuItem newItem = (DataSelectorMenuItem) newValue;
-            if (newItem != null) newItem.activate();
+            if (newItem != null) {
+                newItem.activate();
+            }
         });
 
-        selectMenuItem(MENU_DATA_ALL_ITEMS);
+//        selectMenuItem(MENU_DATA_ALL_ITEMS);
+        MENU_DATA_ALL_ITEMS.setSelected(true);
     }
 
     public void selectMenuItem(RadioMenuItem radioMenuItem) {
         for (MenuItem mi : menu.getItems()) {
-            if (mi.equals(radioMenuItem)) {
+            if (mi == radioMenuItem) {
                 ((DataSelectorMenuItem) mi).activate();
             }
         }
@@ -152,10 +159,10 @@ public class DataSelectorMenu extends Menu {
     }
 
     public void reportDoubles() {
-        new Thread(() -> {
+       /* new Thread(() -> {
             CoreModule.setCurrentItems(CoreModule.getProducts().getDoubles());
             CoreModule.getFilter().apply();
-        }).start();
+        }).start();*/
 
     }
 

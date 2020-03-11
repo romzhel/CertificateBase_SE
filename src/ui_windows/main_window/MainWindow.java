@@ -1,7 +1,9 @@
 package ui_windows.main_window;
 
+import core.AddActions;
 import core.CoreModule;
 import core.Dialogs;
+import core.SharedData;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -14,6 +16,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import ui_windows.main_window.filter_window.FilterParameters;
+import ui_windows.main_window.filter_window_se.FilterParameters_SE;
 import ui_windows.options_window.profile_editor.Profile;
 import ui_windows.product.data.DataItem;
 import utils.SearchBox;
@@ -23,6 +26,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static core.SharedData.SHD_FILTER_PARAMETERS;
 import static ui_windows.options_window.profile_editor.SimpleRight.HIDE;
 
 public class MainWindow extends Application {
@@ -48,13 +52,9 @@ public class MainWindow extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-//        Application.setUserAgentStylesheet(Application.STYLESHEET_CASPIAN);
-
         mainStage = primaryStage;
 
-//        WaitingWindow ww = new WaitingWindow(null);
         initOk = CoreModule.init();
-//        WaitingWindow.close();
 
         if (initOk) {
             fxmlLoader = new FXMLLoader(getClass().getResource("mainWindow.fxml"));
@@ -73,6 +73,8 @@ public class MainWindow extends Application {
                 }
             });
 
+
+
             mainStage.setScene(scene);
             mainStage.setTitle("База по продукции и сертификатам");
             mainStage.setResizable(true);
@@ -88,13 +90,14 @@ public class MainWindow extends Application {
 //            mainTable = new MainTable(controller.tvTable);
 
             executorService = Executors.newFixedThreadPool(5);
-            searchBox.getTextBox().textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    FilterParameters.FILTER_SEARCH_BOX.setValue(newValue);
-                    Runnable filterAction = () -> CoreModule.getFilter().apply();
-                    executorService.execute(filterAction);
-                }
+            searchBox.getTextBox().textProperty().addListener((observable, oldValue, newValue) -> {
+                /*FilterParameters.FILTER_SEARCH_BOX.setValue(newValue);
+                Runnable filterAction = () -> CoreModule.getFilter().apply();
+                executorService.execute(filterAction);*/
+
+                FilterParameters_SE parameters = SHD_FILTER_PARAMETERS.getData();
+                parameters.setSearchText(newValue);
+                SHD_FILTER_PARAMETERS.setData(parameters);
             });
 
             final String searchBoxCss = getClass().getResource("/utils/SearchBox.css").toExternalForm();
@@ -102,14 +105,14 @@ public class MainWindow extends Application {
 
             applyProfile(CoreModule.getUsers().getCurrentUser().getProfile());
 
-            CoreModule.getFilter().apply();
+//            CoreModule.getFilter().apply();
             searchBox.getTextBox().requestFocus();
 
             mainStage.show();
             mainStage.setMinHeight(mainStage.getHeight());
             mainStage.setMinWidth(mainStage.getWidth());
 
-//            new AddActions().make();
+            new AddActions().make();
 
 //        OptionsWindow certificateOverviewWindow = new OptionsWindow();
 //        certificateOverviewWindow.open();
@@ -131,7 +134,7 @@ public class MainWindow extends Application {
 
                 new Thread(() -> {
                     try {
-                        while (progressBarValue > 0) {
+                        while (progressBarValue != 0.0) {
                             Thread.currentThread().sleep(1000);
                         }
                     } catch (InterruptedException e) {

@@ -65,6 +65,8 @@ public class MainTable implements Module {
             }
         });
         tvTable.setPlaceholder(new Label("Нет данных для отображения"));
+
+        SharedData.SHD_DISPLAYED_DATA.subscribe(this);
     }
 
     private void initContextMenu() {
@@ -152,8 +154,9 @@ public class MainTable implements Module {
     }
 
     public void displayEditorWindow() {
-        if (((List<Product>)SharedData.SHD_SELECTED_PRODUCTS.getData()).size() == 0) Dialogs.showMessage("Выбор строки",
-                "Нужно выбрать строку");
+        if (((List<Product>) SharedData.SHD_SELECTED_PRODUCTS.getData()).size() == 0)
+            Dialogs.showMessage("Выбор строки",
+                    "Нужно выбрать строку");
         else new ProductEditorWindow(EDIT, tvTable.getSelectionModel().getSelectedItems());
     }
 
@@ -163,7 +166,7 @@ public class MainTable implements Module {
 
     public void refresh() {
         tvTable.refresh();
-        MainWindow.getController().lbRecordCount.setText(Integer.toString(tvTable.getItems().size()));
+//        MainWindow.getController().lbRecordCount.setText(Integer.toString(tvTable.getItems().size()));
     }
 
     public ArrayList<Product> getItemsForReport() {
@@ -180,5 +183,23 @@ public class MainTable implements Module {
 
     @Override
     public void refreshSubscribedData(SharedData sharedData, Object data) {
+        if (sharedData == SharedData.SHD_DISPLAYED_DATA && data instanceof List) {
+            List<Product> itemsForDisplaying = (List<Product>) data;
+
+            System.out.println(this.getClass().getName() + ", displayed data = " + itemsForDisplaying.size());
+
+            tvTable.getItems().clear();
+            tvTable.getItems().addAll(itemsForDisplaying);
+            tvTable.refresh();
+            MainWindowsController mwc = MainWindow.getController();
+            if (mwc != null) {
+                mwc.lbRecordCount.setText(String.valueOf(tvTable.getItems().size()));
+            }
+//            refresh();
+        } else {
+            System.out.println(this.getClass().getName() + ", " + sharedData.toString());
+        }
+
+
     }
 }

@@ -80,4 +80,9 @@ public class ProductFamily implements PriceListContentItem {
     public PriceListContentTableItem getTableItem() {
         return new PriceListContentTableItem(this);
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }
