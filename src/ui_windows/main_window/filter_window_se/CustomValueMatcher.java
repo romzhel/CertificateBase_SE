@@ -1,6 +1,6 @@
 package ui_windows.main_window.filter_window_se;
 
-public enum CustomValueCondition {
+public enum CustomValueMatcher {
     START_WITH {
         boolean matches(String text, String pattern) {
             return text.startsWith(pattern);

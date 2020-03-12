@@ -62,7 +62,7 @@ public class LgbkGroup {
         cell = row.createCell(0, CellType.STRING);
         cell.setCellStyle(CELL_ALIGN_LEFT_BOLD);
 
-        ProductLgbk pl = CoreModule.getProductLgbks().getByLgbkName(name);
+        ProductLgbk pl = CoreModule.getProductLgbks().getGroupLgbkByName(name);
 
         if (sheet.getSheetName().toLowerCase().contains("en")) {
             cell.setCellValue(pl.getDescriptionEnRu());

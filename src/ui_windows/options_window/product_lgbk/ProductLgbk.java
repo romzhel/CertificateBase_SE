@@ -13,9 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static ui_windows.main_window.filter_window.FilterParameters.FILTER_VALUE_ALL_ITEMS;
-import static ui_windows.main_window.filter_window.FilterParameters.FILTER_VALUE_ALL_LGBKS;
-
 public class ProductLgbk implements PriceListContentItem {
     public static final int ROOT_NODE = 0;
     public static final int GROUP_NODE = 1;
@@ -146,17 +143,17 @@ public class ProductLgbk implements PriceListContentItem {
     }
 
     public String getCombineDescription() {
-        return this.equals(FILTER_VALUE_ALL_LGBKS) ? FILTER_VALUE_ALL_ITEMS :
-                "[".concat(getLgbk()).concat("] ").concat(getDescriptionRuEn());
+        /*return this.equals(FILTER_VALUE_ALL_LGBKS) ? FILTER_VALUE_ALL_ITEMS :
+                "[".concat(getLgbk()).concat("] ").concat(getDescriptionRuEn());*/
+
+        return String.format("[%s] %s", getLgbk(), getDescriptionRuEn());
     }
 
     public String getCombineLgbkDescription() {
         String lgbkName = "";
-        if (CoreModule.getProductLgbkGroups().getLgbkAndParent(this) != null &&
-                CoreModule.getProductLgbkGroups().getLgbkAndParent(this).getLgbkParent() != null) {
-
-            lgbkName = CoreModule.getProductLgbkGroups().getLgbkAndParent(this)
-                    .getLgbkParent().getLgbk();
+        LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(this);
+        if (lap != null && lap.getLgbkParent() != null) {
+            lgbkName = lap.getLgbkParent().getLgbk();
         }
 
         return String.format("[%s] %s", lgbkName, getDescriptionRuEn());

@@ -1,92 +1,116 @@
 package ui_windows.main_window.filter_window_se;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.data.DataItem;
 
 import java.util.TreeSet;
 
-import static ui_windows.main_window.filter_window_se.CustomValueCondition.START_WITH;
+import static ui_windows.main_window.filter_window_se.CustomValueMatcher.START_WITH;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.ALL_ITEMS;
 
 public class FilterParameters_SE {
     public final static String TEXT_ALL_ITEMS = "--- Все ---";
+    public final static String TEXT_NOT_ASSIGNED = "--- Не назначено ---";
+    public final static String TEXT_NO_DATA = "--- Не присвоено ---";
     public final static ProductFamily ALL_FAMILIES = new ProductFamily(TEXT_ALL_ITEMS);
+    public final static ProductFamily FAMILY_NOT_ASSIGNED = new ProductFamily(TEXT_NOT_ASSIGNED);
     public final static ProductLgbk ALL_LGBKS = new ProductLgbk(TEXT_ALL_ITEMS, TEXT_ALL_ITEMS);
+    public final static ProductLgbk LGBK_NO_DATA = new ProductLgbk(TEXT_NO_DATA, TEXT_NO_DATA);
+    public final static ProductLgbk LGBK_NOT_ASSIGNED = new ProductLgbk(TEXT_NOT_ASSIGNED, TEXT_NOT_ASSIGNED);
     public final static int CHANGE_PRICE = 0;
     public final static int CHANGE_SEARCH_TEXT = 1;
     public final static int CHANGE_FAMILY = 2;
     public final static int CHANGE_LGBK = 3;
     public final static int CHANGE_HIERARCHY = 4;
+    public final static int CHANGE_CUSTOM_PROPERTY = 5;
+    public final static int CHANGE_CUSTOM_VALUE = 6;
+    public final static int CHANGE_CUSTOM_VALUE_MATCHER = 7;
 
     private ItemsSelection filterItems;
-    private ProductFamily filterProductFamily;
-    private ProductLgbk filterProductLgbk;
-    private ProductLgbk filterProductHierarchy;
-    private DataItem filterCustomProperty;
-    private String filterCustomValue;
-    private CustomValueCondition filterCustomCondition;
+    private ProductFamily family;
+    private ProductLgbk lgbk;
+    private ProductLgbk hierarchy;
+    private DataItem customCondition;
+    private String customValue;
+    private CustomValueMatcher customValueMatcher;
     private String searchText;
-    private int lastChange;
+    private IntegerProperty lastChange;
     private TreeSet<ProductFamily> families;
     private TreeSet<ProductLgbk> lgbks;
+    private TreeSet<ProductLgbk> hierarchies;
 
     public FilterParameters_SE() {
         filterItems = ALL_ITEMS;
-        filterProductFamily = ALL_FAMILIES;
-        filterProductLgbk = null;
-        filterProductHierarchy = null;
-        filterCustomProperty = null;
-        filterCustomValue = "";
-        filterCustomCondition = START_WITH;
+        family = ALL_FAMILIES;
+        lgbk = ALL_LGBKS;
+        hierarchy = ALL_LGBKS;
+        customCondition = null;
+        customValue = "";
+        customValueMatcher = START_WITH;
         searchText = "";
-        lastChange = -1;
+        lastChange = new SimpleIntegerProperty(-1);
+        lastChange.addListener((observable, oldValue, newValue) -> System.out.println("filter last change value = " + (int) newValue));
+
         families = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
         lgbks = new TreeSet<>((o1, o2) -> o1.getLgbk().compareTo(o2.getLgbk()));
+        hierarchies = new TreeSet<>((o1, o2) -> o1.getHierarchy().compareTo(o2.getHierarchy()));
     }
 
     public FilterParameters_SE setItems(ItemsSelection selection) {
         filterItems = selection;
-        lastChange = CHANGE_PRICE;
+//        lastChange = CHANGE_PRICE;
+        lastChange.set(CHANGE_PRICE);
         return this;
     }
 
     public FilterParameters_SE setProductFamily(ProductFamily family) {
-        filterProductFamily = family;
-        lastChange = CHANGE_FAMILY;
+        this.family = family;
+//        lastChange = CHANGE_FAMILY;
+        lastChange.set(CHANGE_FAMILY);
         return this;
     }
 
     public FilterParameters_SE setLgbk(ProductLgbk lgbk) {
-        filterProductLgbk = lgbk;
-        lastChange = CHANGE_LGBK;
+        this.lgbk = lgbk;
+//        lastChange = CHANGE_LGBK;
+        lastChange.set(CHANGE_LGBK);
         return this;
     }
 
     public FilterParameters_SE setHierarchy(ProductLgbk lgbk) {
-        filterProductHierarchy = lgbk;
-        lastChange = CHANGE_HIERARCHY;
-        
+        hierarchy = lgbk;
+//        lastChange = CHANGE_HIERARCHY;
+        lastChange.set(CHANGE_HIERARCHY);
         return this;
     }
 
     public FilterParameters_SE setCustomProperty(DataItem dataItem) {
-        filterCustomProperty = dataItem;
+        customCondition = dataItem;
+//        lastChange = CHANGE_CUSTOM_PROPERTY;
+        lastChange.set(CHANGE_CUSTOM_PROPERTY);
         return this;
     }
 
     public FilterParameters_SE setCustomValue(String value) {
-        filterCustomValue = value;
+        customValue = value;
+//        lastChange = CHANGE_CUSTOM_VALUE;
+        lastChange.set(CHANGE_CUSTOM_VALUE);
         return this;
     }
 
-    public FilterParameters_SE setCustomCondition(CustomValueCondition condition) {
-        filterCustomCondition = condition;
+    public FilterParameters_SE setCustomCondition(CustomValueMatcher matcher) {
+        customValueMatcher = matcher;
+//        lastChange = CHANGE_CUSTOM_VALUE_MATCHER;
+        lastChange.set(CHANGE_CUSTOM_VALUE_MATCHER);
         return this;
     }
 
     public FilterParameters_SE setSearchText(String text) {
         searchText = text;
+        lastChange.set(CHANGE_SEARCH_TEXT);
         return this;
     }
 
@@ -94,28 +118,28 @@ public class FilterParameters_SE {
         return filterItems;
     }
 
-    public ProductFamily getFilterProductFamily() {
-        return filterProductFamily;
+    public ProductFamily getFamily() {
+        return family;
     }
 
-    public ProductLgbk getFilterProductLgbk() {
-        return filterProductLgbk;
+    public ProductLgbk getLgbk() {
+        return lgbk;
     }
 
-    public ProductLgbk getFilterProductHierarchy() {
-        return filterProductHierarchy;
+    public ProductLgbk getHierarchy() {
+        return hierarchy;
     }
 
-    public DataItem getFilterCustomProperty() {
-        return filterCustomProperty;
+    public DataItem getCustomCondition() {
+        return customCondition;
     }
 
-    public String getFilterCustomValue() {
-        return filterCustomValue;
+    public String getCustomValue() {
+        return customValue;
     }
 
-    public CustomValueCondition getFilterCustomCondition() {
-        return filterCustomCondition;
+    public CustomValueMatcher getCustomValueMatcher() {
+        return customValueMatcher;
     }
 
     public String getSearchText() {
@@ -130,11 +154,19 @@ public class FilterParameters_SE {
         return lgbks;
     }
 
+    public int getLastChange() {
+        return lastChange.get();
+    }
+
+    public TreeSet<ProductLgbk> getHierarchies() {
+        return hierarchies;
+    }
+
     @Override
     public String toString() {
         return String.format("items: %s, family: %s, lgbk: %s, hierarchy: %s, customPar: %s, customValue: %s, customCondition: %s," +
                         "searchText: %s",
-                filterItems.toString(), filterProductFamily, filterProductLgbk, filterProductHierarchy, filterCustomProperty,
-                filterCustomValue, filterCustomCondition, searchText);
+                filterItems.toString(), family, lgbk, hierarchy, customCondition,
+                customValue, customValueMatcher, searchText);
     }
 }

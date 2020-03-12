@@ -4,13 +4,12 @@ import core.CoreModule;
 import core.Dialogs;
 import core.Module;
 import core.SharedData;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import ui_windows.options_window.families_editor.ProductFamily;
@@ -20,12 +19,10 @@ import ui_windows.product.data.DataItem;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
-import java.util.TreeSet;
 
 import static core.SharedData.SHD_DATA_SET;
 import static core.SharedData.SHD_FILTER_PARAMETERS;
-import static ui_windows.main_window.filter_window.FilterParameters.*;
-import static ui_windows.main_window.filter_window_se.FilterParameters_SE.ALL_FAMILIES;
+import static ui_windows.main_window.filter_window_se.FilterParameters_SE.*;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.ALL_ITEMS;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.PRICE_ITEMS;
 
@@ -73,6 +70,7 @@ public class FilterWindowController_SE implements Initializable, Module {
             initMainSelection();
             initFamilySelector();
             initLgbkSelector();
+            initHierarchySelector();
             initCustomSelection();
         } else {
             Dialogs.showMessageTS("Инициализация окна фильтра", "Не найдено параметров фильтра!");
@@ -101,7 +99,7 @@ public class FilterWindowController_SE implements Initializable, Module {
         cbFamily.setConverter(new StringConverter<ProductFamily>() {
             @Override
             public String toString(ProductFamily object) {
-                return /*object != null ? */object.getName() /*: TEXT_ALL_ITEMS*/;
+                return object.getName();
             }
 
             @Override
@@ -110,27 +108,35 @@ public class FilterWindowController_SE implements Initializable, Module {
             }
         });
 
-        cbFamily.getItems().clear();
-        cbFamily.getItems().addAll(filterParameters.getFamilies());
+        if (cbFamily.getItems().size() < 2 || filterParameters.getLastChange() < CHANGE_FAMILY ||
+                filterParameters.getLastChange() == CHANGE_FAMILY && filterParameters.getFamily() == ALL_FAMILIES) {
 
-//        if (filterParameters.getFilterProductFamily() != null) {
-            cbFamily.getSelectionModel().select(filterParameters.getFilterProductFamily());
-//        } else {
-//            cbFamily.getSelectionModel().select(ALL_FAMILIES);
-//        }
+            cbFamily.getItems().clear();
+            cbFamily.getItems().addAll(filterParameters.getFamilies());
+        }
+
+        cbFamily.getSelectionModel().select(filterParameters.getFamily());
 
         cbFamily.setOnAction(event -> {
             filterParameters.setProductFamily(cbFamily.getValue());
             sync();
         });
+
+        cbFamily.setVisibleRowCount(Math.min(cbFamily.getItems().size(), 10));
     }
 
     public void initLgbkSelector() {
+        cbLgbk.setOnAction(null);
+
         cbLgbk.setConverter(new StringConverter<ProductLgbk>() {
             @Override
             public String toString(ProductLgbk object) {
-                return object.getLgbk().equals(FilterParameters_SE.TEXT_ALL_ITEMS) ?
-                        object.getLgbk() : object.getCombineLgbkDescription();
+                if (object.equals(ALL_LGBKS) || object.equals(LGBK_NO_DATA)) {
+                    return object.getLgbk();
+                }
+
+//                ProductLgbk pl = CoreModule.getProductLgbks().getGroupLgbkByName(object);
+                return object.getCombineDescription();
             }
 
             @Override
@@ -139,14 +145,14 @@ public class FilterWindowController_SE implements Initializable, Module {
             }
         });
 
-        cbLgbk.getItems().clear();
-        cbLgbk.getItems().addAll(filterParameters.getLgbks());
+        if (cbLgbk.getItems().size() < 2 || filterParameters.getLastChange() < CHANGE_LGBK ||
+                filterParameters.getLastChange() == CHANGE_LGBK && filterParameters.getLgbk().equals(TEXT_ALL_ITEMS)) {
 
-        if (filterParameters.getFilterProductFamily() != null) {
-            cbLgbk.getSelectionModel().select(filterParameters.getFilterProductLgbk());
-        } else {
-            cbLgbk.getSelectionModel().select(0);
+            cbLgbk.getItems().clear();
+            cbLgbk.getItems().addAll(filterParameters.getLgbks());
         }
+
+        cbLgbk.getSelectionModel().select(filterParameters.getLgbk());
 
         cbLgbk.setOnAction(event -> {
             if (cbLgbk.getValue() != null) {
@@ -154,29 +160,48 @@ public class FilterWindowController_SE implements Initializable, Module {
                 sync();
             }
         });
+
+        cbLgbk.setVisibleRowCount(Math.min(cbFamily.getItems().size(), 10));
     }
 
-    public void syncLgbkSelector(ProductFamily pf) {
-        cbLgbk.getItems().clear();
-        cbLgbk.getItems().add(FILTER_VALUE_ALL_LGBKS);
-        TreeSet<ProductLgbk> lgbkGroups = new TreeSet<>((o1, o2) -> o1.getLgbk().compareTo(o2.getLgbk()));
+    public void initHierarchySelector() {
+        cbHierarchy.setOnAction(null);
 
-        for (ProductLgbk pl : CoreModule.getProductLgbks().getItems()) {
-            if (pf == FILTER_VALUE_ALL_FAMILIES || pl.getFamilyId() == pf.getId()) {
-                lgbkGroups.add(pl);
+        cbHierarchy.setConverter(new StringConverter<ProductLgbk>() {
+            @Override
+            public String toString(ProductLgbk object) {
+                if (object.equals(ALL_LGBKS) || object.equals(LGBK_NO_DATA)) {
+                    return object.getHierarchy();
+                }
+
+//                ProductLgbk pl = CoreModule.getProductLgbks().getLgbkByHierarchy(object);
+//                return pl != null ? pl.getCombineDescription() : String.format("[%s] ------", object);
+                return object.getCombineDescription();
             }
+
+            @Override
+            public ProductLgbk fromString(String string) {
+                return null;
+            }
+        });
+
+        if (cbHierarchy.getItems().size() < 2 || filterParameters.getLastChange() < CHANGE_HIERARCHY ||
+                filterParameters.getLastChange() == CHANGE_HIERARCHY && filterParameters.getHierarchy().equals(TEXT_ALL_ITEMS)) {
+
+            cbHierarchy.getItems().clear();
+            cbHierarchy.getItems().addAll(filterParameters.getHierarchies());
         }
 
-        cbLgbk.getItems().addAll(lgbkGroups);
-        cbLgbk.setVisibleRowCount(Math.min(cbLgbk.getItems().size() + 1, SELECTOR_LGBK_ROWS_MAX));
+        cbHierarchy.getSelectionModel().select(filterParameters.getHierarchy());
 
-        ProductLgbk selectedItem = FILTER_LGBK.getValue();
-        if (cbLgbk.getItems().indexOf(selectedItem) >= 0) {
-            cbLgbk.getSelectionModel().select(selectedItem);
-        } else {
-            cbLgbk.getSelectionModel().select(0);
-            FILTER_LGBK.setValue(FILTER_VALUE_ALL_LGBKS);
-        }
+        cbHierarchy.setOnAction(event -> {
+            if (cbHierarchy.getValue() != null) {
+                filterParameters.setHierarchy(cbHierarchy.getValue());
+                sync();
+            }
+        });
+
+        cbHierarchy.setVisibleRowCount(Math.min(cbHierarchy.getItems().size(), 10));
     }
 
     private void initCustomSelection() {
@@ -186,11 +211,11 @@ public class FilterWindowController_SE implements Initializable, Module {
             radioButton.setToggleGroup(customSelection);
         }
 
-        customSelectionItems[filterParameters.getFilterCustomCondition().ordinal()].setSelected(true);
+        customSelectionItems[filterParameters.getCustomValueMatcher().ordinal()].setSelected(true);
 
         customSelection.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                filterParameters.setCustomCondition(CustomValueCondition.values()[
+                filterParameters.setCustomCondition(CustomValueMatcher.values()[
                         Arrays.asList(customSelectionItems).indexOf((RadioButton) newValue)]);
                 sync();
             }
