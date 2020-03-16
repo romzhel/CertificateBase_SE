@@ -23,6 +23,7 @@ import static core.SharedData.SHD_FILTER_PARAMETERS;
 import static ui_windows.main_window.filter_window_se.FilterParameters_SE.*;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.ALL_ITEMS;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.PRICE_ITEMS;
+import static ui_windows.product.data.DataItem.DATA_EMPTY;
 
 public class FilterWindowController_SE implements Initializable, Module {
     private static final String TEXT_ALL_ITEMS = "--- Все ---";
@@ -31,6 +32,7 @@ public class FilterWindowController_SE implements Initializable, Module {
     private Selector<ProductFamily> familySelector;
     private Selector<ProductLgbk> lgbkSelector;
     private Selector<ProductLgbk> hierarchySelector;
+    private Selector<DataItem> customPropertySelector;
 
     @FXML
     private RadioButton rbPriceItems;
@@ -80,6 +82,11 @@ public class FilterWindowController_SE implements Initializable, Module {
                     CHANGE_HIERARCHY, filterParameters::getHierarchies, filterParameters::getHierarchy,
                     (hier) -> filterParameters.setHierarchy(hier),
                     this::sync);
+            customPropertySelector = new Selector<>(cbCustomProperty,
+                    (di) -> di == DATA_EMPTY ? TEXT_NO_SELECTED : di.getDisplayingName(),
+                    0, filterParameters::getCustomProperties, filterParameters::getCustomProperty,
+                    (di) -> filterParameters.setCustomProperty(di),
+                    this::sync);
 
             refresh();
         }
@@ -93,6 +100,7 @@ public class FilterWindowController_SE implements Initializable, Module {
             familySelector.actualize(filterParameters);
             lgbkSelector.actualize(filterParameters);
             hierarchySelector.actualize(filterParameters);
+            customPropertySelector.actualize(filterParameters);
             initCustomSelection();
         } else {
             Dialogs.showMessageTS("Инициализация окна фильтра", "Не найдено параметров фильтра!");
@@ -126,15 +134,15 @@ public class FilterWindowController_SE implements Initializable, Module {
         customSelectionItems[filterParameters.getCustomValueMatcher().ordinal()].setSelected(true);
 
         customSelection.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                filterParameters.setCustomCondition(CustomValueMatcher.values()[
+            if (filterParameters.getCustomProperty() != DATA_EMPTY && newValue != null) {
+                filterParameters.setCustomValueMatcher(CustomValueMatcher.values()[
                         Arrays.asList(customSelectionItems).indexOf((RadioButton) newValue)]);
                 sync(null);
             }
         });
 
         tfCustomValue.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null && !newValue.equals(oldValue)) {
+            if (filterParameters.getCustomProperty() != DATA_EMPTY && newValue != null && !newValue.equals(oldValue)) {
                 filterParameters.setCustomValue(newValue);
                 sync(null);
             }

@@ -11,14 +11,16 @@ import static core.SharedData.*;
 public class Listen implements Module {
 
     public Listen() {
-        SHD_FILTER_PARAMETERS.subscribe(this);
-        SHD_DATA_SET.subscribe(this);
+//        SHD_FILTER_PARAMETERS.subscribe(this);
+//        SHD_DATA_SET.subscribe(this);
     }
 
     @Override
     public void refreshSubscribedData(SharedData sharedData, Object data) {
+        System.out.print(sharedData.name() + ": ");
+
         if (sharedData == SHD_FILTER_PARAMETERS && data instanceof FilterParameters_SE) {
-            System.out.println(this.getClass().getName() + "; " + data.toString());
+            System.out.println(this.getClass().getName() + "; filter params " + data.toString());
         } else if (sharedData == SHD_DATA_SET && data instanceof List) {
             List<Product> dataSet = SHD_DATA_SET.getData();
             System.out.println(this.getClass().getName() + "; dataset " + dataSet.size());

@@ -3,22 +3,23 @@ package ui_windows.main_window.filter_window_se;
 import core.CoreModule;
 import core.Module;
 import core.SharedData;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
+import ui_windows.product.data.DataItem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import static core.SharedData.*;
 import static ui_windows.main_window.filter_window_se.FilterParameters_SE.*;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.ALL_ITEMS;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.PRICE_ITEMS;
+import static ui_windows.product.data.DataItem.DATA_EMPTY;
 
 public class Filter_SE implements Module {
 //    private ExecutorService filterExecutors;
@@ -77,8 +78,8 @@ public class Filter_SE implements Module {
             hierarchyMatch = parameters.getHierarchy().getHierarchy().equals(TEXT_ALL_ITEMS) ||
                     parameters.getHierarchy() == LGBK_NO_DATA && (product.getHierarchy() == null || product.getHierarchy().isEmpty()) ||
                     product.getHierarchy().contains(parameters.getHierarchy().getHierarchy().replaceAll("\\.", ""));
-            customMatches = parameters.getCustomCondition() == null || parameters.getCustomValueMatcher().matches(
-                    parameters.getCustomCondition().getValue(product).toString(), parameters.getCustomValue());
+            customMatches = parameters.getCustomProperty() == DATA_EMPTY || parameters.getCustomValueMatcher().matches(
+                    parameters.getCustomProperty().getValue(product).toString(), parameters.getCustomValue());
 
             if (searchTextMatches && priceMatches && familyMatches && lgbkMatches && hierarchyMatch && customMatches) {
                 result.add(product);
@@ -93,49 +94,22 @@ public class Filter_SE implements Module {
             }
         }
 
-        print("families: ", parameters.getFamilies(), new StringConverter<ProductFamily>(){
-            @Override
-            public String toString(ProductFamily object) {
-                return object.getName();
-            }
+//        print("families: ", parameters.getFamilies(), (f) -> f.getName());
+//        print("lgbks: ", parameters.getLgbks(), (l) -> l.getLgbk());
+//        print("hierarchies: ", parameters.getHierarchies(), (h) -> h.getHierarchy());
 
-            @Override
-            public ProductFamily fromString(String string) {
-                return null;
-            }
-        });
-        print("lgbks: ", parameters.getLgbks(), new StringConverter<ProductLgbk>() {
-            @Override
-            public String toString(ProductLgbk object) {
-                return object.getLgbk();
-            }
-
-            @Override
-            public ProductLgbk fromString(String string) {
-                return null;
-            }
-        });
-        print("hierarchies: ", parameters.getHierarchies(), new StringConverter<ProductLgbk>() {
-            @Override
-            public String toString(ProductLgbk object) {
-                return object.getHierarchy();
-            }
-
-            @Override
-            public ProductLgbk fromString(String string) {
-                return null;
-            }
-        });
+        System.out.println(String.format("%s; prop: %s, value: %s, matcher: %s", this.getClass().getSimpleName(), parameters.getCustomProperty().name(),
+                parameters.getCustomValue(), parameters.getCustomValueMatcher().name()));
 
         System.out.println(System.currentTimeMillis() - t1);
-        SHD_DISPLAYED_DATA.setData(result);
+        SHD_DISPLAYED_DATA.setData(result, this);
         SHD_FILTER_PARAMETERS.setData(parameters, this);
     }
 
-    private <T> void print(String title, TreeSet<T> items, StringConverter<T> converter) {
+    private <T> void print(String title, TreeSet<T> items, Function<T, String> converter) {
         System.out.print(title + " list: ");
         for (T item : items) {
-            System.out.print(converter.toString(item) + ", ");
+            System.out.print(converter.apply(item) + ", ");
         }
         System.out.println();
     }

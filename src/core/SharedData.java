@@ -17,12 +17,19 @@ public enum SharedData {
         return (T) data;
     }
 
-    public <T> void setData(T data) {
+    /*public <T> void setData(T data) {
         this.data = data;
         refresh();
+    }*/
+
+    public <T> void setData(T data) {
+        setData(data, null);
     }
 
     public <T> void setData(T data, Module module) {
+        System.out.println(String.format("%s set data from module %s", this.name(),
+                (module == null ? "null" : module.getClass().getSimpleName())));
+
         this.data = data;
         if (subscribers != null) {
             for (Module subscriber : subscribers) {
@@ -33,13 +40,13 @@ public enum SharedData {
         }
     }
 
-    public void refresh() {
+    /*public void refresh() {
         if (subscribers != null) {
             for (Module subscriber : subscribers) {
                 subscriber.refreshSubscribedData(this, this.data);
             }
         }
-    }
+    }*/
 
     public boolean subscribe(Module module) {
         if (subscribers == null) {

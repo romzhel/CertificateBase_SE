@@ -186,7 +186,7 @@ public class MainTable implements Module {
         if (sharedData == SharedData.SHD_DISPLAYED_DATA && data instanceof List) {
             List<Product> itemsForDisplaying = (List<Product>) data;
 
-            System.out.println(this.getClass().getName() + ", displayed data = " + itemsForDisplaying.size());
+            System.out.println(this.getClass().getSimpleName() + "; " + sharedData.name() + ", " + ", displayed data = " + itemsForDisplaying.size());
 
             tvTable.getItems().clear();
             tvTable.getItems().addAll(itemsForDisplaying);
