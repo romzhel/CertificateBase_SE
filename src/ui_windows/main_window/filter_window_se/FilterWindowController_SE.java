@@ -1,6 +1,5 @@
 package ui_windows.main_window.filter_window_se;
 
-import core.CoreModule;
 import core.Dialogs;
 import core.Module;
 import core.SharedData;
@@ -11,7 +10,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.data.DataItem;
@@ -30,6 +28,9 @@ public class FilterWindowController_SE implements Initializable, Module {
     private static final String TEXT_ALL_ITEMS = "--- Все ---";
     private static final int SELECTOR_LGBK_ROWS_MAX = 10;
     private FilterParameters_SE filterParameters;
+    private Selector<ProductFamily> familySelector;
+    private Selector<ProductLgbk> lgbkSelector;
+    private Selector<ProductLgbk> hierarchySelector;
 
     @FXML
     private RadioButton rbPriceItems;
@@ -60,17 +61,38 @@ public class FilterWindowController_SE implements Initializable, Module {
     public void initialize(URL location, ResourceBundle resources) {
         SHD_FILTER_PARAMETERS.subscribe(this);
         SHD_DATA_SET.subscribe(this);
-        init();
+
+        if (SHD_FILTER_PARAMETERS.getData() instanceof FilterParameters_SE) {
+            filterParameters = SHD_FILTER_PARAMETERS.getData();
+
+            familySelector = new Selector<>(cbFamily,
+                    ProductFamily::getName,
+                    CHANGE_FAMILY, filterParameters::getFamilies, filterParameters::getFamily,
+                    (pf) -> filterParameters.setProductFamily(pf),
+                    this::sync);
+            lgbkSelector = new Selector<>(cbLgbk,
+                    pl -> pl.equals(ALL_LGBKS) || pl.equals(LGBK_NO_DATA) ? pl.getLgbk() : pl.getCombineDescriptionLgbk(),
+                    CHANGE_LGBK, filterParameters::getLgbks, filterParameters::getLgbk,
+                    (lgbk) -> filterParameters.setLgbk(lgbk),
+                    this::sync);
+            hierarchySelector = new Selector<>(cbHierarchy,
+                    (h) -> h.equals(ALL_LGBKS) || h.equals(LGBK_NO_DATA) ? h.getHierarchy() : h.getCombineDescriptionHierarchy(),
+                    CHANGE_HIERARCHY, filterParameters::getHierarchies, filterParameters::getHierarchy,
+                    (hier) -> filterParameters.setHierarchy(hier),
+                    this::sync);
+
+            refresh();
+        }
     }
 
-    private void init() {
+    private void refresh() {
         if (SHD_FILTER_PARAMETERS.getData() instanceof FilterParameters_SE) {
             filterParameters = SHD_FILTER_PARAMETERS.getData();
 
             initMainSelection();
-            initFamilySelector();
-            initLgbkSelector();
-            initHierarchySelector();
+            familySelector.actualize(filterParameters);
+            lgbkSelector.actualize(filterParameters);
+            hierarchySelector.actualize(filterParameters);
             initCustomSelection();
         } else {
             Dialogs.showMessageTS("Инициализация окна фильтра", "Не найдено параметров фильтра!");
@@ -87,121 +109,11 @@ public class FilterWindowController_SE implements Initializable, Module {
 
         itemsGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                filterParameters.setItems(ItemsSelection.values()[Arrays.asList(rbAllItems, rbPriceItems).indexOf(newValue)]);
-                sync();
+                int index = Arrays.asList(rbAllItems, rbPriceItems).indexOf((RadioButton) newValue);
+                filterParameters.setItems(ItemsSelection.values()[index]);
+                sync(null);
             }
         });
-    }
-
-    public void initFamilySelector() {
-        cbFamily.setOnAction(null);
-
-        cbFamily.setConverter(new StringConverter<ProductFamily>() {
-            @Override
-            public String toString(ProductFamily object) {
-                return object.getName();
-            }
-
-            @Override
-            public ProductFamily fromString(String name) {
-                return CoreModule.getProductFamilies().getFamilyByName(name);
-            }
-        });
-
-        if (cbFamily.getItems().size() < 2 || filterParameters.getLastChange() < CHANGE_FAMILY ||
-                filterParameters.getLastChange() == CHANGE_FAMILY && filterParameters.getFamily() == ALL_FAMILIES) {
-
-            cbFamily.getItems().clear();
-            cbFamily.getItems().addAll(filterParameters.getFamilies());
-        }
-
-        cbFamily.getSelectionModel().select(filterParameters.getFamily());
-
-        cbFamily.setOnAction(event -> {
-            filterParameters.setProductFamily(cbFamily.getValue());
-            sync();
-        });
-
-        cbFamily.setVisibleRowCount(Math.min(cbFamily.getItems().size(), 10));
-    }
-
-    public void initLgbkSelector() {
-        cbLgbk.setOnAction(null);
-
-        cbLgbk.setConverter(new StringConverter<ProductLgbk>() {
-            @Override
-            public String toString(ProductLgbk object) {
-                if (object.equals(ALL_LGBKS) || object.equals(LGBK_NO_DATA)) {
-                    return object.getLgbk();
-                }
-
-//                ProductLgbk pl = CoreModule.getProductLgbks().getGroupLgbkByName(object);
-                return object.getCombineDescription();
-            }
-
-            @Override
-            public ProductLgbk fromString(String string) {
-                return null;
-            }
-        });
-
-        if (cbLgbk.getItems().size() < 2 || filterParameters.getLastChange() < CHANGE_LGBK ||
-                filterParameters.getLastChange() == CHANGE_LGBK && filterParameters.getLgbk().equals(TEXT_ALL_ITEMS)) {
-
-            cbLgbk.getItems().clear();
-            cbLgbk.getItems().addAll(filterParameters.getLgbks());
-        }
-
-        cbLgbk.getSelectionModel().select(filterParameters.getLgbk());
-
-        cbLgbk.setOnAction(event -> {
-            if (cbLgbk.getValue() != null) {
-                filterParameters.setLgbk(cbLgbk.getValue());
-                sync();
-            }
-        });
-
-        cbLgbk.setVisibleRowCount(Math.min(cbFamily.getItems().size(), 10));
-    }
-
-    public void initHierarchySelector() {
-        cbHierarchy.setOnAction(null);
-
-        cbHierarchy.setConverter(new StringConverter<ProductLgbk>() {
-            @Override
-            public String toString(ProductLgbk object) {
-                if (object.equals(ALL_LGBKS) || object.equals(LGBK_NO_DATA)) {
-                    return object.getHierarchy();
-                }
-
-//                ProductLgbk pl = CoreModule.getProductLgbks().getLgbkByHierarchy(object);
-//                return pl != null ? pl.getCombineDescription() : String.format("[%s] ------", object);
-                return object.getCombineDescription();
-            }
-
-            @Override
-            public ProductLgbk fromString(String string) {
-                return null;
-            }
-        });
-
-        if (cbHierarchy.getItems().size() < 2 || filterParameters.getLastChange() < CHANGE_HIERARCHY ||
-                filterParameters.getLastChange() == CHANGE_HIERARCHY && filterParameters.getHierarchy().equals(TEXT_ALL_ITEMS)) {
-
-            cbHierarchy.getItems().clear();
-            cbHierarchy.getItems().addAll(filterParameters.getHierarchies());
-        }
-
-        cbHierarchy.getSelectionModel().select(filterParameters.getHierarchy());
-
-        cbHierarchy.setOnAction(event -> {
-            if (cbHierarchy.getValue() != null) {
-                filterParameters.setHierarchy(cbHierarchy.getValue());
-                sync();
-            }
-        });
-
-        cbHierarchy.setVisibleRowCount(Math.min(cbHierarchy.getItems().size(), 10));
     }
 
     private void initCustomSelection() {
@@ -217,14 +129,14 @@ public class FilterWindowController_SE implements Initializable, Module {
             if (newValue != null) {
                 filterParameters.setCustomCondition(CustomValueMatcher.values()[
                         Arrays.asList(customSelectionItems).indexOf((RadioButton) newValue)]);
-                sync();
+                sync(null);
             }
         });
 
         tfCustomValue.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && !newValue.equals(oldValue)) {
                 filterParameters.setCustomValue(newValue);
-                sync();
+                sync(null);
             }
         });
     }
@@ -240,12 +152,12 @@ public class FilterWindowController_SE implements Initializable, Module {
         ((Stage) cbLgbk.getScene().getWindow()).close();
     }
 
-    private void sync() {
+    public void sync(Selector selector) {
         SHD_FILTER_PARAMETERS.setData(filterParameters, this);
     }
 
     @Override
     public void refreshSubscribedData(SharedData sharedData, Object data) {
-        init();
+        refresh();
     }
 }

@@ -3,12 +3,16 @@ package ui_windows.main_window.filter_window_se;
 import core.CoreModule;
 import core.Module;
 import core.SharedData;
+import javafx.util.Callback;
+import javafx.util.StringConverter;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import static core.SharedData.*;
@@ -33,10 +37,6 @@ public class Filter_SE implements Module {
             return;
         }
 
-        System.out.println(getClass().getName() + ", data set = " + dataSet.size());
-        System.out.println("prod fam in start = " + parameters.getFamily());
-
-//        ProductFamily prevFamily = parameters.getFilterProductFamily() == null ? ALL_FAMILIES : parameters.getFilterProductFamily();
         parameters.getFamilies().clear();
         parameters.getFamilies().add(ALL_FAMILIES);
 
@@ -76,7 +76,7 @@ public class Filter_SE implements Module {
                     parameters.getLgbk().getLgbk().equals(product.getLgbk());
             hierarchyMatch = parameters.getHierarchy().getHierarchy().equals(TEXT_ALL_ITEMS) ||
                     parameters.getHierarchy() == LGBK_NO_DATA && (product.getHierarchy() == null || product.getHierarchy().isEmpty()) ||
-                    product.getHierarchy().contains(parameters.getHierarchy().getHierarchy().replaceAll("\\.",""));
+                    product.getHierarchy().contains(parameters.getHierarchy().getHierarchy().replaceAll("\\.", ""));
             customMatches = parameters.getCustomCondition() == null || parameters.getCustomValueMatcher().matches(
                     parameters.getCustomCondition().getValue(product).toString(), parameters.getCustomValue());
 
@@ -88,49 +88,59 @@ public class Filter_SE implements Module {
                 ProductLgbk lgbk = CoreModule.getProductLgbks().getGroupLgbkByName(product.getLgbk());
                 parameters.getLgbks().add(lgbk == null || lgbk.getLgbk().isEmpty() ? LGBK_NO_DATA : lgbk);
 
-//                parameters.getLgbks().add(product.getLgbk() == null || product.getLgbk().isEmpty() ? TEXT_NO_DATA : product.getLgbk());
-
                 ProductLgbk hier = CoreModule.getProductLgbks().getLgbkByProduct(product);
                 parameters.getHierarchies().add(hier == null || hier.getHierarchy().isEmpty() ? LGBK_NO_DATA : hier);
-
-                /*parameters.getHierarchies().add(product.getHierarchy() == null || product.getHierarchy().isEmpty() ?
-                        TEXT_NO_DATA : product.getHierarchy());*/
             }
         }
 
-//        System.out.println(String.format("curr family = %s, prev = %s", parameters.getFilterProductFamily(), prevFamily));
-        printFamilies(parameters);
-        printLgbk(parameters);
-        printHierarchies(parameters);
+        print("families: ", parameters.getFamilies(), new StringConverter<ProductFamily>(){
+            @Override
+            public String toString(ProductFamily object) {
+                return object.getName();
+            }
+
+            @Override
+            public ProductFamily fromString(String string) {
+                return null;
+            }
+        });
+        print("lgbks: ", parameters.getLgbks(), new StringConverter<ProductLgbk>() {
+            @Override
+            public String toString(ProductLgbk object) {
+                return object.getLgbk();
+            }
+
+            @Override
+            public ProductLgbk fromString(String string) {
+                return null;
+            }
+        });
+        print("hierarchies: ", parameters.getHierarchies(), new StringConverter<ProductLgbk>() {
+            @Override
+            public String toString(ProductLgbk object) {
+                return object.getHierarchy();
+            }
+
+            @Override
+            public ProductLgbk fromString(String string) {
+                return null;
+            }
+        });
 
         System.out.println(System.currentTimeMillis() - t1);
         SHD_DISPLAYED_DATA.setData(result);
         SHD_FILTER_PARAMETERS.setData(parameters, this);
     }
 
-    private void printFamilies(FilterParameters_SE parameters) {
-        System.out.print("families list = ");
-        for (ProductFamily fam : parameters.getFamilies()) {
-            System.out.print(fam.getName() + ", ");
+    private <T> void print(String title, TreeSet<T> items, StringConverter<T> converter) {
+        System.out.print(title + " list: ");
+        for (T item : items) {
+            System.out.print(converter.toString(item) + ", ");
         }
         System.out.println();
     }
 
-    private void printLgbk(FilterParameters_SE parameters) {
-        System.out.print("lgbk list = ");
-        for (ProductLgbk lgbk : parameters.getLgbks()) {
-            System.out.print(lgbk + ", ");
-        }
-        System.out.println();
-    }
 
-    private void printHierarchies(FilterParameters_SE parameters) {
-        System.out.print("hierarchy list = ");
-        for (ProductLgbk hierarchy : parameters.getHierarchies()) {
-            System.out.print(hierarchy + ", ");
-        }
-        System.out.println();
-    }
 
     @Override
     public void refreshSubscribedData(SharedData sharedData, Object data) {

@@ -142,11 +142,12 @@ public class ProductLgbk implements PriceListContentItem {
         }
     }
 
-    public String getCombineDescription() {
-        /*return this.equals(FILTER_VALUE_ALL_LGBKS) ? FILTER_VALUE_ALL_ITEMS :
-                "[".concat(getLgbk()).concat("] ").concat(getDescriptionRuEn());*/
-
+    public String getCombineDescriptionLgbk() {
         return String.format("[%s] %s", getLgbk(), getDescriptionRuEn());
+    }
+
+    public String getCombineDescriptionHierarchy() {
+        return String.format("[%s] %s", getHierarchy(), getDescriptionRuEn());
     }
 
     public String getCombineLgbkDescription() {

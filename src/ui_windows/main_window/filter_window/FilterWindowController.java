@@ -6,7 +6,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import org.apache.poi.ss.formula.functions.T;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 
@@ -48,7 +47,7 @@ public class FilterWindowController implements Initializable {
         cbLgbk.setConverter(new StringConverter<ProductLgbk>() {
             @Override
             public String toString(ProductLgbk object) {
-                return object.getCombineDescription();
+                return object.getCombineDescriptionLgbk();
             }
 
             @Override
