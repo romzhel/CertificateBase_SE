@@ -47,8 +47,6 @@ public class Filter_SE implements Module {
         parameters.getHierarchies().clear();
         parameters.getHierarchies().add(ALL_LGBKS);
 
-        if (dataSet == null || parameters == null) return;
-
         List<Product> result = new ArrayList<>();
 
         Pattern pattern = Pattern.compile(
@@ -113,8 +111,6 @@ public class Filter_SE implements Module {
         }
         System.out.println();
     }
-
-
 
     @Override
     public void refreshSubscribedData(SharedData sharedData, Object data) {

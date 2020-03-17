@@ -58,7 +58,7 @@ public class FilterParameters_SE {
         customValueMatcher = START_WITH;
         searchText = "";
         lastChange = new SimpleIntegerProperty(-1);
-        lastChange.addListener((observable, oldValue, newValue) -> System.out.println("filter last change value = " + (int) newValue));
+//        lastChange.addListener((observable, oldValue, newValue) -> System.out.println("filter last change value = " + (int) newValue));
 
         families = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
         lgbks = new TreeSet<>((o1, o2) -> o1.getLgbk().compareTo(o2.getLgbk()));

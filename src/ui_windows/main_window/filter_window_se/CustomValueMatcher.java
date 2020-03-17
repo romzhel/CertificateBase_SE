@@ -1,5 +1,7 @@
 package ui_windows.main_window.filter_window_se;
 
+import java.util.regex.Pattern;
+
 public enum CustomValueMatcher {
     START_WITH {
         boolean matches(String text, String pattern) {
@@ -23,7 +25,11 @@ public enum CustomValueMatcher {
     },
     REGULAR_EXPRESSION{
         boolean matches(String text, String pattern) {
-            return text.matches(pattern);
+            try {
+                return text.matches(pattern);
+            } catch (Exception e) {
+                return false;
+            }
         }
     },
     EQUALS{

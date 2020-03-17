@@ -142,7 +142,7 @@ public class FilterWindowController_SE implements Initializable, Module {
                 sync(null);
             }
         });
-        
+
         tfCustomValue.setText(filterParameters.getCustomValue());
 
         tfCustomValue.textProperty().addListener((observable, oldValue, newValue) -> {
