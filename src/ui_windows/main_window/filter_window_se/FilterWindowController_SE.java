@@ -67,6 +67,8 @@ public class FilterWindowController_SE implements Initializable, Module {
         if (SHD_FILTER_PARAMETERS.getData() instanceof FilterParameters_SE) {
             filterParameters = SHD_FILTER_PARAMETERS.getData();
 
+            initMainSelection();
+
             familySelector = new Selector<>(cbFamily,
                     ProductFamily::getName,
                     CHANGE_FAMILY, filterParameters::getFamilies, filterParameters::getFamily,
@@ -84,9 +86,11 @@ public class FilterWindowController_SE implements Initializable, Module {
                     this::sync);
             customPropertySelector = new Selector<>(cbCustomProperty,
                     (di) -> di == DATA_EMPTY ? TEXT_NO_SELECTED : di.getDisplayingName(),
-                    0, filterParameters::getCustomProperties, filterParameters::getCustomProperty,
+                    CHANGE_NONE, filterParameters::getCustomProperties, filterParameters::getCustomProperty,
                     (di) -> filterParameters.setCustomProperty(di),
                     this::sync);
+
+            initCustomSelection();
 
             refresh();
         }
@@ -96,12 +100,10 @@ public class FilterWindowController_SE implements Initializable, Module {
         if (SHD_FILTER_PARAMETERS.getData() instanceof FilterParameters_SE) {
             filterParameters = SHD_FILTER_PARAMETERS.getData();
 
-            initMainSelection();
             familySelector.actualize(filterParameters);
             lgbkSelector.actualize(filterParameters);
             hierarchySelector.actualize(filterParameters);
             customPropertySelector.actualize(filterParameters);
-            initCustomSelection();
         } else {
             Dialogs.showMessageTS("Инициализация окна фильтра", "Не найдено параметров фильтра!");
         }
@@ -140,6 +142,8 @@ public class FilterWindowController_SE implements Initializable, Module {
                 sync(null);
             }
         });
+        
+        tfCustomValue.setText(filterParameters.getCustomValue());
 
         tfCustomValue.textProperty().addListener((observable, oldValue, newValue) -> {
             if (filterParameters.getCustomProperty() != DATA_EMPTY && newValue != null && !newValue.equals(oldValue)) {
@@ -148,10 +152,6 @@ public class FilterWindowController_SE implements Initializable, Module {
             }
         });
     }
-
-    /*public void applyFilter() {
-        CoreModule.getFilter().apply();
-    }*/
 
     public void close() {
         SHD_FILTER_PARAMETERS.unsubscribe(this);

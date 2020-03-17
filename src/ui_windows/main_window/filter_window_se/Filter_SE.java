@@ -102,7 +102,7 @@ public class Filter_SE implements Module {
                 parameters.getCustomValue(), parameters.getCustomValueMatcher().name()));
 
         System.out.println(System.currentTimeMillis() - t1);
-        SHD_DISPLAYED_DATA.setData(result, this);
+        SHD_DISPLAYED_DATA.setData(result);
         SHD_FILTER_PARAMETERS.setData(parameters, this);
     }
 

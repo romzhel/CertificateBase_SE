@@ -57,7 +57,7 @@ public class MainTableContextMenuFactory {
         MENU_ADD_ITEM_TO_CUSTOM.setOnAction(event -> {
 //            ObservableList itemsForAdd = CoreModule.getProducts().getTableView().getSelectionModel().getSelectedItems();
             CoreModule.getCustomItems().addAll(SHD_SELECTED_PRODUCTS.getData());
-            SHD_DATA_SET.setData(CoreModule.getCustomItems());
+            SHD_DATA_SET.setData(new ArrayList<>(CoreModule.getCustomItems()));
         });
         MENU_CHECK_CERTIFICATES.setOnAction(event -> {
 //            new Thread(() -> {

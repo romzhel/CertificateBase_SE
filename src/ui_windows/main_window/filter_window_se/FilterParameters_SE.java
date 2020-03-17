@@ -24,6 +24,7 @@ public class FilterParameters_SE {
     public final static ProductLgbk ALL_LGBKS = new ProductLgbk(TEXT_ALL_ITEMS, TEXT_ALL_ITEMS);
     public final static ProductLgbk LGBK_NO_DATA = new ProductLgbk(TEXT_NO_DATA, TEXT_NO_DATA);
     public final static ProductLgbk LGBK_NOT_ASSIGNED = new ProductLgbk(TEXT_NOT_ASSIGNED, TEXT_NOT_ASSIGNED);
+    public final static int CHANGE_NONE = -1;
     public final static int CHANGE_PRICE = 0;
     public final static int CHANGE_SEARCH_TEXT = 1;
     public final static int CHANGE_FAMILY = 2;
@@ -62,7 +63,8 @@ public class FilterParameters_SE {
         families = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
         lgbks = new TreeSet<>((o1, o2) -> o1.getLgbk().compareTo(o2.getLgbk()));
         hierarchies = new TreeSet<>((o1, o2) -> o1.getHierarchy().compareTo(o2.getHierarchy()));
-        customProperties = new TreeSet<>(Arrays.asList(DATA_EMPTY, DATA_COUNTRY, DATA_DCHAIN));
+        customProperties = new TreeSet<>(Arrays.asList(DATA_EMPTY, DATA_COUNTRY, DATA_DCHAIN, DATA_RESPONSIBLE,
+                DATA_CERTIFICATE, DATA_IN_WHICH_PRICE_LIST, DATA_TYPE_DESCRIPTION));
     }
 
     public FilterParameters_SE setItems(ItemsSelection selection) {
