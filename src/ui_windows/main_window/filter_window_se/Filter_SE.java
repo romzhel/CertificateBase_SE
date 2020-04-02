@@ -96,8 +96,8 @@ public class Filter_SE implements Module {
 //        print("lgbks: ", parameters.getLgbks(), (l) -> l.getLgbk());
 //        print("hierarchies: ", parameters.getHierarchies(), (h) -> h.getHierarchy());
 
-        System.out.println(String.format("%s; prop: %s, value: %s, matcher: %s", this.getClass().getSimpleName(), parameters.getCustomProperty().name(),
-                parameters.getCustomValue(), parameters.getCustomValueMatcher().name()));
+//        System.out.println(String.format("%s; prop: %s, value: %s, matcher: %s", this.getClass().getSimpleName(), parameters.getCustomProperty().name(),
+//                parameters.getCustomValue(), parameters.getCustomValueMatcher().name()));
 
         System.out.println(System.currentTimeMillis() - t1);
         SHD_DISPLAYED_DATA.setData(result);

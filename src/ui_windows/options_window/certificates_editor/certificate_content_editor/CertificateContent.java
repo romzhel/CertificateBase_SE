@@ -79,7 +79,7 @@ public class CertificateContent {
         this.equipmentName = equipmentName;
     }
 
-    public boolean isWasChanged() {
+    public boolean wasChanged() {
         return wasChanged;
     }
 

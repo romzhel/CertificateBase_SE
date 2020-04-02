@@ -1,14 +1,24 @@
 package database;
 
 import org.sqlite.SQLiteConfig;
+import utils.Utils;
 
 import java.io.File;
 import java.sql.*;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.function.Supplier;
 
 public class DataBase {
     private Connection dbConnection;
     private File dataBaseFile;
+    private Timer timer;
     private boolean firstStart = true;
+    private Supplier<Boolean> disconnectLink;
+
+    public DataBase() {
+        disconnectLink = this::disconnect;
+    }
 
     public boolean connect(File dbFile) {
         SQLiteConfig config = null;
@@ -22,9 +32,8 @@ public class DataBase {
 
         try {
             dbConnection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getPath(), config.toProperties());
+            System.out.printf("database connect to base %s", Utils.printTime());
             dataBaseFile = dbFile;
-
-
 
             System.out.println("DB connected");
             if (firstStart) System.out.println(getDbJournalingMode());
@@ -36,10 +45,26 @@ public class DataBase {
         return false;
     }
 
+    public void requestToDisconnect() {
+        System.out.printf("database request do disconnect %s", Utils.printTime());
+        if (timer != null) {
+            timer.cancel();
+        }
+        timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.out.printf("database timer do disconnect %s", Utils.printTime());
+                disconnectLink.get();
+            }
+        }, 3000);
+    }
+
     public boolean disconnect() {
         try {
             if (!dbConnection.isClosed()) {
                 dbConnection.close();
+                System.out.printf("database disconnection %s", Utils.printTime());
                 System.out.println("DB disconnected");
             }
             return true;
@@ -50,8 +75,10 @@ public class DataBase {
     }
 
     public Connection reconnect() {
+
         try {
             if (dbConnection.isClosed()) {
+                System.out.printf("database reconnection to db %s", Utils.printTime());
                 connect(dataBaseFile);
 
                 new DbBackuper();
@@ -89,5 +116,9 @@ public class DataBase {
 
     public Connection getDbConnection() {
         return dbConnection;
+    }
+
+    public File getDataBaseFile() {
+        return dataBaseFile;
     }
 }

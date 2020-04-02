@@ -27,7 +27,7 @@ public class DbRequest {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        CoreModule.getDataBase().disconnect();
+        CoreModule.getDataBase().requestToDisconnect();
     }
 
 
