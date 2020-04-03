@@ -69,9 +69,9 @@ public class HierarchyGroup {
                 new ProductLgbk(lgroupName, name));
 
         if (lap != null && lap.getLgbkItem() != null && lap.getLgbkParent() != null) {
-            String enText = CoreModule.getProductLgbks().getByLgbkName(lgroupName).getDescriptionEnRu() + " / " +
+            String enText = CoreModule.getProductLgbks().getGroupLgbkByName(lgroupName).getDescriptionEnRu() + " / " +
                     lap.getLgbkItem().getDescriptionEnRu();
-            String ruText = CoreModule.getProductLgbks().getByLgbkName(lgroupName).getDescriptionRuEn() + " / " +
+            String ruText = CoreModule.getProductLgbks().getGroupLgbkByName(lgroupName).getDescriptionRuEn() + " / " +
                     lap.getLgbkItem().getDescriptionRuEn();
             String printText = priceListSheet.getLanguage() == LANG_RU ? ruText : enText;
 

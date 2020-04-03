@@ -67,9 +67,14 @@ public class ProductLgbks {
         return false;
     }
 
-    public ProductLgbk getByLgbkName(String lgbkName) {
+    public ProductLgbk getByLgbkNameDefValue(String lgbkName, ProductLgbk defValue) {
+        ProductLgbk productLgbk = getGroupLgbkByName(lgbkName);
+        return productLgbk == null ? defValue : productLgbk;
+    }
+
+    public ProductLgbk getGroupLgbkByName(String lgbkName) {
         for (ProductLgbk plgbk : productLgbks) {
-            if (plgbk.getLgbk().equals(lgbkName) && plgbk.getHierarchy().equals("Все")) {
+            if (plgbk.getLgbk().equals(lgbkName) && plgbk.getNodeType() == ProductLgbk.GROUP_NODE) {
                 return plgbk;
             }
         }
@@ -79,7 +84,7 @@ public class ProductLgbks {
     public ProductLgbk getByLgbkCombinedText(String combinedText) {
         if (combinedText.contains("[") && combinedText.contains("]")) {
             String findingLgbk = combinedText.substring(1, combinedText.indexOf("]"));
-            return getByLgbkName(findingLgbk);
+            return getGroupLgbkByName(findingLgbk);
         }
         return null;
     }
@@ -93,11 +98,21 @@ public class ProductLgbks {
         return null;
     }
 
+    public ProductLgbk getLgbkByHierarchy(String hierarchy) {
+        for (ProductLgbk lgbk : productLgbks) {
+            if (hierarchy.equals(lgbk.getHierarchy())) {
+                return lgbk;
+            }
+        }
+
+        return null;
+    }
+
     public TreeSet<String> getLgbkDescALbyNamesAL(ArrayList<String> lgbkNames) {
         TreeSet<String> result = new TreeSet<>();
         ProductLgbk pl;
         for (String lgbkName : lgbkNames) {
-            pl = getByLgbkName(lgbkName);
+            pl = getGroupLgbkByName(lgbkName);
             if (pl != null)
                 result.add("[" + pl.getLgbk() + "] " + pl.getDescription());
         }
@@ -111,7 +126,7 @@ public class ProductLgbks {
         for (String lgbkDesc : lgbkDescs) {
             String[] parts = lgbkDesc.split("\\]");
             lgbkName = parts[0].replaceAll("[\\[\\s]", "");
-            pl = getByLgbkName(lgbkName);
+            pl = getGroupLgbkByName(lgbkName);
 
             if (pl != null) result.add(pl.getLgbk());
         }

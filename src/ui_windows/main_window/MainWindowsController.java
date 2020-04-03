@@ -10,6 +10,7 @@ import scripts.PriceGenerationScript;
 import ui_windows.login_window.LoginWindow;
 import ui_windows.main_window.file_import_window.se.ImportNowFile;
 import ui_windows.main_window.filter_window.FilterWindow;
+import ui_windows.main_window.filter_window_se.FilterWindow_SE;
 import ui_windows.options_window.OptionsWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.user_editor.User;
@@ -135,7 +136,7 @@ public class MainWindowsController implements Initializable {
     }
 
     public void displayFilterOptions() {
-        new FilterWindow();
+        new FilterWindow_SE();
     }
 
     public void actionRequest() {

@@ -480,4 +480,8 @@ public class Utils {
         }
         return null;
     }
+
+    public static String printTime(){
+        return new SimpleDateFormat("hh:mm:ss.SSS").format(new Date()).concat("\n");
+    }
 }

@@ -2,21 +2,17 @@ package core;
 
 import database.DataBase;
 import files.Folders;
-import javafx.application.Platform;
-import javafx.scene.control.TableView;
 import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.filter_window.Filter;
+import ui_windows.main_window.filter_window_se.Filter_SE;
 import ui_windows.options_window.certificates_editor.Certificates;
 import ui_windows.options_window.certificates_editor.CertificatesTable;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContent;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContentTable;
 import ui_windows.options_window.families_editor.ProductFamilies;
-import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
 import ui_windows.options_window.price_lists_editor.PriceLists;
-import ui_windows.options_window.product_lgbk.LgbkAndParent;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.options_window.product_lgbk.ProductLgbks;
 import ui_windows.options_window.profile_editor.Profiles;
@@ -30,7 +26,6 @@ import utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.TreeSet;
 
 public class CoreModule {
     private static DataBase dataBase;
@@ -50,9 +45,10 @@ public class CoreModule {
     private static Users users;
     private static Folders folders;
     private static Filter filter;
+    private static Filter_SE filter_se;
     private static PriceLists priceLists;
 
-    private static ArrayList<Product> currentItems = new ArrayList<>();
+    //    private static ArrayList<Product> currentItems = new ArrayList<>();
     private static HashSet<Product> customItems = new HashSet<>();
 
     public static boolean init() {
@@ -82,8 +78,10 @@ public class CoreModule {
         productLgbks = new ProductLgbks().getFromDB();
 
         filter = new Filter();
+        filter_se = new Filter_SE();
         products = new Products().getFromDB();
-        currentItems.addAll(products.getItems());
+//        SHD_DATA_SET.setData(products.getItems());
+//        currentItems.addAll(products.getItems());
 
         productLgbkGroups = new ProductLgbkGroups().get();
         priceLists = new PriceLists().getFromDB();
@@ -187,7 +185,7 @@ public class CoreModule {
         return filter;
     }
 
-    public static ArrayList<Product> getCurrentItems() {
+    /*public static ArrayList<Product> getCurrentItems() {
         return currentItems;
     }
 
@@ -199,7 +197,7 @@ public class CoreModule {
     public static synchronized void setCurrentItems(HashSet<Product> items) {
         CoreModule.currentItems.clear();
         CoreModule.currentItems.addAll(items);
-    }
+    }*/
 
     public static ProductLgbkGroups getProductLgbkGroups() {
         return productLgbkGroups;
