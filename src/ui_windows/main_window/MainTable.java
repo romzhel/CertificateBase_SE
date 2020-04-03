@@ -21,6 +21,7 @@ import ui_windows.product.productEditorWindow.ProductEditorWindow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -186,8 +187,26 @@ public class MainTable implements Module {
         if (sharedData == SharedData.SHD_DISPLAYED_DATA && data instanceof List) {
             List<Product> itemsForDisplaying = (List<Product>) data;
 
-//            System.out.println(this.getClass().getSimpleName() + "; " + sharedData.name() + ", " + ", displayed data = " + itemsForDisplaying.size());
+            if (!Thread.currentThread().getName().equals("JavaFX Application Thread")) {
+                CountDownLatch inputWaiting = new CountDownLatch(1);
 
+                Platform.runLater(() -> {
+                    refreshData(itemsForDisplaying);
+                    inputWaiting.countDown();
+                });
+
+                try {
+                    inputWaiting.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                refreshData(itemsForDisplaying);
+            }
+        }
+    }
+
+    public void refreshData(List<Product> itemsForDisplaying) {
             tvTable.getItems().clear();
             tvTable.getItems().addAll(itemsForDisplaying);
             tvTable.refresh();
@@ -195,9 +214,5 @@ public class MainTable implements Module {
             if (mwc != null) {
                 mwc.lbRecordCount.setText(String.valueOf(tvTable.getItems().size()));
             }
-//            refresh();
-        } /*else {
-            System.out.println(this.getClass().getName() + ", " + sharedData.toString());
-        }*/
     }
 }
