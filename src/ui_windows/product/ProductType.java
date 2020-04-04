@@ -7,6 +7,7 @@ public class ProductType {
     private int id;
     private String type;
     private String ten;
+    private boolean wasChanged = false;
 
     public ProductType(int id, String type, String ten){
         this.id = id;
@@ -46,5 +47,13 @@ public class ProductType {
 
     public void setTen(String ten) {
         this.ten = ten;
+    }
+
+    public boolean wasChanged() {
+        return wasChanged;
+    }
+
+    public void setWasChanged(boolean wasChanged) {
+        this.wasChanged = wasChanged;
     }
 }

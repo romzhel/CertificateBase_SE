@@ -3,6 +3,7 @@ package ui_windows.options_window.certificates_editor.certificate_content_editor
 import core.CoreModule;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import ui_windows.product.ProductType;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,30 +11,25 @@ import java.sql.SQLException;
 public class CertificateContent {
     private int id;
     private int certId;
-    private int eqTypeId;
-    private String equipmentType;
-    private String tnved;
     private String equipmentName;
+    private ProductType productType;
     private boolean wasChanged;
 
-    public CertificateContent(int id, int certId, String equipmentType, String tnved, String equipmentName) {
+    public CertificateContent(int id, int certId, ProductType productType, String equipmentName) {
         this.id = id;
         this.certId = certId;
-        this.equipmentType = equipmentType;
-        this.tnved = tnved;
         this.equipmentName = equipmentName;
+        this.productType = new ProductType(productType.getId(), productType.getType(), productType.getTen());
         wasChanged = false;
-        eqTypeId = CoreModule.getProductTypes().getIDbyType(equipmentType);
     }
 
     public CertificateContent(ResultSet rs) {
         try {
             id = rs.getInt("id");
             certId = rs.getInt("cert_id");
-            eqTypeId = rs.getInt("product_type_id");
-            equipmentType = CoreModule.getProductTypes().getTypeById(rs.getInt("product_type_id"));
-            tnved = CoreModule.getProductTypes().getTnVedById(rs.getInt("product_type_id"));
             equipmentName = rs.getString("product_names");
+            ProductType temp = CoreModule.getProductTypes().getById(rs.getInt("product_type_id"));
+            productType = temp == null ? new ProductType(0, "", "") : temp;
         } catch (SQLException e) {
             System.out.println("exception Certificate Content constructor from DB: " + e.getMessage());
         }
@@ -55,20 +51,12 @@ public class CertificateContent {
         this.certId = certId;
     }
 
-    public String getEquipmentType() {
-        return equipmentType;
+    public boolean wasChanged() {
+        return wasChanged;
     }
 
-    public void setEquipmentType(String equipmentType) {
-        this.equipmentType = equipmentType;
-    }
-
-    public String getTnved() {
-        return tnved;
-    }
-
-    public void setTnved(String tnved) {
-        this.tnved = tnved;
+    public void setWasChanged(boolean wasChanged) {
+        this.wasChanged = wasChanged;
     }
 
     public String getEquipmentName() {
@@ -79,19 +67,11 @@ public class CertificateContent {
         this.equipmentName = equipmentName;
     }
 
-    public boolean wasChanged() {
-        return wasChanged;
+    public ProductType getProductType() {
+        return productType;
     }
 
-    public void setWasChanged(boolean wasChanged) {
-        this.wasChanged = wasChanged;
-    }
-
-    public int getEqTypeId() {
-        return eqTypeId;
-    }
-
-    public void setEqTypeId(int eqTypeId) {
-        this.eqTypeId = eqTypeId;
+    public void setProductType(ProductType productType) {
+        this.productType = productType;
     }
 }

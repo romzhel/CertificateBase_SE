@@ -16,8 +16,8 @@ public class ProductTypesDB extends DbRequest {
             addData = connection.prepareStatement("INSERT INTO " +
                             "productTypes (product_type, type_ten) VALUES (?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
-//            updateData = CoreModule.getDataBase().getDbConnection().prepareStatement("UPDATE productTypes " +
-//                    "SET name = ?, cert_type_id = ?, expiration_date = ?, countries = ?, file_name = ? WHERE id = ?");
+            updateData = connection.prepareStatement("UPDATE productTypes " +
+                    "SET product_type = ?, type_ten = ? WHERE id = ?");
             deleteData = connection.prepareStatement("DELETE FROM productTypes " +
                     "WHERE id = ?");
         } catch (SQLException e) {
@@ -49,14 +49,14 @@ public class ProductTypesDB extends DbRequest {
 
             MainWindow.setProgress(1.0);
 
-            if (addData.executeUpdate() > 0) {//successful
+            if (addData.executeUpdate() > 0) {
                 ResultSet rs = addData.getGeneratedKeys();
 
                 if (rs.next()) {
                     pt.setId(rs.getInt(1));
-//                        System.out.println("new product type ID = " + rs.getInt(1));
-                    return true;
                 }
+
+                return true;
             } else {
                 logAndMessage("Ошибка добавления типа оборудования в БД");
             }
@@ -69,6 +69,24 @@ public class ProductTypesDB extends DbRequest {
     }
 
     public boolean updateData(ProductType pt) {
+        try {
+            updateData.setString(1, pt.getType());
+            updateData.setString(2, pt.getTen());
+
+            updateData.setInt(3, pt.getId());
+
+            MainWindow.setProgress(1.0);
+
+            if (updateData.executeUpdate() > 0) {//successful
+                return true;
+            } else {
+                logAndMessage("Ошибка обновления типа оборудования в БД");
+            }
+        } catch (SQLException e) {
+            logAndMessage("exception of updating product type to BD");
+        } finally {
+            finalActions();
+        }
         return false;
     }
 

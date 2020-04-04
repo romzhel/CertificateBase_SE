@@ -62,12 +62,12 @@ public class CertificateContentChecker {
         for (CertificateContent cc : certificate.getContent()) {
             String[] names = cc.getEquipmentName().split("\\,");
 
-            addRow(1, cc.getEquipmentType());
+            addRow(1, cc.getProductType().getType());
 
             for (String name : names) {
                 ItemsGroups<String, String, Product> nameGroup = new ItemsGroups<>(name, (o1, o2) -> o1.getGroupNode().compareTo(o2.getGroupNode()));
 
-                addRow(2, name + " (" + cc.getEquipmentType() + ")");
+                addRow(2, name + " (" + cc.getProductType().getType() + ")");
 
                 for (Product product : CoreModule.getProducts().getItems()) {
                     String comparingValue = "^".concat(name).concat("[^a-zA-Z]").concat(".*");

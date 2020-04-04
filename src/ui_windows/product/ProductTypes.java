@@ -22,23 +22,24 @@ public class ProductTypes {
         return this;
     }
 
-    public int getID(CertificateContent cc) {
+    public ProductType getById(int id) {
         for (ProductType pt : productTypes) {
-            if (pt.getType().equals(cc.getEquipmentType().trim())) {
-                return pt.getId();//existing type
+            if (pt.getId() == id) {
+                return pt;
             }
         }
 
-        ProductType pt = new ProductType(0, cc.getEquipmentType(), cc.getTnved());//create new one
-        if (new ProductTypesDB().putData(pt)) {
-            addItem(pt);
+        return null;
+    }
+
+    public ProductType getByEqType(String eqType){
+        for (ProductType pt : productTypes) {
+            if (pt.getType().trim().toLowerCase().equals(eqType.trim().toLowerCase())) {
+                return pt;
+            }
         }
 
-//        return productTypes.indexOf(pt);//return index of new item
-        if (pt.getId() == 0) {
-            System.out.println("not found product type ID for certificate content " + cc.getEquipmentName());
-        }
-        return pt.getId();
+        return null;
     }
 
     public int getIDbyType(String type) {
@@ -87,7 +88,7 @@ public class ProductTypes {
         return NO_SELECTED;
     }
 
-    public String getTnVedById(int id){
+    public String getTnVedById(int id) {
         for (ProductType pt : productTypes) {
             if (pt.getId() == id) return pt.getTen();
         }
@@ -107,18 +108,4 @@ public class ProductTypes {
             }
         }
     }
-
-    public ProductType getProductTypeByType(String type) {
-        for (ProductType pt : productTypes) {
-            if (pt.getType().equals(type)) return pt;
-        }
-        return null;
-    }
-
-    public ProductType getProductTypeByTypeOrDefault(String type, ProductType def) {
-        ProductType result = getProductTypeByType(type);
-        return result == null ? def : result;
-    }
-
-
 }

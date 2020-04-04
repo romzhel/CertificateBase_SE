@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class CertificatesContentDB extends DbRequest {
@@ -48,14 +49,13 @@ public class CertificatesContentDB extends DbRequest {
 
     }
 
-    public boolean putData(List<CertificateContent> contents) {
+    public boolean putData(Collection<CertificateContent> contents) {
         try {
             for (CertificateContent content : contents) {
                 addData.setInt(1, content.getCertId());
-                addData.setInt(2, CoreModule.getProductTypes().getID(content));
+                addData.setInt(2, content.getProductType().getId());
                 addData.setString(3, content.getEquipmentName());
                 addData.addBatch();
-                System.out.printf("content DB batch %s", Utils.printTime());
             }
 
             connection.setAutoCommit(false);
@@ -94,10 +94,10 @@ public class CertificatesContentDB extends DbRequest {
         return true;
     }
 
-    public boolean updateData(List<CertificateContent> contents) {
+    public boolean updateData(Collection<CertificateContent> contents) {
         try {
             for (CertificateContent content : contents) {
-                updateData.setInt(1, CoreModule.getProductTypes().getID(content));
+                updateData.setInt(1, content.getProductType().getId());
                 updateData.setString(2, content.getEquipmentName());
                 updateData.setInt(3, content.getId());
                 updateData.addBatch();

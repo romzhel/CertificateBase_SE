@@ -68,9 +68,11 @@ public class CertificatesChecker {
             for (CertificateContent content : cert.getContent()) {//check all content
                 boolean fullNameMatch = cert.isFullNameMatch();
                 boolean productTypeNotDefined = product.getType_id() == 0;
-                boolean productTypeDefinedAndMatches = product.getType_id() > 0 && product.getType_id() == content.getEqTypeId();
+                boolean productTypeDefinedAndMatches = product.getType_id() > 0 &&
+                        product.getType_id() == content.getProductType().getId();
                 boolean changedProductTypeNotDefined = checkParameters.getTemporaryTypeId() == 0;
-                boolean changedProductTypeDefinedAndMatch = checkParameters.getTemporaryTypeId() > 0 && checkParameters.getTemporaryTypeId() == content.getEqTypeId();
+                boolean changedProductTypeDefinedAndMatch = checkParameters.getTemporaryTypeId() > 0 &&
+                        checkParameters.getTemporaryTypeId() == content.getProductType().getId();
 
                 boolean usualWay = !checkParameters.isUseTemporaryTypeId() && (productTypeNotDefined || productTypeDefinedAndMatches);
                 boolean temporaryWay = checkParameters.isUseTemporaryTypeId() && (changedProductTypeNotDefined || changedProductTypeDefinedAndMatch);
@@ -81,8 +83,8 @@ public class CertificatesChecker {
                         for (String prod : prodNames) {//compare product article / material with certificate content
 
                             if (isNamesMatches(prod, cert, contentName)) {//add prod type from certificate for allowing of selection
-                                if (content.getEquipmentType() != null && !content.getEquipmentType().isEmpty()) {
-                                    productTypes.add(content.getEquipmentType());
+                                if (content.getProductType().getType() != null && !content.getProductType().getType().isEmpty()) {
+                                    productTypes.add(content.getProductType().getType());
                                 }
 
                                 boolean typeNotDefined = (!checkParameters.isUseTemporaryTypeId() && productTypeNotDefined) ||
@@ -98,7 +100,7 @@ public class CertificatesChecker {
 
                                 for (String normName : norms.split("\\,")) {
                                     resultTableItems.add(new CertificateVerificationItem(normName.trim(), contentName,
-                                            content.getEquipmentType(), cert.getFileName(), status,
+                                            content.getProductType().getType(), cert.getFileName(), status,
                                             cert.getExpirationDate(), cert, product));
 
                                 }
@@ -134,7 +136,7 @@ public class CertificatesChecker {
 
     private boolean isMatchEquipTypeName(Product product, CertificateContent content) {
         String[] productDescriptionParts = product.getDescriptionru().replaceAll("[\\(\\)\\[\\]]", "").split("[\\s\\,]");
-        String certEqType = content.getEquipmentType().toLowerCase();
+        String certEqType = content.getProductType().getType().toLowerCase();
 
         for (String partOfDesc : productDescriptionParts) {
             String searchPart;

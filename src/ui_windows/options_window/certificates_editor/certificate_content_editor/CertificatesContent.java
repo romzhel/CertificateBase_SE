@@ -32,7 +32,7 @@ public class CertificatesContent {
 
     public boolean isProductTypeUsed(String type) {
         for (CertificateContent cc : content) {
-            if (cc.getEquipmentType().equals(type)) return true;
+            if (cc.getProductType().getType().equals(type)) return true;
         }
         return false;
     }
@@ -48,9 +48,9 @@ public class CertificatesContent {
     public void delete(CertificateContent item) {
         content.remove(item);
 
-        if (!isProductTypeUsed(item.getEquipmentType()) &&  //product type don't used any more
-                !CoreModule.getProducts().isProductTypeIsUsed(item.getEquipmentType())) {
-            CoreModule.getProductTypes().delete(item.getEquipmentType());
+        if (!isProductTypeUsed(item.getProductType().getType()) &&  //product type don't used any more
+                !CoreModule.getProducts().isProductTypeIsUsed(item.getProductType().getType())) {
+            CoreModule.getProductTypes().delete(item.getProductType().getType());
         }
     }
 }
