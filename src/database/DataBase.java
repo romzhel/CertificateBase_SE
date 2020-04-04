@@ -47,9 +47,7 @@ public class DataBase {
 
     public void requestToDisconnect() {
         System.out.printf("database request do disconnect %s", Utils.printTime());
-        if (timer != null) {
-            timer.cancel();
-        }
+
         timer = new Timer(true);
         timer.schedule(new TimerTask() {
             @Override
@@ -75,6 +73,10 @@ public class DataBase {
     }
 
     public Connection reconnect() {
+        if (timer != null) {
+            timer.cancel();
+            System.out.printf("database reconnection to db, disconnecting timer was canceled %s", Utils.printTime());
+        }
 
         try {
             if (dbConnection.isClosed()) {
