@@ -30,7 +30,7 @@ import static core.SharedData.SHD_FILTER_PARAMETERS;
 import static ui_windows.options_window.profile_editor.SimpleRight.HIDE;
 
 public class MainWindow extends Application {
-    private String version = "1.3.0.2 (тест) от 02.04.2020";
+    private String version = "1.3.1.0 (beta) от 05.04.2020";
     private static Stage mainStage;
     private static AnchorPane rootAnchorPane;
     private static ProgressBar progressBar;

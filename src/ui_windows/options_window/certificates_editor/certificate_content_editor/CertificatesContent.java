@@ -46,11 +46,26 @@ public class CertificatesContent {
     }
 
     public void delete(CertificateContent item) {
-        content.remove(item);
+        if (!content.remove(item)) {
+            CertificateContent forDelete = getById(item.getId());
+            if (forDelete != null) {
+                content.remove(forDelete);
+            }
+        }
 
         if (!isProductTypeUsed(item.getProductType().getType()) &&  //product type don't used any more
                 !CoreModule.getProducts().isProductTypeIsUsed(item.getProductType().getType())) {
             CoreModule.getProductTypes().delete(item.getProductType().getType());
         }
+    }
+
+    public CertificateContent getById(int id) {
+        for (CertificateContent cc : content) {
+            if (cc.getId() == id) {
+                return cc;
+            }
+        }
+
+        return null;
     }
 }

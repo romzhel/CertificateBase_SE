@@ -8,10 +8,7 @@ import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.product.Product;
 import ui_windows.product.ProductType;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class CertificateContentActions {
 
@@ -72,11 +69,10 @@ public class CertificateContentActions {
 
     public static void deleteContent(CertificateContent cc) {
         if (Dialogs.confirm("Удаление записи", "Действительно желаете удалить запись?")) {
-            ArrayList<CertificateContent> alcc = new ArrayList<>();
-            alcc.add(cc);
+            ArrayList<CertificateContent> alcc = new ArrayList<>(Collections.singletonList(cc));
 
             if (new CertificatesContentDB().deleteData(alcc)) {//remove from DB
-                System.out.println("certificate content deleted");
+                System.out.println("certificate content deleted from DB");
 //                CoreModule.getProductTypes().delete();
                 CoreModule.getCertificates().removeContent(cc); //remove from cert
                 CoreModule.getCertificatesContent().delete(cc); //remove from contents

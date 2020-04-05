@@ -27,10 +27,8 @@ public class DbBackuper extends DbRequest {
 
     public DbBackuper() {
         try {
-            System.out.printf("backuper %s create %s", this, Utils.printTime());
             Statement backupStatement = connection.createStatement();
             final File dbLocalBackupFile = new File(CoreModule.getFolders().getTempFolder().getPath() + "\\certificateDB_backup.db");
-//            final File dbZipRemoteBackupFile = new File(CoreModule.getFolders().getDbBackupFolder().getPath() + "\\certificateDB_backup.db");
 
             if (!CoreModule.getFolders().getTempFolder().exists()) {
                 CoreModule.getFolders().getTempFolder().mkdir();
@@ -39,9 +37,7 @@ public class DbBackuper extends DbRequest {
             if (!CoreModule.getFolders().getDbBackupFolder().exists()) {
                 CoreModule.getFolders().getDbBackupFolder().mkdir();
             }
-            System.out.printf("backuper %s before backup to local %s", this, Utils.printTime());
             backupStatement.executeUpdate("backup to '" + dbLocalBackupFile.getPath() + "'");
-            System.out.printf("backuper %s after backup to local %s", this, Utils.printTime());
 
             new Thread(() -> {
                 try {
@@ -53,16 +49,8 @@ public class DbBackuper extends DbRequest {
 
                     File remoteDbZipFile = new File(CoreModule.getFolders().getDbBackupFolder() + "\\" + localDbZipFile.getName());
 
-                    System.out.printf("backuper %s before local archiving %s", this, Utils.printTime());
                     new Archiver().addToArchive(dbLocalBackupFile, localDbZipFile);
-                    System.out.printf("backuper %s after local archiving %s", this, Utils.printTime());
-
-//                    CountDownLatch latcher = new CountDownLatch(1);
-//                    latcher.await(2, TimeUnit.SECONDS);
-
-                    System.out.printf("backuper %s before copy archive to remote %s", this, Utils.printTime());
                     Files.copy(localDbZipFile.toPath(), remoteDbZipFile.toPath());
-                    System.out.printf("backuper %s after copy archive to remote %s", this, Utils.printTime());
 
                     File[] filesList = remoteDbZipFile.getParentFile().listFiles(pathname -> pathname.getName().endsWith(".zip"));
                     if (filesList.length > BACKUP_COPIES) {

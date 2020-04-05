@@ -53,7 +53,7 @@ public class Filter_SE implements Module {
                 String.format(".*%s.*", parameters.getSearchText().replaceAll("\\*", ".*")),
                 Pattern.CASE_INSENSITIVE);
 
-        long t1 = System.currentTimeMillis();
+//        long t1 = System.currentTimeMillis();
 
         boolean searchTextMatches;
         boolean priceMatches;
@@ -99,7 +99,7 @@ public class Filter_SE implements Module {
 //        System.out.println(String.format("%s; prop: %s, value: %s, matcher: %s", this.getClass().getSimpleName(), parameters.getCustomProperty().name(),
 //                parameters.getCustomValue(), parameters.getCustomValueMatcher().name()));
 
-        System.out.println(System.currentTimeMillis() - t1);
+//        System.out.println(System.currentTimeMillis() - t1);
         SHD_DISPLAYED_DATA.setData(result);
         SHD_FILTER_PARAMETERS.setData(parameters, this);
     }

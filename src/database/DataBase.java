@@ -32,7 +32,6 @@ public class DataBase {
 
         try {
             dbConnection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getPath(), config.toProperties());
-            System.out.printf("database connect to base %s", Utils.printTime());
             dataBaseFile = dbFile;
 
             System.out.println("DB connected");
@@ -46,13 +45,10 @@ public class DataBase {
     }
 
     public void requestToDisconnect() {
-        System.out.printf("database request do disconnect %s", Utils.printTime());
-
         timer = new Timer(true);
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                System.out.printf("database timer do disconnect %s", Utils.printTime());
                 disconnectLink.get();
             }
         }, 3000);
@@ -62,7 +58,6 @@ public class DataBase {
         try {
             if (!dbConnection.isClosed()) {
                 dbConnection.close();
-                System.out.printf("database disconnection %s", Utils.printTime());
                 System.out.println("DB disconnected");
             }
             return true;
@@ -75,12 +70,10 @@ public class DataBase {
     public Connection reconnect() {
         if (timer != null) {
             timer.cancel();
-            System.out.printf("database reconnection to db, disconnecting timer was canceled %s", Utils.printTime());
         }
 
         try {
             if (dbConnection.isClosed()) {
-                System.out.printf("database reconnection to db %s", Utils.printTime());
                 connect(dataBaseFile);
 
                 new DbBackuper();

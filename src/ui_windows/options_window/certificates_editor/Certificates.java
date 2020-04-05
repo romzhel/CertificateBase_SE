@@ -4,13 +4,12 @@ import core.CoreModule;
 import core.Dialogs;
 import database.CertificatesDB;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
-import ui_windows.product.certificatesChecker.CertificatesChecker;
 import utils.Utils;
 
 import java.util.ArrayList;
 
 public class Certificates {
-//    private CertificatesChecker certificatesChecker;
+    //    private CertificatesChecker certificatesChecker;
     private ArrayList<Certificate> certificates;
 
     public Certificates() {
@@ -65,9 +64,8 @@ public class Certificates {
 
     public void removeContent(CertificateContent cc) {
         Certificate cert = getCertificateByID(cc.getCertId());
-        if (cert != null) {
-            CoreModule.getCertificatesContent().delete(new ArrayList<CertificateContent>());
-            cert.getContent().remove(cc);
+        if (cert != null && !cert.getContent().remove(cc)) {
+            cert.getContent().remove(CoreModule.getCertificatesContent().getById(cc.getId()));
         }
     }
 
