@@ -13,6 +13,7 @@ public class FilterParameter<T> {
 
     public void displayValue(Control control) {
         if (control == null) return;
+
         this.control = control;
         if (control instanceof RadioButton && value instanceof Boolean) {
             ((RadioButton) control).setSelected((Boolean) value);

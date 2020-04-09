@@ -81,8 +81,8 @@ public class CertificateEditorWindowActions {
         cert.setCountries(Countries.getShortNames(Utils.getALControlValueFromLV(root, "lvCountries")));
         cert.setNorms(CoreModule.getRequirementTypes().getReqIdsLineFromShortNamesAL(Utils.getALControlValueFromLV(root, "lvNorms")));
         cert.setFileName(Utils.getControlValue(root, "tfFileName"));
-        cert.setFullNameMatch(Utils.getControlValue(root, "ckbNameMatch") == "true" ? true : false);
-        cert.setMaterialMatch(Utils.getControlValue(root, "ckbMaterialMatch") == "true" ? true : false);
+        cert.setFullNameMatch(Utils.getControlValue(root, "ckbNameMatch") == "true");
+        cert.setMaterialMatch(Utils.getControlValue(root, "ckbMaterialMatch") == "true");
     }
 
     public static void close() {
@@ -112,15 +112,13 @@ public class CertificateEditorWindowActions {
             Utils.setControlValue(root, "ckbMaterialMatch", cert.isMaterialMatch());
 
             CoreModule.getCertificatesContentTable().setContent(cert.getContent());
-            ((CertificateEditorWindowController) CertificateEditorWindow.getLoader().getController())
-                    .getCertificatesContentTable().setBackupItems(cert.getContent());
         }
     }
 
     public static void deleteData() {
         Certificate cert = getItem();
         if (cert != null)
-            if (Dialogs.confirm("Удаление записи", "Действительно желаете удалить запись?")) {
+            if (Dialogs.confirm("Удаление записи", "Действительно желаете удалить запись без возможности восстановления?")) {
                 if (new CertificatesDB().deleteData(cert)) {//delete cert from DB
                     new CertificatesContentDB().deleteData(cert.getContent());//delete cert content from db
                     CoreModule.getCertificatesContent().delete(cert.getContent());//delete content from class
@@ -148,20 +146,25 @@ public class CertificateEditorWindowActions {
     public static void addCountry() {
         AnchorPane root = (AnchorPane) CertificateEditorWindow.getStage().getScene().getRoot();
         String newCountry = Utils.getControlValue(root, "cbCountrySelect");
-        if (newCountry.trim().length() > 0) Utils.addControlValueLV(root, "lvCountries", newCountry);
+        if (newCountry.trim().length() > 0) {
+            Utils.addControlValueLV(root, "lvCountries", newCountry);
+        }
     }
 
     public static void addNorm() {
         AnchorPane root = (AnchorPane) CertificateEditorWindow.getStage().getScene().getRoot();
         String newNorm = Utils.getControlValue(root, "cbNormSelect");
-        if (newNorm.trim().length() > 0) Utils.addControlValueLV(root, "lvNorms", newNorm);
+        if (newNorm.trim().length() > 0) {
+            Utils.addControlValueLV(root, "lvNorms", newNorm);
+        }
     }
 
     public static void selectFile() {
         File certFile = Dialogs.selectFile(CertificateEditorWindow.getStage());
         if (certFile != null) {
             if (new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + certFile.getName()).exists()) {
-                Dialogs.showMessage("Добавление сертификата", "Сертификат с таким именем уже существует");
+                Dialogs.showMessage("Добавление сертификата", "Файл сертификата с таким именем уже существует.\n" +
+                        "Проверьте, возможно, сертификат уже есть в базе");
             } else {
                 File destination = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + certFile.getName());
 
@@ -180,8 +183,8 @@ public class CertificateEditorWindowActions {
 
     public static boolean hasEmptyCellInTable() {
         for (CertificateContent cc : CoreModule.getCertificatesContentTable().getTableView().getItems()) {
-            boolean eqTypeEmpty = cc.getEquipmentType() == null || cc.getEquipmentType().trim().isEmpty();
-            boolean tnvedEmpty = cc.getTnved() == null || cc.getTnved().trim().isEmpty();
+            boolean eqTypeEmpty = cc.getProductType().getType() == null || cc.getProductType().getType().trim().isEmpty();
+            boolean tnvedEmpty = cc.getProductType().getTen() == null || cc.getProductType().getTen().trim().isEmpty();
             boolean eqNamesEmpty = cc.getEquipmentName() == null || cc.getEquipmentName().trim().isEmpty();
             if (eqTypeEmpty || eqNamesEmpty || tnvedEmpty) return true;
         }

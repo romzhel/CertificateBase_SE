@@ -69,7 +69,6 @@ public class CertificateEditorWindowController implements Initializable {
     }
 
     public void cancel() {
-        certificatesContentTable.restoreBackupedItems();
         CertificateEditorWindowActions.close();
     }
 

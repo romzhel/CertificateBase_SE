@@ -15,7 +15,7 @@ public class ProductFamily implements PriceListContentItem {
     private StringProperty name;
     private StringProperty responsible;
 
-    public ProductFamily(){
+    public ProductFamily() {
         name = new SimpleStringProperty("введите название");
         responsible = new SimpleStringProperty("введите ответственных");
     }
@@ -24,12 +24,12 @@ public class ProductFamily implements PriceListContentItem {
         this.name = new SimpleStringProperty(name);
     }
 
-    public ProductFamily(AnchorPane root){
+    public ProductFamily(AnchorPane root) {
         name = new SimpleStringProperty(Utils.getControlValue(root, "tfFamily"));
         responsible = new SimpleStringProperty(Utils.getControlValue(root, "taResponsible"));
     }
 
-    public ProductFamily(ResultSet rs){
+    public ProductFamily(ResultSet rs) {
         try {
             id = rs.getInt("id");
             name = new SimpleStringProperty(rs.getString("name"));
@@ -39,7 +39,7 @@ public class ProductFamily implements PriceListContentItem {
         }
     }
 
-    public void showInEditorWindow(AnchorPane root){
+    public void showInEditorWindow(AnchorPane root) {
         Utils.setControlValue(root, "tfFamily", getName());
         Utils.setControlValue(root, "taResponsible", getResponsible());
     }
@@ -79,5 +79,10 @@ public class ProductFamily implements PriceListContentItem {
     @Override
     public PriceListContentTableItem getTableItem() {
         return new PriceListContentTableItem(this);
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

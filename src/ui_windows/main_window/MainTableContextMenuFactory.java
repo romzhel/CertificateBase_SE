@@ -5,7 +5,6 @@ import core.Dialogs;
 import files.SelectorExportWindow;
 import files.reports.CertificateMatrixReportToExcel;
 import files.reports.ReportToExcel;
-import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -22,8 +21,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
-import static core.SharedData.SHD_SELECTED_PRODUCTS;
+import static core.SharedData.*;
 
 public class MainTableContextMenuFactory {
     private static final String SPACE = "     ";
@@ -40,20 +40,24 @@ public class MainTableContextMenuFactory {
         wasInited = true;
         MENU_OPEN_ITEM.setOnAction(event -> mainTable.displayEditorWindow());
         MENU_DELETE_ITEMS_FROM_LIST.setOnAction(event -> {
-            ObservableList<Product> itemsForDelete = MainWindow.getMainTable().getSelectedItems();
-            CoreModule.getCustomItems().removeAll(itemsForDelete);
-            CoreModule.getCurrentItems().removeAll(itemsForDelete);
-            CoreModule.getProducts().getTableView().getItems().removeAll(itemsForDelete);
-            mainTable.refresh();
+//            List<Product> itemsForDelete = SHD_SELECTED_PRODUCTS.getData();
+            CoreModule.getCustomItems().removeAll(SHD_SELECTED_PRODUCTS.getData());
+            SHD_DATA_SET.setData(new ArrayList<>(CoreModule.getCustomItems()));
+
+//            CoreModule.getProducts().getTableView().getItems().removeAll(itemsForDelete);
+//            mainTable.refresh();
         });
         MENU_DELETE_ALL_ITEMS.setOnAction(event -> {
             CoreModule.getCustomItems().clear();
-            CoreModule.getProducts().getTableView().getItems().clear();
-            mainTable.refresh();
+            SHD_DATA_SET.setData(new ArrayList<Product>());
+
+//            CoreModule.getProducts().getTableView().getItems().clear();
+//            mainTable.refresh();
         });
         MENU_ADD_ITEM_TO_CUSTOM.setOnAction(event -> {
-            ObservableList itemsForAdd = CoreModule.getProducts().getTableView().getSelectionModel().getSelectedItems();
-            CoreModule.getCustomItems().addAll(itemsForAdd);
+//            ObservableList itemsForAdd = CoreModule.getProducts().getTableView().getSelectionModel().getSelectedItems();
+            CoreModule.getCustomItems().addAll(SHD_SELECTED_PRODUCTS.getData());
+//            SHD_DATA_SET.setData(new ArrayList<>(CoreModule.getCustomItems()));
         });
         MENU_CHECK_CERTIFICATES.setOnAction(event -> {
 //            new Thread(() -> {
@@ -65,8 +69,11 @@ public class MainTableContextMenuFactory {
         MENU_EXPORT.setOnAction(event -> {
             ArrayList<DataItem> columns = new SelectorExportWindow(MainWindow.getMainStage()).getColumns();
             new Thread(() -> {
-                File file = new ReportToExcel().export(columns, SHD_SELECTED_PRODUCTS.getData(), null);
-                Utils.openFile(file);
+                List<File> files = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(), "Выбор места сохранения",
+                        Dialogs.EXCEL_FILES, Utils.getDateTimeForFileName().concat("_report"));
+                if (files != null && files.get(0) != null) {
+                    Utils.openFile(new ReportToExcel().export(columns, SHD_SELECTED_PRODUCTS.getData(), files.get(0)));
+                }
             }).start();
         });
     }

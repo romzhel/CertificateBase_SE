@@ -3,11 +3,15 @@ package database;
 import core.CoreModule;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
+import utils.Utils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class CertificatesContentDB extends DbRequest {
 
@@ -45,54 +49,78 @@ public class CertificatesContentDB extends DbRequest {
 
     }
 
-    public boolean putData(CertificateContent content) {
+    public boolean putData(Collection<CertificateContent> contents) {
         try {
-            addData.setInt(1, content.getCertId());
-            addData.setInt(2, CoreModule.getProductTypes().getID(content));
-            addData.setString(3, content.getEquipmentName());
+            for (CertificateContent content : contents) {
+                addData.setInt(1, content.getCertId());
+                addData.setInt(2, content.getProductType().getId());
+                addData.setString(3, content.getEquipmentName());
+                addData.addBatch();
+            }
+
+            connection.setAutoCommit(false);
+            int[] result = addData.executeBatch();
+            connection.commit();
 
             MainWindow.setProgress(1.0);
+            for (int res : result) {
+                if (res != 1) {
+                    logAndMessage("Данный контент не был добавлен в БД");
+                    return false;
+                }
+            }
 
-            if (addData.executeUpdate() > 0) {//successful
+//            if (addData.executeUpdate() > 0) {//successful
+            if (result.length == contents.size()) {//successful
                 ResultSet rs = addData.getGeneratedKeys();
 
                 if (rs.next()) {
-                    content.setId(rs.getInt(1));
-                    return true;
+                    int index = rs.getInt(1) - contents.size();
+                    for (CertificateContent cc : contents) {
+                        cc.setId(++index);
+                    }
                 }
+
+                rs.close();
             } else {
                 logAndMessage("CertificateContent DB insert error ");
+                return false;
             }
-
         } catch (SQLException e) {
-            logAndMessage("exception of writing content to BD: " + e.getMessage() + "\n" +
-                    "Additional info: certID = " + content.getCertId() + ", prodTypeId = " + CoreModule.getProductTypes().getID(content) +
-                    ", equipEnums = " + content.getEquipmentName() + "\n" + e.getSQLState() + "\n" + e.getStackTrace());
+            logAndMessage("exception of writing content to BD: " + e.getMessage() + "\n" + e.getStackTrace());
         } finally {
             finalActions();
         }
-        return false;
+        return true;
     }
 
-    public boolean updateData(CertificateContent content) {
+    public boolean updateData(Collection<CertificateContent> contents) {
         try {
-            updateData.setInt(1, CoreModule.getProductTypes().getID(content));
-            updateData.setString(2, content.getEquipmentName());
-            updateData.setInt(3, content.getId());
+            for (CertificateContent content : contents) {
+                updateData.setInt(1, content.getProductType().getId());
+                updateData.setString(2, content.getEquipmentName());
+                updateData.setInt(3, content.getId());
+                updateData.addBatch();
+            }
+
+            connection.setAutoCommit(false);
+            int[] result = updateData.executeBatch();
+            connection.commit();
 
             MainWindow.setProgress(1.0);
 
-            if (updateData.executeUpdate() > 0) {//successful
-                return true;
-            } else {
-                logAndMessage("CertificateContent DB update error");
+            for (int res : result) {
+                if (res != 1) {
+                    logAndMessage("CertificateContent DB update error");
+                    return false;
+                }
             }
         } catch (SQLException e) {
             logAndMessage("exception of updating content in BD: " + e.getMessage());
         } finally {
             finalActions();
         }
-        return false;
+        return true;
     }
 
     public boolean deleteData(ArrayList<CertificateContent> content) {

@@ -1,14 +1,24 @@
 package database;
 
 import org.sqlite.SQLiteConfig;
+import utils.Utils;
 
 import java.io.File;
 import java.sql.*;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.function.Supplier;
 
 public class DataBase {
     private Connection dbConnection;
     private File dataBaseFile;
+    private Timer timer;
     private boolean firstStart = true;
+    private Supplier<Boolean> disconnectLink;
+
+    public DataBase() {
+        disconnectLink = this::disconnect;
+    }
 
     public boolean connect(File dbFile) {
         SQLiteConfig config = null;
@@ -24,8 +34,6 @@ public class DataBase {
             dbConnection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getPath(), config.toProperties());
             dataBaseFile = dbFile;
 
-
-
             System.out.println("DB connected");
             if (firstStart) System.out.println(getDbJournalingMode());
             return true;
@@ -34,6 +42,16 @@ public class DataBase {
         }
 
         return false;
+    }
+
+    public void requestToDisconnect() {
+        timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                disconnectLink.get();
+            }
+        }, 3000);
     }
 
     public boolean disconnect() {
@@ -50,6 +68,10 @@ public class DataBase {
     }
 
     public Connection reconnect() {
+        if (timer != null) {
+            timer.cancel();
+        }
+
         try {
             if (dbConnection.isClosed()) {
                 connect(dataBaseFile);
@@ -89,5 +111,9 @@ public class DataBase {
 
     public Connection getDbConnection() {
         return dbConnection;
+    }
+
+    public File getDataBaseFile() {
+        return dataBaseFile;
     }
 }

@@ -18,20 +18,18 @@ public enum SharedData {
     }
 
     public <T> void setData(T data) {
-        this.data = data;
-        if (subscribers != null) {
-            for (Module subscriber : subscribers) {
-                subscriber.refreshSubscribedData(this, this.data);
-            }
-        }
+        setData(data, null);
     }
 
     public <T> void setData(T data, Module module) {
+//        System.out.println(String.format("%s set data from module %s", this.name(),
+//                (module == null ? "null" : module.getClass().getSimpleName())));
+
         this.data = data;
         if (subscribers != null) {
             for (Module subscriber : subscribers) {
                 if (!subscriber.equals(module)) {
-                    module.refreshSubscribedData(this, this.data);
+                    subscriber.refreshSubscribedData(this, this.data);
                 }
             }
         }

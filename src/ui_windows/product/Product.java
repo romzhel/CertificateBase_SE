@@ -3,7 +3,6 @@ package ui_windows.product;
 import core.CoreModule;
 import ui_windows.main_window.file_import_window.RowData;
 import ui_windows.main_window.file_import_window.se.Mapper;
-import ui_windows.main_window.filter_window.Filter;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
@@ -19,9 +18,6 @@ import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import static ui_windows.main_window.filter_window.FilterParameters.FILTER_ALL_ITEMS;
-import static ui_windows.main_window.filter_window.FilterParameters.FILTER_PRICE_ITEMS;
 
 public class Product implements Cloneable {
     public final String NO_DATA = "нет данных";
@@ -232,48 +228,6 @@ public class Product implements Cloneable {
         else return false;
     }
 
-    public boolean matchFilter(Filter filter) {
-        boolean allRecords = ((Boolean) FILTER_ALL_ITEMS.getValue());
-        boolean priceMatches = ((Boolean) FILTER_PRICE_ITEMS.getValue() && isPrice());
-//        boolean archive = (filter.getFilterSimpleByUIname("cbxArchive").isValue() && isArchive());
-//        boolean needAction = (filter.getFilterSimpleByUIname("cbxNeedAction").isValue());// && isNeedaction());
-//        boolean lgbk = filter.getLgbk().equals(FILTER_VALUE_ALL_LGBK) ? true : filter.getLgbk().equals(getLgbk());
-        boolean lgbkMatches = true;
-        LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
-
-        while (lgbkAndParent == null || lgbkAndParent.getLgbkParent() == null || lgbkAndParent.getLgbkItem() == null) {
-            System.out.println(article + ", new lgbk/hierarchy");
-            CoreModule.getProductLgbkGroups().checkConsistency();
-            lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(getLgbk(), getHierarchy()));
-        }
-
-//        boolean globalNotUsed = lgbkAndParent.getLgbkItem().isNotUsed() || lgbkAndParent.getLgbkParent().isNotUsed();
-//        boolean summaryNotUsed = isNotused() || globalNotUsed;
-//        boolean notUsed = filter.getFilterSimpleByUIname("cbxNotUsed").isValue() && summaryNotUsed;
-
-        boolean matchChanges = false;
-       /* if (needAction) {
-            if (!isNeedaction()) return false;
-
-            ArrayList<String> changeItems = new ArrayList<>(Arrays.asList(CoreModule.getFilter().getChangeCode().split("\\,")));
-
-            matchChanges = false;
-            for (String chIt : changeItems) {
-                if ((!changecodes.trim().isEmpty() && changecodes.contains(chIt.trim())) ||
-                        (!lastImportcodes.trim().isEmpty() && lastImportcodes.contains(chIt.trim())))
-                    matchChanges = true;
-            }
-
-            if ((allRecords || price*//* && (!summaryNotUsed || notUsed)*//* || archive *//*|| !price && notUsed*//*) && matchChanges && lgbk)
-                return true;
-        } else {*/
-        if ((allRecords || priceMatches) && lgbkMatches)
-            return true;
-//        }
-
-        return false;
-    }
-
     public String getTextForComparing() {
         String[] parts = getMaterial().split("\\-");
 
@@ -288,7 +242,7 @@ public class Product implements Cloneable {
 
     @Override
     public String toString() {
-        return material + ", " + article;
+        return String.format("%s (%s)", article, material);
     }
 
     @Override
@@ -466,6 +420,11 @@ public class Product implements Cloneable {
         this.family_id = family_id;
     }
 
+    public ProductFamily getProductFamilyDefValue(ProductFamily defaultValue) {
+        ProductFamily result = getProductFamily();
+        return result == null ? defaultValue : result;
+    }
+
     public ProductFamily getProductFamily() {
         if (family_id != null && family_id > 0) {
             return CoreModule.getProductFamilies().getFamilyById(family_id);
@@ -488,7 +447,6 @@ public class Product implements Cloneable {
             }
 
             return lgbkAndParent != null ? lgbkAndParent.getProductFamily() : null;
-
         }
     }
 
