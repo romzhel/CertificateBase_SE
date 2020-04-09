@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.data.DataItem;
+import utils.SearchBox;
 
 import java.util.Arrays;
 import java.util.TreeSet;
@@ -25,14 +26,15 @@ public class FilterParameters_SE {
     public final static ProductLgbk LGBK_NO_DATA = new ProductLgbk(TEXT_NO_DATA, TEXT_NO_DATA);
     public final static ProductLgbk LGBK_NOT_ASSIGNED = new ProductLgbk(TEXT_NOT_ASSIGNED, TEXT_NOT_ASSIGNED);
     public final static int CHANGE_NONE = -1;
-    public final static int CHANGE_PRICE = 0;
-    public final static int CHANGE_SEARCH_TEXT = 1;
-    public final static int CHANGE_FAMILY = 2;
-    public final static int CHANGE_LGBK = 3;
-    public final static int CHANGE_HIERARCHY = 4;
-    public final static int CHANGE_CUSTOM_PROPERTY = 5;
-    public final static int CHANGE_CUSTOM_VALUE = 6;
-    public final static int CHANGE_CUSTOM_VALUE_MATCHER = 7;
+    public final static int CHANGE_GLOBAL = 0;
+    public final static int CHANGE_PRICE = 1;
+    public final static int CHANGE_SEARCH_TEXT = 2;
+    public final static int CHANGE_FAMILY = 3;
+    public final static int CHANGE_LGBK = 4;
+    public final static int CHANGE_HIERARCHY = 5;
+    public final static int CHANGE_CUSTOM_PROPERTY = 6;
+    public final static int CHANGE_CUSTOM_VALUE = 7;
+    public final static int CHANGE_CUSTOM_VALUE_MATCHER = 8;
 
     private ItemsSelection filterItems;
     private ProductFamily family;
@@ -41,7 +43,7 @@ public class FilterParameters_SE {
     private DataItem customProperty;
     private String customValue;
     private CustomValueMatcher customValueMatcher;
-    private String searchText;
+    private static SearchBox searchBox = new SearchBox();
     private IntegerProperty lastChange;
     private TreeSet<ProductFamily> families;
     private TreeSet<ProductLgbk> lgbks;
@@ -56,7 +58,6 @@ public class FilterParameters_SE {
         customProperty = DATA_EMPTY;
         customValue = "";
         customValueMatcher = START_WITH;
-        searchText = "";
         lastChange = new SimpleIntegerProperty(-1);
 //        lastChange.addListener((observable, oldValue, newValue) -> System.out.println("filter last change value = " + (int) newValue));
 
@@ -118,7 +119,6 @@ public class FilterParameters_SE {
     }
 
     public FilterParameters_SE setSearchText(String text) {
-        searchText = text;
         lastChange.set(CHANGE_SEARCH_TEXT);
         return this;
     }
@@ -152,7 +152,11 @@ public class FilterParameters_SE {
     }
 
     public String getSearchText() {
-        return searchText;
+        return searchBox.getText();
+    }
+
+    public static SearchBox getSearchBox() {
+        return searchBox;
     }
 
     public TreeSet<ProductFamily> getFamilies() {
@@ -175,11 +179,15 @@ public class FilterParameters_SE {
         return customProperties;
     }
 
+    public void setLastChange(int lastChange) {
+        this.lastChange.set(lastChange);
+    }
+
     @Override
     public String toString() {
         return String.format("items: %s, family: %s, lgbk: %s, hierarchy: %s, customPar: %s, customValue: %s, customCondition: %s," +
                         "searchText: %s",
                 filterItems.toString(), family, lgbk, hierarchy, customProperty,
-                customValue, customValueMatcher, searchText);
+                customValue, customValueMatcher, searchBox.getText());
     }
 }

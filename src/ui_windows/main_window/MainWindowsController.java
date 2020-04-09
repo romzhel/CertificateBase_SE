@@ -9,7 +9,6 @@ import javafx.scene.image.ImageView;
 import scripts.PriceGenerationScript;
 import ui_windows.login_window.LoginWindow;
 import ui_windows.main_window.file_import_window.se.ImportNowFile;
-import ui_windows.main_window.filter_window.FilterWindow;
 import ui_windows.main_window.filter_window_se.FilterWindow_SE;
 import ui_windows.options_window.OptionsWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
@@ -27,9 +26,14 @@ import java.util.ResourceBundle;
 
 public class MainWindowsController implements Initializable {
     private final String SPACE = "     ";
-    private MainTable mainTable;
-    private DataSelectorMenu dataSelectorMenu;
-
+    @FXML
+    public Menu miDataSource;
+    @FXML
+    public Menu mPriceList;
+    @FXML
+    public MenuItem mniOpenNow;
+    @FXML
+    public ImageView ivFilter;
     @FXML
     TableView<Product> tvTable;
     @FXML
@@ -42,14 +46,8 @@ public class MainWindowsController implements Initializable {
     Menu miFile;
     @FXML
     MenuItem miOptions;
-    @FXML
-    public Menu miReports;
-    @FXML
-    public Menu mPriceList;
-    @FXML
-    public MenuItem mniOpenNow;
-    @FXML
-    public ImageView ivFilter;
+    private MainTable mainTable;
+    private DataSelectorMenu dataSelectorMenu;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -57,7 +55,7 @@ public class MainWindowsController implements Initializable {
         CoreModule.getProducts().setTableView(tvTable);
         MainWindow.setProgressBar(pbExecuted);
         MainWindow.setMiOptions(miOptions);
-        dataSelectorMenu = new DataSelectorMenu(miReports);
+        dataSelectorMenu = new DataSelectorMenu(miDataSource);
 
         initPriceListMenu();
 
@@ -136,7 +134,7 @@ public class MainWindowsController implements Initializable {
     }
 
     public void displayFilterOptions() {
-        new FilterWindow_SE();
+        FilterWindow_SE.openFilterWindow();
     }
 
     public void actionRequest() {

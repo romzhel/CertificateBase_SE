@@ -42,14 +42,14 @@ public class MainTableContextMenuFactory {
         MENU_DELETE_ITEMS_FROM_LIST.setOnAction(event -> {
 //            List<Product> itemsForDelete = SHD_SELECTED_PRODUCTS.getData();
             CoreModule.getCustomItems().removeAll(SHD_SELECTED_PRODUCTS.getData());
-            SHD_DATA_SET.setData(new ArrayList<>(CoreModule.getCustomItems()));
+            SHD_DATA_SET.setData(MainTableContextMenuFactory.class, new ArrayList<>(CoreModule.getCustomItems()));
 
 //            CoreModule.getProducts().getTableView().getItems().removeAll(itemsForDelete);
 //            mainTable.refresh();
         });
         MENU_DELETE_ALL_ITEMS.setOnAction(event -> {
             CoreModule.getCustomItems().clear();
-            SHD_DATA_SET.setData(new ArrayList<Product>());
+            SHD_DATA_SET.setData(MainTableContextMenuFactory.class, new ArrayList<Product>());
 
 //            CoreModule.getProducts().getTableView().getItems().clear();
 //            mainTable.refresh();

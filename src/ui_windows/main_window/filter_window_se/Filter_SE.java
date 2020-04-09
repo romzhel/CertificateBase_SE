@@ -10,6 +10,7 @@ import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.function.Function;
@@ -31,7 +32,7 @@ public class Filter_SE implements Module {
     }
 
     public void apply() {
-        List<Product> dataSet = SHD_DATA_SET.getData();
+        Collection<Product> dataSet = SHD_DATA_SET.getData();
         FilterParameters_SE parameters = SHD_FILTER_PARAMETERS.getData();
 
         if (dataSet == null || parameters == null) {
@@ -100,8 +101,10 @@ public class Filter_SE implements Module {
 //                parameters.getCustomValue(), parameters.getCustomValueMatcher().name()));
 
 //        System.out.println(System.currentTimeMillis() - t1);
-        SHD_DISPLAYED_DATA.setData(result);
-        SHD_FILTER_PARAMETERS.setData(parameters, this);
+        SHD_DISPLAYED_DATA.setData(this.getClass(), result);
+//        SHD_FILTER_PARAMETERS.setData(this.getClass(), parameters, this);
+
+        FilterParameters_SE.getSearchBox().getTextBox().requestFocus();
     }
 
     private <T> void print(String title, TreeSet<T> items, Function<T, String> converter) {
