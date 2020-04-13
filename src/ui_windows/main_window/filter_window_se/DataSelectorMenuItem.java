@@ -1,5 +1,6 @@
 package ui_windows.main_window.filter_window_se;
 
+import javafx.application.Platform;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.RadioMenuItem;
 import ui_windows.main_window.MainTable;
@@ -32,11 +33,13 @@ public class DataSelectorMenuItem extends RadioMenuItem {
     }
 
     public void activate() {
-        ((FilterParameters_SE) SHD_FILTER_PARAMETERS.getData()).setItems(itemsSelection);
-        SHD_DATA_SET.setData(this.getClass(), syncDataSource.syncData());
-        MainTable.setContextMenu(syncContextMenu.getContextMenu());
+        Platform.runLater(() -> {
+            ((FilterParameters_SE) SHD_FILTER_PARAMETERS.getData()).setItems(itemsSelection);
+            SHD_DATA_SET.setData(this.getClass(), syncDataSource.syncData());
+            MainTable.setContextMenu(syncContextMenu.getContextMenu());
 
-        setSelected(true);
+            setSelected(true);
+        });
     }
 
     public interface FilterParamChanger {

@@ -28,7 +28,7 @@ public class MainWindow extends Application {
     private static boolean initOk;
     private static FXMLLoader fxmlLoader;
     private static MainWindowsController controller;
-    private String version = "1.3.1.1 (beta) от 13.04.2020";
+    private String version = "1.3.1.2 (beta) от 13.04.2020";
 
 
     public static void main(String[] args) {

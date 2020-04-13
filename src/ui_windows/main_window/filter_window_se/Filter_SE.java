@@ -3,11 +3,9 @@ package ui_windows.main_window.filter_window_se;
 import core.CoreModule;
 import core.Module;
 import core.SharedData;
-import javafx.util.StringConverter;
-import ui_windows.options_window.families_editor.ProductFamily;
+import javafx.application.Platform;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.Product;
-import ui_windows.product.data.DataItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,7 +63,7 @@ public class Filter_SE implements Module {
 
 
         for (Product product : dataSet) {
-            searchTextMatches = pattern.matcher(product.getArticle()).matches();
+            searchTextMatches = pattern.matcher(product.getArticle()).matches() || pattern.matcher(product.getMaterial()).matches();
             priceMatches = parameters.getFilterItems() == null || parameters.getFilterItems() == ALL_ITEMS ||
                     parameters.getFilterItems() == PRICE_ITEMS && product.isPrice();
             familyMatches = parameters.getFamily() == ALL_FAMILIES ||
