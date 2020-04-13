@@ -3,8 +3,7 @@ package core;
 import database.DataBase;
 import files.Folders;
 import ui_windows.main_window.DataSelectorMenu;
-import ui_windows.main_window.MainWindow;
-import ui_windows.main_window.filter_window.Filter;
+import ui_windows.main_window.filter_window_se.FilterParameters_SE;
 import ui_windows.main_window.filter_window_se.Filter_SE;
 import ui_windows.options_window.certificates_editor.Certificates;
 import ui_windows.options_window.certificates_editor.CertificatesTable;
@@ -24,8 +23,11 @@ import ui_windows.product.ProductTypes;
 import ui_windows.product.Products;
 import utils.Utils;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+
+import static core.SharedData.NOT_NOTIFY;
+import static core.SharedData.SHD_FILTER_PARAMETERS;
 
 public class CoreModule {
     private static DataBase dataBase;
@@ -44,7 +46,6 @@ public class CoreModule {
     private static Profiles profiles;
     private static Users users;
     private static Folders folders;
-    private static Filter filter;
     private static Filter_SE filter_se;
     private static PriceLists priceLists;
 
@@ -77,11 +78,9 @@ public class CoreModule {
         productFamilies = new ProductFamilies().getFromDB();
         productLgbks = new ProductLgbks().getFromDB();
 
-        filter = new Filter();
-        filter_se = new Filter_SE();
         products = new Products().getFromDB();
-//        SHD_DATA_SET.setData(products.getItems());
-//        currentItems.addAll(products.getItems());
+        filter_se = new Filter_SE();
+        SHD_FILTER_PARAMETERS.setData(CoreModule.class, new FilterParameters_SE(), NOT_NOTIFY);
 
         productLgbkGroups = new ProductLgbkGroups().get();
         priceLists = new PriceLists().getFromDB();
@@ -181,10 +180,6 @@ public class CoreModule {
         return folders;
     }
 
-    public static Filter getFilter() {
-        return filter;
-    }
-
     /*public static ArrayList<Product> getCurrentItems() {
         return currentItems;
     }
@@ -211,21 +206,15 @@ public class CoreModule {
         return customItems;
     }
 
-    public static void setCustomItems(HashSet<Product> customItems) {
-        SharedData.SHD_CUSTOM_DATA.setData(new ArrayList<>(customItems));
-        CoreModule.customItems = customItems;
-    }
-
-    public static void setCustomItems(ArrayList<Product> customItems) {
-        SharedData.SHD_CUSTOM_DATA.setData(customItems);
+    public static void setAndDisplayCustomItems(List<Product> customItems) {
+        SharedData.SHD_CUSTOM_DATA.setData(CoreModule.class, customItems);
         CoreModule.customItems.clear();
         CoreModule.customItems.addAll(customItems);
+//        MainWindow.getController().getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION);
+        DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION.activate();
     }
 
-    public static void setAndDisplayCustomItems(ArrayList<Product> customItems) {
-        SharedData.SHD_CUSTOM_DATA.setData(customItems);
-        CoreModule.customItems.clear();
-        CoreModule.customItems.addAll(customItems);
-        MainWindow.getController().getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION);
+    public static Filter_SE getFilter_se() {
+        return filter_se;
     }
 }

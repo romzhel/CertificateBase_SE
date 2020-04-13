@@ -9,7 +9,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.data.DataItem;
@@ -18,7 +18,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
-import static core.SharedData.SHD_DATA_SET;
+import static core.SharedData.SHD_DISPLAYED_DATA;
 import static core.SharedData.SHD_FILTER_PARAMETERS;
 import static ui_windows.main_window.filter_window_se.FilterParameters_SE.*;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.ALL_ITEMS;
@@ -28,11 +28,15 @@ import static ui_windows.product.data.DataItem.DATA_EMPTY;
 public class FilterWindowController_SE implements Initializable, Module {
     private static final String TEXT_ALL_ITEMS = "--- Все ---";
     private static final int SELECTOR_LGBK_ROWS_MAX = 10;
+    private static final boolean REFRESH_AND_SEND_DATA = true;
+    private static final boolean REFRESH_ONLY = false;
     private FilterParameters_SE filterParameters;
     private Selector<ProductFamily> familySelector;
     private Selector<ProductLgbk> lgbkSelector;
     private Selector<ProductLgbk> hierarchySelector;
     private Selector<DataItem> customPropertySelector;
+    private RadioButton[] customSelectionItems;
+    private boolean refreshMode;
 
     @FXML
     private RadioButton rbPriceItems;
@@ -61,8 +65,8 @@ public class FilterWindowController_SE implements Initializable, Module {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        SHD_FILTER_PARAMETERS.subscribe(this);
-        SHD_DATA_SET.subscribe(this);
+        SHD_DISPLAYED_DATA.subscribe(this);
+        refreshMode = REFRESH_AND_SEND_DATA;
 
         if (SHD_FILTER_PARAMETERS.getData() instanceof FilterParameters_SE) {
             filterParameters = SHD_FILTER_PARAMETERS.getData();
@@ -100,12 +104,18 @@ public class FilterWindowController_SE implements Initializable, Module {
         if (SHD_FILTER_PARAMETERS.getData() instanceof FilterParameters_SE) {
             filterParameters = SHD_FILTER_PARAMETERS.getData();
 
+            rbAllItems.setSelected(filterParameters.getFilterItems() == ALL_ITEMS);
+            rbPriceItems.setSelected(filterParameters.getFilterItems() == PRICE_ITEMS);
+
             familySelector.actualize(filterParameters);
             lgbkSelector.actualize(filterParameters);
             hierarchySelector.actualize(filterParameters);
             customPropertySelector.actualize(filterParameters);
+
+            tfCustomValue.setText(filterParameters.getCustomValue());
+            customSelectionItems[filterParameters.getCustomValueMatcher().ordinal()].setSelected(true);
         } else {
-            Dialogs.showMessageTS("Инициализация окна фильтра", "Не найдено параметров фильтра!");
+            Dialogs.showMessageTS("Обновление окна фильтра", "Не найдено параметров фильтра!");
         }
     }
 
@@ -113,7 +123,6 @@ public class FilterWindowController_SE implements Initializable, Module {
         ToggleGroup itemsGroup = new ToggleGroup();
         rbAllItems.setToggleGroup(itemsGroup);
         rbPriceItems.setToggleGroup(itemsGroup);
-
         rbAllItems.setSelected(filterParameters.getFilterItems() == ALL_ITEMS);
         rbPriceItems.setSelected(filterParameters.getFilterItems() == PRICE_ITEMS);
 
@@ -128,12 +137,10 @@ public class FilterWindowController_SE implements Initializable, Module {
 
     private void initCustomSelection() {
         ToggleGroup customSelection = new ToggleGroup();
-        RadioButton[] customSelectionItems = {rbStartWith, rbEndWith, rbContains, rbNotContains, rbRegularExpression};
+        customSelectionItems = new RadioButton[]{rbStartWith, rbEndWith, rbContains, rbNotContains, rbRegularExpression};
         for (RadioButton radioButton : customSelectionItems) {
             radioButton.setToggleGroup(customSelection);
         }
-
-        customSelectionItems[filterParameters.getCustomValueMatcher().ordinal()].setSelected(true);
 
         customSelection.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (filterParameters.getCustomProperty() != DATA_EMPTY && newValue != null) {
@@ -142,8 +149,6 @@ public class FilterWindowController_SE implements Initializable, Module {
                 sync(null);
             }
         });
-
-        tfCustomValue.setText(filterParameters.getCustomValue());
 
         tfCustomValue.textProperty().addListener((observable, oldValue, newValue) -> {
             if (filterParameters.getCustomProperty() != DATA_EMPTY && newValue != null && !newValue.equals(oldValue)) {
@@ -154,18 +159,20 @@ public class FilterWindowController_SE implements Initializable, Module {
     }
 
     public void close() {
-        SHD_FILTER_PARAMETERS.unsubscribe(this);
-        SHD_DATA_SET.unsubscribe(this);
-
-        ((Stage) cbLgbk.getScene().getWindow()).close();
+        SHD_DISPLAYED_DATA.unsubscribe(this);
+        cbLgbk.getScene().getWindow().fireEvent(new WindowEvent(cbLgbk.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST));
     }
 
-    public void sync(Selector selector) {
-        SHD_FILTER_PARAMETERS.setData(filterParameters, this);
+    public void sync(Selector<?> selector) {
+        if (refreshMode == REFRESH_AND_SEND_DATA) {
+            SHD_FILTER_PARAMETERS.setData(this.getClass(), filterParameters);
+        }
     }
 
     @Override
     public void refreshSubscribedData(SharedData sharedData, Object data) {
+        refreshMode = REFRESH_ONLY;
         refresh();
+        refreshMode = REFRESH_AND_SEND_DATA;
     }
 }

@@ -39,7 +39,7 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
             MainWindow.setProgress(-1);
 
             if (priceList.getProblemItems().size() > 0) {
-                CoreModule.setAndDisplayCustomItems(priceList.getProblemItems());
+                Platform.runLater(() -> CoreModule.setAndDisplayCustomItems(priceList.getProblemItems()));
 
                 if (!askProblemItems || Dialogs.confirmTS("Формирование прайс-листа", "Найдены заказные" +
                         " позиции, статус проверки сертификатов которых не позволяет добавить их в прайс-лист (" +

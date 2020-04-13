@@ -30,7 +30,7 @@
                 <MenuItem fx:id="miRequestCertExistence" mnemonicParsing="false" onAction="#actionRequest" text="     Заказные позиции     " />
               </items>
             </Menu>
-            <Menu fx:id="miReports" mnemonicParsing="false" text="   Данные   " />
+            <Menu fx:id="miDataSource" mnemonicParsing="false" text="   Данные   " />
             <Menu mnemonicParsing="false" text="   Фильтр   ">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#displayFilterOptions" text="     Настройки фильтра     " />

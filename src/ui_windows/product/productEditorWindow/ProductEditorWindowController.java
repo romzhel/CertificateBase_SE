@@ -136,7 +136,7 @@ public class ProductEditorWindowController implements Initializable {
     public void apply() {
         if (multiEditor.checkAndSaveChanges()) {
             if (new ProductsDB().updateData(multiEditor.getEditedItems())) {
-                CoreModule.getFilter().apply();
+                CoreModule.getFilter_se().apply();
                 ((Stage) tvCertVerification.getScene().getWindow()).close();
             }
         } else {

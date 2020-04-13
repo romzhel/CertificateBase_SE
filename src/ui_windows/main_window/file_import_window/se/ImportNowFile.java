@@ -73,7 +73,8 @@ public class ImportNowFile implements Callable<File> {
             CoreModule.getProducts().getItems().addAll(result.getNewItems());
 
             MainWindowsController mwc = MainWindow.getFxmlLoader().getController();
-            mwc.getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_LAST_IMPORT_RESULT);
+//            mwc.getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_LAST_IMPORT_RESULT);
+            DataSelectorMenu.MENU_DATA_LAST_IMPORT_RESULT.activate();
 
             if (result.getNewItems().size() > 0)
                 new ProductsDB().putData(result.getNewItems());// save new items to db

@@ -5,10 +5,10 @@ import core.Dialogs;
 import files.price_to_excel.ExportPriceListToExcel_SE;
 import files.reports.ReportToExcel;
 import javafx.application.Platform;
+import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.product.data.DataItem;
-import utils.OutlookEmailSender;
 import utils.Utils;
 import utils.comparation.prices.PricesComparator;
 
@@ -69,6 +69,8 @@ public class PriceGenerationScript {
                     AtomicReference<File> opf = new AtomicReference<>(outOfPriceFile);
                     outOfPriceFile = executorService.submit(() -> new ReportToExcel().export(Arrays.asList(columns),
                             SHD_CUSTOM_DATA.getData(), opf.get())).get();
+                    DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION.activate();
+
 
                     System.out.println("out of price report generated");
 

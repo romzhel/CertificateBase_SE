@@ -19,12 +19,12 @@ import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
 import ui_windows.product.productEditorWindow.ProductEditorWindow;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static core.SharedData.SHD_CUSTOM_DATA;
 import static ui_windows.Mode.EDIT;
 import static ui_windows.main_window.DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION;
 
@@ -58,7 +58,7 @@ public class MainTable implements Module {
             if (event.getButton().equals(MouseButton.PRIMARY) || event.getButton().equals(MouseButton.SECONDARY)) {
                 if (event.getClickCount() == 1) {
                     if (getSelectedItems().size() > 0) {
-                        SharedData.SHD_SELECTED_PRODUCTS.setData(getSelectedItems());
+                        SharedData.SHD_SELECTED_PRODUCTS.setData(this.getClass(), getSelectedItems());
                     }
                 } else if (event.getClickCount() == 2) {
                     displayEditorWindow();//open product editor window
@@ -172,7 +172,7 @@ public class MainTable implements Module {
 
     public ArrayList<Product> getItemsForReport() {
         if (MENU_DATA_CUSTOM_SELECTION.isSelected()) {
-            return new ArrayList<>(CoreModule.getCustomItems());
+            return (ArrayList<Product>) SHD_CUSTOM_DATA.getData();
         } else {
             return new ArrayList<>(tvTable.getSelectionModel().getSelectedItems());
         }
