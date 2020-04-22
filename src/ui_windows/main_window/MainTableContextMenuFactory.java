@@ -23,7 +23,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import static core.SharedData.*;
+import static core.SharedData.SHD_DATA_SET;
+import static core.SharedData.SHD_SELECTED_PRODUCTS;
 
 public class MainTableContextMenuFactory {
     private static final String SPACE = "     ";
@@ -70,7 +71,7 @@ public class MainTableContextMenuFactory {
             ArrayList<DataItem> columns = new SelectorExportWindow(MainWindow.getMainStage()).getColumns();
             new Thread(() -> {
                 List<File> files = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(), "Выбор места сохранения",
-                        Dialogs.EXCEL_FILES, Utils.getDateTimeForFileName().concat("_report"));
+                        Dialogs.EXCEL_FILES, Utils.getDateTimeForFileName().concat("_report.xlsx"));
                 if (files != null && files.get(0) != null) {
                     Utils.openFile(new ReportToExcel().export(columns, SHD_SELECTED_PRODUCTS.getData(), files.get(0)));
                 }
