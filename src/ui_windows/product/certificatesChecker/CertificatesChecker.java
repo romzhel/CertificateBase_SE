@@ -7,9 +7,10 @@ import ui_windows.options_window.certificates_editor.certificate_content_editor.
 import ui_windows.product.Product;
 import utils.Utils;
 
-import java.util.*;
+import java.util.Date;
+import java.util.TreeSet;
 
-import static ui_windows.product.certificatesChecker.CheckStatusResult.*;
+import static ui_windows.product.certificatesChecker.CheckStatusResult.STATUS_OK;
 
 public class CertificatesChecker {
     public final static String NOT_OK = "НЕ ОК";
@@ -152,21 +153,19 @@ public class CertificatesChecker {
     }
 
     private boolean isNamesMatches(String prodName, Certificate cert, String contentName) {
-        prodName = prodName.replaceAll("[\\s\\-\\/]", "")/*.toUpperCase()*/;
-        contentName = contentName.replaceAll("[\\s\\-\\/]", "")/*.toUpperCase()*/;
+        prodName = prodName.replaceAll("[\\s/()]", "").trim();
+        contentName = contentName.replaceAll("[\\s/()]", "").trim();
         String contentValue;
 
         if (contentName.matches(".+[x]{2,}.*")) {
-            contentValue = contentName.replaceAll("[x]{2,}", ".*").trim().toUpperCase();
+            contentValue = contentName.replaceAll("[x]{2,}", ".*");
         } else {
-            contentValue = contentName.trim().toUpperCase() + "\\d+.*";
+            contentValue = contentName + "(-|\\d+).*";
         }
 
-        contentValue = contentValue.replaceAll("\\(", "\\\\(").replaceAll("\\)", "\\\\)");
-
-        boolean namesWithNumbersAndMatches = prodName.matches(".*\\d+.*") && prodName.matches(contentValue);
+        boolean namesWithNumbersAndMatches = prodName.matches("(?i)" + contentValue);
         boolean namesTheSame = prodName.equals(contentName);
-        boolean namesOnlyTextAndHaveTheSameBegin = prodName.matches("[A-Z]+") && prodName.startsWith(contentName);
+        boolean namesOnlyTextAndHaveTheSameBegin = prodName.matches("^(?i)[A-Z]+$") && prodName.startsWith(contentName);
 
         return namesTheSame || namesOnlyTextAndHaveTheSameBegin || namesWithNumbersAndMatches;
     }

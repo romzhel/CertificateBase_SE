@@ -51,7 +51,9 @@ public class FileImportWindowController implements Initializable {
                 tvFields.getItems().addAll(parameters);
             }
         });
-        cbSheetNames.getSelectionModel().select(0);
+        if (cbSheetNames.getItems().size() > 0) {
+            cbSheetNames.getSelectionModel().select(0);
+        }
         cbxDelPrevStat.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != oldValue) {
                 fileImport.setDeleteOldStatistic(newValue);
