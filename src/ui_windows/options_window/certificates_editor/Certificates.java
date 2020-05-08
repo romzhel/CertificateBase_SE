@@ -1,19 +1,31 @@
 package ui_windows.options_window.certificates_editor;
 
-import core.CoreModule;
 import core.Dialogs;
 import database.CertificatesDB;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContent;
 import utils.Utils;
 
 import java.util.ArrayList;
 
 public class Certificates {
+    private static Certificates instance;
     //    private CertificatesChecker certificatesChecker;
     private ArrayList<Certificate> certificates;
 
-    public Certificates() {
+    private Certificates() {
 //        certificatesChecker = new CertificatesChecker();
+
+    }
+
+    public static Certificates getInstance() {
+        if (instance == null) {
+            instance = new Certificates();
+        }
+        return instance;
+    }
+
+    public void getFromDb() {
         certificates = new CertificatesDB().getData();
     }
 
@@ -23,8 +35,8 @@ public class Certificates {
 
     public void remove(Certificate cert) {
         certificates.remove(cert);
-        CoreModule.getCertificatesTable().getTableView().getItems().remove(cert);
-        CoreModule.getCertificatesTable().getTableView().refresh();
+        CertificatesTable.getInstance().getTableView().getItems().remove(cert);
+        CertificatesTable.getInstance().getTableView().refresh();
     }
 
     public boolean hasDoubles(Certificate certificate) {
@@ -65,7 +77,7 @@ public class Certificates {
     public void removeContent(CertificateContent cc) {
         Certificate cert = getCertificateByID(cc.getCertId());
         if (cert != null && !cert.getContent().remove(cc)) {
-            cert.getContent().remove(CoreModule.getCertificatesContent().getById(cc.getId()));
+            cert.getContent().remove(CertificatesContent.getInstance().getById(cc.getId()));
         }
     }
 

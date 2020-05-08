@@ -1,13 +1,12 @@
 package ui_windows.options_window.order_accessibility_editor;
 
-import core.CoreModule;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import utils.comparation.products.ObjectsComparator;
 import utils.Utils;
+import utils.comparation.products.ObjectsComparator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -58,23 +57,23 @@ public class OrdersAccessibilityEditorWindowController implements Initializable 
 
 
         if (OrdersAccessibilityEditorWindow.getMode() == ADD) {
-            CoreModule.getOrdersAccessibility().addItem(
+            OrdersAccessibility.getInstance().addItem(
                     new OrderAccessibility((AnchorPane) OrdersAccessibilityEditorWindow.getStage().getScene().getRoot()));
 
         } else if (OrdersAccessibilityEditorWindow.getMode() == EDIT) {
-            TableView<OrderAccessibility> oat = CoreModule.getOrdersAccessibility().getTable().getTableView();
+            TableView<OrderAccessibility> oat = OrdersAccessibility.getInstance().getTable().getTableView();
             int index = oat.getSelectionModel().getSelectedIndex();
             OrderAccessibility oa = oat.getItems().get(index);
             OrderAccessibility changedOa = new OrderAccessibility((AnchorPane) OrdersAccessibilityEditorWindow.getStage().getScene().getRoot());
 
             ObjectsComparator oc = new ObjectsComparator(oa, changedOa, false, "id");
-            if (oc.getResult().isNeedUpdateInDB()) CoreModule.getOrdersAccessibility().updateItem(oa);
+            if (oc.getResult().isNeedUpdateInDB()) OrdersAccessibility.getInstance().updateItem(oa);
         }
         actionClose();
     }
 
     public void actionClose() {
-        CoreModule.getOrdersAccessibility().getTable().getTableView().refresh();
+        OrdersAccessibility.getInstance().getTable().getTableView().refresh();
         OrdersAccessibilityEditorWindow.getStage().close();
     }
 }

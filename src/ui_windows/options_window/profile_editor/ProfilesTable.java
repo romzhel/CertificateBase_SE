@@ -1,17 +1,13 @@
 package ui_windows.options_window.profile_editor;
 
-import core.CoreModule;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 
-import static ui_windows.options_window.profile_editor.SimpleRight.*;
+import static ui_windows.options_window.profile_editor.SimpleRight.valueOf;
 
 public class ProfilesTable {
     private TableView<Profile> tableView;
@@ -105,7 +101,7 @@ public class ProfilesTable {
 
         optionsCol.getColumns().addAll(col1, col2, col3, col4, col5);
         tableView.getColumns().add(optionsCol);
-        tableView.getItems().addAll(CoreModule.getProfiles().getItems());
+        tableView.getItems().addAll(Profiles.getInstance().getItems());
         tableView.setEditable(true);
     }
 

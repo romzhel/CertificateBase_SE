@@ -1,6 +1,5 @@
 package ui_windows.main_window;
 
-import core.CoreModule;
 import core.Dialogs;
 import core.Module;
 import core.SharedData;
@@ -14,12 +13,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.util.Callback;
 import ui_windows.options_window.families_editor.ProductFamily;
+import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
 import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
 import ui_windows.product.productEditorWindow.ProductEditorWindow;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -99,7 +100,7 @@ public class MainTable implements Module {
                 });
 
             } else if (cols[i] == "dchain") {
-                col.setCellValueFactory(param -> new SimpleStringProperty(CoreModule.getOrdersAccessibility()
+                col.setCellValueFactory(param -> new SimpleStringProperty(OrdersAccessibility.getInstance()
                         .getCombineOrderAccessibility(param.getValue().getDchain())));
                 col.setCellFactory(new Callback<TableColumn<Product, String>, TableCell<Product, String>>() {
                     @Override

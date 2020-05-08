@@ -1,7 +1,6 @@
 package database;
 
 import org.sqlite.SQLiteConfig;
-import utils.Utils;
 
 import java.io.File;
 import java.sql.*;
@@ -10,14 +9,22 @@ import java.util.TimerTask;
 import java.util.function.Supplier;
 
 public class DataBase {
+    private static DataBase instance;
     private Connection dbConnection;
     private File dataBaseFile;
     private Timer timer;
     private boolean firstStart = true;
     private Supplier<Boolean> disconnectLink;
 
-    public DataBase() {
+    private DataBase() {
         disconnectLink = this::disconnect;
+    }
+
+    public static DataBase getInstance() {
+        if (instance == null) {
+            instance = new DataBase();
+        }
+        return instance;
     }
 
     public boolean connect(File dbFile) {
@@ -61,7 +68,7 @@ public class DataBase {
                 System.out.println("DB disconnected");
             }
             return true;
-        } catch (SQLException e2) {
+        } catch (Exception e2) {
             System.out.println("error of DB closing " + e2.getMessage());
             return false;
         }

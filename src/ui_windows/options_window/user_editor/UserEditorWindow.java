@@ -1,10 +1,9 @@
 package ui_windows.options_window.user_editor;
 
-import core.CoreModule;
 import javafx.stage.Modality;
+import ui_windows.Mode;
 import ui_windows.OrdinalWindow;
 import ui_windows.options_window.OptionsWindow;
-import ui_windows.Mode;
 
 import static ui_windows.Mode.*;
 
@@ -17,12 +16,12 @@ public class UserEditorWindow extends OrdinalWindow {
         if (mode == ADD) {
 
         } else if (mode == EDIT) {//put data into fields
-            CoreModule.getUsers().getTable().getSelectedItem().displayInEditorWindow(UserEditorWindow.getRootAnchorPane());
+            Users.getInstance().getTable().getSelectedItem().displayInEditorWindow(UserEditorWindow.getRootAnchorPane());
         } else if (mode == DELETE) {
 
         }
 
-        applyProfileSimple(CoreModule.getUsers().getCurrentUser().getProfile().getUsers());
+        applyProfileSimple(Users.getInstance().getCurrentUser().getProfile().getUsers());
 
         stage.show();
     }

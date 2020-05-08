@@ -1,6 +1,5 @@
 package ui_windows.options_window.user_editor;
 
-import core.CoreModule;
 import core.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,6 +8,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
+import ui_windows.options_window.families_editor.ProductFamilies;
+import ui_windows.options_window.profile_editor.Profiles;
 import utils.Utils;
 import utils.comparation.products.ObjectsComparator;
 
@@ -16,7 +17,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
 
-import static ui_windows.Mode.*;
+import static ui_windows.Mode.ADD;
+import static ui_windows.Mode.EDIT;
 
 public class userEditorWindowController implements Initializable {
 
@@ -31,8 +33,8 @@ public class userEditorWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        lvFamilies.getItems().addAll(CoreModule.getProductFamilies().getFamiliesNames());
-        cbProfile.getItems().addAll(CoreModule.getProfiles().getProfilesName());
+        lvFamilies.getItems().addAll(ProductFamilies.getInstance().getFamiliesNames());
+        cbProfile.getItems().addAll(Profiles.getInstance().getProfilesName());
 
         lvFamilies.setOnMouseClicked(event -> {//double click on product
             if (event.getButton().equals(MouseButton.PRIMARY)) {
@@ -61,23 +63,23 @@ public class userEditorWindowController implements Initializable {
             newUser = new User(UserEditorWindow.getRootAnchorPane());
 
             if (!newUser.getPassword().isEmpty()) {
-                if (!CoreModule.getUsers().isPasswordUsed(newUser.getPassword()))
-                    CoreModule.getUsers().addItem(new User(UserEditorWindow.getRootAnchorPane()));
+                if (!Users.getInstance().isPasswordUsed(newUser.getPassword()))
+                    Users.getInstance().addItem(new User(UserEditorWindow.getRootAnchorPane()));
                 else {
                     Dialogs.showMessage("Добавление пользователя", "Такой пароль уже используется");
                     return;
                 }
-            } else CoreModule.getUsers().addItem(new User(UserEditorWindow.getRootAnchorPane()));
+            } else Users.getInstance().addItem(new User(UserEditorWindow.getRootAnchorPane()));
 
         } else if (UserEditorWindow.getMode() == EDIT) {
 
-            User editedUser = CoreModule.getUsers().getTable().getSelectedItem();
+            User editedUser = Users.getInstance().getTable().getSelectedItem();
             newUser = new User(UserEditorWindow.getRootAnchorPane());
 
             if (newUser.getPassword() == null || newUser.getPassword().trim().isEmpty())
                 newUser.setPassword(editedUser.getPassword());
             else {
-                if (CoreModule.getUsers().isPasswordUsed(newUser.getPassword())) {
+                if (Users.getInstance().isPasswordUsed(newUser.getPassword())) {
                     Dialogs.showMessage("Добавление пользователя", "Такой пароль уже используется");
                     return;
                 }
@@ -88,7 +90,7 @@ public class userEditorWindowController implements Initializable {
 
             if (!editedUser.getProfile().equals(newUser.getProfile()) || oc.getResult().isNeedUpdateInDB()) {
                 editedUser.setProfile(newUser.getProfile());
-                CoreModule.getUsers().editItem(editedUser);
+                Users.getInstance().editItem(editedUser);
             }
         }
 

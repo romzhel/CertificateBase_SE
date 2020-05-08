@@ -1,9 +1,10 @@
 package ui_windows.product.certificatesChecker;
 
-import core.CoreModule;
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.options_window.requirements_types_editor.RequirementType;
+import ui_windows.options_window.requirements_types_editor.RequirementTypes;
 import ui_windows.product.Product;
 import utils.ItemsGroup;
 import utils.ItemsGroups;
@@ -46,12 +47,12 @@ public class NormsChecker {
         }
 
         for (ItemsGroup<String, String> singleNorm : results.getItems()) {
-            RequirementType rt = CoreModule.getRequirementTypes().getRequirementByShortName(singleNorm.getGroupNode());
+            RequirementType rt = RequirementTypes.getInstance().getRequirementByShortName(singleNorm.getGroupNode());
             if (rt != null) {
                 if (singleNorm.getItems().contains(OK)) {
                     correctNorms.add(rt.getId());
                 } else if (!singleNorm.getItems().contains(OK) && singleNorm.getItems().contains(NOT_OK)) {
-                    faultNorms.add(CoreModule.getRequirementTypes().getRequirementByShortName(singleNorm.getGroupNode()).getId());
+                    faultNorms.add(RequirementTypes.getInstance().getRequirementByShortName(singleNorm.getGroupNode()).getId());
                 }
             }
         }
@@ -64,13 +65,13 @@ public class NormsChecker {
         HashSet<Integer> normsForChecking = new HashSet<>();
 
         productNeededNorms.addAll(product.getNormsList().getIntegerItems());
-        globalNeededNorms.addAll(CoreModule.getProductLgbkGroups().getGlobalNormIds(new ProductLgbk(product)));
+        globalNeededNorms.addAll(ProductLgbkGroups.getInstance().getGlobalNormIds(new ProductLgbk(product)));
 
         if (product.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
             normsForChecking.addAll(globalNeededNorms);
 
             if (product.getArticle().endsWith("-EX")) {
-                int normExId = CoreModule.getRequirementTypes().getExNormId();
+                int normExId = RequirementTypes.getInstance().getExNormId();
                 if (normExId > 0) normsForChecking.add(normExId);
             }
         }
@@ -92,7 +93,7 @@ public class NormsChecker {
 
         if (normsForChecking.size() > 0) {
             for (int normIndex : normsForChecking) {
-                String shortName = CoreModule.getRequirementTypes().getRequirementByID(normIndex).getShortName();
+                String shortName = RequirementTypes.getInstance().getRequirementByID(normIndex).getShortName();
                 CertificateVerificationItem cvi = new CertificateVerificationItem(shortName);
                 if (shortName.equals(CERT_NO_NEEDED)) {
                     cvi.setStatus(OK);

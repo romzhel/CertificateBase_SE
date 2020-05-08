@@ -1,13 +1,12 @@
 package ui_windows.options_window.product_lgbk;
 
-import core.CoreModule;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.Modality;
+import ui_windows.Mode;
 import ui_windows.OrdinalWindow;
 import ui_windows.options_window.OptionsWindow;
-import ui_windows.Mode;
+import ui_windows.options_window.user_editor.Users;
 
 import static ui_windows.Mode.*;
 
@@ -21,7 +20,7 @@ public class LgbkEditorWindow extends OrdinalWindow {
 
         } else if (mode == EDIT) {//put data into fields
 
-            TreeTableView<ProductLgbk> plt = CoreModule.getProductLgbks().getProductLgbksTable().getTableView();
+            TreeTableView<ProductLgbk> plt = ProductLgbks.getInstance().getProductLgbksTable().getTableView();
             TreeItem<ProductLgbk> selectedItem = plt.getSelectionModel().getSelectedItem();
 
             if (selectedItem != null && selectedItem.getValue() != null) {
@@ -32,7 +31,7 @@ public class LgbkEditorWindow extends OrdinalWindow {
 
         }
 
-        applyProfileSimple(CoreModule.getUsers().getCurrentUser().getProfile().getFamilies());
+        applyProfileSimple(Users.getInstance().getCurrentUser().getProfile().getFamilies());
 
         stage.show();
     }

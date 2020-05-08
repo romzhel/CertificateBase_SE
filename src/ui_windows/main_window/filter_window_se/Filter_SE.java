@@ -1,10 +1,9 @@
 package ui_windows.main_window.filter_window_se;
 
-import core.CoreModule;
 import core.Module;
 import core.SharedData;
-import javafx.application.Platform;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.options_window.product_lgbk.ProductLgbks;
 import ui_windows.product.Product;
 
 import java.util.ArrayList;
@@ -21,12 +20,20 @@ import static ui_windows.main_window.filter_window_se.ItemsSelection.PRICE_ITEMS
 import static ui_windows.product.data.DataItem.DATA_EMPTY;
 
 public class Filter_SE implements Module {
+    private static Filter_SE instance;
 //    private ExecutorService filterExecutors;
 
-    public Filter_SE() {
+    private Filter_SE() {
         SHD_DATA_SET.subscribe(this);
         SHD_FILTER_PARAMETERS.subscribe(this);
 //        filterExecutors = Executors.newFixedThreadPool(2);
+    }
+
+    public static Filter_SE getInstance() {
+        if (instance == null) {
+            instance = new Filter_SE();
+        }
+        return instance;
     }
 
     public void apply() {
@@ -83,10 +90,10 @@ public class Filter_SE implements Module {
 
                 parameters.getFamilies().add(product.getProductFamilyDefValue(FAMILY_NOT_ASSIGNED));
 
-                ProductLgbk lgbk = CoreModule.getProductLgbks().getGroupLgbkByName(product.getLgbk());
+                ProductLgbk lgbk = ProductLgbks.getInstance().getGroupLgbkByName(product.getLgbk());
                 parameters.getLgbks().add(lgbk == null || lgbk.getLgbk().isEmpty() ? LGBK_NO_DATA : lgbk);
 
-                ProductLgbk hier = CoreModule.getProductLgbks().getLgbkByProduct(product);
+                ProductLgbk hier = ProductLgbks.getInstance().getLgbkByProduct(product);
                 parameters.getHierarchies().add(hier == null || hier.getHierarchy().isEmpty() ? LGBK_NO_DATA : hier);
             }
         }

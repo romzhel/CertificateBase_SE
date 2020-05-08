@@ -3,18 +3,25 @@ package ui_windows.product;
 import database.ProductTypesDB;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.TreeSet;
 
 public class ProductTypes {
     public final static String NO_SELECTED = "не выбрано";
-    private ArrayList<ProductType> productTypes;
+    private static ProductTypes instance;
+    private List<ProductType> productTypes;
 
-    public ProductTypes() {
-//        productTypes = new ArrayList<>();
+    private ProductTypes() {
+    }
+
+    public static ProductTypes getInstance() {
+        if (instance == null) {
+            instance = new ProductTypes();
+        }
+        return instance;
     }
 
     public ProductTypes getFromDB() {
@@ -32,7 +39,7 @@ public class ProductTypes {
         return null;
     }
 
-    public ProductType getByEqType(String eqType){
+    public ProductType getByEqType(String eqType) {
         for (ProductType pt : productTypes) {
             if (pt.getType().trim().toLowerCase().equals(eqType.trim().toLowerCase())) {
                 return pt;
@@ -95,7 +102,7 @@ public class ProductTypes {
         return "";
     }
 
-    public ArrayList<ProductType> getItems() {
+    public List<ProductType> getItems() {
         return productTypes;
     }
 

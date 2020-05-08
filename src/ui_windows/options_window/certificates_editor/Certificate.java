@@ -1,11 +1,12 @@
 package ui_windows.options_window.certificates_editor;
 
-import core.CoreModule;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContent;
+import ui_windows.options_window.requirements_types_editor.RequirementTypes;
 import utils.Countries;
 import utils.Utils;
 
@@ -35,7 +36,7 @@ public class Certificate {
             countries = rs.getString("countries");
             norms = rs.getString("norms");
             fileName = rs.getString("file_name");
-            content = CoreModule.getCertificatesContent().getContentByCertID(id);
+            content = CertificatesContent.getInstance().getContentByCertID(id);
             fullNameMatch = rs.getBoolean("name_match");
             materialMatch = rs.getBoolean("material_match");
             userId = rs.getInt("user_id");
@@ -50,10 +51,10 @@ public class Certificate {
         name = new SimpleStringProperty(Utils.getControlValue(root, "tfCertName"));
         expirationDate = new SimpleStringProperty(Utils.getControlValue(root, "dpDatePicker"));
         countries = Countries.getShortNames(Utils.getALControlValueFromLV(root, "lvCountries"));
-        norms = CoreModule.getRequirementTypes().getReqIdsLineFromShortNamesAL(Utils.getALControlValueFromLV(root, "lvNorms"));
+        norms = RequirementTypes.getInstance().getReqIdsLineFromShortNamesAL(Utils.getALControlValueFromLV(root, "lvNorms"));
         fileName = Utils.getControlValue(root, "tfFileName");
-        fullNameMatch = Utils.getControlValue(root, "ckbNameMatch") == "true" ? true : false;
-        materialMatch = Utils.getControlValue(root, "ckbMaterialMatch") == "true" ? true : false;
+        fullNameMatch = Utils.getControlValue(root, "ckbNameMatch").equals("true");
+        materialMatch = Utils.getControlValue(root, "ckbMaterialMatch").equals("true");
         content = new ArrayList<>();
     }
 

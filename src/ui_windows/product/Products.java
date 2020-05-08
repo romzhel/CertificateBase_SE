@@ -1,26 +1,30 @@
 package ui_windows.product;
 
-import core.CoreModule;
 import database.ProductsDB;
 import javafx.scene.control.TableView;
 import ui_windows.main_window.MainWindow;
 import utils.Utils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Products {
-    private ArrayList<Product> products;
+    private static Products instance;
+    private List<Product> products;
     private TableView<Product> tableView;
 
-    public Products() {
+    private Products() {
         products = new ArrayList<>();
     }
 
-    public Products(ArrayList<Product> items) {
-        products = items;
+    public static Products getInstance() {
+        if (instance == null) {
+            instance = new Products();
+        }
+        return instance;
     }
 
-    public ArrayList<Product> getItems() {
+    public List<Product> getItems() {
         return products;
     }
 
@@ -44,9 +48,8 @@ public class Products {
         return null;
     }
 
-    public Products getFromDB() {
+    public void getFromDB() {
         products = new ProductsDB().getData();
-        return this;
     }
 
     public TableView<Product> getTableView() {
@@ -59,7 +62,7 @@ public class Products {
 
     public boolean isProductTypeIsUsed(String type) {
         for (Product pr : products) {
-            if (CoreModule.getProductTypes().getTypeById(pr.getType_id()).equals(type)) return true;
+            if (ProductTypes.getInstance().getTypeById(pr.getType_id()).equals(type)) return true;
         }
         return false;
     }

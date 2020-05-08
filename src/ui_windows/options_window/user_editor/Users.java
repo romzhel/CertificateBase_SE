@@ -6,16 +6,24 @@ import utils.Utils;
 import java.util.ArrayList;
 
 public class Users {
+    private static Users instance;
     private ArrayList<User> users;
     private UsersTable table;
     private User currentUser;
 
-    public Users() {
+    private Users() {
         users = new ArrayList<>();
     }
 
+    public static Users getInstance() {
+        if (instance == null) {
+            instance = new Users();
+        }
+        return instance;
+    }
+
     public Users getFromDB() {
-        users =  new UsersDB().getData();
+        users = new UsersDB().getData();
         return this;
     }
 

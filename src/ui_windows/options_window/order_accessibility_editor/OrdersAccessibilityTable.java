@@ -1,6 +1,5 @@
 package ui_windows.options_window.order_accessibility_editor;
 
-import core.CoreModule;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -15,7 +14,7 @@ public class OrdersAccessibilityTable {
         this.tableView = tableView;
         String[] cols = new String[]{"statusCode", "sesCode", "descriptionEn", "descriptionRu", "f1", "f2",
                 "status", "orderable"};
-        String[] titles = new String[]{"Код статуса", "Код SES", "Описание (англ)", "Описание (руск)", "#1", "#2",
+        String[] titles = new String[]{"Код статуса", "Код SES", "Описание (англ)", "Описание (рус)", "#1", "#2",
                 "Комментарий", "Доступность"};
         int[] width = new int[]{100, 100, 250, 250, 30, 30, 250, 100};
 
@@ -37,7 +36,7 @@ public class OrdersAccessibilityTable {
                 tableView.getColumns().add(colS);
             }
         }
-        tableView.getItems().addAll(CoreModule.getOrdersAccessibility().getItems());
+        tableView.getItems().addAll(OrdersAccessibility.getInstance().getItems());
     }
 
     public TableView<OrderAccessibility> getTableView() {

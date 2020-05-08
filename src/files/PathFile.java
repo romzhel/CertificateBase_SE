@@ -1,7 +1,6 @@
 package files;
 
 import java.io.*;
-import java.util.Scanner;
 
 public class PathFile {
     private File settingsFile;
@@ -9,7 +8,6 @@ public class PathFile {
 
     public PathFile() {
         settingsFile = new File(System.getProperty("user.dir") + "\\DBpath.cnf");
-
     }
 
     public boolean exists() {

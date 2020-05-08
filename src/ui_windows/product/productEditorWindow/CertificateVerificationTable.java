@@ -1,6 +1,6 @@
 package ui_windows.product.productEditorWindow;
 
-import core.CoreModule;
+import files.Folders;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -20,7 +20,8 @@ import utils.Utils;
 import java.io.File;
 import java.util.TreeSet;
 
-import static ui_windows.product.certificatesChecker.CertificateVerificationItem.*;
+import static ui_windows.product.certificatesChecker.CertificateVerificationItem.ABSENT_TEXT;
+import static ui_windows.product.certificatesChecker.CertificateVerificationItem.NOT_OK_TEXT;
 import static ui_windows.product.certificatesChecker.CertificatesChecker.CERT_NO_NEEDED;
 
 public class CertificateVerificationTable {
@@ -85,7 +86,7 @@ public class CertificateVerificationTable {
                                 if (!isEmpty()) {
                                     setText(item);
 
-                                    File file = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + item);
+                                    File file = new File(Folders.getInstance().getCertFolder().getPath() + "\\" + item);
                                     if (file.exists()) setTextFill(Color.GREEN);
                                     else setTextFill(Color.RED);
                                 }
@@ -135,7 +136,7 @@ public class CertificateVerificationTable {
                     String fileName = tableView.getSelectionModel().getSelectedItem().getFile();
 
                     if (fileName != null && !fileName.isEmpty()) {
-                        File certFile = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + fileName);
+                        File certFile = new File(Folders.getInstance().getCertFolder().getPath() + "\\" + fileName);
 
                         if (certFile != null && certFile.exists()) Utils.openFile(certFile);
                     }

@@ -1,8 +1,8 @@
 package ui_windows.product.productEditorWindow;
 
-import core.CoreModule;
 import core.Dialogs;
 import database.ProductsDB;
+import files.Folders;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,9 +10,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import ui_windows.main_window.filter_window_se.Filter_SE;
 import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
+import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.profile_editor.Profile;
+import ui_windows.options_window.user_editor.Users;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificateVerificationItem;
@@ -113,7 +116,7 @@ public class ProductEditorWindowController implements Initializable {
 
         multiEditor = new MultiEditor(editedItems, this);
 
-        cmCertActions.getItems().get(3).setDisable(CoreModule.getUsers().getCurrentUser().getProfile().getName().equals(Profile.COMMON_ACCESS));
+        cmCertActions.getItems().get(3).setDisable(Users.getInstance().getCurrentUser().getProfile().getName().equals(Profile.COMMON_ACCESS));
 
         rmiTypeFilter.selectedProperty().addListener((observable, oldValue, newValue) -> {
             String prevType = cbType.getValue();
@@ -126,7 +129,7 @@ public class ProductEditorWindowController implements Initializable {
 
     private void initFamilySelector() {
         cbFamily.setOnAction(event -> {
-            ProductFamily pf = CoreModule.getProductFamilies().getFamilyByName(cbFamily.getValue());
+            ProductFamily pf = ProductFamilies.getInstance().getFamilyByName(cbFamily.getValue());
 
             if (pf != null) tfPm.setText(pf.getResponsible());
             else tfPm.setText("");
@@ -136,7 +139,7 @@ public class ProductEditorWindowController implements Initializable {
     public void apply() {
         if (multiEditor.checkAndSaveChanges()) {
             if (new ProductsDB().updateData(multiEditor.getEditedItems())) {
-                CoreModule.getFilter_se().apply();
+                Filter_SE.getInstance().apply();
                 ((Stage) tvCertVerification.getScene().getWindow()).close();
             }
         } else {
@@ -151,10 +154,10 @@ public class ProductEditorWindowController implements Initializable {
     public void actionSelectManualFile() {
         File manualFile = Dialogs.selectFile(CertificateEditorWindow.getStage());
         if (manualFile != null) {
-            if (new File(CoreModule.getFolders().getManualsFolder().getPath() + "\\" + manualFile.getName()).exists()) {
+            if (new File(Folders.getInstance().getManualsFolder().getPath() + "\\" + manualFile.getName()).exists()) {
                 Dialogs.showMessage("Добавление описания", "Описание с таким именем уже существует");
             } else {
-                File destination = new File(CoreModule.getFolders().getManualsFolder().getPath() + "\\" +
+                File destination = new File(Folders.getInstance().getManualsFolder().getPath() + "\\" +
                         Utils.getControlValue(ProductEditorWindow.getRootAnchorPane(), "tfFileName"));
 
                 try {
@@ -172,7 +175,7 @@ public class ProductEditorWindowController implements Initializable {
         CertificateVerificationItem cv = tvCertVerification.getSelectionModel().getSelectedItem();
         if (cv == null) return;
 
-        File file = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + cv.getFile());
+        File file = new File(Folders.getInstance().getCertFolder().getPath() + "\\" + cv.getFile());
         ArrayList<File> files = new ArrayList<>();
         if (file.exists() && file.getPath().endsWith(".pdf")) files.add(file);
         Utils.copyFilesToClipboard(files);
@@ -182,7 +185,7 @@ public class ProductEditorWindowController implements Initializable {
         ArrayList<File> files = new ArrayList<>();
         for (CertificateVerificationItem cv : tvCertVerification.getItems()) {
             if (cv.getFile() != null && !cv.getFile().isEmpty()) {
-                File file = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + cv.getFile());
+                File file = new File(Folders.getInstance().getCertFolder().getPath() + "\\" + cv.getFile());
                 if (file.exists() && file.getPath().endsWith(".pdf")) files.add(file);
             }
         }

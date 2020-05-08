@@ -1,20 +1,31 @@
 package ui_windows.options_window.requirements_types_editor;
 
-import core.CoreModule;
 import core.Dialogs;
 import database.RequirementTypesDB;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 public class RequirementTypes {
-    private ArrayList<RequirementType> requirementTypes;
+    private static RequirementTypes instance;
+    private List<RequirementType> requirementTypes;
 
-    public RequirementTypes() {
+    private RequirementTypes() {
+    }
+
+    public static RequirementTypes getInstance() {
+        if (instance == null) {
+            instance = new RequirementTypes();
+        }
+        return instance;
+    }
+
+    public void getFromDb() {
         requirementTypes = new RequirementTypesDB().getData();
     }
 
-    public ArrayList<RequirementType> getItems() {
+    public List<RequirementType> getItems() {
         return requirementTypes;
     }
 
@@ -32,8 +43,8 @@ public class RequirementTypes {
 
     public void remove(RequirementType requirementType) {
         requirementTypes.remove(requirementType);
-        CoreModule.getRequirementTypesTable().getTableView().getItems().remove(requirementType);
-        CoreModule.getRequirementTypesTable().getTableView().refresh();
+        RequirementTypesTable.getInstance().getTableView().getItems().remove(requirementType);
+        RequirementTypesTable.getInstance().getTableView().refresh();
     }
 
     public RequirementType getRequirementByID(int id) {

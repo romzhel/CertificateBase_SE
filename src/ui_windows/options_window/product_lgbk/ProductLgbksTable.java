@@ -1,9 +1,7 @@
 package ui_windows.options_window.product_lgbk;
 
-import core.CoreModule;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
@@ -12,6 +10,7 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.util.Callback;
+import ui_windows.options_window.families_editor.ProductFamilies;
 
 import static ui_windows.options_window.product_lgbk.ProductLgbk.GROUP_NODE;
 import static ui_windows.options_window.product_lgbk.ProductLgbk.ROOT_NODE;
@@ -34,7 +33,7 @@ public class ProductLgbksTable {
         TreeTableColumn<ProductLgbk, String> col = new TreeTableColumn<>("Направление");
         col.setPrefWidth(225);
         col.setCellValueFactory(param -> new SimpleStringProperty(
-                CoreModule.getProductFamilies().getFamilyNameById(param.getValue().getValue().getFamilyId())));
+                ProductFamilies.getInstance().getFamilyNameById(param.getValue().getValue().getFamilyId())));
 
         tableView.getColumns().add(col);
 
@@ -113,7 +112,7 @@ public class ProductLgbksTable {
 
         tableView.getColumns().add(colExcPrice);*/
 
-        tableView.setRoot(CoreModule.getProductLgbkGroups().getFullTreeSet());
+        tableView.setRoot(ProductLgbkGroups.getInstance().getFullTreeSet());
     }
 
     public TreeTableView<ProductLgbk> getTableView() {

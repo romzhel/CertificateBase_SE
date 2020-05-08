@@ -1,13 +1,15 @@
 package ui_windows.product;
 
-import core.CoreModule;
 import ui_windows.main_window.file_import_window.RowData;
 import ui_windows.main_window.file_import_window.se.Mapper;
+import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
+import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.product.data.DataItem;
 import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 import utils.Countries;
@@ -66,7 +68,7 @@ public class Product implements Cloneable {
         hierarchy = pewc.tfHierarchy.getText();
         ProductFamily pf = getProductFamily();
         int calcFamilyId = pf != null ? pf.getId() : -1;
-        int uiFamilyId = CoreModule.getProductFamilies().getFamilyIdByName(pewc.cbFamily.getValue());
+        int uiFamilyId = ProductFamilies.getInstance().getFamilyIdByName(pewc.cbFamily.getValue());
         family_id = calcFamilyId == uiFamilyId ? 0 : uiFamilyId;
 
         descriptionru = pewc.taDescription.getText();
@@ -75,7 +77,7 @@ public class Product implements Cloneable {
         changecodes = "";
         lastImportcodes = "";
 
-        type_id = CoreModule.getProductTypes().getIDbyType(pewc.cbType.getValue() == null ? "" : pewc.cbType.getValue());
+        type_id = ProductTypes.getInstance().getIDbyType(pewc.cbType.getValue() == null ? "" : pewc.cbType.getValue());
 //        history = pewc.lHistory.toString();///!!!!!! check
         lastChangeDate = "";
         comments = pewc.taComments.getText();
@@ -175,7 +177,7 @@ public class Product implements Cloneable {
         pewc.tfDangerous.setText(dangerous);
         pewc.tfCountry.setText(Countries.getCombinedName(country));
         if (dchain != null)
-            pewc.tfAccessibility.setText(CoreModule.getOrdersAccessibility().getCombineOrderAccessibility(dchain));
+            pewc.tfAccessibility.setText(OrdersAccessibility.getInstance().getCombineOrderAccessibility(dchain));
         if (price != null) {
             pewc.cbxPrice.setSelected(price);
         } else {
@@ -185,7 +187,7 @@ public class Product implements Cloneable {
         pewc.lHistory.getItems().clear();
         pewc.lHistory.getItems().addAll(history.split("\\|"));
         ProductLgbk pl = new ProductLgbk(this);
-        if (pl != null) pewc.tfManHier.setText(CoreModule.getProductLgbkGroups().getFullDescription(pl));
+        if (pl != null) pewc.tfManHier.setText(ProductLgbkGroups.getInstance().getFullDescription(pl));
 
         String manualFile = "";
         if (fileName == null) {
@@ -203,7 +205,7 @@ public class Product implements Cloneable {
         pewc.taComments.setEditable(comments != null);
         pewc.tfReplacement.setText(replacement);
         pewc.tfReplacement.setEditable(replacement != null);
-        if (type_id != null) pewc.cbType.setValue(CoreModule.getProductTypes().getTypeById(type_id));
+        if (type_id != null) pewc.cbType.setValue(ProductTypes.getInstance().getTypeById(type_id));
         pewc.cbType.setDisable(type_id == null);
         if (minOrder != null) pewc.tfMinOrder.setText(minOrder == 0 ? NO_DATA : String.valueOf(minOrder));
         if (packetSize != null) pewc.tfPacketSize.setText(packetSize == 0 ? NO_DATA : String.valueOf(packetSize));
@@ -212,7 +214,7 @@ public class Product implements Cloneable {
         if (localPrice != null)
             pewc.tfLocalPrice.setText(localPrice == 0 ? NO_DATA : String.format("%,.2f", localPrice));
 
-        ArrayList<String> items = CoreModule.getProductFamilies().getFamiliesNames();//add all families and display value
+        ArrayList<String> items = ProductFamilies.getInstance().getFamiliesNames();//add all families and display value
         items.add(0, "");
         pewc.cbFamily.getItems().addAll(items);
         ProductFamily productFamily = getProductFamily();
@@ -223,7 +225,7 @@ public class Product implements Cloneable {
     }
 
     public boolean isOrderableCalculated() {
-        OrderAccessibility oa = CoreModule.getOrdersAccessibility().getOrderAccessibilityByStatusCode(getDchain());
+        OrderAccessibility oa = OrdersAccessibility.getInstance().getOrderAccessibilityByStatusCode(getDchain());
         if (oa != null) return oa.isOrderable();
         else return false;
     }
@@ -427,20 +429,20 @@ public class Product implements Cloneable {
 
     public ProductFamily getProductFamily() {
         if (family_id != null && family_id > 0) {
-            return CoreModule.getProductFamilies().getFamilyById(family_id);
+            return ProductFamilies.getInstance().getFamilyById(family_id);
         } else {
             if (lgbk == null) return null;
 
-            LgbkAndParent lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
+            LgbkAndParent lgbkAndParent = ProductLgbkGroups.getInstance().getLgbkAndParent(new ProductLgbk(this));
             if (lgbkAndParent != null) return lgbkAndParent.getProductFamily();
 
             if ((hierarchy == null || hierarchy.isEmpty()) && material != null) {
-                Product product = CoreModule.getProducts().getItemByMaterialOrArticle(
+                Product product = Products.getInstance().getItemByMaterialOrArticle(
                         material.replaceAll("(VBPZ\\:)*(BPZ\\:)*", ""));
 
                 if (product != null) {
                     hierarchy = product.hierarchy;
-                    lgbkAndParent = CoreModule.getProductLgbkGroups().getLgbkAndParent(new ProductLgbk(this));
+                    lgbkAndParent = ProductLgbkGroups.getInstance().getLgbkAndParent(new ProductLgbk(this));
                 }
 
 //                System.out.println("product for material: " + material + " not found");
@@ -536,7 +538,7 @@ public class Product implements Cloneable {
     }
 
     public ArrayList<Integer> getGlobalNorms() {
-        return new ArrayList<Integer>(CoreModule.getProductLgbkGroups().getGlobalNormIds(new ProductLgbk(this)));
+        return new ArrayList<Integer>(ProductLgbkGroups.getInstance().getGlobalNormIds(new ProductLgbk(this)));
     }
 
     public void setLocalPrice(Double localPrice) {

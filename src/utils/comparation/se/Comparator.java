@@ -3,6 +3,7 @@ package utils.comparation.se;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Comparator<T extends Cloneable> {
     private ComparingParameters comparingParameters;
@@ -23,7 +24,7 @@ public class Comparator<T extends Cloneable> {
         return compare(items1, items2, parameters);
     }
 
-    public ComparisonResult<T> compare(ArrayList<T> items1, ArrayList<T> items2, ComparingParameters parameters) {
+    public ComparisonResult<T> compare(List<T> items1, List<T> items2, ComparingParameters parameters) {
         ObjectsComparatorSe<T> objectsComparator = new ObjectsComparatorSe<>();
         comparingParameters = parameters;
 

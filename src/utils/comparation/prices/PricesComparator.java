@@ -1,12 +1,12 @@
 package utils.comparation.prices;
 
-import core.CoreModule;
 import files.price_to_excel.PriceStructure;
 import files.reports.PriceComparisonMergerResultToExcel;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.main_window.file_import_window.se.FileImport;
 import ui_windows.options_window.price_lists_editor.PriceList;
+import ui_windows.options_window.price_lists_editor.PriceLists;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.product.Product;
 import utils.comparation.merger.ComparisonResultMerger;
@@ -28,7 +28,7 @@ public class PricesComparator {
     private File comparisonResultFile;
     private ComparisonResultMerger<Product> merger;
     private FileImport oldPriceFi;
-    public static final PriceList COMPARED_PRICE_LIST = CoreModule.getPriceLists().getItems().get(0);//internal price list
+    public static final PriceList COMPARED_PRICE_LIST = PriceLists.getInstance().getItems().get(0);//internal price list
 
     public void compare(ArrayList<File> priceListFiles) {
         if (priceListFiles != null) {

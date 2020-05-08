@@ -1,6 +1,5 @@
 package utils;
 
-import core.CoreModule;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
@@ -9,6 +8,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
+import ui_windows.product.ProductTypes;
 
 public class ComboBoxCell extends TableCell<CertificateContent, String> {
     private ComboBox<String> comboBox;
@@ -62,7 +62,7 @@ public class ComboBoxCell extends TableCell<CertificateContent, String> {
 
     private void createComboBox() {
         // ClassesController.getLevelChoice() is the observable list of String
-        comboBox = new ComboBox<>(CoreModule.getProductTypes().getObs());
+        comboBox = new ComboBox<>(ProductTypes.getInstance().getObs());
         accl = new AutoCompleteComboBoxListener(comboBox, false);
         comboBox.setEditable(true);
         comboBox.setMinWidth(this.getWidth() - this.getGraphicTextGap()*2);

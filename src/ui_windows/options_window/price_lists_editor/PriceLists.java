@@ -7,28 +7,38 @@ import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListShee
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheets;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PriceLists {
-    private ArrayList<PriceList> items;
+    private static PriceLists instance;
+    private List<PriceList> items;
     private PriceListsTable priceListsTable;
 
-    public PriceLists() {
-
+    private PriceLists() {
     }
 
-    public PriceLists getFromDB() {
+    public static PriceLists getInstance() {
+        if (instance == null) {
+            instance = new PriceLists();
+        }
+        return instance;
+    }
+
+    public void getFromDB() {
         items = new PriceListsDB().getData();
         PriceListSheets sheets = new PriceListSheets().getFromDB();
 
         for (PriceList item : items) {
             item.getSheets().addAll(sheets.getPriceListSheets(item.getId()));
         }
-
-        return this;
     }
 
     public PriceListsTable getPriceListsTable() {
         return priceListsTable;
+    }
+
+    public void setPriceListsTable(PriceListsTable priceListsTable) {
+        this.priceListsTable = priceListsTable;
     }
 
     public boolean addItem(PriceList priceList) {
@@ -97,11 +107,7 @@ public class PriceLists {
         return false;
     }
 
-    public void setPriceListsTable(PriceListsTable priceListsTable) {
-        this.priceListsTable = priceListsTable;
-    }
-
-    public ArrayList<PriceList> getItems() {
+    public List<PriceList> getItems() {
         return items;
     }
 

@@ -13,6 +13,7 @@ import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.product.Product;
+import ui_windows.product.Products;
 import ui_windows.product.data.DataItem;
 import utils.ItemsGroup;
 import utils.ItemsGroups;
@@ -69,7 +70,7 @@ public class CertificateContentChecker {
 
                 addRow(2, name + " (" + cc.getProductType().getType() + ")");
 
-                for (Product product : CoreModule.getProducts().getItems()) {
+                for (Product product : Products.getInstance().getItems()) {
                     String comparingValue = "^".concat(name).concat("[^a-zA-Z]").concat(".*");
                     boolean articleMatches = product.getArticle().matches(comparingValue);
 

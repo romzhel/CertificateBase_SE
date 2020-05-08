@@ -1,8 +1,8 @@
 package ui_windows.options_window;
 
-import core.CoreModule;
 import core.Dialogs;
 import database.ProfilesDB;
+import files.Folders;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -13,18 +13,20 @@ import ui_windows.options_window.certificates_editor.CertificateEditorWindowActi
 import ui_windows.options_window.certificates_editor.CertificatesTable;
 import ui_windows.options_window.certificates_editor.content_checker.CertificateContentChecker;
 import ui_windows.options_window.families_editor.FamiliesEditorWindow;
+import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamiliesTable;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
+import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibilityEditorWindow;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibilityTable;
 import ui_windows.options_window.price_lists_editor.PriceList;
+import ui_windows.options_window.price_lists_editor.PriceLists;
 import ui_windows.options_window.price_lists_editor.PriceListsTable;
 import ui_windows.options_window.price_lists_editor.se.PriceListEditorWindow;
-import ui_windows.options_window.product_lgbk.LgbkEditorWindow;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
-import ui_windows.options_window.product_lgbk.ProductLgbksTable;
+import ui_windows.options_window.product_lgbk.*;
 import ui_windows.options_window.profile_editor.Profile;
+import ui_windows.options_window.profile_editor.Profiles;
 import ui_windows.options_window.profile_editor.ProfilesTable;
 import ui_windows.options_window.requirements_types_editor.RequirementType;
 import ui_windows.options_window.requirements_types_editor.RequirementTypeEditorWindow;
@@ -32,6 +34,7 @@ import ui_windows.options_window.requirements_types_editor.RequirementTypeEditor
 import ui_windows.options_window.requirements_types_editor.RequirementTypesTable;
 import ui_windows.options_window.user_editor.User;
 import ui_windows.options_window.user_editor.UserEditorWindow;
+import ui_windows.options_window.user_editor.Users;
 import ui_windows.options_window.user_editor.UsersTable;
 import utils.Utils;
 
@@ -93,8 +96,8 @@ public class OptionsWindowController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         OptionsWindow.setTpOptions(tpOptions);
         //------------------------------certificates--------------------------------------------------------------------
-        CoreModule.setRequirementTypesTable(new RequirementTypesTable(tvCertificateTypes));//fill certificates types table
-        CoreModule.setCertificatesTable(new CertificatesTable(tvCertificates));//fill certificates table
+        RequirementTypesTable.getInstance().init(tvCertificateTypes);//fill certificates types table
+        CertificatesTable.getInstance().init(tvCertificates);//fill certificates table
 
         tvCertificateTypes.setOnMouseClicked(event -> {//double click on certificate type
             if (event.getButton().equals(MouseButton.PRIMARY)) {
@@ -114,8 +117,8 @@ public class OptionsWindowController implements Initializable {
         });
 
         //----------------------------product families------------------------------------------------------------------
-        CoreModule.getProductFamilies().setProductFamiliesTable(new ProductFamiliesTable(tvFamilies));  //fill families table
-        CoreModule.getProductLgbks().setProductLgbksTable(new ProductLgbksTable(tvLgbk));  //fill lgbk table
+        ProductFamilies.getInstance().setProductFamiliesTable(new ProductFamiliesTable(tvFamilies));  //fill families table
+        ProductLgbks.getInstance().setProductLgbksTable(new ProductLgbksTable(tvLgbk));  //fill lgbk table
 
         tvFamilies.setOnMouseClicked(event -> {//double click on product
             if (event.getButton().equals(MouseButton.PRIMARY)) {
@@ -136,7 +139,7 @@ public class OptionsWindowController implements Initializable {
 //        tvLgbk.setStyle();
 
         //------------------------------------------order accessibility-------------------------------------------------
-        CoreModule.getOrdersAccessibility().setTable(new OrdersAccessibilityTable(tvOrdersAccessibility)); //fill order acc table
+        OrdersAccessibility.getInstance().setTable(new OrdersAccessibilityTable(tvOrdersAccessibility)); //fill order acc table
 
         tvOrdersAccessibility.setOnMouseClicked(event -> {//double click on product
             if (event.getButton().equals(MouseButton.PRIMARY)) {
@@ -147,10 +150,10 @@ public class OptionsWindowController implements Initializable {
         });
 
         //------------------------------------------profiles------------------------------------------------------------
-        CoreModule.getProfiles().setTable(new ProfilesTable(tvProfiles));
+        Profiles.getInstance().setTable(new ProfilesTable(tvProfiles));
 
         //------------------------------------------users---------------------------------------------------------------
-        CoreModule.getUsers().setTable(new UsersTable(tvUsers));
+        Users.getInstance().setTable(new UsersTable(tvUsers));
 
         tvUsers.setOnMouseClicked(event -> {//double click on product
             if (event.getButton().equals(MouseButton.PRIMARY)) {
@@ -161,7 +164,7 @@ public class OptionsWindowController implements Initializable {
         });
 
         //---------------------------------------price lists--------------------------------------------------------------
-        CoreModule.getPriceLists().setPriceListsTable(new PriceListsTable(tvPriceLists));
+        PriceLists.getInstance().setPriceListsTable(new PriceListsTable(tvPriceLists));
 
         tvPriceLists.setOnMouseClicked(event -> {//double click on product
             if (event.getButton().equals(MouseButton.PRIMARY)) {
@@ -197,7 +200,7 @@ public class OptionsWindowController implements Initializable {
     }
 
     public void actionOpenCertificateFile() {
-        File certFile = new File(CoreModule.getFolders().getCertFolder() + "\\" +
+        File certFile = new File(Folders.getInstance().getCertFolder() + "\\" +
                 tvCertificates.getSelectionModel().getSelectedItem().getFileName());
         Utils.openFile(certFile);
     }
@@ -211,16 +214,16 @@ public class OptionsWindowController implements Initializable {
     }
 
     public void actionDeleteFamily() {
-        TableView<ProductFamily> pft = CoreModule.getProductFamilies().getProductFamiliesTable().getTableView();
+        TableView<ProductFamily> pft = ProductFamilies.getInstance().getProductFamiliesTable().getTableView();
         int index = pft.getSelectionModel().getSelectedIndex();
         ProductFamily pf = pft.getItems().get(index);
 
-        if (CoreModule.getProductLgbks().isFamilyUsed(pf)) Dialogs.showMessage("Удаление элемента",
+        if (ProductLgbks.getInstance().isFamilyUsed(pf)) Dialogs.showMessage("Удаление элемента",
                 "Элемент не может быть удалён, так как используется");
         else {
             if (pf != null) {
                 if (Dialogs.confirm("Удаление записи", "Действительно желаете удалить запись?")) {
-                    CoreModule.getProductFamilies().removeItem(pf);//delete from class
+                    ProductFamilies.getInstance().removeItem(pf);//delete from class
                 }
             }
         }
@@ -246,14 +249,14 @@ public class OptionsWindowController implements Initializable {
             Dialogs.showMessage("Удаление элемента", "Удаление корневого элемента и элементов групп не поддерживается");
         } else {
             if (Dialogs.confirm("Удаление элемента", "Действительно желаете удалить элемент?")) {
-                CoreModule.getProductLgbks().removeItem(deletedLgbk);
+                ProductLgbks.getInstance().removeItem(deletedLgbk);
                 deletedItem.getParent().getChildren().remove(deletedItem);
             }
         }
     }
 
     public void actionReCheckLgbkFromProducts() {
-        CoreModule.getProductLgbkGroups().checkConsistency();
+        ProductLgbkGroups.getInstance().checkConsistency();
     }
 
     public void actionAddOrderAccessItem() {
@@ -273,7 +276,7 @@ public class OptionsWindowController implements Initializable {
 
         if (index >= 0) {
             if (Dialogs.confirm("Удаление элемента", "Действительно желаете удалить элемент"))
-                CoreModule.getOrdersAccessibility().removeItem(tvOrdersAccessibility.getItems().get(index));
+                OrdersAccessibility.getInstance().removeItem(tvOrdersAccessibility.getItems().get(index));
         }
     }
 
@@ -291,9 +294,9 @@ public class OptionsWindowController implements Initializable {
             Profile editedProfile = tvProfiles.getItems().get(index);
 
             if (editedProfile.isNewItem()) {
-                if (CoreModule.getProfiles().hasDuplicateName(editedProfile))
+                if (Profiles.getInstance().hasDuplicateName(editedProfile))
                     Dialogs.showMessage("Повтор имени", "Профиль с таким именем уже существует");
-                else CoreModule.getProfiles().addItem(editedProfile);
+                else Profiles.getInstance().addItem(editedProfile);
             } else {
                 new ProfilesDB().updateData(editedProfile);
             }
@@ -307,7 +310,7 @@ public class OptionsWindowController implements Initializable {
             Profile editedProfile = tvProfiles.getItems().get(index);
 
             if (editedProfile.isNewItem()) tvProfiles.getItems().remove(index);
-            else CoreModule.getProfiles().removeItem(editedProfile);
+            else Profiles.getInstance().removeItem(editedProfile);
         }
     }
 
@@ -320,8 +323,8 @@ public class OptionsWindowController implements Initializable {
     }
 
     public void actionDeleteUser() {
-        User deletedUser = CoreModule.getUsers().getTable().getSelectedItem();
-        if (deletedUser != null) CoreModule.getUsers().removeItem(deletedUser);
+        User deletedUser = Users.getInstance().getTable().getSelectedItem();
+        if (deletedUser != null) Users.getInstance().removeItem(deletedUser);
     }
 
     public void actionCertCheckCountries() {

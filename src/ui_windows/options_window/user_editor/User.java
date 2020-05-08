@@ -1,10 +1,11 @@
 package ui_windows.options_window.user_editor;
 
-import core.CoreModule;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.layout.AnchorPane;
+import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.profile_editor.Profile;
+import ui_windows.options_window.profile_editor.Profiles;
 import utils.Utils;
 
 import java.sql.ResultSet;
@@ -39,7 +40,7 @@ public class User {
             productFamilies = new SimpleStringProperty(rs.getString("product_families"));
             password = rs.getString("password");
             pcNames = rs.getString("pc_names");
-            profile = CoreModule.getProfiles().getProfileById(rs.getInt("profile_id"));
+            profile = Profiles.getInstance().getProfileById(rs.getInt("profile_id"));
         } catch (SQLException e) {
             System.out.println("user constructor ecxeption" + e.getMessage());
         }
@@ -49,7 +50,7 @@ public class User {
         name = Utils.getControlValue(root, "tfName");
         surname = Utils.getControlValue(root, "tfSurname");
         productFamilies = new SimpleStringProperty(Utils.getControlValue(root, "lvSelectedFamilies"));
-        profile = CoreModule.getProfiles().getProfileByName(Utils.getControlValue(root, "cbProfile"));
+        profile = Profiles.getInstance().getProfileByName(Utils.getControlValue(root, "cbProfile"));
         password = Utils.getControlValue(root, "tfPassword");
     }
 
@@ -61,7 +62,7 @@ public class User {
         selFamilies.addAll(Arrays.asList(getProductFamilies().split("\\,")));
         Utils.setControlValue(root, "lvSelectedFamilies", new ArrayList<>(selFamilies));
 
-        ArrayList<String> allFamilies = CoreModule.getProductFamilies().getFamiliesNames();
+        ArrayList<String> allFamilies = ProductFamilies.getInstance().getFamiliesNames();
         for (String s : new ArrayList<>(selFamilies)) {
             allFamilies.remove(s);
         }

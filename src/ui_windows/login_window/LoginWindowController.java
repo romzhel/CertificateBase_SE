@@ -1,6 +1,5 @@
 package ui_windows.login_window;
 
-import core.CoreModule;
 import core.Dialogs;
 import database.UsersDB;
 import javafx.fxml.FXML;
@@ -10,6 +9,7 @@ import javafx.scene.input.KeyCode;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.profile_editor.Profile;
 import ui_windows.options_window.user_editor.User;
+import ui_windows.options_window.user_editor.Users;
 import utils.Utils;
 
 import java.net.URL;
@@ -29,10 +29,10 @@ public class LoginWindowController implements Initializable {
     }
 
     public void actionOK() {
-        User currUser = CoreModule.getUsers().getCurrentUser();
+        User currUser = Users.getInstance().getCurrentUser();
         Profile currProfile = currUser.getProfile();
 
-        User newUser = CoreModule.getUsers().checkCurrentUser(pfPassword.getText().trim());
+        User newUser = Users.getInstance().checkCurrentUser(pfPassword.getText().trim());
         Profile newProfile = newUser.getProfile();
 
         LoginWindow.getStage().close();
@@ -46,7 +46,7 @@ public class LoginWindowController implements Initializable {
                     newUser.getName() + " " + newUser.getSurname() + ")";
 
             if (!newProfile.getName().equals("Общий доступ") && !newProfile.getName().equals("тест") &&
-                    !CoreModule.getUsers().isPcNameUsed(Utils.getComputerName())) {
+                    !Users.getInstance().isPcNameUsed(Utils.getComputerName())) {
                 message += "\n\nЖелаете привязать аккаунт к компьютеру, чтобы не было " +
                         "необходимости каждый раз вводить пароль?\n";
 

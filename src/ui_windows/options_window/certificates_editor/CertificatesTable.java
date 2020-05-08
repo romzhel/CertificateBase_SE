@@ -1,8 +1,7 @@
 package ui_windows.options_window.certificates_editor;
 
-import core.CoreModule;
+import files.Folders;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -10,18 +9,24 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
-import ui_windows.options_window.requirements_types_editor.RequirementType;
-import utils.Utils;
 
 import java.io.File;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 public class CertificatesTable {
+    private static CertificatesTable instance;
     private TableView<Certificate> tableView;
 
-    public CertificatesTable(TableView<Certificate> tableView){
+    private CertificatesTable() {
+    }
+
+    public static CertificatesTable getInstance() {
+        if (instance == null) {
+            instance = new CertificatesTable();
+        }
+        return instance;
+    }
+
+    public void init(TableView<Certificate> tableView) {
         this.tableView = tableView;
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -48,36 +53,36 @@ public class CertificatesTable {
         tcfn.setText(tableView.getColumns().get(3).getText());
 
         tcfn.setCellFactory(new Callback<TableColumn<Certificate, String>, TableCell<Certificate, String>>() {
-                @Override
-                public TableCell<Certificate, String> call(TableColumn<Certificate, String> param) {
-                    return new TableCell<Certificate, String>() {
+            @Override
+            public TableCell<Certificate, String> call(TableColumn<Certificate, String> param) {
+                return new TableCell<Certificate, String>() {
 
-                        @Override
-                        protected void updateItem(String item, boolean empty) {
-                            super.updateItem(item, empty);
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
 
-                            if (!isEmpty()) {
-                                setText(item);
+                        if (!isEmpty()) {
+                            setText(item);
 
-                                File file = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + item);
-                                if (file.exists()) setTextFill(Color.GREEN);
-                                else setTextFill(Color.RED);
-                            }
+                            File file = new File(Folders.getInstance().getCertFolder().getPath() + "\\" + item);
+                            if (file.exists()) setTextFill(Color.GREEN);
+                            else setTextFill(Color.RED);
                         }
-                    };
-                }
-            });
+                    }
+                };
+            }
+        });
 
         tableView.getColumns().set(3, tcfn);
 
-        tableView.getItems().addAll(CoreModule.getCertificates().getCertificates());
+        tableView.getItems().addAll(Certificates.getInstance().getCertificates());
     }
 
     public TableView<Certificate> getTableView() {
         return tableView;
     }
 
-    public void addItem(Certificate certificate){
+    public void addItem(Certificate certificate) {
         tableView.getItems().add(certificate);
         tableView.refresh();
     }

@@ -1,11 +1,12 @@
 package ui_windows.options_window.product_lgbk;
 
-import core.CoreModule;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.layout.AnchorPane;
+import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentItem;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
+import ui_windows.options_window.requirements_types_editor.RequirementTypes;
 import ui_windows.product.Product;
 import utils.Utils;
 
@@ -81,7 +82,7 @@ public class ProductLgbk implements PriceListContentItem {
         description_ru = new SimpleStringProperty(Utils.getControlValue(root, "tfDescriptionRu"));
 
         String familyValue = Utils.getControlValue(root, "cbFamily").trim();
-        familyId = familyValue.length() > 0 ? CoreModule.getProductFamilies().getFamilyIdByName(familyValue) : -1;
+        familyId = familyValue.length() > 0 ? ProductFamilies.getInstance().getFamilyIdByName(familyValue) : -1;
 
         isNotUsed = Utils.getControlValue(root, "ckbNotUsed") == "true" ? true : false;
         normsList = new NormsList(Utils.getControlValue(root, "lvSelectedNorms"));
@@ -100,14 +101,14 @@ public class ProductLgbk implements PriceListContentItem {
         Utils.setControlValue(root, "tfDescriptionEn", getDescription_en());
         Utils.setControlValue(root, "tfDescriptionRu", getDescription_ru());
         if (familyId >= 0)
-            Utils.setControlValue(root, "cbFamily", CoreModule.getProductFamilies().getFamilyNameById(familyId));
+            Utils.setControlValue(root, "cbFamily", ProductFamilies.getInstance().getFamilyNameById(familyId));
         Utils.setControlValue(root, "ckbNotUsed", isNotUsed);
 
         ((LgbkEditorWindowController) LgbkEditorWindow.getLoader().getController()).ckbNotUsed.setDisable(nodeType == ROOT_NODE);
 
         String line = normsList.getStringLine();
-        ArrayList<String> selectedNorms = CoreModule.getRequirementTypes().getRequirementsList(line);
-        ArrayList<String> allNorms = CoreModule.getRequirementTypes().getAllRequirementTypesShortNames();
+        ArrayList<String> selectedNorms = RequirementTypes.getInstance().getRequirementsList(line);
+        ArrayList<String> allNorms = RequirementTypes.getInstance().getAllRequirementTypesShortNames();
         if (selectedNorms != null) allNorms.removeAll(selectedNorms);
 
 //        Utils.setControlValue(root, "lvAllNorms", allNorms);
@@ -152,7 +153,7 @@ public class ProductLgbk implements PriceListContentItem {
 
     public String getCombineLgbkDescription() {
         String lgbkName = "";
-        LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(this);
+        LgbkAndParent lap = ProductLgbkGroups.getInstance().getLgbkAndParent(this);
         if (lap != null && lap.getLgbkParent() != null) {
             lgbkName = lap.getLgbkParent().getLgbk();
         }

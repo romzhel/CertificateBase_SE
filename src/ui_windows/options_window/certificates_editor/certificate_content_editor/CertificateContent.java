@@ -1,9 +1,7 @@
 package ui_windows.options_window.certificates_editor.certificate_content_editor;
 
-import core.CoreModule;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import ui_windows.product.ProductType;
+import ui_windows.product.ProductTypes;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,7 +26,7 @@ public class CertificateContent {
             id = rs.getInt("id");
             certId = rs.getInt("cert_id");
             equipmentName = rs.getString("product_names");
-            ProductType temp = CoreModule.getProductTypes().getById(rs.getInt("product_type_id"));
+            ProductType temp = ProductTypes.getInstance().getById(rs.getInt("product_type_id"));
             productType = temp == null ? new ProductType(0, "", "") : temp;
         } catch (SQLException e) {
             System.out.println("exception Certificate Content constructor from DB: " + e.getMessage());

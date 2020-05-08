@@ -3,6 +3,7 @@ package ui_windows.main_window;
 import core.CoreModule;
 import javafx.scene.control.*;
 import ui_windows.main_window.filter_window_se.DataSelectorMenuItem;
+import ui_windows.product.Products;
 
 import static ui_windows.main_window.filter_window_se.ItemsSelection.ALL_ITEMS;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.PRICE_ITEMS;
@@ -14,10 +15,10 @@ public class DataSelectorMenu {
             MainTableContextMenuFactory::createContectMenuForCustomItems);
     public static final DataSelectorMenuItem MENU_DATA_LAST_IMPORT_RESULT = new DataSelectorMenuItem(
             SPACE + "Результаты последнего импорта" + SPACE, ALL_ITEMS,
-            CoreModule.getProducts()::getChangedPositions, MainTableContextMenuFactory::createContextMenuForAllData);
+            Products.getInstance()::getChangedPositions, MainTableContextMenuFactory::createContextMenuForAllData);
     private static final DataSelectorMenuItem MENU_DATA_ALL_ITEMS = new DataSelectorMenuItem(
             SPACE + "Все позиции" + SPACE, PRICE_ITEMS,
-            CoreModule.getProducts()::getItems, MainTableContextMenuFactory::createContextMenuForAllData);
+            Products.getInstance()::getItems, MainTableContextMenuFactory::createContextMenuForAllData);
 
     public DataSelectorMenu(Menu menu) {
         init(menu);

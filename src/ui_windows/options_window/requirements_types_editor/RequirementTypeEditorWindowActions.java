@@ -1,13 +1,14 @@
 package ui_windows.options_window.requirements_types_editor;
 
-import core.CoreModule;
 import core.Dialogs;
 import database.RequirementTypesDB;
 import javafx.application.Platform;
 import javafx.scene.layout.AnchorPane;
+import ui_windows.options_window.certificates_editor.Certificates;
 import utils.Utils;
 
-import static ui_windows.Mode.*;
+import static ui_windows.Mode.ADD;
+import static ui_windows.Mode.EDIT;
 
 public class RequirementTypeEditorWindowActions {
 
@@ -22,10 +23,10 @@ public class RequirementTypeEditorWindowActions {
                 RequirementType ct = new RequirementType(0, Utils.getControlValue(root, "tfShortName"),
                         Utils.getControlValue(root, "taFullName"));
 
-                if (!CoreModule.getRequirementTypes().hasDoubles(ct)) {//check duplicates
+                if (!RequirementTypes.getInstance().hasDoubles(ct)) {//check duplicates
                     if (new RequirementTypesDB().putData(ct)) {//write to DB
-                        CoreModule.getRequirementTypes().getItems().add(ct);//add item to arrayList
-                        CoreModule.getRequirementTypesTable().addItem(ct);//add record to table
+                        RequirementTypes.getInstance().getItems().add(ct);//add item to arrayList
+                        RequirementTypesTable.getInstance().addItem(ct);//add record to table
                         close();
                     }
                 }
@@ -39,9 +40,9 @@ public class RequirementTypeEditorWindowActions {
                 ct.setShortName(Utils.getControlValue(root, "tfShortName"));
                 ct.setFullName(Utils.getControlValue(root, "taFullName"));
 
-                if (!CoreModule.getRequirementTypes().hasDoubles(ct)) {//check duplicates
+                if (!RequirementTypes.getInstance().hasDoubles(ct)) {//check duplicates
                     if (new RequirementTypesDB().updateData(ct)) {//write to DB
-                        Platform.runLater(() -> CoreModule.getRequirementTypesTable().getTableView().refresh());//refresh table
+                        Platform.runLater(() -> RequirementTypesTable.getInstance().getTableView().refresh());//refresh table
                         close();
                     }
                 }
@@ -74,9 +75,9 @@ public class RequirementTypeEditorWindowActions {
     public static void deleteData() {
         RequirementType ct = getItem();
         if (ct != null) {
-            if (!CoreModule.getCertificates().isNormUsed(ct.getId())) {
+            if (!Certificates.getInstance().isNormUsed(ct.getId())) {
                 if (Dialogs.confirm("Удаление записи", "Действительно желаете удалить запись?")) {
-                    if (new RequirementTypesDB().deleteData(ct)) CoreModule.getRequirementTypes().remove(ct);
+                    if (new RequirementTypesDB().deleteData(ct)) RequirementTypes.getInstance().remove(ct);
                 }
             }
 
@@ -84,10 +85,10 @@ public class RequirementTypeEditorWindowActions {
     }
 
     private static RequirementType getItem() {
-        int index = CoreModule.getRequirementTypesTable().getTableView().getSelectionModel().getSelectedIndex();
+        int index = RequirementTypesTable.getInstance().getTableView().getSelectionModel().getSelectedIndex();
 
-        if (index > -1 && index < CoreModule.getRequirementTypesTable().getTableView().getItems().size()) {
-            return CoreModule.getRequirementTypesTable().getTableView().getItems().get(index);
+        if (index > -1 && index < RequirementTypesTable.getInstance().getTableView().getItems().size()) {
+            return RequirementTypesTable.getInstance().getTableView().getItems().get(index);
         } else return null;
     }
 }

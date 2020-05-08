@@ -3,14 +3,22 @@ package ui_windows.options_window.profile_editor;
 import database.ProfilesDB;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 public class Profiles {
-    private ArrayList<Profile> profiles;
+    private static Profiles instance;
+    private List<Profile> profiles;
     private ProfilesTable table;
 
-    public Profiles() {
-//        profiles = new ArrayList<>();
+    private Profiles() {
+    }
+
+    public static Profiles getInstance() {
+        if (instance == null) {
+            instance = new Profiles();
+        }
+        return instance;
     }
 
     public Profiles getFromDB() {
@@ -62,7 +70,7 @@ public class Profiles {
         return new ArrayList<>(result);
     }
 
-    public ArrayList<Profile> getItems() {
+    public List<Profile> getItems() {
         return profiles;
     }
 

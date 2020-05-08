@@ -1,7 +1,7 @@
 package ui_windows.options_window.price_lists_editor.se;
 
-import core.CoreModule;
 import core.Dialogs;
+import files.Folders;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
+import ui_windows.options_window.price_lists_editor.PriceLists;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 
 import java.io.File;
@@ -30,7 +31,7 @@ public class PriceListEditorWindowControllerv2 {
 
     public void setTemplateFile() {
         File selectedFile = new Dialogs().selectAnyFile(PriceListEditorWindow.getStage(), "Выбор файла шаблона прайс-листа",
-                Dialogs.EXCEL_FILES, CoreModule.getFolders().getTemplatesFolder().getPath()).get(0);
+                Dialogs.EXCEL_FILES, Folders.getInstance().getTemplatesFolder().getPath()).get(0);
         if (selectedFile != null && selectedFile.exists()) {
             tempPriceList.setTemplate(selectedFile);
             tfTemplateName.setText(selectedFile.getName());
@@ -51,12 +52,12 @@ public class PriceListEditorWindowControllerv2 {
             tempPriceList.setName(tfPriceName.getText());
             tempPriceList.setFileName(tfPriceFileName.getText());
             if (tempPriceList.getId() == -1) {
-                if (CoreModule.getPriceLists().addItem(tempPriceList)) {
+                if (PriceLists.getInstance().addItem(tempPriceList)) {
                     MainWindow.getController().initPriceListMenu();
                     actionClose();
                 }
             } else {
-                if (CoreModule.getPriceLists().editItem(tempPriceList)) {
+                if (PriceLists.getInstance().editItem(tempPriceList)) {
                     actionClose();
                 }
             }

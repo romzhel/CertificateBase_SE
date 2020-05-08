@@ -1,12 +1,9 @@
 package ui_windows.options_window.user_editor;
 
-import core.CoreModule;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Callback;
 
 public class UsersTable {
     private TableView<User> tableView;
@@ -34,7 +31,7 @@ public class UsersTable {
             tableView.getColumns().add(col);
         }
 
-        tableView.getItems().addAll(CoreModule.getUsers().getItems());
+        tableView.getItems().addAll(Users.getInstance().getItems());
     }
 
     public User getSelectedItem(){

@@ -1,16 +1,9 @@
 package ui_windows.product.productEditorWindow;
 
-import core.CoreModule;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.SelectionMode;
-import ui_windows.product.ProductType;
 import ui_windows.product.ProductTypes;
-import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import utils.AutoCompleteComboBoxListener;
-
-import java.util.TreeSet;
 
 public class ComboBoxEqTypeSelector {
     private ComboBox<String> cbEqTypeSelector;
@@ -25,7 +18,7 @@ public class ComboBoxEqTypeSelector {
         eqTypeChangeListener = (observable, oldValue, newValue) -> {
             if (newValue != null && !newValue.isEmpty()) {
                 certificateVerificationTable.display(certificateVerificationTable.getCheckParameters()
-                        .setTemporaryTypeId(CoreModule.getProductTypes().getIDbyType(newValue))
+                        .setTemporaryTypeId(ProductTypes.getInstance().getIDbyType(newValue))
                         .setUseTemporaryTypeId(true));
             }
         };

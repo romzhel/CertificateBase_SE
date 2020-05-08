@@ -1,6 +1,5 @@
 package ui_windows.product.productEditorWindow.configNormsWindow;
 
-import core.CoreModule;
 import database.ProductsDB;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,6 +12,7 @@ import ui_windows.options_window.requirements_types_editor.RequirementTypesListV
 import ui_windows.product.MultiEditor;
 import ui_windows.product.MultiEditorItem;
 import ui_windows.product.Product;
+import ui_windows.product.Products;
 import ui_windows.product.productEditorWindow.CertificateVerificationTable;
 
 import java.net.URL;
@@ -91,7 +91,7 @@ public class ConfigNormsWindowController implements Initializable {
         }
 
         if (saveToDbResult) {
-            CoreModule.getProducts().getTableView().refresh();
+            Products.getInstance().getTableView().refresh();
             closeWindow();
         }
 

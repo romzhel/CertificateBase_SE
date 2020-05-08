@@ -1,18 +1,31 @@
 package ui_windows.options_window.certificates_editor.certificate_content_editor;
 
-import core.CoreModule;
 import database.CertificatesContentDB;
+import ui_windows.product.ProductTypes;
+import ui_windows.product.Products;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CertificatesContent {
-    private ArrayList<CertificateContent> content;
+    private static CertificatesContent instance;
+    private List<CertificateContent> content;
 
-    public CertificatesContent() {
+    private CertificatesContent() {
+    }
+
+    public static CertificatesContent getInstance() {
+        if (instance == null) {
+            instance = new CertificatesContent();
+        }
+        return instance;
+    }
+
+    public void getFromDb() {
         content = new CertificatesContentDB().getData();
     }
 
-    public ArrayList<CertificateContent> getItems() {
+    public List<CertificateContent> getItems() {
         return content;
     }
 
@@ -54,8 +67,8 @@ public class CertificatesContent {
         }
 
         if (!isProductTypeUsed(item.getProductType().getType()) &&  //product type don't used any more
-                !CoreModule.getProducts().isProductTypeIsUsed(item.getProductType().getType())) {
-            CoreModule.getProductTypes().delete(item.getProductType().getType());
+                !Products.getInstance().isProductTypeIsUsed(item.getProductType().getType())) {
+            ProductTypes.getInstance().delete(item.getProductType().getType());
         }
     }
 

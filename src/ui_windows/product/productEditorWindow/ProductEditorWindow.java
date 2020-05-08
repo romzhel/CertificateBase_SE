@@ -1,6 +1,5 @@
 package ui_windows.product.productEditorWindow;
 
-import core.CoreModule;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -12,14 +11,13 @@ import ui_windows.Mode;
 import ui_windows.OrdinalWindow;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.families_editor.ProductFamily;
-import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.profile_editor.SimpleRight;
 import ui_windows.options_window.user_editor.User;
-import ui_windows.product.MultiEditor;
+import ui_windows.options_window.user_editor.Users;
 import ui_windows.product.Product;
+import ui_windows.product.Products;
 import utils.Utils;
 
-import static ui_windows.Mode.*;
 import static ui_windows.options_window.profile_editor.SimpleRight.*;
 
 public class ProductEditorWindow extends OrdinalWindow {
@@ -41,7 +39,7 @@ public class ProductEditorWindow extends OrdinalWindow {
             }
 
 
-        applyProfileSimple(CoreModule.getUsers().getCurrentUser().getProfile().getProducts());
+        applyProfileSimple(Users.getInstance().getCurrentUser().getProfile().getProducts());
 
         stage.setResizable(true);
         stage.show();
@@ -49,8 +47,8 @@ public class ProductEditorWindow extends OrdinalWindow {
 
     @Override
     public void applyProfileSimple(SimpleRight sr) {
-        User user = CoreModule.getUsers().getCurrentUser();
-        Product prd = CoreModule.getProducts().getSelectedItem();
+        User user = Users.getInstance().getCurrentUser();
+        Product prd = Products.getInstance().getSelectedItem();
 
         ProductFamily pf = prd.getProductFamily();
         boolean profileRights = sr == DISPLAY;

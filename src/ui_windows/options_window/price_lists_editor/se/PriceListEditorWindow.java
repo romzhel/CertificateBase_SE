@@ -1,10 +1,10 @@
 package ui_windows.options_window.price_lists_editor.se;
 
-import core.CoreModule;
 import javafx.stage.Modality;
 import ui_windows.OrdinalWindow;
 import ui_windows.options_window.OptionsWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
+import ui_windows.options_window.user_editor.Users;
 
 public class PriceListEditorWindow extends OrdinalWindow {
     public PriceListEditorWindow(PriceList editedPriceList) {
@@ -15,7 +15,7 @@ public class PriceListEditorWindow extends OrdinalWindow {
         editedPriceList.showInEditorWindow(controller);
         controller.setTempPriceList(editedPriceList);
 
-        CoreModule.getUsers().getCurrentUser().getProfile().getPriceLists().apply(controller.btnApply);
+        Users.getInstance().getCurrentUser().getProfile().getPriceLists().apply(controller.btnApply);
 
         stage.show();
     }

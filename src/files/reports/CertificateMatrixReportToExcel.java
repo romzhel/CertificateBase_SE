@@ -1,19 +1,11 @@
 package files.reports;
 
-import core.CoreModule;
 import core.Dialogs;
-import files.ExcelCellStyleFactory;
+import files.Folders;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import ui_windows.main_window.MainWindow;
-import ui_windows.product.Product;
-import ui_windows.product.data.DataItem;
 import ui_windows.request.CertificateRequestResult;
 import utils.Utils;
 
@@ -102,7 +94,7 @@ public class CertificateMatrixReportToExcel {
 
     private boolean saveToExcelFile() {
         String fileExtension = workbook instanceof HSSFWorkbook ? ".xls" : ".xlsx";
-        file = new File(CoreModule.getFolders().getTempFolder().getPath() + "\\" +
+        file = new File(Folders.getInstance().getTempFolder().getPath() + "\\" +
                 "Отчет_" + Utils.getDateTime().replaceAll(":", "-") + fileExtension);
 
         try {

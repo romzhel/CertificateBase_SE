@@ -1,6 +1,5 @@
 package files.price_to_excel;
 
-import core.CoreModule;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -8,6 +7,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
+import ui_windows.options_window.product_lgbk.ProductLgbks;
 import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
 
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
-import static files.ExcelCellStyleFactory.*;
+import static files.ExcelCellStyleFactory.CELL_ALIGN_LEFT;
 import static ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet.LANG_RU;
 
 public class HierarchyGroup {
@@ -65,13 +66,13 @@ public class HierarchyGroup {
             firstRowForGroup++;
         }
 
-        LgbkAndParent lap = CoreModule.getProductLgbkGroups().getLgbkAndParent(
+        LgbkAndParent lap = ProductLgbkGroups.getInstance().getLgbkAndParent(
                 new ProductLgbk(lgroupName, name));
 
         if (lap != null && lap.getLgbkItem() != null && lap.getLgbkParent() != null) {
-            String enText = CoreModule.getProductLgbks().getGroupLgbkByName(lgroupName).getDescriptionEnRu() + " / " +
+            String enText = ProductLgbks.getInstance().getGroupLgbkByName(lgroupName).getDescriptionEnRu() + " / " +
                     lap.getLgbkItem().getDescriptionEnRu();
-            String ruText = CoreModule.getProductLgbks().getGroupLgbkByName(lgroupName).getDescriptionRuEn() + " / " +
+            String ruText = ProductLgbks.getInstance().getGroupLgbkByName(lgroupName).getDescriptionRuEn() + " / " +
                     lap.getLgbkItem().getDescriptionRuEn();
             String printText = priceListSheet.getLanguage() == LANG_RU ? ruText : enText;
 

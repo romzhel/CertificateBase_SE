@@ -8,9 +8,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
-import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.product.Product;
+import ui_windows.product.Products;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class RequestWindowController implements Initializable {
 
                 for (String word : words) {
                     if (word != null && !word.isEmpty() && !word.matches(".*\\s.*")) {
-                        product = CoreModule.getProducts().getItemByMaterialOrArticle(word);
+                        product = Products.getInstance().getItemByMaterialOrArticle(word);
 
                         if (product == null) {
 //                            notFoundItems += "- " + line + "\n";

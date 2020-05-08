@@ -1,12 +1,17 @@
 package ui_windows.options_window.product_lgbk;
 
-import core.CoreModule;
 import database.ProductLgbksDB;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.AnchorPane;
+import ui_windows.options_window.families_editor.ProductFamilies;
+import ui_windows.options_window.requirements_types_editor.RequirementTypes;
 import ui_windows.options_window.requirements_types_editor.RequirementTypesListViews;
+import ui_windows.product.Products;
 import utils.Utils;
 
 import java.net.URL;
@@ -34,9 +39,9 @@ public class LgbkEditorWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         cbFamily.getItems().add("");
-        cbFamily.getItems().addAll(CoreModule.getProductFamilies().getFamiliesNames());
+        cbFamily.getItems().addAll(ProductFamilies.getInstance().getFamiliesNames());
 
-        TreeTableView<ProductLgbk> plt = CoreModule.getProductLgbks().getProductLgbksTable().getTableView();
+        TreeTableView<ProductLgbk> plt = ProductLgbks.getInstance().getProductLgbksTable().getTableView();
         ProductLgbk pl = plt.getSelectionModel().getSelectedItem().getValue();
         listViews = new RequirementTypesListViews(pl, lvAllNorms, lvSelectedNorms);
     }
@@ -47,13 +52,13 @@ public class LgbkEditorWindowController implements Initializable {
         if (LgbkEditorWindow.getMode() == ADD) {
             if (!Utils.hasEmptyControls(root)) {
                 ProductLgbk plg = new ProductLgbk(root);
-                if (!CoreModule.getProductLgbks().hasDublicates(plg)) {
-                    CoreModule.getProductLgbks().addItem(plg);
+                if (!ProductLgbks.getInstance().hasDublicates(plg)) {
+                    ProductLgbks.getInstance().addItem(plg);
                     close();
                 }
             }
         } else if (LgbkEditorWindow.getMode() == EDIT) {
-            TreeTableView<ProductLgbk> plt = CoreModule.getProductLgbks().getProductLgbksTable().getTableView();
+            TreeTableView<ProductLgbk> plt = ProductLgbks.getInstance().getProductLgbksTable().getTableView();
             ProductLgbk pl = plt.getSelectionModel().getSelectedItem().getValue();
 
             pl.setDescription_en(Utils.getControlValue(root, "tfDescriptionEn"));
@@ -62,22 +67,22 @@ public class LgbkEditorWindowController implements Initializable {
             pl.setHierarchy(Utils.getControlValue(root, "tfHierarchy"));
 
             ArrayList<String> normsALS = Utils.getALControlValueFromLV(root, "lvSelectedNorms");
-            String normIds = CoreModule.getRequirementTypes().getReqIdsLineFromShortNamesAL(normsALS);
+            String normIds = RequirementTypes.getInstance().getReqIdsLineFromShortNamesAL(normsALS);
             pl.setNormsList(new NormsList(normIds));
 
             String familyValue = Utils.getControlValue(root, "cbFamily").trim();
-            pl.setFamilyId(familyValue.length() > 0 ? CoreModule.getProductFamilies().getFamilyIdByName(familyValue) : -1);
+            pl.setFamilyId(familyValue.length() > 0 ? ProductFamilies.getInstance().getFamilyIdByName(familyValue) : -1);
 
-            pl.setNotUsed(Utils.getControlValue(root, "ckbNotUsed") == "true" ? true : false);
+            pl.setNotUsed(Utils.getControlValue(root, "ckbNotUsed").equals("true"));
 
             new ProductLgbksDB().updateData(pl);
-            CoreModule.getProductLgbks().getProductLgbksTable().getTableView().refresh();
+            ProductLgbks.getInstance().getProductLgbksTable().getTableView().refresh();
             close();
         }
     }
 
     public void close() {
-        CoreModule.getProducts().getTableView().refresh();
+        Products.getInstance().getTableView().refresh();
         LgbkEditorWindow.getStage().close();
     }
 

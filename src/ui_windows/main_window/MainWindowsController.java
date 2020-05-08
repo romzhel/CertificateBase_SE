@@ -1,7 +1,7 @@
 package ui_windows.main_window;
 
-import core.CoreModule;
 import core.Dialogs;
+import files.Folders;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -12,8 +12,11 @@ import ui_windows.main_window.file_import_window.se.ImportNowFile;
 import ui_windows.main_window.filter_window_se.FilterWindow_SE;
 import ui_windows.options_window.OptionsWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
+import ui_windows.options_window.price_lists_editor.PriceLists;
 import ui_windows.options_window.user_editor.User;
+import ui_windows.options_window.user_editor.Users;
 import ui_windows.product.Product;
+import ui_windows.product.Products;
 import ui_windows.request.RequestWindow;
 import utils.Utils;
 import utils.comparation.prices.PricesComparator;
@@ -52,7 +55,7 @@ public class MainWindowsController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         mainTable = new MainTable(tvTable);
-        CoreModule.getProducts().setTableView(tvTable);
+        Products.getInstance().setTableView(tvTable);
         MainWindow.setProgressBar(pbExecuted);
         MainWindow.setMiOptions(miOptions);
         dataSelectorMenu = new DataSelectorMenu(miDataSource);
@@ -64,7 +67,7 @@ public class MainWindowsController implements Initializable {
 
     public void initPriceListMenu() {
         mPriceList.getItems().clear();
-        for (PriceList pl : CoreModule.getPriceLists().getItems()) {
+        for (PriceList pl : PriceLists.getInstance().getItems()) {
             final MenuItem mi = new MenuItem(SPACE + pl.getName() + SPACE);
             mPriceList.getItems().add(mi);
 
@@ -94,7 +97,7 @@ public class MainWindowsController implements Initializable {
             }
 
             if (isFullPackage) {
-                File importReportFile = new File(CoreModule.getFolders().getTempFolder().getPath() + "\\" +
+                File importReportFile = new File(Folders.getInstance().getTempFolder().getPath() + "\\" +
                         "import_report_" + Utils.getDateTimeForFileName() + ".xlsx");
                 importReportFile = importNowFile.getReportFile(importReportFile);
                 new PriceGenerationScript().run(0, PriceGenerationScript.REPORTS_FOR_CHECK);
@@ -128,7 +131,7 @@ public class MainWindowsController implements Initializable {
     }
 
     public void userInfo() {
-        User user = CoreModule.getUsers().getCurrentUser();
+        User user = Users.getInstance().getCurrentUser();
         Dialogs.showMessage("Информация о текущем пользователе", "Пользователь: " + user.getName() + " " +
                 user.getSurname() + "\nПрофиль: " + user.getProfile().getName());
     }

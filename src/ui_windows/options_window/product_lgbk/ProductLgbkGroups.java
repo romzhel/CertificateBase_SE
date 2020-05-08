@@ -1,6 +1,5 @@
 package ui_windows.options_window.product_lgbk;
 
-import core.CoreModule;
 import core.Dialogs;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
@@ -15,22 +14,30 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 public class ProductLgbkGroups {
+    private static ProductLgbkGroups instance;
     private ProductLgbk rootNode;
     private TreeItem<ProductLgbk> treeItemRoot;
     private TreeSet<ItemsGroup<ProductLgbk, ProductLgbk>> lgbkGroups;
 
-    public ProductLgbkGroups() {
+    private ProductLgbkGroups() {
         lgbkGroups = new TreeSet<>((o1, o2) ->
                 o1.getGroupNode().getLgbk().compareToIgnoreCase(o2.getGroupNode().getLgbk()));
     }
 
-    public ProductLgbkGroups get() {
+    public static ProductLgbkGroups getInstance() {
+        if (instance == null) {
+            instance = new ProductLgbkGroups();
+        }
+        return instance;
+    }
+
+    public ProductLgbkGroups init() {
         lgbkGroups.clear();
-        if (CoreModule.getProductLgbks().getItems().size() > 0) {
-            createFromLgbks(CoreModule.getProductLgbks());
+        if (ProductLgbks.getInstance().getItems().size() > 0) {
+            createFromLgbks(ProductLgbks.getInstance());
         } else {
-            createFromProducts(CoreModule.getProducts());
-            CoreModule.getProductLgbks().addItems(getLgbks());
+            createFromProducts(Products.getInstance());
+            ProductLgbks.getInstance().addItems(getLgbks());
         }
 
         getFullTreeSet();
@@ -100,7 +107,7 @@ public class ProductLgbkGroups {
     }
 
     public void checkConsistency() {
-        ArrayList<ProductLgbk> newLgbks = createFromProducts(CoreModule.getProducts());
+        ArrayList<ProductLgbk> newLgbks = createFromProducts(Products.getInstance());
 
         String newNames = "";
         for (ProductLgbk plgbk : newLgbks) {
@@ -113,11 +120,11 @@ public class ProductLgbkGroups {
                 "Обнаружено новых направлений: " + newLgbks.size() + newNamesF));
 
 
-        CoreModule.getProductLgbks().addItems(newLgbks);
+        ProductLgbks.getInstance().addItems(newLgbks);
 
         if (newLgbks.size() > 0) {
-            if (CoreModule.getProductLgbks().getProductLgbksTable() != null) {
-                TreeTableView<ProductLgbk> tableView = CoreModule.getProductLgbks().getProductLgbksTable().getTableView();
+            if (ProductLgbks.getInstance().getProductLgbksTable() != null) {
+                TreeTableView<ProductLgbk> tableView = ProductLgbks.getInstance().getProductLgbksTable().getTableView();
                 if (tableView != null) tableView.setRoot(getFullTreeSet());
             }
         }

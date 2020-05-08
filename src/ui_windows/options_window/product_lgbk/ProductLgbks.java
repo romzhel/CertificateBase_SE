@@ -1,6 +1,5 @@
 package ui_windows.options_window.product_lgbk;
 
-import core.CoreModule;
 import core.Dialogs;
 import database.ProductLgbksDB;
 import javafx.scene.control.TreeTableView;
@@ -8,19 +7,26 @@ import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.product.Product;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 public class ProductLgbks {
-    private ArrayList<ProductLgbk> productLgbks;
+    private static ProductLgbks instance;
+    private List<ProductLgbk> productLgbks;
     private ProductLgbksTable productLgbksTable;
 
-    public ProductLgbks() {
-//        productLgbks = new ArrayList<>();
+    private ProductLgbks() {
     }
 
-    public ProductLgbks getFromDB() {
+    public static ProductLgbks getInstance() {
+        if (instance == null) {
+            instance = new ProductLgbks();
+        }
+        return instance;
+    }
+
+    public void getFromDB() {
         productLgbks = new ProductLgbksDB().getData();
-        return this;
     }
 
     public void addItem(ProductLgbk productLgbk) {
@@ -28,8 +34,8 @@ public class ProductLgbks {
             productLgbks.add(productLgbk);
 
             TreeTableView<ProductLgbk> tableView = productLgbksTable.getTableView();
-            CoreModule.getProductLgbkGroups().createFromLgbks(this);
-            tableView.setRoot(CoreModule.getProductLgbkGroups().getFullTreeSet());
+            ProductLgbkGroups.getInstance().createFromLgbks(this);
+            tableView.setRoot(ProductLgbkGroups.getInstance().getFullTreeSet());
         }
     }
 
@@ -44,7 +50,7 @@ public class ProductLgbks {
     public void removeItem(ProductLgbk pl) {
         if (new ProductLgbksDB().deleteData(pl)) {
             productLgbks.remove(pl);
-            CoreModule.getProductLgbkGroups().createFromLgbks(this);
+            ProductLgbkGroups.getInstance().createFromLgbks(this);
         }
     }
 
@@ -160,7 +166,7 @@ public class ProductLgbks {
         return getLgbkByLgbk(new ProductLgbk(product));
     }
 
-    public ArrayList<ProductLgbk> getItems() {
+    public List<ProductLgbk> getItems() {
         return productLgbks;
     }
 

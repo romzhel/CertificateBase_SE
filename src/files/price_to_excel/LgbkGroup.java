@@ -1,12 +1,12 @@
 package files.price_to_excel;
 
-import core.CoreModule;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.options_window.product_lgbk.ProductLgbks;
 import ui_windows.product.Product;
 
 import java.util.TreeSet;
@@ -62,7 +62,7 @@ public class LgbkGroup {
         cell = row.createCell(0, CellType.STRING);
         cell.setCellStyle(CELL_ALIGN_LEFT_BOLD);
 
-        ProductLgbk pl = CoreModule.getProductLgbks().getGroupLgbkByName(name);
+        ProductLgbk pl = ProductLgbks.getInstance().getGroupLgbkByName(name);
 
         if (sheet.getSheetName().toLowerCase().contains("en")) {
             cell.setCellValue(pl.getDescriptionEnRu());

@@ -1,6 +1,6 @@
 package ui_windows.options_window.product_lgbk;
 
-import core.CoreModule;
+import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
 
 public class LgbkAndParent {
@@ -14,9 +14,9 @@ public class LgbkAndParent {
 
     public ProductFamily getProductFamily() {
         if (lgbkItem != null && lgbkItem.getFamilyId() > 0) {
-            return CoreModule.getProductFamilies().getFamilyById(lgbkItem.getFamilyId());
+            return ProductFamilies.getInstance().getFamilyById(lgbkItem.getFamilyId());
         } else if (lgbkParent != null) {
-            return CoreModule.getProductFamilies().getFamilyById(lgbkParent.getFamilyId());
+            return ProductFamilies.getInstance().getFamilyById(lgbkParent.getFamilyId());
         }
         return null;
     }

@@ -1,33 +1,36 @@
 package ui_windows.options_window.certificates_editor.certificate_content_editor;
 
-import core.CoreModule;
 import core.Dialogs;
 import database.CertificatesContentDB;
 import database.ProductTypesDB;
 import ui_windows.options_window.certificates_editor.Certificate;
-import ui_windows.product.Product;
+import ui_windows.options_window.certificates_editor.Certificates;
 import ui_windows.product.ProductType;
+import ui_windows.product.ProductTypes;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CertificateContentActions {
 
     public static void addItem(CertificatesContentTable certificatesContentTable) {
         CertificateContent newItem = new CertificateContent(0, 0, new ProductType(0, "", ""), "");
-        CoreModule.getCertificatesContentTable().getTableView().getItems().add(newItem);
-        certificatesContentTable.setEditMode(CoreModule.getCertificatesContentTable().getTableView().getItems().indexOf(newItem));
+        CertificatesContentTable.getInstance().getTableView().getItems().add(newItem);
+        certificatesContentTable.setEditMode(CertificatesContentTable.getInstance().getTableView().getItems().indexOf(newItem));
     }
 
     public static void saveContent(Certificate cert) {
         Set<CertificateContent> changedContent = new HashSet<>();
         Set<CertificateContent> newContent = new HashSet<>();
 
-        for (CertificateContent cc : CoreModule.getCertificatesContentTable().getTableView().getItems()) {
+        for (CertificateContent cc : CertificatesContentTable.getInstance().getTableView().getItems()) {
             ProductType inputProductType = cc.getProductType();
             ProductType existingProductType;
 
             if (inputProductType.wasChanged()) {//changed or new
-                existingProductType = CoreModule.getProductTypes().getByEqType(inputProductType.getType());
+                existingProductType = ProductTypes.getInstance().getByEqType(inputProductType.getType());
 
                 if (existingProductType != null && inputProductType.getType().equals(existingProductType.getType())) {
                     if (!inputProductType.getTen().equals(existingProductType.getTen())) {
@@ -40,7 +43,7 @@ public class CertificateContentActions {
                         changedContent.add(cc);
                     }
                 } else {
-                    CoreModule.getProductTypes().addItem(inputProductType);
+                    ProductTypes.getInstance().addItem(inputProductType);
                 }
 
                 inputProductType.setWasChanged(false);
@@ -51,7 +54,7 @@ public class CertificateContentActions {
                 newContent.add(cc);
 
                 cert.getContent().add(cc);
-                CoreModule.getCertificatesContent().addItem(cc);
+                CertificatesContent.getInstance().addItem(cc);
             } else if (cc.wasChanged()) {//content can be changed
                 changedContent.add(cc);
                 cc.setWasChanged(false);
@@ -74,11 +77,11 @@ public class CertificateContentActions {
             if (new CertificatesContentDB().deleteData(alcc)) {//remove from DB
                 System.out.println("certificate content deleted from DB");
 //                CoreModule.getProductTypes().delete();
-                CoreModule.getCertificates().removeContent(cc); //remove from cert
-                CoreModule.getCertificatesContent().delete(cc); //remove from contents
+                Certificates.getInstance().removeContent(cc); //remove from cert
+                CertificatesContent.getInstance().delete(cc); //remove from contents
             }
-            CoreModule.getCertificatesContentTable().getTableView().getItems().remove(cc); //remove from table
-            CoreModule.getCertificatesContentTable().getTableView().refresh();
+            CertificatesContentTable.getInstance().getTableView().getItems().remove(cc); //remove from table
+            CertificatesContentTable.getInstance().getTableView().refresh();
         }
 
     }

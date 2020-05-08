@@ -1,14 +1,16 @@
 package ui_windows.product.data;
 
-import core.CoreModule;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
+import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
 import ui_windows.options_window.price_lists_editor.PriceList;
+import ui_windows.options_window.price_lists_editor.PriceLists;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.product.Product;
+import ui_windows.product.ProductTypes;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
 import utils.Countries;
@@ -136,7 +138,7 @@ public enum DataItem {
                     cell.setCellValue(pls.getLanguage() == LANG_RU ? "По запросу" : "By request");
                 }
             } else {
-                for (PriceList priceList : CoreModule.getPriceLists().getItems()) {
+                for (PriceList priceList : PriceLists.getInstance().getItems()) {
                     for (PriceListSheet pls : priceList.getSheets()) {
                         if (pls.getContentMode() == CONTENT_MODE_FAMILY)
                             pls.getContentTable().switchContentMode(CONTENT_MODE_LGBK);
@@ -162,7 +164,7 @@ public enum DataItem {
     DATA_IN_WHICH_PRICE_LIST(9, "В каком прайс-листе", null) {
         private String getPriceSheetName(Product product) {
             String result = "";
-            for (PriceList priceList : CoreModule.getPriceLists().getItems()) {
+            for (PriceList priceList : PriceLists.getInstance().getItems()) {
                 for (PriceListSheet pls : priceList.getSheets()) {
                     if (pls.isInPrice(product)) {
                         result += result == "" ? priceList.getName() + "/" + pls.getSheetName() :
@@ -305,7 +307,7 @@ public enum DataItem {
     },
     DATA_DCHAIN_COMMENT(21, "Код доступности - расшифровка", null) {
         private String getDchainComment(Product product) {
-            OrderAccessibility oa = CoreModule.getOrdersAccessibility().getOrderAccessibilityByStatusCode(product.getDchain());
+            OrderAccessibility oa = OrdersAccessibility.getInstance().getOrderAccessibilityByStatusCode(product.getDchain());
             if (oa != null) {
                 return oa.getDescription();
             }
@@ -325,12 +327,12 @@ public enum DataItem {
     DATA_DCHAIN_WITH_COMMENT(22, "Код доступности c расшифровкой", null) {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
-            cell.setCellValue(CoreModule.getOrdersAccessibility().getCombineOrderAccessibility(product.getDchain()));
+            cell.setCellValue(OrdersAccessibility.getInstance().getCombineOrderAccessibility(product.getDchain()));
             cell.setCellStyle(CELL_ALIGN_LEFT);
         }
 
         public Object getValue(Product product) {
-            return CoreModule.getOrdersAccessibility().getCombineOrderAccessibility(product.getDchain());
+            return OrdersAccessibility.getInstance().getCombineOrderAccessibility(product.getDchain());
         }
     },
     DATA_PACKSIZE(23, "Размер упаковки", "packetSize") {
@@ -436,12 +438,12 @@ public enum DataItem {
     DATA_TYPE_DESCRIPTION(31, "Тип (Описание)", null) {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
-            cell.setCellValue(CoreModule.getProductTypes().getTypeById(product.getType_id()));
+            cell.setCellValue(ProductTypes.getInstance().getTypeById(product.getType_id()));
             cell.setCellStyle(CELL_ALIGN_LEFT);
         }
 
         public Object getValue(Product product) {
-            return CoreModule.getProductTypes().getTypeById(product.getType_id());
+            return ProductTypes.getInstance().getTypeById(product.getType_id());
         }
     },
     DATA_CERTIFICATE(32, "Наличие сертификатов", null) {

@@ -3,6 +3,8 @@ package ui_windows.main_window;
 import core.AddActions;
 import core.CoreModule;
 import core.Dialogs;
+import database.DataBase;
+import files.Folders;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import ui_windows.main_window.filter_window_se.FilterParameters_SE;
 import ui_windows.options_window.profile_editor.Profile;
+import ui_windows.options_window.user_editor.Users;
 import utils.Utils;
 
 import java.io.IOException;
@@ -25,11 +28,9 @@ public class MainWindow extends Application {
     private static ProgressBar progressBar;
     private static double progressBarValue;
     private static MenuItem miOptions;
-    private static boolean initOk;
     private static FXMLLoader fxmlLoader;
     private static MainWindowsController controller;
     private String version = "1.3.1.4 (beta) от 27.04.2020";
-
 
     public static void main(String[] args) {
         launch(args);
@@ -94,15 +95,11 @@ public class MainWindow extends Application {
     public void start(Stage primaryStage) {
         mainStage = primaryStage;
 
-        initOk = CoreModule.init();
+        try {
+            new CoreModule().init();
 
-        if (initOk) {
             fxmlLoader = new FXMLLoader(getClass().getResource("mainWindow.fxml"));
-            try {
-                rootAnchorPane = fxmlLoader.load();
-            } catch (IOException e) {
-                System.out.println("error xml file loading: " + e.getMessage());
-            }
+            rootAnchorPane = fxmlLoader.load();
 
             controller = (MainWindowsController) fxmlLoader.getController();
             Scene scene = new Scene(rootAnchorPane);
@@ -112,7 +109,6 @@ public class MainWindow extends Application {
                     Dialogs.showMessage("Инфо", version);
                 }
             });
-
 
             mainStage.setScene(scene);
             mainStage.setTitle("База по продукции и сертификатам");
@@ -127,7 +123,7 @@ public class MainWindow extends Application {
             final String searchBoxCss = getClass().getResource("/utils/SearchBox.css").toExternalForm();
             rootAnchorPane.getStylesheets().add(searchBoxCss);
 
-            applyProfile(CoreModule.getUsers().getCurrentUser().getProfile());
+            applyProfile(Users.getInstance().getCurrentUser().getProfile());
 
             mainStage.show();
             mainStage.setMinHeight(mainStage.getHeight());
@@ -137,14 +133,18 @@ public class MainWindow extends Application {
 
 //        OptionsWindow certificateOverviewWindow = new OptionsWindow();
 //        certificateOverviewWindow.open();
-        } else Platform.exit();
+        } catch (Exception e) {
+            Dialogs.showMessage("Ошибка инициализация программы", "Программа не может продолжить работу." +
+                    "\nПричина: " + e.getMessage());
+            Platform.exit();
+        }
 
         mainStage.setOnCloseRequest(event -> {
             try {
-                if (CoreModule.getFolders().getTempFolder().exists())
-                    Utils.deleteFolder(CoreModule.getFolders().getTempFolder().toPath());
+                if (Folders.getInstance().getTempFolder().exists())
+                    Utils.deleteFolder(Folders.getInstance().getTempFolder().toPath());
             } catch (IOException ioe) {
-                System.out.printf("deleting error " + ioe.getMessage());
+                System.out.printf("deleting error %s", ioe.getMessage());
             }
 
             if (progressBarValue > 0) {
@@ -168,10 +168,18 @@ public class MainWindow extends Application {
     }
 
     @Override
-    public void stop() throws Exception {
-        if (initOk) CoreModule.getDataBase().disconnect();
+    public void stop() {
+        DataBase.getInstance().disconnect();
 
-        MainWindow.getMainTable().close();
-        super.stop();
+        try {
+            MainWindow.getMainTable().close();
+        } catch (Exception e) {
+
+        }
+        try {
+            super.stop();
+        } catch (Exception e) {
+
+        }
     }
 }

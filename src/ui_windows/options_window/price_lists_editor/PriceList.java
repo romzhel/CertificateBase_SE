@@ -1,24 +1,18 @@
 package ui_windows.options_window.price_lists_editor;
 
-import core.CoreModule;
-import core.Dialogs;
+import files.Folders;
 import files.price_to_excel.PriceStructure;
-import javafx.application.Platform;
 import javafx.scene.layout.AnchorPane;
-import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.se.PriceListEditorWindowControllerv2;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
+import ui_windows.options_window.product_lgbk.ProductLgbks;
 import ui_windows.product.Product;
 import utils.Utils;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class PriceList {
     private int id = -1;
@@ -59,7 +53,7 @@ public class PriceList {
         id = rs.getInt("id");
         name = rs.getString("name");
         fileName = rs.getString("file_name");
-        template = new File(CoreModule.getFolders().getTemplatesFolder() + "\\" + rs.getString("template_name"));
+        template = new File(Folders.getInstance().getTemplatesFolder() + "\\" + rs.getString("template_name"));
         destination = new File(rs.getString("destination_folder"));
     }
 
@@ -69,7 +63,7 @@ public class PriceList {
 
 //        ArrayList<String> lgbkNames = new ArrayList<>();
         ArrayList<String> lgbkDescriptions = Utils.getALControlValueFromLV(root, "lvSelected");
-        lgbks = new ArrayList<>(CoreModule.getProductLgbks().getLgbkNameALbyDescsAL(lgbkDescriptions));
+        lgbks = new ArrayList<>(ProductLgbks.getInstance().getLgbkNameALbyDescsAL(lgbkDescriptions));
         fileName = Utils.getControlValue(root, "tfFileName");
     }
 

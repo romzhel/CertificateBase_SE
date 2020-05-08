@@ -16,13 +16,24 @@ public class CertificatesContentTable {
     private static final String EQ_TYPE_COL = "Тип оборудования";
     private static final String TN_VED_COL = "ТН ВЭД";
     private static final String NAMES_COL = "Наименования";
+    private static CertificatesContentTable instance;
     private TableView<CertificateContent> tableView;
     private TableColumn<CertificateContent, String> typeCol, tnvedCol, namesEnumCol;
     private boolean isEditActive = false;
     private int editedItemIndex = -1;
     private List<CertificateContent> editedContent;
 
-    public CertificatesContentTable(TableView<CertificateContent> tableView) {
+    private CertificatesContentTable() {
+    }
+
+    public static CertificatesContentTable getInstance() {
+        if (instance == null) {
+            instance = new CertificatesContentTable();
+        }
+        return instance;
+    }
+
+    public void init(TableView<CertificateContent> tableView) {
         initTableView(tableView);
 
         typeCol = initColumn(EQ_TYPE_COL, 385);

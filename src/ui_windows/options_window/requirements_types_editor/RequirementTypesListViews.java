@@ -1,7 +1,6 @@
 package ui_windows.options_window.requirements_types_editor;
 
 
-import core.CoreModule;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -10,6 +9,7 @@ import javafx.scene.input.MouseButton;
 import javafx.util.Callback;
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.MultiEditorItem;
 import ui_windows.product.Product;
@@ -57,7 +57,7 @@ public class RequirementTypesListViews {
         lvAllNorms.getItems().clear();
         lvSelectedNorms.getItems().clear();
 
-        lvAllNorms.getItems().addAll(CoreModule.getRequirementTypes().getAllRequirementTypesShortNames());
+        lvAllNorms.getItems().addAll(RequirementTypes.getInstance().getAllRequirementTypesShortNames());
 
         if (multiEditor != null) {
             MultiEditorItem multiEditorItem = new MultiEditorItem(DataItem.DATA_NORMS_MODE, MultiEditorItem.CAN_NOT_BE_SAVED);
@@ -77,13 +77,13 @@ public class RequirementTypesListViews {
 
 
         } else if (lgbk != null) {
-            TreeItem<ProductLgbk> selectedTreeItem = CoreModule.getProductLgbkGroups().getTreeItem(lgbk);
+            TreeItem<ProductLgbk> selectedTreeItem = ProductLgbkGroups.getInstance().getTreeItem(lgbk);
             normsForDisplaying.addAll(selectedTreeItem.getValue().getNormsList().getIntegerItems());
 
         }
         initItemChangeListener(new ArrayList<>(normsForDisplaying));
 
-        lvSelectedNorms.getItems().addAll(CoreModule.getRequirementTypes().getReqTypeShortNamesByIds(new ArrayList<>(normsForDisplaying)));
+        lvSelectedNorms.getItems().addAll(RequirementTypes.getInstance().getReqTypeShortNamesByIds(new ArrayList<>(normsForDisplaying)));
         lvAllNorms.getItems().removeAll(lvSelectedNorms.getItems());
         sortLV(lvSelectedNorms);
     }
@@ -103,10 +103,10 @@ public class RequirementTypesListViews {
                                 if (!isEmpty()) {
                                     setText(item);
 
-                                    int reqId = CoreModule.getRequirementTypes().getRequirementByShortName(item).getId();
+                                    int reqId = RequirementTypes.getInstance().getRequirementByShortName(item).getId();
 
                                     if (lgbk != null) {
-                                        TreeItem<ProductLgbk> selectedTreeItem = CoreModule.getProductLgbkGroups().getTreeItem(lgbk);
+                                        TreeItem<ProductLgbk> selectedTreeItem = ProductLgbkGroups.getInstance().getTreeItem(lgbk);
 
                                         while (selectedTreeItem != null) {
                                             ProductLgbk currentPrLgbk = selectedTreeItem.getValue();
@@ -175,7 +175,7 @@ public class RequirementTypesListViews {
 
     public void removeNorm() {
         int selectedIndex = lvSelectedNorms.getSelectionModel().getSelectedIndex();
-        boolean isGlobalNorm = globalNorms.contains(CoreModule.getRequirementTypes().getRequirementByShortName(lvSelectedNorms.getSelectionModel().getSelectedItem()).getId());
+        boolean isGlobalNorm = globalNorms.contains(RequirementTypes.getInstance().getRequirementByShortName(lvSelectedNorms.getSelectionModel().getSelectedItem()).getId());
         if (selectedIndex > -1 && !isGlobalNorm) {
             lvAllNorms.getItems().add(lvSelectedNorms.getItems().remove(selectedIndex));
             sortLV(lvAllNorms);
@@ -184,7 +184,7 @@ public class RequirementTypesListViews {
 
     public void removeAllNorms() {
         for (String normName : lvSelectedNorms.getItems()) {
-            boolean isGlobalNorm = globalNorms.contains(CoreModule.getRequirementTypes().getRequirementByShortName(normName).getId());
+            boolean isGlobalNorm = globalNorms.contains(RequirementTypes.getInstance().getRequirementByShortName(normName).getId());
             if (!isGlobalNorm) {
                 lvAllNorms.getItems().add(normName);
             }
@@ -205,10 +205,10 @@ public class RequirementTypesListViews {
 
 //        if (product.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
         if (product.getNormsMode() == NormsList.ADD_TO_GLOBAL) {
-            onlyProduct.removeAll(CoreModule.getRequirementTypes().getReqTypeShortNamesByIds(new ArrayList<>(globalNorms)));
+            onlyProduct.removeAll(RequirementTypes.getInstance().getReqTypeShortNamesByIds(new ArrayList<>(globalNorms)));
         }
 
-        return new NormsList(CoreModule.getRequirementTypes().getReqTypeIdsByShortNames(onlyProduct));
+        return new NormsList(RequirementTypes.getInstance().getReqTypeIdsByShortNames(onlyProduct));
     }
 
 

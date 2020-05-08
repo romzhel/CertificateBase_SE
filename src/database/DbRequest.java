@@ -1,18 +1,19 @@
 package database;
 
-import core.CoreModule;
 import core.Dialogs;
 import javafx.application.Platform;
 import ui_windows.main_window.MainWindow;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class DbRequest {
     protected PreparedStatement getData, addData, updateData, deleteData;
     protected Connection connection;
 
     public DbRequest() {
-        connection = CoreModule.getDataBase().reconnect();
+        connection = DataBase.getInstance().reconnect();
     }
 
     public void logAndMessage(String text){
@@ -27,7 +28,7 @@ public class DbRequest {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        CoreModule.getDataBase().requestToDisconnect();
+        DataBase.getInstance().requestToDisconnect();
     }
 
 

@@ -1,14 +1,18 @@
 package ui_windows.options_window.certificates_editor;
 
-import core.CoreModule;
 import core.Dialogs;
 import database.CertificatesContentDB;
 import database.CertificatesDB;
+import files.Folders;
 import javafx.application.Platform;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContentActions;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContent;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContentTable;
+import ui_windows.options_window.requirements_types_editor.RequirementTypes;
+import ui_windows.options_window.user_editor.Users;
 import utils.Countries;
 import utils.Utils;
 
@@ -32,13 +36,13 @@ public class CertificateEditorWindowActions {
             } else {//save to DB
 
                 Certificate cert = new Certificate(CertificateEditorWindow.getStage());
-                cert.setUserId(CoreModule.getUsers().getCurrentUser().getId());
+                cert.setUserId(Users.getInstance().getCurrentUser().getId());
 
-                if (!CoreModule.getCertificates().hasDoubles(cert)) {//check duplicates
+                if (!Certificates.getInstance().hasDoubles(cert)) {//check duplicates
                     if (new CertificatesDB().putData(cert)) {//write to DB, get cert id
 
-                        CoreModule.getCertificates().addItem(cert);//add cert to global list
-                        CoreModule.getCertificatesTable().addItem(cert);//display record in table
+                        Certificates.getInstance().addItem(cert);//add cert to global list
+                        CertificatesTable.getInstance().addItem(cert);//display record in table
 
                         CertificateContentActions.saveContent(cert);
 
@@ -52,14 +56,14 @@ public class CertificateEditorWindowActions {
             if (cert != null && !hasEmptyCellInTable()) {
 
                 getCertFromEditorWindow(cert);//get data from form
-                if (CoreModule.getUsers().getCurrentUser().getProfile().getCertificates() != FULL)
-                    cert.setUserId(CoreModule.getUsers().getCurrentUser().getId());
+                if (Users.getInstance().getCurrentUser().getProfile().getCertificates() != FULL)
+                    cert.setUserId(Users.getInstance().getCurrentUser().getId());
 
-                if (!CoreModule.getCertificates().hasDoubles(cert)) {//check duplicates
+                if (!Certificates.getInstance().hasDoubles(cert)) {//check duplicates
                     if (new CertificatesDB().updateData(cert)) {//write to DB
                         CertificateContentActions.saveContent(cert);
 
-                        Platform.runLater(() -> CoreModule.getCertificatesTable().getTableView().refresh());//refresh table
+                        Platform.runLater(() -> CertificatesTable.getInstance().getTableView().refresh());//refresh table
 
                         System.out.println(cert.toString());
 
@@ -79,7 +83,7 @@ public class CertificateEditorWindowActions {
         cert.setName(Utils.getControlValue(root, "tfCertName"));
         cert.setExpirationDate(Utils.getControlValue(root, "dpDatePicker"));
         cert.setCountries(Countries.getShortNames(Utils.getALControlValueFromLV(root, "lvCountries")));
-        cert.setNorms(CoreModule.getRequirementTypes().getReqIdsLineFromShortNamesAL(Utils.getALControlValueFromLV(root, "lvNorms")));
+        cert.setNorms(RequirementTypes.getInstance().getReqIdsLineFromShortNamesAL(Utils.getALControlValueFromLV(root, "lvNorms")));
         cert.setFileName(Utils.getControlValue(root, "tfFileName"));
         cert.setFullNameMatch(Utils.getControlValue(root, "ckbNameMatch") == "true");
         cert.setMaterialMatch(Utils.getControlValue(root, "ckbMaterialMatch") == "true");
@@ -98,10 +102,10 @@ public class CertificateEditorWindowActions {
             Utils.setControlValue(root, "tfCertName", cert.getName());
             Utils.setControlValue(root, "dpDatePicker", cert.getExpirationDate());
             Utils.setControlValueLVfromAL(root, "lvCountries", Countries.getCombinedNames(cert.getCountries()));
-            Utils.setControlValueLVfromAL(root, "lvNorms", CoreModule.getRequirementTypes().getRequirementsList(cert.getNorms()));
+            Utils.setControlValueLVfromAL(root, "lvNorms", RequirementTypes.getInstance().getRequirementsList(cert.getNorms()));
             Utils.setControlValue(root, "tfFileName", cert.getFileName());
 
-            File certFile = new File(CoreModule.getFolders().getCertFolder() + "\\" + cert.getFileName());
+            File certFile = new File(Folders.getInstance().getCertFolder() + "\\" + cert.getFileName());
             if (certFile.exists()) {
                 Utils.setColor(CertificateEditorWindow.getRootAnchorPane(), "tfFileName", Color.GREEN);
             } else {
@@ -111,7 +115,7 @@ public class CertificateEditorWindowActions {
             Utils.setControlValue(root, "ckbNameMatch", cert.isFullNameMatch());
             Utils.setControlValue(root, "ckbMaterialMatch", cert.isMaterialMatch());
 
-            CoreModule.getCertificatesContentTable().setContent(cert.getContent());
+            CertificatesContentTable.getInstance().setContent(cert.getContent());
         }
     }
 
@@ -121,17 +125,17 @@ public class CertificateEditorWindowActions {
             if (Dialogs.confirm("Удаление записи", "Действительно желаете удалить запись без возможности восстановления?")) {
                 if (new CertificatesDB().deleteData(cert)) {//delete cert from DB
                     new CertificatesContentDB().deleteData(cert.getContent());//delete cert content from db
-                    CoreModule.getCertificatesContent().delete(cert.getContent());//delete content from class
-                    CoreModule.getCertificates().remove(cert);//delete cert from class
+                    CertificatesContent.getInstance().delete(cert.getContent());//delete content from class
+                    Certificates.getInstance().remove(cert);//delete cert from class
                 }
             }
     }
 
     public static Certificate getItem() {
-        int index = CoreModule.getCertificatesTable().getTableView().getSelectionModel().getSelectedIndex();
+        int index = CertificatesTable.getInstance().getTableView().getSelectionModel().getSelectedIndex();
 
-        if (index > -1 && index < CoreModule.getCertificatesTable().getTableView().getItems().size()) {
-            return CoreModule.getCertificatesTable().getTableView().getItems().get(index);
+        if (index > -1 && index < CertificatesTable.getInstance().getTableView().getItems().size()) {
+            return CertificatesTable.getInstance().getTableView().getItems().get(index);
         } else return null;
     }
 
@@ -139,7 +143,7 @@ public class CertificateEditorWindowActions {
         AnchorPane root = (AnchorPane) CertificateEditorWindow.getStage().getScene().getRoot();
 
         Utils.setControlValue(root, "cbCountrySelect", Countries.getItems());//add countries
-        Utils.setControlValue(root, "cbNormSelect", CoreModule.getRequirementTypes().getAllRequirementTypesShortNames());
+        Utils.setControlValue(root, "cbNormSelect", RequirementTypes.getInstance().getAllRequirementTypesShortNames());
 //        Utils.setControlValue(root, "cbCountrySelect", Countries.getItems().get(0));//display first country
     }
 
@@ -162,11 +166,11 @@ public class CertificateEditorWindowActions {
     public static void selectFile() {
         File certFile = Dialogs.selectFile(CertificateEditorWindow.getStage());
         if (certFile != null) {
-            if (new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + certFile.getName()).exists()) {
+            if (new File(Folders.getInstance().getCertFolder().getPath() + "\\" + certFile.getName()).exists()) {
                 Dialogs.showMessage("Добавление сертификата", "Файл сертификата с таким именем уже существует.\n" +
                         "Проверьте, возможно, сертификат уже есть в базе");
             } else {
-                File destination = new File(CoreModule.getFolders().getCertFolder().getPath() + "\\" + certFile.getName());
+                File destination = new File(Folders.getInstance().getCertFolder().getPath() + "\\" + certFile.getName());
 
                 try {
                     Files.copy(certFile.toPath(), destination.toPath());
@@ -182,7 +186,7 @@ public class CertificateEditorWindowActions {
     }
 
     public static boolean hasEmptyCellInTable() {
-        for (CertificateContent cc : CoreModule.getCertificatesContentTable().getTableView().getItems()) {
+        for (CertificateContent cc : CertificatesContentTable.getInstance().getTableView().getItems()) {
             boolean eqTypeEmpty = cc.getProductType().getType() == null || cc.getProductType().getType().trim().isEmpty();
             boolean tnvedEmpty = cc.getProductType().getTen() == null || cc.getProductType().getTen().trim().isEmpty();
             boolean eqNamesEmpty = cc.getEquipmentName() == null || cc.getEquipmentName().trim().isEmpty();

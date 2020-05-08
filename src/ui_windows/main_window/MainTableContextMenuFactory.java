@@ -2,6 +2,7 @@ package ui_windows.main_window;
 
 import core.CoreModule;
 import core.Dialogs;
+import files.Folders;
 import files.SelectorExportWindow;
 import files.reports.CertificateMatrixReportToExcel;
 import files.reports.ReportToExcel;
@@ -89,7 +90,7 @@ public class MainTableContextMenuFactory {
             CertificatesChecker certificatesChecker = new CertificatesChecker(product, new CheckParameters());
             for (CertificateVerificationItem cvi : certificatesChecker.getResultTableItems()) {
                 if (cvi.getCertificate() != null && cvi.getCertificate().getFileName() != null && !cvi.getCertificate().getFileName().isEmpty()) {
-                    File certificate = new File(CoreModule.getFolders().getCertFolder() + "\\" + cvi.getCertificate().getFileName());
+                    File certificate = new File(Folders.getInstance().getCertFolder() + "\\" + cvi.getCertificate().getFileName());
                     if (certificate.exists()) foundFiles.add(certificate);
                     else lostFiles.add(certificate);
                 }
@@ -110,7 +111,7 @@ public class MainTableContextMenuFactory {
         }
 
         for (File file : allFiles) {
-            File target = new File(CoreModule.getFolders().getTempFolder() + "\\" + file.getName());
+            File target = new File(Folders.getInstance().getTempFolder() + "\\" + file.getName());
 
             try {
                 if (!target.exists()) Files.copy(file.toPath(), target.toPath());

@@ -1,9 +1,10 @@
 package ui_windows.product.certificatesChecker;
 
-import core.CoreModule;
 import javafx.collections.ObservableList;
 import ui_windows.options_window.certificates_editor.Certificate;
+import ui_windows.options_window.certificates_editor.Certificates;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
+import ui_windows.options_window.requirements_types_editor.RequirementTypes;
 import ui_windows.product.Product;
 import utils.Utils;
 
@@ -61,7 +62,7 @@ public class CertificatesChecker {
 
     private void checkExistingCertificates(Product product, CheckParameters checkParameters) {
         TreeSet<String> prodNames = new TreeSet<>();
-        for (Certificate cert : CoreModule.getCertificates().getCertificates()) {//check all certificates
+        for (Certificate cert : Certificates.getInstance().getCertificates()) {//check all certificates
             prodNames.clear();//forming comparing product values (article / material)
             prodNames.add(Utils.toEN(product.getArticle()).toUpperCase());
             if (cert.isMaterialMatch()) prodNames.add(Utils.toEN(product.getMaterial()).toUpperCase());
@@ -97,7 +98,7 @@ public class CertificatesChecker {
                                 String status = getStatusString(product, cert);
 
 //                                foundNorms.addAll(Utils.getNumberALfromStringEnum(cert.getNorms()));
-                                String norms = CoreModule.getRequirementTypes().getNormsShortNamesByIds(cert.getNorms());
+                                String norms = RequirementTypes.getInstance().getNormsShortNamesByIds(cert.getNorms());
 
                                 for (String normName : norms.split("\\,")) {
                                     resultTableItems.add(new CertificateVerificationItem(normName.trim(), contentName,

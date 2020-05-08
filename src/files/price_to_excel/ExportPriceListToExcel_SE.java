@@ -3,6 +3,7 @@ package files.price_to_excel;
 import core.CoreModule;
 import core.Dialogs;
 import files.ExcelCellStyleFactory;
+import files.Folders;
 import javafx.application.Platform;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import ui_windows.main_window.MainWindow;
@@ -70,7 +71,7 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
         targetFileName = targetFileName.concat("_").concat(Utils.getDate(new Date()));
 
         try {
-            resultFile = new File(CoreModule.getFolders().getTempFolder().getPath() + "\\" + targetFileName + ".xlsx");
+            resultFile = new File(Folders.getInstance().getTempFolder().getPath() + "\\" + targetFileName + ".xlsx");
             Files.copy(templateFile.toPath(), resultFile.toPath(), REPLACE_EXISTING);
         } catch (Exception e) {
             Dialogs.showMessage("Ошибка копирования шаблона", "Ошибка копирования файла шаблона: " + e.getMessage());

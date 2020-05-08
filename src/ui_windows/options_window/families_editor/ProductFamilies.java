@@ -3,19 +3,26 @@ package ui_windows.options_window.families_editor;
 import database.ProductFamiliesDB;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 public class ProductFamilies {
+    private static ProductFamilies instance;
     private ProductFamiliesTable productFamiliesTable;
-    private ArrayList<ProductFamily> productFamilies;
+    private List<ProductFamily> productFamilies;
 
-    public ProductFamilies() {
-        productFamilies = new ArrayList<>();
+    private ProductFamilies() {
     }
 
-    public ProductFamilies getFromDB() {
+    public static ProductFamilies getInstance() {
+        if (instance == null) {
+            instance = new ProductFamilies();
+        }
+        return instance;
+    }
+
+    public void getFromDB() {
         productFamilies = new ProductFamiliesDB().getData();
-        return this;
     }
 
     public ProductFamiliesTable getProductFamiliesTable() {
@@ -26,7 +33,7 @@ public class ProductFamilies {
         this.productFamiliesTable = productFamiliesTable;
     }
 
-    public ArrayList<ProductFamily> getItems() {
+    public List<ProductFamily> getItems() {
         return productFamilies;
     }
 
@@ -64,7 +71,7 @@ public class ProductFamilies {
         return "";
     }
 
-    public ProductFamily getFamilyById(int id){
+    public ProductFamily getFamilyById(int id) {
         for (ProductFamily pf : productFamilies) {
             if (pf.getId() == id) return pf;
         }
@@ -72,7 +79,7 @@ public class ProductFamilies {
         return null;
     }
 
-    public ProductFamily getFamilyByName(String name){
+    public ProductFamily getFamilyByName(String name) {
         for (ProductFamily pf : productFamilies) {
             if (pf.getName().equals(name)) return pf;
         }

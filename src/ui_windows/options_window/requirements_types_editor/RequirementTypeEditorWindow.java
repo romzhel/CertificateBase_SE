@@ -1,12 +1,12 @@
 package ui_windows.options_window.requirements_types_editor;
 
-import core.CoreModule;
 import javafx.stage.Modality;
-import ui_windows.OrdinalWindow;
 import ui_windows.Mode;
+import ui_windows.OrdinalWindow;
 import ui_windows.options_window.OptionsWindow;
+import ui_windows.options_window.user_editor.Users;
 
-import static ui_windows.Mode.*;
+import static ui_windows.Mode.EDIT;
 
 public class RequirementTypeEditorWindow extends OrdinalWindow {
 
@@ -18,7 +18,7 @@ public class RequirementTypeEditorWindow extends OrdinalWindow {
             RequirementTypeEditorWindowActions.displayData();
         }
 
-        applyProfileSimple(CoreModule.getUsers().getCurrentUser().getProfile().getCertificates());
+        applyProfileSimple(Users.getInstance().getCurrentUser().getProfile().getCertificates());
 
         stage.show();
     }

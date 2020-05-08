@@ -1,6 +1,5 @@
 package ui_windows.options_window.price_lists_editor.se.price_sheet;
 
-import core.CoreModule;
 import files.price_to_excel.HierarchyGroup;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListCell;
@@ -9,6 +8,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
 import javafx.util.Callback;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
+import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTable;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
@@ -208,7 +208,7 @@ public class PriceListSheet extends Tab {
     }
 
     private void initDchainSelector() {
-        dchainSelector = new TwinListViews<>(controller.pPriceDchain, CoreModule.getOrdersAccessibility().getItems());
+        dchainSelector = new TwinListViews<>(controller.pPriceDchain, OrdersAccessibility.getInstance().getItems());
         dchainSelector.setListViewsCellFactory(new Callback<ListView<OrderAccessibility>, ListCell<OrderAccessibility>>() {
             @Override
             public ListCell<OrderAccessibility> call(ListView<OrderAccessibility> param) {
@@ -234,7 +234,7 @@ public class PriceListSheet extends Tab {
             ArrayList<OrderAccessibility> result = new ArrayList<>();
             if (param != null && !param.isEmpty()) {
                 for (String item : param.split("\\,")) {
-                    result.add(CoreModule.getOrdersAccessibility().getOrderAccessibilityByStatusCode(item));
+                    result.add(OrdersAccessibility.getInstance().getOrderAccessibilityByStatusCode(item));
                 }
             }
             return result;

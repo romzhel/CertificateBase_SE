@@ -1,6 +1,5 @@
 package ui_windows.options_window;
 
-import core.CoreModule;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Modality;
@@ -8,6 +7,7 @@ import javafx.stage.Stage;
 import ui_windows.OrdinalWindow;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.profile_editor.Profile;
+import ui_windows.options_window.user_editor.Users;
 import utils.Utils;
 
 import static ui_windows.options_window.profile_editor.SimpleRight.*;
@@ -44,7 +44,7 @@ public class OptionsWindow extends OrdinalWindow {
     }
 
     private void applyProfile() {
-        Profile profile = CoreModule.getUsers().getCurrentUser().getProfile();
+        Profile profile = Users.getInstance().getCurrentUser().getProfile();
 
         Utils.getTabById("tabCertificates").setDisable(profile.getCertificates() == HIDE);
         Utils.disableEditing(Utils.getTabById("tabCertificates"), profile.getCertificates() == DISPLAY);

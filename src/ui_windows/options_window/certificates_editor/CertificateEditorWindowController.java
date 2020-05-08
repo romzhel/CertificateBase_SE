@@ -1,6 +1,5 @@
 package ui_windows.options_window.certificates_editor;
 
-import core.CoreModule;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
@@ -35,8 +34,7 @@ public class CertificateEditorWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        certificatesContentTable = new CertificatesContentTable(tvContent);
-        CoreModule.setCertificatesContentTable(certificatesContentTable);
+        CertificatesContentTable.getInstance().init(tvContent);
 
         lvNorms.setOnKeyReleased(event -> {
             if (event.getCode() == KeyCode.DELETE) {

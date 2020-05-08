@@ -1,9 +1,9 @@
 package ui_windows.product;
 
-import core.CoreModule;
 import core.Dialogs;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.main_window.file_import_window.SingleProductsComparator;
+import ui_windows.options_window.user_editor.Users;
 import ui_windows.product.data.DataItem;
 import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 import utils.Utils;
@@ -72,7 +72,7 @@ public class MultiEditor {
             if (haveChanges) {
                 String oldHistory = product.getHistory();
                 String newHistory = Utils.getDateTime().concat(comparator.getResult().getHistoryComment().concat(", ")
-                        .concat(CoreModule.getUsers().getCurrentUser().getSurname()));
+                        .concat(Users.getInstance().getCurrentUser().getSurname()));
 
                 product.setHistory(oldHistory != null && !oldHistory.isEmpty() ?
                         oldHistory.concat("|").concat(newHistory) :

@@ -1,13 +1,14 @@
 package scripts;
 
-import core.CoreModule;
 import core.Dialogs;
+import files.Folders;
 import files.price_to_excel.ExportPriceListToExcel_SE;
 import files.reports.ReportToExcel;
 import javafx.application.Platform;
 import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
+import ui_windows.options_window.price_lists_editor.PriceLists;
 import ui_windows.product.data.DataItem;
 import utils.Utils;
 import utils.comparation.prices.PricesComparator;
@@ -33,7 +34,7 @@ public class PriceGenerationScript {
     public void run(int priceIndex, int generationMode) {
         new Thread(() -> {
             MainWindow.setProgress(-1);
-            PriceList priceList = CoreModule.getPriceLists().getItems().get(priceIndex);
+            PriceList priceList = PriceLists.getInstance().getItems().get(priceIndex);
             priceList.generate();
             System.out.println("new price list generated");
 
@@ -59,7 +60,7 @@ public class PriceGenerationScript {
                 }
 
                 if (priceListFile != null) {
-                    outOfPriceFile = new File(CoreModule.getFolders().getTempFolder().getPath() + "\\" +
+                    outOfPriceFile = new File(Folders.getInstance().getTempFolder().getPath() + "\\" +
                             "out_of_price_report_" + Utils.getDateTimeForFileName() + ".xlsx");
 
                     DataItem[] columns = new DataItem[]{DATA_FAMILY_NAME, DATA_RESPONSIBLE, DATA_ORDER_NUMBER,
@@ -83,7 +84,7 @@ public class PriceGenerationScript {
 
                         if (previousPriceList != null) {
                             pricesComparator.compare(previousPriceList, priceListFile);
-                            String fileName = String.format("%s\\price_comparison_report_%s vs %s.xlsx", CoreModule.getFolders()
+                            String fileName = String.format("%s\\price_comparison_report_%s vs %s.xlsx", Folders.getInstance()
                                     .getTempFolder().getPath(), priceListFile.getName(), previousPriceList.getName());
                             priceComparisonFile = new File(fileName);
                             pricesComparator.exportToExcel(priceComparisonFile);

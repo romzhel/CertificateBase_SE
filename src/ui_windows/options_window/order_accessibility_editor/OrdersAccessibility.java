@@ -5,11 +5,19 @@ import database.AccessibilityDB;
 import java.util.ArrayList;
 
 public class OrdersAccessibility {
+    private static OrdersAccessibility instance;
     private ArrayList<OrderAccessibility> ordersAccessibility;
     private OrdersAccessibilityTable table;
 
-    public OrdersAccessibility() {
+    private OrdersAccessibility() {
         ordersAccessibility = new ArrayList<>();
+    }
+
+    public static OrdersAccessibility getInstance() {
+        if (instance == null) {
+            instance = new OrdersAccessibility();
+        }
+        return instance;
     }
 
     public OrdersAccessibility getFromDB() {

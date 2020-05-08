@@ -1,7 +1,7 @@
 package ui_windows.options_window.product_lgbk;
 
-import core.CoreModule;
 import ui_windows.options_window.requirements_types_editor.RequirementType;
+import ui_windows.options_window.requirements_types_editor.RequirementTypes;
 
 import java.util.ArrayList;
 
@@ -22,7 +22,7 @@ public class NormsList {
         String[] itemsS = normsId.split("\\,");
         for (String itemS : itemsS) {
             if (itemS.trim().matches("^\\d+$")) {
-                RequirementType rt = CoreModule.getRequirementTypes().getRequirementByID(Integer.parseInt(itemS.trim()));
+                RequirementType rt = RequirementTypes.getInstance().getRequirementByID(Integer.parseInt(itemS.trim()));
 
                 if (rt != null) {
                     norms.add(rt.getId());
@@ -49,7 +49,7 @@ public class NormsList {
     }
 
     public String getNormNamesLine(){
-        return CoreModule.getRequirementTypes().getNormsShortNamesByIds(toString());
+        return RequirementTypes.getInstance().getNormsShortNamesByIds(toString());
     }
 
     @Override

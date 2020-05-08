@@ -1,7 +1,6 @@
 package ui_windows.options_window.price_lists_editor;
 
 
-import core.CoreModule;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -23,7 +22,7 @@ public class PriceListsTable {
         fileNameCol.setPrefWidth(300);
 
         tableView.getColumns().addAll(nameCol, fileNameCol);
-        tableView.getItems().addAll(CoreModule.getPriceLists().getItems());
+        tableView.getItems().addAll(PriceLists.getInstance().getItems());
     }
 
     public TableView<PriceList> getTableView() {

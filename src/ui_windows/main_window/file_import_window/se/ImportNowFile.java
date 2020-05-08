@@ -1,6 +1,5 @@
 package ui_windows.main_window.file_import_window.se;
 
-import core.CoreModule;
 import core.Dialogs;
 import database.ProductsDB;
 import files.reports.NowImportResultToExcel;
@@ -10,6 +9,7 @@ import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.MainWindowsController;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.product.Product;
+import ui_windows.product.Products;
 import utils.DoublesPreprocessor;
 import utils.comparation.se.*;
 
@@ -49,12 +49,12 @@ public class ImportNowFile implements Callable<File> {
             fileImport.getProductsInManualMode(file);
 
             if (fileImport.isDeleteOldStatistic() && files.indexOf(file) < 1) {
-                changedItemsForDB.addAll(CoreModule.getProducts().resetLastImportCodes());
+                changedItemsForDB.addAll(Products.getInstance().resetLastImportCodes());
             }
 
             FileImportParameter[] importParameters = fileImport.getExcelFile().getMapper().getParameters().toArray(new FileImportParameter[]{});
 
-            comparator.compare(CoreModule.getProducts().getItems(), new DoublesPreprocessor(fileImport.getProductItems()).getTreatedItems(),
+            comparator.compare(Products.getInstance().getItems(), new DoublesPreprocessor(fileImport.getProductItems()).getTreatedItems(),
                     new ComparingParameters(new Adapter<Product>().convert(importParameters), new ComparingRulesImportNow(), WITHOUT_GONE));
         }
         comparator.fixChanges();
@@ -70,7 +70,7 @@ public class ImportNowFile implements Callable<File> {
 
         if (result.getChangedItems().size() + result.getNewItems().size() > 0) {
             changedItemsForDB.addAll(result.getChangedItems());
-            CoreModule.getProducts().getItems().addAll(result.getNewItems());
+            Products.getInstance().getItems().addAll(result.getNewItems());
 
             MainWindowsController mwc = MainWindow.getFxmlLoader().getController();
 //            mwc.getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_LAST_IMPORT_RESULT);

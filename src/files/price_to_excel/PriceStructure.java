@@ -1,11 +1,11 @@
 package files.price_to_excel;
 
-import core.CoreModule;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.product.Product;
+import ui_windows.product.Products;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckStatusResult;
 
@@ -41,7 +41,7 @@ public class PriceStructure {
         if (contentMode == CONTENT_MODE_FAMILY) priceListSheet.getContentTable().switchContentMode(CONTENT_MODE_LGBK);
 
         ExecutorService executorService = Executors.newFixedThreadPool(5);
-        for (Product product : CoreModule.getProducts().getItems()) {
+        for (Product product : Products.getInstance().getItems()) {
             executorService.execute(() -> {
                 if (product.isPrice() && priceListSheet.isInPrice(product)) {
                     CheckStatusResult checkingResult = new CertificatesChecker(product).getCheckStatusResult();

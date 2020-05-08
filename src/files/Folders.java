@@ -5,9 +5,9 @@ import ui_windows.main_window.MainWindow;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 
 public class Folders {
+    private static Folders instance;
     private final String dbFolder = "\\\\rumowmc0022dat\\SBT.RU\\SBT\\FS\\Base";
     private File dbFile;
     private File certFolder;
@@ -18,19 +18,29 @@ public class Folders {
     private String appFolder;
     private File dbBackupFolder;
 
-    public Folders() {
+    private Folders() {
+    }
+
+    public static Folders getInstance() {
+        if (instance == null) {
+            instance = new Folders();
+        }
+        return instance;
+    }
+
+    public void init() throws RuntimeException {
         appFolder = System.getProperty("user.dir");
-        File remoteBaseFile = new File( dbFolder + "\\certificateDB.db");
+        File remoteBaseFile = new File(dbFolder + "\\certificateDB.db");
         File localBaseFile = new File(appFolder + "\\certificateDB.db");
 
         if (remoteBaseFile.exists()) {
             dbFile = remoteBaseFile;
-        } else if (!remoteBaseFile.exists() && localBaseFile.exists()) {
+        } else if (localBaseFile.exists()) {
             dbFile = localBaseFile;
 
             Dialogs.showMessage("Подключение к базе данных", "Был найден локальный файл базы данных. " +
                     "Обратите внимание, что все изменения будут сохраняться в этом файле.");
-        } else if (!remoteBaseFile.exists() && !localBaseFile.exists()) {
+        } else if (!localBaseFile.exists()) {
             //check path file
             pathFile = new PathFile();
             dbFile = pathFile.getDBFile();
@@ -43,6 +53,8 @@ public class Folders {
                 //create new path file
                 if (dbFile != null && dbFile.exists()) {//save
                     pathFile.createDBFile(dbFile);
+                } else {
+                    throw new RuntimeException("Файл базы данных не был найден.");
                 }
             }
         }

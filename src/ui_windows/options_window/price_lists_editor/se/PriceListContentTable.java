@@ -1,6 +1,5 @@
 package ui_windows.options_window.price_lists_editor.se;
 
-import core.CoreModule;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Pos;
@@ -10,13 +9,11 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.util.Callback;
-import org.apache.poi.ss.formula.functions.T;
+import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
-import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
-import ui_windows.product.Product;
-
-import java.util.ArrayList;
+import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
+import ui_windows.options_window.product_lgbk.ProductLgbks;
 
 import static ui_windows.options_window.product_lgbk.ProductLgbk.GROUP_NODE;
 import static ui_windows.options_window.product_lgbk.ProductLgbk.ROOT_NODE;
@@ -87,7 +84,7 @@ public class PriceListContentTable {
             priceProperty.addListener((observable, oldValue, newValue) -> {
                 if (currItem.getContent() instanceof ProductFamily) {
                     for (TreeItem<PriceListContentTableItem> lgbk : treeItem.getChildren()) {
-                        int lgbkGroupSize = CoreModule.getProductLgbkGroups().getTreeItem((ProductLgbk) lgbk.getValue().getContent()).getChildren().size();
+                        int lgbkGroupSize = ProductLgbkGroups.getInstance().getTreeItem((ProductLgbk) lgbk.getValue().getContent()).getChildren().size();
                         int currentGroupSize = lgbk.getChildren().size();
 
                         if (lgbkGroupSize == currentGroupSize) {
@@ -194,7 +191,7 @@ public class PriceListContentTable {
             treeTableView.setRoot(new FamilyTree(new FamilyGroups()));
             contentMode = CONTENT_MODE_FAMILY;
         } else*/ if (contentMode == CONTENT_MODE_LGBK) {
-            treeTableView.setRoot(new ConverterToPriceTable<>(CoreModule.getProductLgbkGroups().getFullTreeSet()));
+            treeTableView.setRoot(new ConverterToPriceTable<>(ProductLgbkGroups.getInstance().getFullTreeSet()));
             contentMode = CONTENT_MODE_LGBK;
         } else {
             treeTableView.setRoot(new FamilyTree(new FamilyGroups()));
@@ -255,9 +252,9 @@ public class PriceListContentTable {
             int id = Integer.parseInt(contentItem[1].trim());
 
             if (contentItem[0].equals(LGBK_ITEM)) {
-                plci = CoreModule.getProductLgbks().getLgbkById(id);
+                plci = ProductLgbks.getInstance().getLgbkById(id);
             } else {
-                plci = CoreModule.getProductFamilies().getFamilyById(id);
+                plci = ProductFamilies.getInstance().getFamilyById(id);
             }
 
 //            boolean result = false;
