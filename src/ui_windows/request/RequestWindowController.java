@@ -8,7 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
-import ui_windows.main_window.MainWindow;
+import ui_windows.ExecutionIndicator;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
 
@@ -34,7 +34,7 @@ public class RequestWindowController implements Initializable {
     public void actionRequest() {
         notFoundItems = "";
         results.clear();
-        MainWindow.setProgress(-1);
+        ExecutionIndicator.getInstance().start();
 
         new Thread(() -> {
             String[] lines = taData.getText().split("\n");
@@ -72,7 +72,7 @@ public class RequestWindowController implements Initializable {
                 }
             }
 
-            MainWindow.setProgress(0);
+            ExecutionIndicator.getInstance().stop();
 
             Platform.runLater(() -> {
                 if (!notFoundItems.isEmpty()) {

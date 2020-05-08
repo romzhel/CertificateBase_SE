@@ -6,10 +6,9 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import ui_windows.main_window.MainWindow;
+import ui_windows.ExecutionIndicator;
 import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
-import utils.Utils;
 
 import java.io.File;
 import java.util.List;
@@ -18,7 +17,7 @@ public class ReportToExcel extends ReportToExcelTemplate {
 
 
     public File export(List<DataItem> columns, List<Product> items, File reportFile) {
-        MainWindow.setProgress(-1.0);
+        ExecutionIndicator.getInstance().start();
         this.reportFile = reportFile;
         workbook = new XSSFWorkbook();
         new ExcelCellStyleFactory(workbook);
@@ -46,7 +45,7 @@ public class ReportToExcel extends ReportToExcelTemplate {
         }
 
         reportFile = saveToExcelFile();
-        MainWindow.setProgress(0.0);
+        ExecutionIndicator.getInstance().stop();
         return reportFile;
     }
 

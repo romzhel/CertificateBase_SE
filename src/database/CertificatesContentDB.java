@@ -1,17 +1,12 @@
 package database;
 
-import core.CoreModule;
-import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
-import utils.Utils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 public class CertificatesContentDB extends DbRequest {
 
@@ -62,7 +57,6 @@ public class CertificatesContentDB extends DbRequest {
             int[] result = addData.executeBatch();
             connection.commit();
 
-            MainWindow.setProgress(1.0);
             for (int res : result) {
                 if (res != 1) {
                     logAndMessage("Данный контент не был добавлен в БД");
@@ -107,8 +101,6 @@ public class CertificatesContentDB extends DbRequest {
             int[] result = updateData.executeBatch();
             connection.commit();
 
-            MainWindow.setProgress(1.0);
-
             for (int res : result) {
                 if (res != 1) {
                     logAndMessage("CertificateContent DB update error");
@@ -129,8 +121,6 @@ public class CertificatesContentDB extends DbRequest {
                 deleteData.setInt(1, cc.getId());
                 deleteData.addBatch();
             }
-
-            MainWindow.setProgress(1.0);
 
             int results[] = deleteData.executeBatch();
 

@@ -1,6 +1,5 @@
 package database;
 
-import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.user_editor.User;
 
 import java.sql.ResultSet;
@@ -47,8 +46,6 @@ public class UsersDB extends DbRequest {
 
     public boolean putData(User user) {
         try {
-            MainWindow.setProgress(1.0);
-
             addData.setString(1, user.getName());
             addData.setString(2, user.getSurname());
             addData.setString(3, user.getProductFamilies());
@@ -78,8 +75,6 @@ public class UsersDB extends DbRequest {
 
     public boolean updateData(User user) {
         try {
-            MainWindow.setProgress(1.0);
-
             updateData.setString(1, user.getName());
             updateData.setString(2, user.getSurname());
             updateData.setString(3, user.getProductFamilies());
@@ -103,8 +98,6 @@ public class UsersDB extends DbRequest {
 
     public boolean deleteData(User user) {
         try {
-            MainWindow.setProgress(1.0);
-
             deleteData.setInt(1, user.getId());
 
             if (deleteData.executeUpdate() > 0) {//successful

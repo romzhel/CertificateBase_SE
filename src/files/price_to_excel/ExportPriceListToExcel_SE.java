@@ -6,6 +6,7 @@ import files.ExcelCellStyleFactory;
 import files.Folders;
 import javafx.application.Platform;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import utils.Utils;
@@ -37,7 +38,7 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
         this.priceList = priceList;
 
         if (loadTemplate() && priceList.getPriceStructures() != null) {
-            MainWindow.setProgress(-1);
+            ExecutionIndicator.getInstance().start();
 
             if (priceList.getProblemItems().size() > 0) {
                 Platform.runLater(() -> CoreModule.setAndDisplayCustomItems(priceList.getProblemItems()));

@@ -1,6 +1,7 @@
 package database;
 
 import org.sqlite.SQLiteConfig;
+import ui_windows.ExecutionIndicator;
 
 import java.io.File;
 import java.sql.*;
@@ -42,7 +43,10 @@ public class DataBase {
             dataBaseFile = dbFile;
 
             System.out.println("DB connected");
-            if (firstStart) System.out.println(getDbJournalingMode());
+            ExecutionIndicator.getInstance().start();
+            if (firstStart) {
+                System.out.println(getDbJournalingMode());
+            }
             return true;
         } catch (SQLException e2) {
             System.out.println("can't connect to DB file " + e2.getMessage());
@@ -66,6 +70,7 @@ public class DataBase {
             if (!dbConnection.isClosed()) {
                 dbConnection.close();
                 System.out.println("DB disconnected");
+                ExecutionIndicator.getInstance().stop();
             }
             return true;
         } catch (Exception e2) {

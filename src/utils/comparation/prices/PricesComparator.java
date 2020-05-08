@@ -2,7 +2,7 @@ package utils.comparation.prices;
 
 import files.price_to_excel.PriceStructure;
 import files.reports.PriceComparisonMergerResultToExcel;
-import ui_windows.main_window.MainWindow;
+import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.main_window.file_import_window.se.FileImport;
 import ui_windows.options_window.price_lists_editor.PriceList;
@@ -48,7 +48,7 @@ public class PricesComparator {
 
     private void compare() {
 //        new Thread(() -> {
-        MainWindow.setProgress(-1.0);
+        ExecutionIndicator.getInstance().setProgress(ExecutionIndicator.INDETERMINATE);
 
         oldPriceFi = new FileImport();
 
@@ -99,7 +99,7 @@ public class PricesComparator {
 
         merger.merge();
 
-        MainWindow.setProgress(0.0);
+        ExecutionIndicator.getInstance().setProgress(ExecutionIndicator.NO_OPERATION);
 //        }).start();
     }
 

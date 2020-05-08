@@ -1,6 +1,5 @@
 package database;
 
-import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 
 import java.sql.ResultSet;
@@ -56,8 +55,6 @@ public class ProductLgbksDB extends DbRequest {
             addData.setString(index++, pl.getDescription_ru());
             addData.setString(index++, pl.getNormsList().getStringLine());
 
-            MainWindow.setProgress(1.0);
-
             if (addData.executeUpdate() > 0) {//successful
                 ResultSet rs = addData.getGeneratedKeys();
 
@@ -90,8 +87,6 @@ public class ProductLgbksDB extends DbRequest {
             updateData.setString(index++, pl.getNormsList().getStringLine());
 
             updateData.setInt(index++, pl.getId());
-
-            MainWindow.setProgress(1.0);
 
             int result = updateData.executeUpdate();
 

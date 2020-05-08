@@ -9,6 +9,7 @@ import files.reports.ReportToExcel;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import ui_windows.ExecutionIndicator;
 import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
@@ -63,9 +64,9 @@ public class MainTableContextMenuFactory {
         });
         MENU_CHECK_CERTIFICATES.setOnAction(event -> {
 //            new Thread(() -> {
-            MainWindow.setProgress(-1);
+            ExecutionIndicator.getInstance().start();
             startCertsReport(mainTable);
-            MainWindow.setProgress(0);
+            ExecutionIndicator.getInstance().stop();
 //            }).start();
         });
         MENU_EXPORT.setOnAction(event -> {

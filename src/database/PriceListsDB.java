@@ -1,6 +1,5 @@
 package database;
 
-import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
 
 import java.sql.ResultSet;
@@ -49,8 +48,6 @@ public class PriceListsDB extends DbRequest {
             addData.setString(3, pl.getTemplate().getName());
             addData.setString(4, pl.getDestination().getPath());
 
-            MainWindow.setProgress(1.0);
-
             if (addData.executeUpdate() > 0) {//successful
                 ResultSet rs = addData.getGeneratedKeys();
 
@@ -74,8 +71,6 @@ public class PriceListsDB extends DbRequest {
 
     public boolean updateData(PriceList pl) {
         try {
-            MainWindow.setProgress(1.0);
-
             updateData.setString(1, pl.getName());
             updateData.setString(2, pl.getFileName());
             updateData.setString(3, pl.getTemplate().getName());
@@ -99,8 +94,6 @@ public class PriceListsDB extends DbRequest {
     public boolean deleteData(PriceList pl) {
         try {
             deleteData.setInt(1, pl.getId());
-
-            MainWindow.setProgress(1.0);
 
             if (deleteData.executeUpdate() > 0) {//successful
                 return true;

@@ -2,7 +2,6 @@ package database;
 
 import core.Dialogs;
 import javafx.application.Platform;
-import ui_windows.main_window.MainWindow;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,13 +15,12 @@ public class DbRequest {
         connection = DataBase.getInstance().reconnect();
     }
 
-    public void logAndMessage(String text){
+    public void logAndMessage(String text) {
         Platform.runLater(() -> Dialogs.showMessage("Ошибка работы с базой данных", text));
         System.out.println("Ошибка работы с базой данных: " + text);
     }
 
-    public void finalActions(){
-        MainWindow.setProgress(0.0);
+    public void finalActions() {
         try {
             connection.setAutoCommit(true);
         } catch (SQLException e) {

@@ -1,6 +1,5 @@
 package database;
 
-import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.profile_editor.Profile;
 
 import java.sql.ResultSet;
@@ -57,8 +56,6 @@ public class ProfilesDB extends DbRequest {
             addData.setInt(9, prof.getUsers().ordinal());
             addData.setInt(10, prof.getPriceLists().ordinal());
 
-            MainWindow.setProgress(1.0);
-
             if (addData.executeUpdate() > 0) {//successful
                 ResultSet rs = addData.getGeneratedKeys();
 
@@ -92,8 +89,6 @@ public class ProfilesDB extends DbRequest {
             updateData.setInt(10, prof.getPriceLists().ordinal());
             updateData.setInt(11, prof.getId());
 
-            MainWindow.setProgress(1.0);
-
             if (updateData.executeUpdate() > 0) {//successful
                 return true;
             } else {
@@ -111,8 +106,6 @@ public class ProfilesDB extends DbRequest {
         try {
             deleteData.setInt(1, prof.getId());
             deleteData.addBatch();
-
-            MainWindow.setProgress(1.0);
 
             int results[] = deleteData.executeBatch();
 

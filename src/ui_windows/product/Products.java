@@ -2,7 +2,7 @@ package ui_windows.product;
 
 import database.ProductsDB;
 import javafx.scene.control.TableView;
-import ui_windows.main_window.MainWindow;
+import ui_windows.ExecutionIndicator;
 import utils.Utils;
 
 import java.util.ArrayList;
@@ -117,10 +117,10 @@ public class Products {
                     break;
                 }
             }
-            MainWindow.setProgress((double) items.indexOf(pr) / (double) items.size());
+            ExecutionIndicator.getInstance().setProgress((double) items.indexOf(pr) / (double) items.size());
         }
 
-        MainWindow.setProgress(0.0);
+        ExecutionIndicator.getInstance().setProgress(ExecutionIndicator.NO_OPERATION);
 
         return doubles;
     }

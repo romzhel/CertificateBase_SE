@@ -1,6 +1,6 @@
 package database;
 
-import ui_windows.main_window.MainWindow;
+import ui_windows.ExecutionIndicator;
 import ui_windows.product.Product;
 
 import java.sql.ResultSet;
@@ -54,8 +54,6 @@ public class ProductsDB extends DbRequest {
     public boolean updateData(List<Product> alpr) {
         long ts = System.currentTimeMillis();//test
 
-        MainWindow.setProgress(0.01);
-
         try {
             int count = 0;
             for (int i = 0; i < alpr.size(); i = i + 500) {
@@ -94,7 +92,7 @@ public class ProductsDB extends DbRequest {
                     updateData.setString(++count, alpr.get(j).getMaterial());
                     updateData.addBatch();
                 }
-                MainWindow.setProgress((double) j / (double) alpr.size());
+                ExecutionIndicator.getInstance().setProgress((double) j / (double) alpr.size());
 
                 connection.setAutoCommit(false);
                 int[] result = updateData.executeBatch();
@@ -124,8 +122,6 @@ public class ProductsDB extends DbRequest {
     }
 
     public boolean putData(ArrayList<Product> alpr) {
-        MainWindow.setProgress(0.01);
-
         int j = 0;
         try {
             int count = 0;
@@ -164,7 +160,7 @@ public class ProductsDB extends DbRequest {
                     addData.addBatch();
                 }
 
-                MainWindow.setProgress((double) j / (double) alpr.size());
+                ExecutionIndicator.getInstance().setProgress((double) j / (double) alpr.size());
                 connection.setAutoCommit(false);
                 int[] result = addData.executeBatch();
                 connection.commit();

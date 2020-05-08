@@ -1,6 +1,5 @@
 package database;
 
-import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.families_editor.ProductFamily;
 
 import java.sql.ResultSet;
@@ -46,8 +45,6 @@ public class ProductFamiliesDB extends DbRequest {
             addData.setString(1, pf.getName());
             addData.setString(2, pf.getResponsible());
 
-            MainWindow.setProgress(1.0);
-
             if (addData.executeUpdate() > 0) {//successful
                 ResultSet rs = addData.getGeneratedKeys();
 
@@ -72,8 +69,6 @@ public class ProductFamiliesDB extends DbRequest {
             updateData.setString(2, pf.getResponsible());
             updateData.setInt(3, pf.getId());
 
-            MainWindow.setProgress(1.0);
-
             if (updateData.executeUpdate() > 0) {//successful
                 return true;
             } else {
@@ -91,8 +86,6 @@ public class ProductFamiliesDB extends DbRequest {
         try {
             deleteData.setInt(1, pf.getId());
             deleteData.addBatch();
-
-            MainWindow.setProgress(1.0);
 
             int results[] = deleteData.executeBatch();
 

@@ -9,6 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
@@ -33,7 +34,7 @@ public class CertificateContentChecker {
 
     public CertificateContentChecker(final ObservableList<Certificate> certificates) {
         new Thread(() -> {
-            MainWindow.setProgress(-1);
+            ExecutionIndicator.getInstance().start();
             workbook = new XSSFWorkbook();
             workbook.createSheet("certificate(s)_countries_report");
             sheet = workbook.getSheetAt(0);
@@ -50,7 +51,7 @@ public class CertificateContentChecker {
 
             Platform.runLater(() -> saveToFile());
 
-            MainWindow.setProgress(0.0);
+            ExecutionIndicator.getInstance().stop();
         }).start();
     }
 

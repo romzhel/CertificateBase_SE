@@ -1,6 +1,5 @@
 package database;
 
-import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 
 import java.sql.ResultSet;
@@ -58,8 +57,6 @@ public class AccessibilityDB extends DbRequest {
             addData.setString(7, oa.getStatus());
             addData.setBoolean(8, oa.isOrderable());
 
-            MainWindow.setProgress(1.0);
-
             if (addData.executeUpdate() > 0) {//successful
                 ResultSet rs = addData.getGeneratedKeys();
 
@@ -81,8 +78,6 @@ public class AccessibilityDB extends DbRequest {
     }
 
     public boolean updateData(OrderAccessibility oa) {
-        MainWindow.setProgress(1.0);
-
         try {
             updateData.setString(1, oa.getStatusCode());
             updateData.setString(2, oa.getSesCode());
@@ -109,8 +104,6 @@ public class AccessibilityDB extends DbRequest {
     }
 
     public boolean deleteData(OrderAccessibility oa) {
-        MainWindow.setProgress(1.0);
-
         try {
             deleteData.setInt(1, oa.getId());
 

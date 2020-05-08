@@ -3,7 +3,6 @@ package ui_windows.main_window.file_import_window.se;
 import core.Dialogs;
 import database.ProductsDB;
 import files.reports.NowImportResultToExcel;
-import javafx.application.Platform;
 import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.MainWindowsController;
@@ -65,8 +64,8 @@ public class ImportNowFile implements Callable<File> {
 
         result = comparator.getComparisonResult();
 
-        Platform.runLater(() -> Dialogs.showMessage("Результаты импорта", "Новых позиций: " +
-                result.getNewItems().size() + "\nИзменённых позиций: " + result.getChangedItems().size()));
+        Dialogs.showMessageTS("Результаты импорта", "Новых позиций: " +
+                result.getNewItems().size() + "\nИзменённых позиций: " + result.getChangedItems().size());
 
         if (result.getChangedItems().size() + result.getNewItems().size() > 0) {
             changedItemsForDB.addAll(result.getChangedItems());

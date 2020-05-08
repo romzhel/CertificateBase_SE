@@ -5,6 +5,7 @@ import files.Folders;
 import files.price_to_excel.ExportPriceListToExcel_SE;
 import files.reports.ReportToExcel;
 import javafx.application.Platform;
+import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
@@ -33,7 +34,7 @@ public class PriceGenerationScript {
 
     public void run(int priceIndex, int generationMode) {
         new Thread(() -> {
-            MainWindow.setProgress(-1);
+            ExecutionIndicator.getInstance().start();
             PriceList priceList = PriceLists.getInstance().getItems().get(priceIndex);
             priceList.generate();
             System.out.println("new price list generated");
@@ -55,7 +56,7 @@ public class PriceGenerationScript {
                     Utils.openFile(priceListFile);
                     executorService.shutdown();
                     executorService.awaitTermination(1, TimeUnit.MINUTES);
-                    MainWindow.setProgress(0.0);
+                    ExecutionIndicator.getInstance().stop();
                     return;
                 }
 
@@ -108,7 +109,7 @@ public class PriceGenerationScript {
             } catch (Exception e) {
                 System.out.println(e.getMessage() + "\n" + e.getStackTrace());
             }
-            MainWindow.setProgress(0.0);
+            ExecutionIndicator.getInstance().stop();
         }).start();
     }
 

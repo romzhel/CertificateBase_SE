@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import scripts.PriceGenerationScript;
+import ui_windows.ExecutionIndicator;
 import ui_windows.login_window.LoginWindow;
 import ui_windows.main_window.file_import_window.se.ImportNowFile;
 import ui_windows.main_window.filter_window_se.FilterWindow_SE;
@@ -56,7 +57,7 @@ public class MainWindowsController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         mainTable = new MainTable(tvTable);
         Products.getInstance().setTableView(tvTable);
-        MainWindow.setProgressBar(pbExecuted);
+        ExecutionIndicator.getInstance().init(pbExecuted);
         MainWindow.setMiOptions(miOptions);
         dataSelectorMenu = new DataSelectorMenu(miDataSource);
 
@@ -84,7 +85,7 @@ public class MainWindowsController implements Initializable {
 
     public void openNow() {
         new Thread(() -> {
-            MainWindow.setProgress(-1);
+            ExecutionIndicator.getInstance().start();
             boolean isFullPackage = Dialogs.confirmTS("Формирование полного пакета отчётов",
                     "Желаете сформировать полный пакет отчётов?");
 
@@ -105,7 +106,7 @@ public class MainWindowsController implements Initializable {
             } else {
                 Utils.openFile(importNowFile.getReportFile(null));
             }
-            MainWindow.setProgress(0.0);
+            ExecutionIndicator.getInstance().stop();
         }).start();
     }
 
@@ -113,11 +114,11 @@ public class MainWindowsController implements Initializable {
         ArrayList<File> priceListFiles = new SelectPricesForComparisonWindow().getPriceListFiles();
         if (priceListFiles.get(0) != null) {
             new Thread(() -> {
-                MainWindow.setProgress(-1);
+                ExecutionIndicator.getInstance().start();
                 PricesComparator pricesComparator = new PricesComparator();
                 pricesComparator.compare(priceListFiles);
                 Utils.openFile(pricesComparator.exportToExcel(null));
-                MainWindow.setProgress(0.0);
+                ExecutionIndicator.getInstance().stop();
             }).start();
         }
     }

@@ -10,6 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.MainWindow;
 import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
@@ -54,7 +55,7 @@ public class PriceComparisonMergerResultToExcel {
 
         if ((reportFile != null)) {
 //                new Thread(() -> {
-            MainWindow.setProgress(-1);
+            ExecutionIndicator.getInstance().start();
             XSSFRow row;
 
             fillTitles(pricesComparator.getOldPriceFi().getExcelFile().getSheetsName());
@@ -120,7 +121,7 @@ public class PriceComparisonMergerResultToExcel {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                MainWindow.setProgress(0.0);
+                ExecutionIndicator.getInstance().stop();
             }
 
 //                }).start();

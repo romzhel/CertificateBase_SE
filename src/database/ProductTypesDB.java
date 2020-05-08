@@ -1,6 +1,5 @@
 package database;
 
-import ui_windows.main_window.MainWindow;
 import ui_windows.product.ProductType;
 
 import java.sql.ResultSet;
@@ -47,8 +46,6 @@ public class ProductTypesDB extends DbRequest {
             addData.setString(1, pt.getType());
             addData.setString(2, pt.getTen());
 
-            MainWindow.setProgress(1.0);
-
             if (addData.executeUpdate() > 0) {
                 ResultSet rs = addData.getGeneratedKeys();
 
@@ -75,8 +72,6 @@ public class ProductTypesDB extends DbRequest {
 
             updateData.setInt(3, pt.getId());
 
-            MainWindow.setProgress(1.0);
-
             if (updateData.executeUpdate() > 0) {//successful
                 return true;
             } else {
@@ -92,14 +87,10 @@ public class ProductTypesDB extends DbRequest {
 
     public boolean deleteData(ProductType pt) {
         try {
-            MainWindow.setProgress(1.0);
-
             deleteData.setInt(1, pt.getId());
             deleteData.addBatch();
 
             int results[] = deleteData.executeBatch();
-
-            MainWindow.setProgress(0.0);
 
             for (int res : results) {
                 if (res > 0) {

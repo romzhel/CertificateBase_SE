@@ -355,7 +355,7 @@ public class Utils {
                 System.out.println("open file exception " + e.getMessage());
             }
         } else {
-            Dialogs.showMessageTS("Открытие файла", "Не удалось открыть файл \n" + file.getPath());
+            Dialogs.showMessageTS("Открытие файла", "Не удалось открыть файл");
         }
     }
 

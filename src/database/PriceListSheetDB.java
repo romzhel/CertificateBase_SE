@@ -1,7 +1,6 @@
 package database;
 
 import files.price_to_excel.HierarchyGroup;
-import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 
 import java.sql.ResultSet;
@@ -68,8 +67,6 @@ public class PriceListSheetDB extends DbRequest {
             addData.setInt(index++, pls.getSortOrder() == HierarchyGroup.SORT_MATERIAL ? 0 : 1);
             addData.setBoolean(index++, pls.isCheckCert());
 
-            MainWindow.setProgress(1.0);
-
             if (addData.executeUpdate() > 0) {//successful
                 ResultSet rs = addData.getGeneratedKeys();
 
@@ -91,8 +88,6 @@ public class PriceListSheetDB extends DbRequest {
     }
 
     public boolean updateData(PriceListSheet pls) {
-        MainWindow.setProgress(1.0);
-
         try {
             int index = 1;
             updateData.setInt(index++, pls.getPriceListId());
@@ -126,8 +121,6 @@ public class PriceListSheetDB extends DbRequest {
     }
 
     public boolean deleteData(PriceListSheet pls) {
-        MainWindow.setProgress(1.0);
-
         try {
             deleteData.setInt(1, pls.getSheetId());
 

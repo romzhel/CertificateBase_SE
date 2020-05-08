@@ -1,6 +1,5 @@
 package database;
 
-import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.requirements_types_editor.RequirementType;
 
 import java.sql.ResultSet;
@@ -47,8 +46,6 @@ public class RequirementTypesDB extends DbRequest {
             addData.setString(1, ct.getShortName());
             addData.setString(2, ct.getFullName());
 
-            MainWindow.setProgress(1.0);
-
             if (addData.executeUpdate() > 0) {//successful
                 ResultSet rs = addData.getGeneratedKeys();
 
@@ -74,8 +71,6 @@ public class RequirementTypesDB extends DbRequest {
             updateData.setString(2, ct.getFullName());
             updateData.setInt(3, ct.getId());
 
-            MainWindow.setProgress(1.0);
-
             if (updateData.executeUpdate() > 0) {//successful
                 return true;
             } else {
@@ -92,8 +87,6 @@ public class RequirementTypesDB extends DbRequest {
     public boolean deleteData(RequirementType ct) {
         try {
             deleteData.setInt(1, ct.getId());
-
-            MainWindow.setProgress(1.0);
 
             if (deleteData.executeUpdate() > 0) {//successful
                 return true;

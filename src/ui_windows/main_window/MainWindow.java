@@ -10,23 +10,21 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.filter_window_se.FilterParameters_SE;
 import ui_windows.options_window.profile_editor.Profile;
 import ui_windows.options_window.user_editor.Users;
 import utils.Utils;
 
-import java.io.IOException;
+import java.io.File;
 
 import static ui_windows.options_window.profile_editor.SimpleRight.HIDE;
 
 public class MainWindow extends Application {
     private static Stage mainStage;
     private static AnchorPane rootAnchorPane;
-    private static ProgressBar progressBar;
-    private static double progressBarValue;
     private static MenuItem miOptions;
     private static FXMLLoader fxmlLoader;
     private static MainWindowsController controller;
@@ -54,29 +52,6 @@ public class MainWindow extends Application {
 
     public static Stage getMainStage() {
         return mainStage;
-    }
-
-    public static synchronized void setProgress(double value) {
-        progressBarValue = value;
-
-        Platform.runLater(() -> {
-            if (progressBar != null) {
-                progressBar.setVisible(progressBarValue != 0);
-                progressBar.setProgress(value);
-            }
-        });
-    }
-
-    public static ProgressBar getProgressBar() {
-        return progressBar;
-    }
-
-    public static void setProgressBar(ProgressBar progressBar) {
-        MainWindow.progressBar = progressBar;
-    }
-
-    public static synchronized double getProgressBarValue() {
-        return progressBarValue;
     }
 
     public static FXMLLoader getFxmlLoader() {
@@ -140,29 +115,24 @@ public class MainWindow extends Application {
         }
 
         mainStage.setOnCloseRequest(event -> {
-            try {
-                if (Folders.getInstance().getTempFolder().exists())
-                    Utils.deleteFolder(Folders.getInstance().getTempFolder().toPath());
-            } catch (IOException ioe) {
-                System.out.printf("deleting error %s", ioe.getMessage());
-            }
-
-            if (progressBarValue > 0) {
+            if (ExecutionIndicator.getInstance().hasActiveProcess()) {
                 event.consume();
-                Dialogs.showMessage("Закрытие программы", "Активен процесс записи в базу " +
-                        "данных. Программа закроется автоматически после его завершения.");
+                Dialogs.showMessage("Закрытие программы", "Не все процессы завершены. " +
+                        "Повторите попытку чуть позже.");
+            } else {
+                try {
+                    File tempFolder = Folders.getInstance().getTempFolder();
+                    if (tempFolder.exists() && tempFolder.list() != null && tempFolder.list().length > 0) {
+                        Utils.openFile(Folders.getInstance().getTempFolder());
 
-                new Thread(() -> {
-                    try {
-                        while (progressBarValue != 0.0) {
-                            Thread.currentThread().sleep(1000);
+                        if (Dialogs.confirmTS("Удаление временной папки",
+                                "Временная папка не пуста.\n\nУдалить временную папку и все файлы внутри неё?")) {
+                            Utils.deleteFolder(Folders.getInstance().getTempFolder().toPath());
                         }
-                    } catch (InterruptedException e) {
-                        System.out.println(e.getMessage());
                     }
-
-                    Platform.exit();
-                }).start();
+                } catch (Exception e) {
+                    System.out.printf(e.getMessage());
+                }
             }
         });
     }

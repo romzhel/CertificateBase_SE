@@ -1,6 +1,5 @@
 package database;
 
-import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.certificates_editor.Certificate;
 
 import java.sql.ResultSet;
@@ -55,8 +54,6 @@ public class CertificatesDB extends DbRequest {
             addData.setBoolean(7, cert.isMaterialMatch());
             addData.setInt(8, cert.getUserId());
 
-            MainWindow.setProgress(1.0);
-
             if (addData.executeUpdate() > 0) {//successful
                 ResultSet rs = addData.getGeneratedKeys();
 
@@ -89,8 +86,6 @@ public class CertificatesDB extends DbRequest {
             updateData.setInt(8, cert.getUserId());
             updateData.setInt(9, cert.getId());
 
-            MainWindow.setProgress(1.0);
-
             if (updateData.executeUpdate() > 0) {//successful
                 return true;
             } else {
@@ -108,8 +103,6 @@ public class CertificatesDB extends DbRequest {
     public boolean deleteData(Certificate cert) {
         try {
             deleteData.setInt(1, cert.getId());
-
-            MainWindow.setProgress(1.0);
 
             if (deleteData.executeUpdate() > 0) {//successful
                 return true;
