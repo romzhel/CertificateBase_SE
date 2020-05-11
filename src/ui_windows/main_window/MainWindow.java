@@ -28,7 +28,7 @@ public class MainWindow extends Application {
     private static MenuItem miOptions;
     private static FXMLLoader fxmlLoader;
     private static MainWindowsController controller;
-    private String version = "1.3.1.4 (beta) от 27.04.2020";
+    private String version = "1.3.2.0 (beta) от 11.05.2020";
 
     public static void main(String[] args) {
         launch(args);
@@ -122,11 +122,13 @@ public class MainWindow extends Application {
             } else {
                 try {
                     File tempFolder = Folders.getInstance().getTempFolder();
-                    if (tempFolder.exists() && tempFolder.list() != null && tempFolder.list().length > 0) {
+                    String[] filesList;
+                    if (tempFolder.exists() && (filesList = tempFolder.list((dir, name) -> name.matches(".*\\.xlsx?$"))) != null
+                            && filesList.length > 0) {
                         Utils.openFile(Folders.getInstance().getTempFolder());
 
                         if (Dialogs.confirmTS("Удаление временной папки",
-                                "Временная папка не пуста.\n\nУдалить временную папку и все файлы внутри неё?")) {
+                                "Временная папка не пуста.\n\nУдалить временную папку и все файлы внутри неё?\n")) {
                             Utils.deleteFolder(Folders.getInstance().getTempFolder().toPath());
                         }
                     }

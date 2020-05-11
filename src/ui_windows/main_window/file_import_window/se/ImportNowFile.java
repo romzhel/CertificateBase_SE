@@ -4,8 +4,6 @@ import core.Dialogs;
 import database.ProductsDB;
 import files.reports.NowImportResultToExcel;
 import ui_windows.main_window.DataSelectorMenu;
-import ui_windows.main_window.MainWindow;
-import ui_windows.main_window.MainWindowsController;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
@@ -55,8 +53,8 @@ public class ImportNowFile implements Callable<File> {
 
             comparator.compare(Products.getInstance().getItems(), new DoublesPreprocessor(fileImport.getProductItems()).getTreatedItems(),
                     new ComparingParameters(new Adapter<Product>().convert(importParameters), new ComparingRulesImportNow(), WITHOUT_GONE));
+            comparator.fixChanges();
         }
-        comparator.fixChanges();
 
         if (!isThereFiles) {
             return false;
@@ -71,8 +69,6 @@ public class ImportNowFile implements Callable<File> {
             changedItemsForDB.addAll(result.getChangedItems());
             Products.getInstance().getItems().addAll(result.getNewItems());
 
-            MainWindowsController mwc = MainWindow.getFxmlLoader().getController();
-//            mwc.getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_LAST_IMPORT_RESULT);
             DataSelectorMenu.MENU_DATA_LAST_IMPORT_RESULT.activate();
 
             if (result.getNewItems().size() > 0)
