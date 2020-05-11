@@ -208,12 +208,12 @@ public class MainTable implements Module {
     }
 
     public void refreshData(List<Product> itemsForDisplaying) {
-            tvTable.getItems().clear();
-            tvTable.getItems().addAll(itemsForDisplaying);
-            tvTable.refresh();
-            MainWindowsController mwc = MainWindow.getController();
-            if (mwc != null) {
-                mwc.lbRecordCount.setText(String.valueOf(tvTable.getItems().size()));
-            }
+        tvTable.getItems().clear();
+        tvTable.getItems().addAll(itemsForDisplaying);
+        tvTable.refresh();
+        MainWindowsController mwc = MainWindow.getController();
+        if (mwc != null) {
+            mwc.lbRecordCount.setText(String.valueOf(tvTable.getItems().size()));
+        }
     }
 }

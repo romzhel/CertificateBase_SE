@@ -3,7 +3,7 @@ package ui_windows.main_window.filter_window_se;
 import core.Module;
 import core.SharedData;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
-import ui_windows.options_window.product_lgbk.ProductLgbks;
+import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.product.Product;
 
 import java.util.ArrayList;
@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import static core.SharedData.*;
 import static ui_windows.main_window.filter_window_se.FilterParameters_SE.*;
@@ -21,12 +22,10 @@ import static ui_windows.product.data.DataItem.DATA_EMPTY;
 
 public class Filter_SE implements Module {
     private static Filter_SE instance;
-//    private ExecutorService filterExecutors;
 
     private Filter_SE() {
         SHD_DATA_SET.subscribe(this);
         SHD_FILTER_PARAMETERS.subscribe(this);
-//        filterExecutors = Executors.newFixedThreadPool(2);
     }
 
     public static Filter_SE getInstance() {
@@ -44,22 +43,22 @@ public class Filter_SE implements Module {
             return;
         }
 
-        parameters.getFamilies().clear();
-        parameters.getFamilies().add(ALL_FAMILIES);
-
-        parameters.getLgbks().clear();
-        parameters.getLgbks().add(ALL_LGBKS);
-
-        parameters.getHierarchies().clear();
-        parameters.getHierarchies().add(ALL_LGBKS);
+        parameters.clearComboBoxItems();
 
         List<Product> result = new ArrayList<>();
+        Pattern pattern;
+        try {
+            pattern = Pattern.compile(
+                    String.format(".*%s.*", parameters.getSearchText().replaceAll("\\*", ".*")),
+                    Pattern.CASE_INSENSITIVE);
+        } catch (PatternSyntaxException e) {
+            System.out.println(e.getMessage());
+            pattern = Pattern.compile(
+                    String.format(".*%s.*", parameters.getSearchText().replaceAll("[\\*\\(\\)\\[\\]]", ".*")),
+                    Pattern.CASE_INSENSITIVE);
+        }
 
-        Pattern pattern = Pattern.compile(
-                String.format(".*%s.*", parameters.getSearchText().replaceAll("\\*", ".*")),
-                Pattern.CASE_INSENSITIVE);
-
-//        long t1 = System.currentTimeMillis();
+//        System.out.println(Utils.getExactTime());
 
         boolean searchTextMatches;
         boolean priceMatches;
@@ -67,7 +66,6 @@ public class Filter_SE implements Module {
         boolean lgbkMatches;
         boolean hierarchyMatch;
         boolean customMatches;
-
 
         for (Product product : dataSet) {
             searchTextMatches = pattern.matcher(product.getArticle()).matches() || pattern.matcher(product.getMaterial()).matches();
@@ -90,13 +88,13 @@ public class Filter_SE implements Module {
 
                 parameters.getFamilies().add(product.getProductFamilyDefValue(FAMILY_NOT_ASSIGNED));
 
-                ProductLgbk lgbk = ProductLgbks.getInstance().getGroupLgbkByName(product.getLgbk());
+                ProductLgbk lgbk = ProductLgbkGroups.getInstance().getLgbkAndParent(new ProductLgbk(product)).getLgbkItem();
                 parameters.getLgbks().add(lgbk == null || lgbk.getLgbk().isEmpty() ? LGBK_NO_DATA : lgbk);
-
-                ProductLgbk hier = ProductLgbks.getInstance().getLgbkByProduct(product);
-                parameters.getHierarchies().add(hier == null || hier.getHierarchy().isEmpty() ? LGBK_NO_DATA : hier);
+                parameters.getHierarchies().add(lgbk == null || lgbk.getHierarchy().isEmpty() ? LGBK_NO_DATA : lgbk);
             }
         }
+
+//        System.out.println(Utils.getExactTime() + " result arraylist filled");
 
 //        print("families: ", parameters.getFamilies(), (f) -> f.getName());
 //        print("lgbks: ", parameters.getLgbks(), (l) -> l.getLgbk());

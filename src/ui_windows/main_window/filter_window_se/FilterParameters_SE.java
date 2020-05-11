@@ -123,6 +123,17 @@ public class FilterParameters_SE {
         return this;
     }
 
+    public void clearComboBoxItems() {
+        families.clear();
+        families.add(ALL_FAMILIES);
+
+        lgbks.clear();
+        lgbks.add(ALL_LGBKS);
+
+        hierarchies.clear();
+        hierarchies.add(ALL_LGBKS);
+    }
+
     public ItemsSelection getFilterItems() {
         return filterItems;
     }
