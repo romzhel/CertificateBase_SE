@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.options_window.price_lists_editor.se.PriceListEditorWindowControllerv2">
+   <children>
+      <TabPane fx:id="mainTabPane" layoutX="22.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+        <tabs>
+          <Tab text="Прайс лист">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TextField fx:id="tfPriceName" layoutX="184.0" layoutY="44.0" prefHeight="25.0" prefWidth="594.0" />
+                        <TextField fx:id="tfTemplateName" editable="false" layoutX="184.0" layoutY="115.0" prefHeight="25.0" prefWidth="518.0" />
+                        <Button fx:id="btnTemplatePath" layoutX="708.0" layoutY="115.0" mnemonicParsing="false" onAction="#setTemplateFile" prefHeight="25.0" prefWidth="69.0" text="Обзор" />
+                        <Label alignment="CENTER_RIGHT" layoutX="22.0" layoutY="48.0" prefHeight="17.0" prefWidth="143.0" text="Название прайс-листа" />
+                        <Label alignment="CENTER_RIGHT" layoutX="52.0" layoutY="119.0" prefHeight="17.0" prefWidth="112.0" text="Шаблон" />
+                        <Label alignment="CENTER_RIGHT" layoutX="25.0" layoutY="84.0" prefHeight="17.0" prefWidth="139.0" text="Название файла" />
+                        <TextField fx:id="tfPriceFileName" layoutX="184.0" layoutY="80.0" prefHeight="25.0" prefWidth="594.0" />
+                        <Label alignment="CENTER_RIGHT" layoutX="52.0" layoutY="154.0" prefHeight="17.0" prefWidth="112.0" text="Место сохранения" />
+                        <Button fx:id="btnDestibationPath" layoutX="708.0" layoutY="150.0" mnemonicParsing="false" onAction="#setDestinationFile" prefHeight="25.0" prefWidth="69.0" text="Обзор" />
+                        <TextField fx:id="tfDestinationFolder" editable="false" layoutX="184.0" layoutY="150.0" prefHeight="25.0" prefWidth="518.0" />
+                     </children>
+                  </AnchorPane>
+            </content>
+               <contextMenu>
+                  <ContextMenu>
+                    <items>
+                      <MenuItem fx:id="miAddSheet" mnemonicParsing="false" onAction="#actionAddSheet" text="     Добавить лист     " />
+                    </items>
+                  </ContextMenu>
+               </contextMenu>
+          </Tab>
+        </tabs>
+      </TabPane>
+      <Button fx:id="btnApply" layoutX="195.0" layoutY="567.0" mnemonicParsing="false" onAction="#actionApply" prefHeight="25.0" prefWidth="118.0" text="Сохранить" />
+      <Button fx:id="btnClose" layoutX="622.0" layoutY="567.0" mnemonicParsing="false" onAction="#actionClose" prefHeight="25.0" prefWidth="118.0" text="Закрыть" />
+   </children>
+</AnchorPane>

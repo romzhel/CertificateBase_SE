@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<AnchorPane minHeight="650.0" minWidth="1250.0" prefHeight="650.0" prefWidth="1250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.main_window.MainWindowsController">
+    <children>
+      <AnchorPane prefHeight="25.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+        <MenuBar fx:id="mnuBar" layoutY="2.0" prefHeight="25.0" prefWidth="1200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <menus>
+                <Menu fx:id="miFile" mnemonicParsing="false" text="   Файл   ">
+                    <items>
+                        <MenuItem fx:id="mniOpenNow" mnemonicParsing="false" onAction="#openNow" text="     Обновить данные     " />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <Menu fx:id="mPriceList" mnemonicParsing="false" text="     Сгенерировать прайс лист     " />
+                  <MenuItem mnemonicParsing="false" onAction="#comparePriceLists" text="     Сравнить прайс-листы     " />
+                    </items>
+                </Menu>
+                <Menu fx:id="miOptions" mnemonicParsing="false" text="   Настройки  ">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#openOptionsWindow" text="     Открыть окно настроек     " />
+                    </items>
+                </Menu>
+            <Menu mnemonicParsing="false" text="   Запросы   ">
+              <items>
+                <MenuItem fx:id="miRequestCertExistence" mnemonicParsing="false" onAction="#actionRequest" text="     Заказные позиции     " />
+              </items>
+            </Menu>
+            <Menu fx:id="miDataSource" mnemonicParsing="false" text="   Данные   " />
+            <Menu mnemonicParsing="false" text="   Фильтр   ">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#displayFilterOptions" text="     Настройки фильтра     " />
+              </items>
+            </Menu>
+                <Menu mnemonicParsing="false" text="   Авторизация   ">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#actionLogin" text="     Ввести пароль     " />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#userInfo" text="     Данные о текущем пользователе     " />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <TableView fx:id="tvTable" layoutX="26.0" layoutY="34.0" prefHeight="513.0" prefWidth="1180.0" stylesheets="@../css/strikethrough.css" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="30.0" />
+        <Label fx:id="lSearch" alignment="CENTER_RIGHT" layoutX="96.0" layoutY="578.0" prefHeight="17.0" prefWidth="53.0" text="Поиск" AnchorPane.bottomAnchor="42.0" AnchorPane.leftAnchor="96.0" />
+        <Label layoutX="989.0" layoutY="578.0" text="Найдено записей:" AnchorPane.bottomAnchor="42.0" AnchorPane.rightAnchor="112.0" />
+        <Label fx:id="lbRecordCount" layoutX="1092.0" layoutY="578.0" text="ХХХХХХХ" AnchorPane.bottomAnchor="42.0" AnchorPane.rightAnchor="58.0" />
+      <Pane layoutY="770.0" prefHeight="25.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+      <ProgressBar fx:id="pbExecuted" layoutX="993.0" layoutY="5.0" prefWidth="200.0" progress="0.0" visible="false" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+      <ImageView fx:id="ivFilter" fitHeight="25.0" fitWidth="50.0" layoutX="620.0" layoutY="586.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="39.0" AnchorPane.leftAnchor="620.0">
+         <image>
+            <Image url="@../../../resources/images/filter.png" />
+         </image>
+      </ImageView>
+    </children>
+</AnchorPane>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane prefHeight="115.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.login_window.LoginWindowController">
+   <children>
+      <PasswordField fx:id="pfPassword" layoutX="121.0" layoutY="27.0" />
+      <Button layoutX="40.0" layoutY="73.0" mnemonicParsing="false" onAction="#actionOK" prefHeight="25.0" prefWidth="107.0" text="ОК" />
+      <Button layoutX="161.0" layoutY="73.0" mnemonicParsing="false" onAction="#actionCancel" prefHeight="25.0" prefWidth="107.0" text="Отмена" />
+      <Label alignment="CENTER_RIGHT" layoutX="24.0" layoutY="31.0" text="Введите пароль" />
+   </children>
+</AnchorPane>

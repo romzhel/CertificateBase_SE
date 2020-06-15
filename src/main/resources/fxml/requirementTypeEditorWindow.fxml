@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane fx:id="apPane" prefHeight="235.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.options_window.requirements_types_editor.RequirementTypeEditorWindowController">
+   <children>
+      <TextField fx:id="tfShortName" layoutX="195.0" layoutY="26.0" prefHeight="25.0" prefWidth="445.0" />
+      <Label alignment="CENTER_RIGHT" layoutX="3.0" layoutY="31.0" prefHeight="17.0" prefWidth="175.0" text="Сокращенное название" textAlignment="RIGHT" />
+      <Label alignment="CENTER_RIGHT" layoutX="3.0" layoutY="66.0" prefHeight="17.0" prefWidth="175.0" text="Полное название" textAlignment="RIGHT" />
+      <Button fx:id="btnApply" layoutX="133.0" layoutY="189.0" mnemonicParsing="false" onAction="#apply" prefHeight="25.0" prefWidth="150.0" text="Сохранить" />
+      <Button fx:id="btnCancel" layoutX="416.0" layoutY="189.0" mnemonicParsing="false" onAction="#close" prefHeight="25.0" prefWidth="150.0" text="Отмена" />
+      <TextArea fx:id="taFullName" layoutX="195.0" layoutY="66.0" prefHeight="65.0" prefWidth="445.0" wrapText="true" />
+   </children>
+</AnchorPane>
