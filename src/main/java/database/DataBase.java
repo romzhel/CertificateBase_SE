@@ -1,5 +1,7 @@
 package database;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sqlite.SQLiteConfig;
 import ui_windows.ExecutionIndicator;
 
@@ -10,49 +12,74 @@ import java.util.TimerTask;
 import java.util.function.Supplier;
 
 public class DataBase {
+    private static final Logger logger = LogManager.getLogger(DataBase.class);
     private static DataBase instance;
     private Connection dbConnection;
-    private File dataBaseFile;
+    private File dbFile;
     private Timer timer;
-    private boolean firstStart = true;
+    private boolean firstStart;
     private Supplier<Boolean> disconnectLink;
+    private SQLiteConfig config;
 
-    private DataBase() {
-        disconnectLink = this::disconnect;
-    }
-
-    public static DataBase getInstance() {
-        if (instance == null) {
-            instance = new DataBase();
-        }
-        return instance;
-    }
-
-    public boolean connect(File dbFile) {
-        SQLiteConfig config = null;
+    private DataBase() throws Exception {
         try {
             Class.forName("org.sqlite.JDBC");
             config = new SQLiteConfig();
             config.setJournalMode(SQLiteConfig.JournalMode.TRUNCATE);
-        } catch (ClassNotFoundException e1) {
-            System.out.println("DB class not found " + e1.getMessage());
+            disconnectLink = this::disconnect;
+        } catch (Exception e) {
+            logger.fatal(e.getMessage());
+            throw new RuntimeException(e);
         }
+    }
 
-        try {
-            dbConnection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getPath(), config.toProperties());
-            dataBaseFile = dbFile;
-
-            System.out.println("DB connected");
-            ExecutionIndicator.getInstance().start();
-            if (firstStart) {
-                System.out.println(getDbJournalingMode());
+    public static DataBase getInstance() {
+        if (instance == null) {
+            try {
+                instance = new DataBase();
+            } catch (Exception e) {
+                logger.fatal("error DB class creating {}", e.getMessage(), e);
             }
+        }
+        return instance;
+    }
+
+    public boolean firstConnect(File mainDbFile, File cashedDbFile) throws Exception {
+        firstStart = true;
+        try {
+            dbConnection = DriverManager.getConnection("jdbc:sqlite:" + cashedDbFile.getPath(), config.toProperties());
+            dbFile = mainDbFile;
+
+            logger.debug("cashed db file {} is connected, journaling mode {}", cashedDbFile, getDbJournalingMode());
+            logger.debug("main db file is {}", dbFile);
+
             return true;
         } catch (SQLException e2) {
-            System.out.println("can't connect to DB file " + e2.getMessage());
+            logger.fatal("can't connect to DB file {}", e2.getMessage());
         }
 
         return false;
+    }
+
+    public Connection reconnect() {
+        if (timer != null) {
+            timer.cancel();
+            logger.debug("db delayed disconnection timer is cancelled");
+        }
+
+        try {
+            if (dbConnection.isClosed()) {
+                dbConnection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getPath(), config.toProperties());
+
+                logger.debug("main db file {} is connected", dbFile);
+
+                ExecutionIndicator.getInstance().start();
+            }
+        } catch (SQLException e) {
+            logger.error("db reconnect error: {}", e.getMessage(), e);
+        }
+
+        return dbConnection;
     }
 
     public void requestToDisconnect() {
@@ -63,51 +90,40 @@ public class DataBase {
                 disconnectLink.get();
             }
         }, 3000);
+        logger.debug("db delayed disconnection timer started");
     }
 
     public boolean disconnect() {
         try {
             if (!dbConnection.isClosed()) {
+                if (firstStart) {
+                    firstStart = false;
+                } else {
+                    new DbBackuper();
+                }
+
                 dbConnection.close();
-                System.out.println("DB disconnected");
+                logger.debug("db disconnected");
+
                 ExecutionIndicator.getInstance().stop();
             }
             return true;
         } catch (Exception e2) {
-            System.out.println("error of DB closing " + e2.getMessage());
+            logger.warn("error of DB closing {}", e2.getMessage(), e2);
             return false;
         }
     }
 
-    public Connection reconnect() {
-        if (timer != null) {
-            timer.cancel();
-        }
-
-        try {
-            if (dbConnection.isClosed()) {
-                connect(dataBaseFile);
-
-                new DbBackuper();
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return dbConnection;
-    }
-
-    public ResultSet getData(String request) {
+    /*public ResultSet getData(String request) {
         try {
             return dbConnection.prepareStatement(request).executeQuery();
         } catch (SQLException e) {
             System.out.println("error of getting data from DB");
         }
         return null;
-    }
+    }*/
 
     public String getDbJournalingMode() {
-        firstStart = false;
         String result = "";
         try {
             dbConnection.setAutoCommit(true);
@@ -116,7 +132,7 @@ public class DataBase {
             result = rs.getString(1);
             rs.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.warn("error getting db journaling mode {}", e.getMessage());
         }
         return "jMode = " + result;
     }
@@ -125,7 +141,7 @@ public class DataBase {
         return dbConnection;
     }
 
-    public File getDataBaseFile() {
-        return dataBaseFile;
+    public File getDbFile() {
+        return dbFile;
     }
 }

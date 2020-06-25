@@ -2,6 +2,8 @@ package ui_windows.main_window.filter_window_se;
 
 import core.Module;
 import core.SharedData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.product.Product;
@@ -22,6 +24,7 @@ import static ui_windows.product.data.DataItem.DATA_EMPTY;
 
 public class Filter_SE implements Module {
     private static Filter_SE instance;
+    private static final Logger logger = LogManager.getLogger(Filter_SE.class);
 
     private Filter_SE() {
         SHD_DATA_SET.subscribe(this);
@@ -40,8 +43,12 @@ public class Filter_SE implements Module {
         FilterParameters_SE parameters = SHD_FILTER_PARAMETERS.getData();
 
         if (dataSet == null || parameters == null) {
+            logger.warn("can't filtering - no dataset or parameters");
             return;
         }
+
+        logger.debug("start filtering, try to find '{}' ...", parameters.getSearchText());
+        long t1 = System.currentTimeMillis();
 
         parameters.clearComboBoxItems();
 
@@ -93,6 +100,7 @@ public class Filter_SE implements Module {
                 parameters.getHierarchies().add(lgbk == null || lgbk.getHierarchy().isEmpty() ? LGBK_NO_DATA : lgbk);
             }
         }
+        logger.debug("finding process finished, results: {}, time elapsed: {} ms", result.size(), System.currentTimeMillis() - t1);
 
 //        System.out.println(Utils.getExactTime() + " result arraylist filled");
 

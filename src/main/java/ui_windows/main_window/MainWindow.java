@@ -3,6 +3,8 @@ package ui_windows.main_window;
 import core.AddActions;
 import core.CoreModule;
 import core.Dialogs;
+import core.logger.LoggerInit;
+import core.logger.LogsBackuper;
 import database.DataBase;
 import files.Folders;
 import javafx.application.Application;
@@ -12,6 +14,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
 import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.filter_window_se.FilterParameters_SE;
 import ui_windows.options_window.profile_editor.Profile;
@@ -19,18 +25,24 @@ import ui_windows.options_window.user_editor.Users;
 import utils.Utils;
 
 import java.io.File;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static ui_windows.options_window.profile_editor.SimpleRight.HIDE;
 
 public class MainWindow extends Application {
+    private static final String version = "1.3.3.0 (beta) от 25.06.2020";
+    private static final LoggerInit loggerInit = new LoggerInit();
+    private static final Logger logger = LogManager.getLogger(MainWindow.class);
     private static Stage mainStage;
     private static AnchorPane rootAnchorPane;
     private static MenuItem miOptions;
     private static FXMLLoader fxmlLoader;
     private static MainWindowsController controller;
-    private String version = "1.3.2.0 (beta) от 11.05.2020";
 
     public static void main(String[] args) {
+        logger.info("App starting, user = {}, app version = {}", System.getProperty("user.name"), version);
         launch(args);
     }
 
@@ -109,7 +121,7 @@ public class MainWindow extends Application {
 //        OptionsWindow certificateOverviewWindow = new OptionsWindow();
 //        certificateOverviewWindow.open();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.fatal("Program init error {}", e.getMessage(), e);
             Dialogs.showMessage("Ошибка инициализация программы", "Программа не может продолжить работу." +
                     "\nПричина: " + e.getMessage());
             Platform.exit();
@@ -124,7 +136,8 @@ public class MainWindow extends Application {
                 try {
                     File tempFolder = Folders.getInstance().getTempFolder();
                     String[] filesList;
-                    if (tempFolder.exists() && (filesList = tempFolder.list((dir, name) -> name.matches(".*\\.xlsx?$"))) != null
+                    if (tempFolder != null && tempFolder.exists()
+                            && (filesList = tempFolder.list((dir, name) -> name.matches(".*\\.xlsx?$"))) != null
                             && filesList.length > 0) {
                         Utils.openFile(Folders.getInstance().getTempFolder());
 
@@ -133,9 +146,21 @@ public class MainWindow extends Application {
                             Utils.deleteFolder(Folders.getInstance().getTempFolder().toPath());
                         }
                     }
+                    logger.info("app closed");
+
+                    Configuration conf = ((LoggerContext) LogManager.getContext(false)).getConfiguration();
+                    conf.getAppenders().get("FILE").stop();
+
+                    new Thread(() -> {
+                        ScheduledExecutorService logsTreatment = Executors.newSingleThreadScheduledExecutor();
+                        logsTreatment.schedule(() -> LogsBackuper.getInstance().backup(), 3, TimeUnit.SECONDS);
+                        logsTreatment.shutdown();
+                    }).start();
+
                 } catch (Exception e) {
-                    System.out.printf(e.getMessage());
+                    logger.error("app closing error: {}", e.getMessage(), e);
                 }
+
             }
         });
     }

@@ -1,22 +1,33 @@
 package files;
 
 import core.Dialogs;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.main_window.MainWindow;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class Folders {
+    private static final Logger logger = LogManager.getLogger(Folders.class);
     private static Folders instance;
-    private final String dbFolder = "\\\\rumowmc0022dat\\SBT.RU\\SBT\\FS\\Base";
-    private File dbFile;
+    public static final String APP_FOLDER = System.getProperty("user.home") + "\\AppData\\Roaming\\CertificateBase\\";
+    public static final String REMOTE_DB_FOLDER = "\\\\rumowmc0022dat\\SBT.RU\\SBT\\FS\\Base\\";
+    public static final String DB_FILE_NAME = "certificateDB.db";
+    private String currentFolder;
+    private File tempFolder;
+    private File mainDbFile;
+    private File cashedDbFile;
     private File certFolder;
     private File manualsFolder;
-    private File tempFolder;
     private File templatesFolder;
-    private PathFile pathFile;
-    private String appFolder;
     private File dbBackupFolder;
+    private File appLogsFolder;
+    private File remoteLogsFolder;
+    private PathFile pathFile;
 
     private Folders() {
     }
@@ -28,57 +39,92 @@ public class Folders {
         return instance;
     }
 
-    public void init() throws RuntimeException {
-        appFolder = System.getProperty("user.dir");
-        File remoteBaseFile = new File(dbFolder + "\\certificateDB.db");
-        File localBaseFile = new File(appFolder + "\\certificateDB.db");
-
-        if (remoteBaseFile.exists()) {
-            dbFile = remoteBaseFile;
-        } else if (localBaseFile.exists()) {
-            dbFile = localBaseFile;
-
-            Dialogs.showMessage("Подключение к базе данных", "Был найден локальный файл базы данных. " +
-                    "Обратите внимание, что все изменения будут сохраняться в этом файле.");
-        } else if (!localBaseFile.exists()) {
-            //check path file
-            pathFile = new PathFile();
-            dbFile = pathFile.getDBFile();
-
-            if (dbFile == null) {
-                Dialogs.showMessage("Подключение к базе данных", "Файл базы данных не был найден. Как это " +
-                        "сообщение будет закрыто откроется диалог открытия файла. Местонахождение файла:\n\n" + dbFolder);
-                dbFile = Dialogs.selectDBFile(MainWindow.getMainStage());
-
-                //create new path file
-                if (dbFile != null && dbFile.exists()) {//save
-                    pathFile.createDBFile(dbFile);
-                } else {
-                    throw new RuntimeException("Файл базы данных не был найден.");
-                }
-            }
+    public void init() throws Exception {
+        cashedDbFile = new File(APP_FOLDER + DB_FILE_NAME);
+        if (!cashedDbFile.getParentFile().exists()) {
+            cashedDbFile.getParentFile().mkdir();
         }
 
-        if (dbFile != null && dbFile.exists()) {
-            certFolder = new File(dbFile.getParent() + "\\_certs");
-            manualsFolder = new File(dbFile.getParent() + "\\_manuals");
-            dbBackupFolder = new File(dbFile.getParent() + "\\_db_backups");
-            templatesFolder = new File(dbFile.getParent() + "\\_templates");
-//            tempFolder = new File(System.getProperty("user.dir") + "\\_temp");
+        File remoteDbFile = new File(REMOTE_DB_FOLDER + DB_FILE_NAME);
+        if (remoteDbFile.exists()) {
+            logger.debug("Remote db file {} is found", remoteDbFile);
+            mainDbFile = remoteDbFile;
 
-            try {
-                File tempFile = File.createTempFile("temp-file", ".tmp");
-                tempFolder = new File(tempFile.getParent() + "\\" + "CertificateBase");
-                tempFile.delete();
-                tempFolder.mkdir();
-            } catch (IOException ioe) {
-                System.out.println("error temp folder creating " + ioe.getMessage());
-            }
+            copyCashDbFile();
+            initFolders();
+            return;
+        }
+
+        File currentFolderDbFile = new File(System.getProperty("user.dir") + "\\" + DB_FILE_NAME);
+        if (currentFolderDbFile.exists()) {
+            logger.debug("Current folder db file {} is found", currentFolderDbFile);
+            mainDbFile = currentFolderDbFile;
+            copyCashDbFile();
+            initFolders();
+
+            Dialogs.showMessage("Подключение к базе данных", "Был найден локальный файл базы данных.\n\n" +
+                    "Обратите внимание, что все изменения будут сохраняться только в этом файле и никто больше их не увидит.");
+            return;
+        }
+
+        if (cashedDbFile.exists()) {
+            mainDbFile = cashedDbFile;
+            Dialogs.showMessage("Подключение к базе данных", "Была найдена локальная копия файла базы данных " +
+                    "с предыдующих сессий.\n\n" +
+                    "Обратите внимание, такой режим не поддерживает изменение данных.");
+            return;
+        }
+
+        mainDbFile = Dialogs.selectDBFile(MainWindow.getMainStage());
+        if (mainDbFile != null) {
+            logger.debug("Custom db file {} was selected", mainDbFile);
+            copyCashDbFile();
+            initFolders();
+            return;
+        }
+
+        logger.fatal("No db file was found");
+        throw new RuntimeException("Файл базы данных не был найден.");
+    }
+
+    private void copyCashDbFile() throws IOException {
+        logger.debug("Start copy cashing file {} to {}", mainDbFile, cashedDbFile);
+        Files.copy(mainDbFile.toPath(), cashedDbFile.toPath(), REPLACE_EXISTING);
+        logger.debug("Copy process finished");
+    }
+
+    private void initFolders() {
+        logger.debug("Initializing folders");
+        certFolder = new File(mainDbFile.getParent() + "\\_certs");
+        manualsFolder = new File(mainDbFile.getParent() + "\\_manuals");
+        dbBackupFolder = new File(mainDbFile.getParent() + "\\_db_backups");
+        templatesFolder = new File(mainDbFile.getParent() + "\\_templates");
+        appLogsFolder = new File(APP_FOLDER + "logs");
+        remoteLogsFolder = new File(REMOTE_DB_FOLDER + "_logs");
+//        remoteLogsFolder = new File(mainDbFile.getParent()  + "\\_logs");
+        if (!appLogsFolder.exists()) {
+            appLogsFolder.mkdir();
+        }
+        if (!remoteLogsFolder.exists()) {
+            remoteLogsFolder.mkdir();
+        }
+
+        try {
+            File tempFile = File.createTempFile("temp-file", ".tmp");
+            tempFolder = new File(tempFile.getParent() + "\\CertificateBase");
+            tempFile.delete();
+            tempFolder.mkdir();
+        } catch (IOException ioe) {
+            logger.error("Can't create temp folder: {}", ioe.getMessage());
         }
     }
 
-    public File getDbFile() {
-        return dbFile;
+    public File getMainDbFile() {
+        return mainDbFile;
+    }
+
+    public File getCashedDbFile() {
+        return cashedDbFile;
     }
 
     public File getCertFolder() {
@@ -93,15 +139,19 @@ public class Folders {
         return tempFolder;
     }
 
-    public String getAppFolder() {
-        return appFolder;
-    }
-
     public File getDbBackupFolder() {
         return dbBackupFolder;
     }
 
     public File getTemplatesFolder() {
         return templatesFolder;
+    }
+
+    public File getAppLogsFolder() {
+        return appLogsFolder;
+    }
+
+    public File getRemoteLogsFolder() {
+        return remoteLogsFolder;
     }
 }

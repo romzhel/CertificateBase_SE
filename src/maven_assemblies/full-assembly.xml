@@ -1,0 +1,35 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
+    <id>full</id>
+    <formats>
+        <format>jar</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.outputDirectory}</directory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+    </fileSets>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
+            <includes>
+                <include>org.xerial:sqlite-jdbc:*</include>
+                <include>org.apache.poi:poi:*</include>
+                <include>commons-codec:commons-codec</include>
+                <include>org.apache.commons:commons-collections4</include>
+                <include>org.apache.poi:poi-ooxml:*</include>
+                <include>org.apache.poi:poi-ooxml-schemas:*</include>
+                <include>org.apache.xmlbeans:xmlbeans:*</include>
+                <include>org.apache.logging.log4j:log4j-core:*</include>
+                <include>org.apache.logging.log4j:log4j-api:*</include>
+            </includes>
+            <unpack>true</unpack>
+            <scope>runtime</scope>
+        </dependencySet>
+    </dependencySets>
+</assembly>

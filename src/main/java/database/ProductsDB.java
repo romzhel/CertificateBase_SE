@@ -52,8 +52,6 @@ public class ProductsDB extends DbRequest {
     }
 
     public boolean updateData(List<Product> alpr) {
-        long ts = System.currentTimeMillis();//test
-
         try {
             int count = 0;
             for (int i = 0; i < alpr.size(); i = i + 500) {
@@ -117,7 +115,6 @@ public class ProductsDB extends DbRequest {
             finalActions();
         }
 
-        System.out.println(String.valueOf(System.currentTimeMillis() - ts));//test
         return true;
     }
 

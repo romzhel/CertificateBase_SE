@@ -8,7 +8,7 @@ import java.util.zip.ZipOutputStream;
 
 public class Archiver {
 
-    public boolean addToArchive(File sourceFile, File archiveFile) {
+    public static boolean addToArchive(File sourceFile, File archiveFile) {
         FileOutputStream fos = null;
         ZipOutputStream zipOs = null;
         FileInputStream fis = null;
@@ -19,7 +19,7 @@ public class Archiver {
             fos = new FileOutputStream(archiveFile);
             zipOs = new ZipOutputStream(fos);
 
-            ZipEntry ze = new ZipEntry("certificateDB.db");
+            ZipEntry ze = new ZipEntry(sourceFile.getName());
             zipOs.putNextEntry(ze);
             int len;
             while ((len = fis.read(buffer)) > 0) {

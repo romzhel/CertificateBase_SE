@@ -1,8 +1,11 @@
 package ui_windows.main_window.file_import_window.se;
 
 import core.Dialogs;
+import database.DataBase;
 import database.ProductsDB;
 import files.reports.NowImportResultToExcel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.product.Product;
@@ -11,6 +14,8 @@ import utils.DoublesPreprocessor;
 import utils.comparation.se.*;
 
 import java.io.File;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +28,7 @@ public class ImportNowFile implements Callable<File> {
     private File reportFile;
     private Comparator<Product> comparator;
     private FileImport fileImport;
+    private static final Logger logger = LogManager.getLogger(ImportNowFile.class);
 
     public ImportNowFile() {
         comparator = new Comparator<>();
@@ -76,7 +82,17 @@ public class ImportNowFile implements Callable<File> {
             if (changedItemsForDB.size() > 0)
                 new ProductsDB().updateData(new ArrayList<>(changedItemsForDB));//save changed items to db
 
-            System.out.println("DB updating is finished");
+            Statement vacuumStatement = null;
+            try {
+                vacuumStatement = DataBase.getInstance().getDbConnection().createStatement();
+                logger.debug("db file vacuum started");
+                vacuumStatement.executeUpdate("vacuum;");
+                logger.debug("db file vacuum finished");
+            } catch (SQLException e) {
+                logger.warn("sql request vacuum error: {}", e.getMessage());
+            }
+
+            logger.info("DB updating is finished");
         }
         return true;
     }

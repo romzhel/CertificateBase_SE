@@ -2,6 +2,8 @@ package core;
 
 import database.DataBase;
 import files.Folders;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.filter_window_se.FilterParameters_SE;
 import ui_windows.main_window.filter_window_se.Filter_SE;
@@ -28,30 +30,47 @@ import static core.SharedData.SHD_FILTER_PARAMETERS;
 
 public class CoreModule {
     private static HashSet<Product> customItems = new HashSet<>();
+    private static final Logger logger = LogManager.getLogger(CoreModule.class);
 
-    public void init() throws RuntimeException {
+    public void init() throws Exception {
+        logger.info("Initializing Folders");
         Folders.getInstance().init();
-        DataBase.getInstance().connect(Folders.getInstance().getDbFile());
+        logger.info("Initializing Connection to DB");
+        DataBase.getInstance().firstConnect(Folders.getInstance().getMainDbFile(), Folders.getInstance().getCashedDbFile());
 
+        logger.info("Initializing Profiles");
         Profiles.getInstance().getFromDB();
+        logger.info("Initializing Users");
         Users.getInstance().getFromDB();
+        logger.info("Initializing Current user rights");
         Users.getInstance().checkCurrentUser(Utils.getComputerName());
 
+        logger.info("Initializing Orders Accessibility data");
         OrdersAccessibility.getInstance().getFromDB();
+        logger.info("Initializing Requirements Types");
         RequirementTypes.getInstance().getFromDb();
+        logger.info("Initializing Product types");
         ProductTypes.getInstance().getFromDB();
 
+        logger.info("Initializing Certificates Content");
         CertificatesContent.getInstance().getFromDb();
+        logger.info("Initializing Certificates");
         Certificates.getInstance().getFromDb();
 
+        logger.info("Initializing Product families");
         ProductFamilies.getInstance().getFromDB();
+        logger.info("Initializing Product GBK hierarchy");
         ProductLgbks.getInstance().getFromDB();
+        logger.info("Initializing Products");
         Products.getInstance().getFromDB();
 
+        logger.info("Initializing Filter");
         Filter_SE.getInstance();
         SHD_FILTER_PARAMETERS.setData(CoreModule.class, new FilterParameters_SE(), NOT_NOTIFY);
 
+        logger.info("Initializing Product GBK groups");
         ProductLgbkGroups.getInstance().init();
+        logger.info("Initializing PriceLists");
         PriceLists.getInstance().getFromDB();
 
         DataBase.getInstance().disconnect();
