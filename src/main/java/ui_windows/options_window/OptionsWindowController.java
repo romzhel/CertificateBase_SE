@@ -7,6 +7,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
 import ui_windows.options_window.certificates_editor.CertificateEditorWindowActions;
@@ -92,13 +94,14 @@ public class OptionsWindowController implements Initializable {
     @FXML
     public ContextMenu cmPriceListsTable;
 
+    private static final Logger logger = LogManager.getLogger(OptionsWindowController.class);
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         OptionsWindow.setTpOptions(tpOptions);
+        logger.trace("Initializing options window....");
         //------------------------------certificates--------------------------------------------------------------------
         RequirementTypesTable.getInstance().init(tvCertificateTypes);//fill certificates types table
-        CertificatesTable.getInstance().init(tvCertificates);//fill certificates table
-
         tvCertificateTypes.setOnMouseClicked(event -> {//double click on certificate type
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 2) {
@@ -106,7 +109,9 @@ public class OptionsWindowController implements Initializable {
                 }
             }
         });
+        logger.trace("Certificates types table initialized");
 
+        CertificatesTable.getInstance().init(tvCertificates);//fill certificates table
         tvCertificates.setOnMouseClicked(event -> {//double click on certificate
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 2) {
@@ -115,11 +120,10 @@ public class OptionsWindowController implements Initializable {
                 }
             }
         });
+        logger.trace("Certificates table initialized");
 
         //----------------------------product families------------------------------------------------------------------
         ProductFamilies.getInstance().setProductFamiliesTable(new ProductFamiliesTable(tvFamilies));  //fill families table
-        ProductLgbks.getInstance().setProductLgbksTable(new ProductLgbksTable(tvLgbk));  //fill lgbk table
-
         tvFamilies.setOnMouseClicked(event -> {//double click on product
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 2) {
@@ -127,7 +131,9 @@ public class OptionsWindowController implements Initializable {
                 }
             }
         });
+        logger.trace("Product families table initialized");
 
+        ProductLgbks.getInstance().setProductLgbksTable(new ProductLgbksTable(tvLgbk));  //fill lgbk table
         tvLgbk.setOnMouseClicked(event -> {//double click on product
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 2) {
@@ -137,10 +143,10 @@ public class OptionsWindowController implements Initializable {
         });
         tvLgbk.getRoot().setExpanded(true);
 //        tvLgbk.setStyle();
+        logger.trace("Product GBKs table initialized");
 
         //------------------------------------------order accessibility-------------------------------------------------
         OrdersAccessibility.getInstance().setTable(new OrdersAccessibilityTable(tvOrdersAccessibility)); //fill order acc table
-
         tvOrdersAccessibility.setOnMouseClicked(event -> {//double click on product
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 2) {
@@ -148,13 +154,13 @@ public class OptionsWindowController implements Initializable {
                 }
             }
         });
+        logger.trace("Order accessibility table initialized");
 
         //------------------------------------------profiles------------------------------------------------------------
         Profiles.getInstance().setTable(new ProfilesTable(tvProfiles));
-
+        logger.trace("Profiles table initialized");
         //------------------------------------------users---------------------------------------------------------------
         Users.getInstance().setTable(new UsersTable(tvUsers));
-
         tvUsers.setOnMouseClicked(event -> {//double click on product
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 2) {
@@ -162,10 +168,10 @@ public class OptionsWindowController implements Initializable {
                 }
             }
         });
+        logger.trace("Users table initialized");
 
         //---------------------------------------price lists--------------------------------------------------------------
         PriceLists.getInstance().setPriceListsTable(new PriceListsTable(tvPriceLists));
-
         tvPriceLists.setOnMouseClicked(event -> {//double click on product
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 2) {
@@ -173,6 +179,7 @@ public class OptionsWindowController implements Initializable {
                 }
             }
         });
+        logger.trace("Price-lists table initialized");
     }
 
     public void actionAddCertificateType() {

@@ -9,6 +9,8 @@ import files.reports.ReportToExcel;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.ExecutionIndicator;
 import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificateVerificationItem;
@@ -38,6 +40,7 @@ public class MainTableContextMenuFactory {
     public static final MenuItem MENU_CHECK_CERTIFICATES = new MenuItem(SPACE + "Отчет по сертификатам" + SPACE);
     private static boolean wasInited = false;
     private static ContextMenu contextMenu = new ContextMenu();
+    private static final Logger logger = LogManager.getLogger(MainTableContextMenuFactory.class);
 
     public static void init(final MainTable mainTable) {
         wasInited = true;
@@ -64,6 +67,7 @@ public class MainTableContextMenuFactory {
         });
         MENU_CHECK_CERTIFICATES.setOnAction(event -> {
 //            new Thread(() -> {
+            logger.info("Get certificates report");
             ExecutionIndicator.getInstance().start();
             startCertsReport(mainTable);
             ExecutionIndicator.getInstance().stop();
@@ -75,6 +79,7 @@ public class MainTableContextMenuFactory {
                 List<File> files = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(), "Выбор места сохранения",
                         Dialogs.EXCEL_FILES, Utils.getDateTimeForFileName().concat("_report.xlsx"));
                 if (files != null && files.get(0) != null) {
+                    logger.info("Exporting to Excel");
                     Utils.openFile(new ReportToExcel().export(columns, SHD_SELECTED_PRODUCTS.getData(), files.get(0)));
                 }
             }).start();

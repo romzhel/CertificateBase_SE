@@ -5,6 +5,7 @@ import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.builder.api.*;
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
+import utils.Utils;
 
 public class LoggerInit {
 
@@ -14,7 +15,7 @@ public class LoggerInit {
         builder.addProperty("basePath", System.getProperty("user.home") + "/AppData/Roaming/CertificateBase/");
 
         AppenderComponentBuilder fileAppender = builder.newAppender("FILE", "File");
-        fileAppender.addAttribute("fileName", "${basePath}/logs/certBase.log");
+        fileAppender.addAttribute("fileName", "${basePath}/logs/certBase_" + Utils.getDateTimeForFileName() + ".log");
         fileAppender.addAttribute("append", "true");
         LayoutComponentBuilder fileLayout = builder.newLayout("PatternLayout");
         fileLayout.addAttribute("pattern", "%d{yyyy-MM-dd HH:mm:ss.SSS} [%-10.-10t] %-5level %logger{36} - %msg%n");

@@ -25,6 +25,8 @@ import ui_windows.options_window.user_editor.Users;
 import utils.Utils;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.TreeSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 import static ui_windows.options_window.profile_editor.SimpleRight.HIDE;
 
 public class MainWindow extends Application {
-    private static final String version = "1.3.3.0 (beta) от 25.06.2020";
+    private static final String version = "1.3.3.1 от 07.07.2020";
     private static final LoggerInit loggerInit = new LoggerInit();
     private static final Logger logger = LogManager.getLogger(MainWindow.class);
     private static Stage mainStage;
@@ -42,7 +44,8 @@ public class MainWindow extends Application {
     private static MainWindowsController controller;
 
     public static void main(String[] args) {
-        logger.info("App starting, user = {}, app version = {}", System.getProperty("user.name"), version);
+        logger.info("App starting, user = {}, app version = {}, db = {}", System.getProperty("user.name"), version,
+                Folders.DB_FILE_NAME);
         launch(args);
     }
 
@@ -121,7 +124,7 @@ public class MainWindow extends Application {
 //        OptionsWindow certificateOverviewWindow = new OptionsWindow();
 //        certificateOverviewWindow.open();
         } catch (Exception e) {
-            logger.fatal("Program init error {}", e.getMessage(), e);
+            logger.fatal("Program init error: {}", e.getMessage(), e);
             Dialogs.showMessage("Ошибка инициализация программы", "Программа не может продолжить работу." +
                     "\nПричина: " + e.getMessage());
             Platform.exit();
@@ -129,38 +132,49 @@ public class MainWindow extends Application {
 
         mainStage.setOnCloseRequest(event -> {
             if (ExecutionIndicator.getInstance().hasActiveProcess()) {
-                event.consume();
-                Dialogs.showMessage("Закрытие программы", "Не все процессы завершены. " +
-                        "Повторите попытку чуть позже.");
-            } else {
-                try {
-                    File tempFolder = Folders.getInstance().getTempFolder();
-                    String[] filesList;
-                    if (tempFolder != null && tempFolder.exists()
-                            && (filesList = tempFolder.list((dir, name) -> name.matches(".*\\.xlsx?$"))) != null
-                            && filesList.length > 0) {
-                        Utils.openFile(Folders.getInstance().getTempFolder());
-
-                        if (Dialogs.confirmTS("Удаление временной папки",
-                                "Временная папка не пуста.\n\nУдалить временную папку и все файлы внутри неё?\n")) {
-                            Utils.deleteFolder(Folders.getInstance().getTempFolder().toPath());
-                        }
-                    }
-                    logger.info("app closed");
-
-                    Configuration conf = ((LoggerContext) LogManager.getContext(false)).getConfiguration();
-                    conf.getAppenders().get("FILE").stop();
-
-                    new Thread(() -> {
-                        ScheduledExecutorService logsTreatment = Executors.newSingleThreadScheduledExecutor();
-                        logsTreatment.schedule(() -> LogsBackuper.getInstance().backup(), 3, TimeUnit.SECONDS);
-                        logsTreatment.shutdown();
-                    }).start();
-
-                } catch (Exception e) {
-                    logger.error("app closing error: {}", e.getMessage(), e);
+                if (!Dialogs.confirmTS("Закрытие программы", "Не все процессы завершены.\n\n " +
+                        "Всё равно желаете закрыть программу?")) {
+                    event.consume();
+                    return;
                 }
+            }
 
+            try {
+                File tempFolder = Folders.getInstance().getTempFolder();
+                String[] filesList;
+                if (tempFolder != null && tempFolder.exists()
+                        && (filesList = tempFolder.list((dir, name) -> name.matches(".*\\.xlsx?$"))) != null
+                        && filesList.length > 0) {
+                    Utils.openFile(Folders.getInstance().getTempFolder());
+
+                    if (Dialogs.confirmTS("Удаление временной папки",
+                            "Временная папка не пуста.\n\nУдалить временную папку и все файлы внутри неё?\n")) {
+                        Utils.deleteFolder(Folders.getInstance().getTempFolder().toPath());
+                    }
+                }
+                logger.info("app closed");
+
+                File[] dBfilesList = new File(Folders.APP_FOLDER).listFiles(pathname -> pathname.getName().endsWith(".db"));
+                TreeSet<File> files = new TreeSet<>((o1, o2) -> o2.getName().compareTo(o1.getName()));
+                files.addAll(Arrays.asList(dBfilesList));
+
+                File toKeepFile = files.first();
+                logger.debug("newest db file " + toKeepFile.getPath() + " will be kept, other - deletes");
+                files.forEach(file -> {
+                    if (file != toKeepFile) file.delete();
+                });
+
+                Configuration conf = ((LoggerContext) LogManager.getContext(false)).getConfiguration();
+                conf.getAppenders().get("FILE").stop();
+                System.out.println(Folders.getInstance().getAppLogsFolder());
+//                new Thread(() -> {
+                ScheduledExecutorService logsTreatment = Executors.newSingleThreadScheduledExecutor();
+                logsTreatment.schedule(() -> LogsBackuper.getInstance().backup(), 3, TimeUnit.SECONDS);
+                logsTreatment.shutdown();
+//                }).start();
+                System.out.println(Folders.getInstance().getAppLogsFolder());
+            } catch (Exception e) {
+                logger.error("app closing error: {}", e.getMessage(), e);
             }
         });
     }

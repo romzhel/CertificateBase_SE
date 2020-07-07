@@ -89,24 +89,44 @@
                         <TextArea fx:id="taComments" layoutX="124.0" layoutY="475.0" prefHeight="84.0" prefWidth="416.0" />
                         <Button fx:id="btnApply" layoutX="220.0" layoutY="745.0" mnemonicParsing="false" onAction="#apply" prefWidth="150.0" text="Сохранить" />
                         <Button layoutX="612.0" layoutY="745.0" mnemonicParsing="false" onAction="#cancel" prefWidth="150.0" text="Закрыть" />
-                        <CheckBox fx:id="cbxNotUsed" contentDisplay="CENTER" layoutX="624.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="156.0" stylesheets="@../css/checkboxes_styles.css" text="Не в общем прайсе   " visible="false" />
-                        <ComboBox fx:id="cbFamily" layoutX="124.0" layoutY="246.0" prefHeight="25.0" prefWidth="628.0" />
-                        <CheckBox fx:id="cbxOrderable" contentDisplay="GRAPHIC_ONLY" layoutX="17.0" layoutY="299.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="12.0" text="CheckBox" visible="false" />
-                        <TextArea fx:id="taDescriptionEn" layoutX="124.0" layoutY="116.0" prefHeight="40.0" prefWidth="931.0" wrapText="true" />
-                        <Label alignment="CENTER_RIGHT" layoutX="7.0" layoutY="82.0" prefHeight="17.0" prefWidth="111.0" text=" Описание (ru)" />
-                        <Label alignment="CENTER_RIGHT" layoutX="2.0" layoutY="127.0" prefHeight="17.0" prefWidth="116.0" text="Описание (en)" />
-                        <TextField fx:id="tfManHier" editable="false" layoutX="123.0" layoutY="212.0" prefHeight="25.0" prefWidth="628.0" />
-                        <Label alignment="CENTER_RIGHT" layoutX="23.0" layoutY="216.0" prefHeight="17.0" prefWidth="92.0" text="Назначение" />
-                        <TextField fx:id="tfMinOrder" editable="false" layoutX="125.0" layoutY="329.0" prefHeight="25.0" prefWidth="86.0" />
-                        <Label alignment="CENTER_RIGHT" layoutX="29.0" layoutY="333.0" prefHeight="17.0" prefWidth="86.0" text="Мин. заказ" />
-                        <Label alignment="CENTER_RIGHT" layoutX="244.0" layoutY="333.0" prefHeight="17.0" prefWidth="86.0" text="Упаковка" />
-                        <TextField fx:id="tfPacketSize" editable="false" layoutX="340.0" layoutY="329.0" prefHeight="25.0" prefWidth="86.0" />
-                        <Label alignment="CENTER_RIGHT" layoutX="473.0" layoutY="333.0" prefHeight="17.0" prefWidth="98.0" text="Время доставки" />
-                        <TextField fx:id="tfLeadTime" editable="false" layoutX="581.0" layoutY="329.0" prefHeight="25.0" prefWidth="86.0" />
-                        <Label alignment="CENTER_RIGHT" layoutX="669.0" layoutY="333.0" prefHeight="17.0" prefWidth="86.0" text="Вес" />
-                        <TextField fx:id="tfWeight" editable="false" layoutX="765.0" layoutY="329.0" prefHeight="25.0" prefWidth="86.0" />
-                        <Label alignment="CENTER_RIGHT" layoutX="874.0" layoutY="333.0" prefHeight="17.0" prefWidth="86.0" text="Прайс" />
-                        <TextField fx:id="tfLocalPrice" editable="false" layoutX="970.0" layoutY="329.0" prefHeight="25.0" prefWidth="86.0" />
+                        <CheckBox fx:id="cbxNotUsed" contentDisplay="CENTER" layoutX="624.0" layoutY="40.0"
+                                  mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0"
+                                  prefWidth="156.0" stylesheets="@../css/checkboxes_styles.css"
+                                  text="Не в общем прайсе   " visible="false"/>
+                        <ComboBox fx:id="cbFamily" layoutX="124.0" layoutY="246.0" prefHeight="25.0" prefWidth="628.0"/>
+                        <CheckBox fx:id="cbxOrderable" contentDisplay="GRAPHIC_ONLY" layoutX="17.0" layoutY="299.0"
+                                  mnemonicParsing="false" prefHeight="17.0" prefWidth="12.0" text="CheckBox"
+                                  visible="false"/>
+                        <TextArea fx:id="taDescriptionEn" layoutX="124.0" layoutY="116.0" prefHeight="40.0"
+                                  prefWidth="931.0" wrapText="true"/>
+                        <Label alignment="CENTER_RIGHT" layoutX="7.0" layoutY="82.0" prefHeight="17.0" prefWidth="111.0"
+                               text=" Описание (ru)"/>
+                        <Label alignment="CENTER_RIGHT" layoutX="2.0" layoutY="127.0" prefHeight="17.0"
+                               prefWidth="116.0" text="Описание (en)"/>
+                        <TextField fx:id="tfManHier" editable="false" layoutX="123.0" layoutY="212.0" prefHeight="25.0"
+                                   prefWidth="628.0"/>
+                        <Label alignment="CENTER_RIGHT" layoutX="23.0" layoutY="216.0" prefHeight="17.0"
+                               prefWidth="92.0" text="Назначение"/>
+                        <TextField fx:id="tfMinOrder" editable="false" layoutX="125.0" layoutY="329.0" prefHeight="25.0"
+                                   prefWidth="86.0"/>
+                        <Label alignment="CENTER_RIGHT" layoutX="29.0" layoutY="333.0" prefHeight="17.0"
+                               prefWidth="86.0" text="Мин. заказ"/>
+                        <Label alignment="CENTER_RIGHT" layoutX="221.0" layoutY="333.0" prefHeight="17.0"
+                               prefWidth="86.0" text="Упаковка"/>
+                        <TextField fx:id="tfPacketSize" editable="false" layoutX="317.0" layoutY="329.0"
+                                   prefHeight="25.0" prefWidth="86.0"/>
+                        <Label alignment="CENTER_RIGHT" layoutX="413.0" layoutY="333.0" prefHeight="17.0"
+                               prefWidth="110.0" text="Время доставки"/>
+                        <TextField fx:id="tfLeadTime" editable="false" layoutX="533.0" layoutY="329.0" prefHeight="25.0"
+                                   prefWidth="86.0"/>
+                        <Label alignment="CENTER_RIGHT" layoutX="628.0" layoutY="333.0" prefHeight="17.0"
+                               prefWidth="86.0" text="Вес"/>
+                        <TextField fx:id="tfWeight" editable="false" layoutX="724.0" layoutY="329.0" prefHeight="25.0"
+                                   prefWidth="86.0"/>
+                        <Label alignment="CENTER_RIGHT" layoutX="825.0" layoutY="333.0" prefHeight="17.0"
+                               prefWidth="135.0" text="Цена без скидок"/>
+                        <TextField fx:id="tfLocalPrice" editable="false" layoutX="970.0" layoutY="329.0"
+                                   prefHeight="25.0" prefWidth="86.0"/>
                     </children>
                 </AnchorPane>
             </content>

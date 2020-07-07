@@ -44,7 +44,7 @@ public class DataBase {
         return instance;
     }
 
-    public boolean firstConnect(File mainDbFile, File cashedDbFile) throws Exception {
+    public void firstConnect(File mainDbFile, File cashedDbFile) throws Exception {
         firstStart = true;
         try {
             dbConnection = DriverManager.getConnection("jdbc:sqlite:" + cashedDbFile.getPath(), config.toProperties());
@@ -52,13 +52,10 @@ public class DataBase {
 
             logger.debug("cashed db file {} is connected, journaling mode {}", cashedDbFile, getDbJournalingMode());
             logger.debug("main db file is {}", dbFile);
-
-            return true;
         } catch (SQLException e2) {
-            logger.fatal("can't connect to DB file {}", e2.getMessage());
+            logger.fatal("can't connect to DB file {}: {}", cashedDbFile, e2.getMessage());
+            throw new RuntimeException(e2);
         }
-
-        return false;
     }
 
     public Connection reconnect() {

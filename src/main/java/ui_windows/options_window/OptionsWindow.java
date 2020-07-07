@@ -4,6 +4,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.OrdinalWindow;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.profile_editor.Profile;
@@ -16,16 +18,22 @@ public class OptionsWindow extends OrdinalWindow {
     private static TabPane tpOptions;
     private static OptionsWindowController controller;
 
+    private static final Logger logger = LogManager.getLogger(OptionsWindow.class);
+
     public OptionsWindow() {
         super(MainWindow.getMainStage(), Modality.APPLICATION_MODAL,
                 null, "/fxml/optionsWindow.fxml", "Настройки");
 
+        logger.trace("Getting controller");
         controller = loader.getController();
-
+        logger.trace("Controller was got");
         applyProfile();
+        logger.trace("Profiles applied");
 
         stage.setResizable(true);
+        logger.trace("Start to show Options window");
         stage.show();
+        logger.trace("Options window shown");
         stage.setMinWidth(stage.getWidth());
         stage.setMinHeight(stage.getHeight());
     }

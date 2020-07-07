@@ -8,6 +8,10 @@ import ui_windows.main_window.MainWindow;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.TreeSet;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -40,7 +44,13 @@ public class Folders {
     }
 
     public void init() throws Exception {
-        cashedDbFile = new File(APP_FOLDER + DB_FILE_NAME);
+        File oldDbFile = new File(APP_FOLDER + DB_FILE_NAME);
+        if (oldDbFile.exists()) {
+            oldDbFile.delete();
+        }
+
+        cashedDbFile = new File(APP_FOLDER + new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss-SSS_")
+                .format(new Date()) + DB_FILE_NAME);
         if (!cashedDbFile.getParentFile().exists()) {
             cashedDbFile.getParentFile().mkdir();
         }
@@ -63,12 +73,16 @@ public class Folders {
             initFolders();
 
             Dialogs.showMessage("Подключение к базе данных", "Был найден локальный файл базы данных.\n\n" +
-                    "Обратите внимание, что все изменения будут сохраняться только в этом файле и никто больше их не увидит.");
+                    "Обратите внимание, что все изменения будут сохраняться только в этом файле и никто больше их не увидит.\n\n");
             return;
         }
 
-        if (cashedDbFile.exists()) {
-            mainDbFile = cashedDbFile;
+        File[] dBfilesList = new File(Folders.APP_FOLDER).listFiles(pathname -> pathname.getName().endsWith(".db"));
+        TreeSet<File> files = new TreeSet<>((o1, o2) -> o2.getName().compareTo(o1.getName()));
+        files.addAll(Arrays.asList(dBfilesList));
+
+        if (files.first().exists()) {
+            cashedDbFile = mainDbFile = files.first();
             Dialogs.showMessage("Подключение к базе данных", "Была найдена локальная копия файла базы данных " +
                     "с предыдующих сессий.\n\n" +
                     "Обратите внимание, такой режим не поддерживает изменение данных.");
@@ -87,10 +101,17 @@ public class Folders {
         throw new RuntimeException("Файл базы данных не был найден.");
     }
 
-    private void copyCashDbFile() throws IOException {
-        logger.debug("Start copy cashing file {} to {}", mainDbFile, cashedDbFile);
-        Files.copy(mainDbFile.toPath(), cashedDbFile.toPath(), REPLACE_EXISTING);
-        logger.debug("Copy process finished");
+    private void copyCashDbFile() throws Exception {
+        try {
+            logger.debug("Start copy cashing file {} to {}", mainDbFile, cashedDbFile);
+            Files.copy(mainDbFile.toPath(), cashedDbFile.toPath(), REPLACE_EXISTING);
+            logger.debug("Copy process finished");
+        } catch (Exception e) {
+            logger.error("Cashed db file copying error: {}", e.getMessage());
+            if (!cashedDbFile.exists()) {
+                throw new RuntimeException("Cashed db file is absent or corrupted");
+            }
+        }
     }
 
     private void initFolders() {

@@ -28,7 +28,7 @@ public class LogsBackuper {
         File[] logsList = Folders.getInstance().getAppLogsFolder().listFiles(file -> file.getName().endsWith(".log"));
         for (File logFile : logsList) {
             try {
-                currDateTime = new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss").format(new Date());
+                currDateTime = new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss").format(logFile.lastModified());
                 localLogZipFile = new File(String.format("%s\\%s_%s.zip", Folders.getInstance().getAppLogsFolder(),
                         System.getProperty("user.name"), currDateTime));
 

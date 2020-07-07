@@ -243,7 +243,7 @@ public class Utils {
     }
 
     public static String getDateTimeForFileName() {
-        return new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date()).replaceAll("\\:", "-");
+        return new SimpleDateFormat("yyyy.MM.dd HH-mm-ss").format(new Date());
     }
 
     public static String getDate(Date date) {

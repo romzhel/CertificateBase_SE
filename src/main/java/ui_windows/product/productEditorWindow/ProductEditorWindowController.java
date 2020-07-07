@@ -10,6 +10,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.main_window.filter_window_se.Filter_SE;
 import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
 import ui_windows.options_window.families_editor.ProductFamilies;
@@ -100,6 +102,7 @@ public class ProductEditorWindowController implements Initializable {
     private MultiEditor multiEditor;
     private CertificateVerificationTable certificateVerificationTable;
     private ComboBoxEqTypeSelector comboBoxEqTypeSelector;
+    private static final Logger logger = LogManager.getLogger(ProductEditorWindowController.class);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -172,6 +175,7 @@ public class ProductEditorWindowController implements Initializable {
     }
 
     public void getCertificateFile() {
+        logger.info("Getting selected certificates");
         CertificateVerificationItem cv = tvCertVerification.getSelectionModel().getSelectedItem();
         if (cv == null) return;
 
@@ -182,6 +186,7 @@ public class ProductEditorWindowController implements Initializable {
     }
 
     public void getAllCertificatesFiles() {
+        logger.info("Getting all certificates");
         ArrayList<File> files = new ArrayList<>();
         for (CertificateVerificationItem cv : tvCertVerification.getItems()) {
             if (cv.getFile() != null && !cv.getFile().isEmpty()) {
@@ -193,6 +198,7 @@ public class ProductEditorWindowController implements Initializable {
     }
 
     public void configNorms() {
+        logger.info("Opening norms window editor");
         ConfigNormsWindow cnw = new ConfigNormsWindow(ProductEditorWindow.getStage(), multiEditor, certificateVerificationTable);
     }
 

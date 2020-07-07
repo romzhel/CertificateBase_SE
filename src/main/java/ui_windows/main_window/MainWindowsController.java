@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import scripts.PriceGenerationScript;
 import ui_windows.ExecutionIndicator;
 import ui_windows.login_window.LoginWindow;
@@ -52,6 +54,7 @@ public class MainWindowsController implements Initializable {
     MenuItem miOptions;
     private MainTable mainTable;
     private DataSelectorMenu dataSelectorMenu;
+    private static final Logger logger = LogManager.getLogger(MainWindowsController.class);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -77,6 +80,8 @@ public class MainWindowsController implements Initializable {
                         "Генерируем только прайс-лист, пакет для проверки или пакет для пользования?",
                         "Только прайс", "Для проверки", "Для пользования");
                 if (generationMode < 3) {
+                    logger.info("Generating price-list {}", PriceLists.getInstance().getItems()
+                            .get(mPriceList.getItems().indexOf(mi)).getName());
                     new PriceGenerationScript().run(mPriceList.getItems().indexOf(mi), generationMode);
                 }
             });
@@ -114,6 +119,7 @@ public class MainWindowsController implements Initializable {
         ArrayList<File> priceListFiles = new SelectPricesForComparisonWindow().getPriceListFiles();
         if (priceListFiles.get(0) != null) {
             new Thread(() -> {
+                logger.info("Starting price-list comparing {} vs {}", priceListFiles.get(0), priceListFiles.get(1));
                 ExecutionIndicator.getInstance().start();
                 PricesComparator pricesComparator = new PricesComparator();
                 pricesComparator.compare(priceListFiles);
@@ -124,10 +130,12 @@ public class MainWindowsController implements Initializable {
     }
 
     public void openOptionsWindow() {
+        logger.info("Opening Options window");
         new OptionsWindow();
     }
 
     public void actionLogin() {
+        logger.info("Opening authorization window");
         new LoginWindow();
     }
 
@@ -138,10 +146,12 @@ public class MainWindowsController implements Initializable {
     }
 
     public void displayFilterOptions() {
+        logger.info("Opening filter window");
         FilterWindow_SE.openFilterWindow();
     }
 
     public void actionRequest() {
+        logger.info("Opening positions request window");
         new RequestWindow();
     }
 

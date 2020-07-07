@@ -12,6 +12,8 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.util.Callback;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
 import ui_windows.product.Product;
@@ -32,6 +34,7 @@ import static ui_windows.main_window.DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION
 public class MainTable implements Module {
     private static TableView<Product> tvTable;
     private ExecutorService executorService;
+    private static final Logger logger = LogManager.getLogger(MainTable.class);
 
     public MainTable(TableView<Product> tvTable) {
         MainTable.tvTable = tvTable;
@@ -77,12 +80,10 @@ public class MainTable implements Module {
     }
 
     private void initTableColumns() {
-        String[] cols = new String[]{"material", "article", "description", "family", "endofservice",
-                "country", "dchain"};
-        String[] titles = new String[]{"Заказной номер", "Артикул", "Описание", "Направление", "Окончание",
-                "Страна", "Доступность"};
-        int[] colsWidth = new int[]{130, 130, 500, 100, 100, 50, 150};
-        boolean[] centerAligment = new boolean[]{true, true, false, true, true, true, false};
+        String[] cols = new String[]{"material", "article", "description", "family", "country", "dchain"};
+        String[] titles = new String[]{"Заказной номер", "Артикул", "Описание", "Направление", "Страна", "Доступность"};
+        int[] colsWidth = new int[]{130, 130, 500, 200, 50, 150};
+        boolean[] centerAligment = new boolean[]{true, true, false, true, true, false};
 
 //        for (String s : cols) {//add columns
         for (int i = 0; i < cols.length; i++) {
@@ -157,9 +158,11 @@ public class MainTable implements Module {
 
     public void displayEditorWindow() {
         if (((List<Product>) SharedData.SHD_SELECTED_PRODUCTS.getData()).size() == 0)
-            Dialogs.showMessage("Выбор строки",
-                    "Нужно выбрать строку");
-        else new ProductEditorWindow(EDIT, tvTable.getSelectionModel().getSelectedItems());
+            Dialogs.showMessage("Выбор строки", "Нужно выбрать строку");
+        else {
+            logger.info("Opening product editor window {}", tvTable.getSelectionModel().getSelectedItems());
+            new ProductEditorWindow(EDIT, tvTable.getSelectionModel().getSelectedItems());
+        }
     }
 
     public void close() {
