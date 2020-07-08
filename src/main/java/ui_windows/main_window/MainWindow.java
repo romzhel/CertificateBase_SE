@@ -1,6 +1,7 @@
 package ui_windows.main_window;
 
-import core.AddActions;
+//import core.AddActions;
+
 import core.CoreModule;
 import core.Dialogs;
 import core.logger.LoggerInit;
@@ -25,7 +26,9 @@ import ui_windows.options_window.user_editor.Users;
 import utils.Utils;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Properties;
 import java.util.TreeSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -34,9 +37,10 @@ import java.util.concurrent.TimeUnit;
 import static ui_windows.options_window.profile_editor.SimpleRight.HIDE;
 
 public class MainWindow extends Application {
-    private static final String version = "1.3.3.1 от 07.07.2020";
     private static final LoggerInit loggerInit = new LoggerInit();
     private static final Logger logger = LogManager.getLogger(MainWindow.class);
+    private static String version;
+    private static Properties appProperties;
     private static Stage mainStage;
     private static AnchorPane rootAnchorPane;
     private static MenuItem miOptions;
@@ -44,6 +48,15 @@ public class MainWindow extends Application {
     private static MainWindowsController controller;
 
     public static void main(String[] args) {
+        appProperties = new Properties();
+        try (InputStream propFile = MainWindow.class.getClassLoader().getResourceAsStream("application.properties")) {
+            appProperties.load(propFile);
+        } catch (Exception e) {
+            System.out.println("properties file not found");
+            Platform.exit();
+        }
+
+        version = appProperties.getProperty("app_version") + " от " + appProperties.getProperty("app_date");
         logger.info("App starting, user = {}, app version = {}, db = {}", System.getProperty("user.name"), version,
                 Folders.DB_FILE_NAME);
         launch(args);
@@ -69,16 +82,16 @@ public class MainWindow extends Application {
         return mainStage;
     }
 
-    public static FXMLLoader getFxmlLoader() {
-        return fxmlLoader;
-    }
-
     public static MainWindowsController getController() {
         return controller;
     }
 
     public static MainTable getMainTable() {
         return controller.getMainTable();
+    }
+
+    public static Properties getAppProperties() {
+        return appProperties;
     }
 
     @Override
@@ -119,7 +132,7 @@ public class MainWindow extends Application {
             mainStage.setMinHeight(mainStage.getHeight());
             mainStage.setMinWidth(mainStage.getWidth());
 
-            new AddActions().make();
+//            new AddActions().make();
 
 //        OptionsWindow certificateOverviewWindow = new OptionsWindow();
 //        certificateOverviewWindow.open();
