@@ -93,7 +93,7 @@ public class PriceStructure {
     }
 
     public int export(XSSFSheet sheet) {
-        int initialRowIndex = Math.max(priceListSheet.getInitialRow(), 2);
+        int initialRowIndex = Math.max(priceListSheet.getInitialRow(), 3);
         int rowIndex = initialRowIndex;
         for (LgbkGroup lgroup : lgbkGroups) {
             rowIndex = lgroup.export(sheet, rowIndex);

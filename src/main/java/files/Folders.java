@@ -1,5 +1,6 @@
 package files;
 
+import core.App;
 import core.Dialogs;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,8 +20,6 @@ public class Folders {
     private static final Logger logger = LogManager.getLogger(Folders.class);
     private static Folders instance;
     public static final String APP_FOLDER = System.getProperty("user.home") + "\\AppData\\Roaming\\CertificateBase\\";
-    public static final String REMOTE_DB_FOLDER = "\\\\rumowmc0022dat\\SBT.RU\\SBT\\FS\\Base\\";
-    public static final String DB_FILE_NAME = "certificateDB.db";
     private String currentFolder;
     private File tempFolder;
     private File mainDbFile;
@@ -43,18 +42,18 @@ public class Folders {
     }
 
     public void init() throws Exception {
-        File oldDbFile = new File(APP_FOLDER + DB_FILE_NAME);
+        File oldDbFile = new File(APP_FOLDER + App.getProperties().getDbFileName());
         if (oldDbFile.exists()) {
             oldDbFile.delete();
         }
 
         cashedDbFile = new File(APP_FOLDER + new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss-SSS_")
-                .format(new Date()) + DB_FILE_NAME);
+                .format(new Date()) + App.getProperties().getDbFileName());
         if (!cashedDbFile.getParentFile().exists()) {
             cashedDbFile.getParentFile().mkdir();
         }
 
-        File remoteDbFile = new File(REMOTE_DB_FOLDER + DB_FILE_NAME);
+        File remoteDbFile = new File(App.getProperties().getRemoteDbFolder() + App.getProperties().getDbFileName());
         if (remoteDbFile.exists()) {
             logger.debug("Remote db file {} is found", remoteDbFile);
             mainDbFile = remoteDbFile;
@@ -64,7 +63,7 @@ public class Folders {
             return;
         }
 
-        File currentFolderDbFile = new File(System.getProperty("user.dir") + "\\" + DB_FILE_NAME);
+        File currentFolderDbFile = new File(System.getProperty("user.dir") + "\\" + App.getProperties().getDbFileName());
         if (currentFolderDbFile.exists()) {
             logger.debug("Current folder db file {} is found", currentFolderDbFile);
             mainDbFile = currentFolderDbFile;
@@ -113,14 +112,14 @@ public class Folders {
         }
     }
 
-    private void initFolders() {
+    private void initFolders() throws Exception {
         logger.debug("Initializing folders");
         certFolder = new File(mainDbFile.getParent() + "\\_certs");
         manualsFolder = new File(mainDbFile.getParent() + "\\_manuals");
         dbBackupFolder = new File(mainDbFile.getParent() + "\\_db_backups");
         templatesFolder = new File(mainDbFile.getParent() + "\\_templates");
         appLogsFolder = new File(APP_FOLDER + "logs");
-        remoteLogsFolder = new File(REMOTE_DB_FOLDER + "_logs");
+        remoteLogsFolder = new File(App.getProperties().getRemoteDbFolder() + "_logs");
 //        remoteLogsFolder = new File(mainDbFile.getParent()  + "\\_logs");
         if (!appLogsFolder.exists()) {
             appLogsFolder.mkdir();

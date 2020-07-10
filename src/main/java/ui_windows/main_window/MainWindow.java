@@ -82,7 +82,7 @@ public class MainWindow extends Application {
     public void init() throws Exception {
         try {
             logger.info("App starting, user = {}, app version = {}, db = {}", System.getProperty("user.name"),
-                    App.getProperties().getVersion(), Folders.DB_FILE_NAME);
+                    App.getProperties().getVersion(), App.getProperties().getDbFileName());
 
             new InitModule().init(this);
         } catch (Exception e) {

@@ -1,5 +1,6 @@
 package database;
 
+import core.App;
 import files.Folders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,8 +49,9 @@ public class DbBackuper extends DbRequest {
             new Thread(() -> {
                 try {
                     String currDateTime = new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss").format(new Date());
-                    File localDbZipFile = new File(Folders.getInstance().getTempFolder().getPath() + "\\" + Folders.DB_FILE_NAME +
-                            "_backup_" + currDateTime + "_" + Users.getInstance().getCurrentUser().getSurname() + ".zip");
+                    File localDbZipFile = new File(Folders.getInstance().getTempFolder().getPath() + "\\" +
+                            App.getProperties().getDbFileName() + "_backup_" + currDateTime + "_" +
+                            Users.getInstance().getCurrentUser().getSurname() + ".zip");
 
                     File remoteDbZipFile = new File(Folders.getInstance().getDbBackupFolder() + "\\" + localDbZipFile.getName());
 

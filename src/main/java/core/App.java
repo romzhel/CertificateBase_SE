@@ -25,6 +25,15 @@ public class App {
     }
 
     public String getVersion() {
-        return String.format("%s от %s", properties.getProperty("app_version"), properties.getProperty("app_date"));
+        return String.format("%s от %s", properties.getProperty("app_version"), properties.getProperty("app_date"))
+                .replace("- ", " ");
+    }
+
+    public String getDbFileName() {
+        return properties.getProperty("db_file_name");
+    }
+
+    public String getRemoteDbFolder() {
+        return properties.getProperty("remote_db_folder");
     }
 }
