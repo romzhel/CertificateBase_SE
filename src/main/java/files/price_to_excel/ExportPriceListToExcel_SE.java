@@ -5,6 +5,7 @@ import core.InitModule;
 import files.ExcelCellStyleFactory;
 import files.Folders;
 import javafx.application.Platform;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.MainWindow;
@@ -52,7 +53,7 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
                 }
             }
         } else {
-            System.out.println(String.format("pricelist %s wasn't generated !!! can't be exported to Excel", priceList.getName()));
+            System.out.printf("pricelist %s wasn't generated !!! can't be exported to Excel", priceList.getName());
         }
     }
 
@@ -102,6 +103,9 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
             if (sheetName != null && !sheetName.isEmpty() && !sheetName.equals(excelDoc.getSheetName(index))) {
                 excelDoc.setSheetName(index, sheetName);
             }
+
+            Cell dateInfo = excelDoc.getSheetAt(index).getRow(1).getCell(0);
+            dateInfo.setCellValue(dateInfo.getStringCellValue().replace("${date}", Utils.getDateTime()));
 
             priceStructure.export(excelDoc.getSheetAt(index++));
         }
