@@ -2,8 +2,10 @@ package ui_windows.main_window;
 
 //import core.AddActions;
 
-import core.CoreModule;
+import com.sun.javafx.application.LauncherImpl;
+import core.App;
 import core.Dialogs;
+import core.InitModule;
 import core.logger.LoggerInit;
 import core.logger.LogsBackuper;
 import database.DataBase;
@@ -19,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
+import preloader.AppPreloader;
 import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.filter_window_se.FilterParameters_SE;
 import ui_windows.options_window.profile_editor.Profile;
@@ -26,9 +29,7 @@ import ui_windows.options_window.user_editor.Users;
 import utils.Utils;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Properties;
 import java.util.TreeSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,8 +40,6 @@ import static ui_windows.options_window.profile_editor.SimpleRight.HIDE;
 public class MainWindow extends Application {
     private static final LoggerInit loggerInit = new LoggerInit();
     private static final Logger logger = LogManager.getLogger(MainWindow.class);
-    private static String version;
-    private static Properties appProperties;
     private static Stage mainStage;
     private static AnchorPane rootAnchorPane;
     private static MenuItem miOptions;
@@ -48,18 +47,7 @@ public class MainWindow extends Application {
     private static MainWindowsController controller;
 
     public static void main(String[] args) {
-        appProperties = new Properties();
-        try (InputStream propFile = MainWindow.class.getClassLoader().getResourceAsStream("application.properties")) {
-            appProperties.load(propFile);
-        } catch (Exception e) {
-            System.out.println("properties file not found");
-            Platform.exit();
-        }
-
-        version = appProperties.getProperty("app_version") + " от " + appProperties.getProperty("app_date");
-        logger.info("App starting, user = {}, app version = {}, db = {}", System.getProperty("user.name"), version,
-                Folders.DB_FILE_NAME);
-        launch(args);
+        LauncherImpl.launchApplication(MainWindow.class, AppPreloader.class, args);
     }
 
     public static void setMiOptions(MenuItem miOptions) {
@@ -90,8 +78,19 @@ public class MainWindow extends Application {
         return controller.getMainTable();
     }
 
-    public static Properties getAppProperties() {
-        return appProperties;
+    @Override
+    public void init() throws Exception {
+        try {
+            logger.info("App starting, user = {}, app version = {}, db = {}", System.getProperty("user.name"),
+                    App.getProperties().getVersion(), Folders.DB_FILE_NAME);
+
+            new InitModule().init(this);
+        } catch (Exception e) {
+            logger.fatal("App init error: {}", e.getMessage(), e);
+            Dialogs.showMessageTS("Ошибка инициализации приложения", "Во время инициализации программы " +
+                    "произошла ошибка:\n\n" + e.getMessage());
+            Platform.exit();
+        }
     }
 
     @Override
@@ -99,8 +98,6 @@ public class MainWindow extends Application {
         mainStage = primaryStage;
 
         try {
-            new CoreModule().init();
-
             fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/mainWindow.fxml"));
             rootAnchorPane = fxmlLoader.load();
 
@@ -109,7 +106,10 @@ public class MainWindow extends Application {
 
             scene.setOnKeyPressed(event -> {
                 if (event.getCode().getName().equals("F12")) {
-                    Dialogs.showMessage("Инфо", version);
+                    try {
+                        Dialogs.showMessage("Инфо", App.getProperties().getVersion());
+                    } catch (Exception e) {
+                    }
                 }
             });
 
@@ -137,9 +137,9 @@ public class MainWindow extends Application {
 //        OptionsWindow certificateOverviewWindow = new OptionsWindow();
 //        certificateOverviewWindow.open();
         } catch (Exception e) {
-            logger.fatal("Program init error: {}", e.getMessage(), e);
-            Dialogs.showMessage("Ошибка инициализация программы", "Программа не может продолжить работу." +
-                    "\nПричина: " + e.getMessage());
+            logger.fatal("App start error: {}", e.getMessage(), e);
+            Dialogs.showMessageTS("Ошибка запуска программы", "Программа не может продолжить работу." +
+                    "\nПричина:\n\n" + e.getMessage());
             Platform.exit();
         }
 

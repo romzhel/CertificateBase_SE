@@ -1,7 +1,7 @@
 package ui_windows.request;
 
-import core.CoreModule;
 import core.Dialogs;
+import core.InitModule;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -85,7 +85,7 @@ public class RequestWindowController implements Initializable {
                 /*CoreModule.getCustomItems().addAll(results);
                 MainWindow.getController().getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION);*/
 
-                CoreModule.setAndDisplayCustomItems(results);
+                InitModule.setAndDisplayCustomItems(results);
 
                 ((Stage) btnApply.getScene().getWindow()).close();
             });

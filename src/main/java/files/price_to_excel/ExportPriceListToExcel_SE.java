@@ -1,7 +1,7 @@
 package files.price_to_excel;
 
-import core.CoreModule;
 import core.Dialogs;
+import core.InitModule;
 import files.ExcelCellStyleFactory;
 import files.Folders;
 import javafx.application.Platform;
@@ -41,7 +41,7 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
             ExecutionIndicator.getInstance().start();
 
             if (priceList.getProblemItems().size() > 0) {
-                Platform.runLater(() -> CoreModule.setAndDisplayCustomItems(priceList.getProblemItems()));
+                Platform.runLater(() -> InitModule.setAndDisplayCustomItems(priceList.getProblemItems()));
 
                 if (!askProblemItems || Dialogs.confirmTS("Формирование прайс-листа", "Найдены заказные" +
                         " позиции, статус проверки сертификатов которых не позволяет добавить их в прайс-лист (" +

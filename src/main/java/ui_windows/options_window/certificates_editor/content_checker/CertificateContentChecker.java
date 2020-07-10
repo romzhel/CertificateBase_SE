@@ -1,7 +1,7 @@
 package ui_windows.options_window.certificates_editor.content_checker;
 
-import core.CoreModule;
 import core.Dialogs;
+import core.InitModule;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import org.apache.poi.ss.usermodel.CellType;
@@ -46,7 +46,7 @@ public class CertificateContentChecker {
             }
 
             if (itemsWithNotOkCountry.size() > 0) {
-                CoreModule.setAndDisplayCustomItems(itemsWithNotOkCountry);
+                InitModule.setAndDisplayCustomItems(itemsWithNotOkCountry);
             }
 
             Platform.runLater(() -> saveToFile());

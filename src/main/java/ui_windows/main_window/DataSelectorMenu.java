@@ -1,6 +1,6 @@
 package ui_windows.main_window;
 
-import core.CoreModule;
+import core.InitModule;
 import javafx.scene.control.*;
 import ui_windows.main_window.filter_window_se.DataSelectorMenuItem;
 import ui_windows.product.Products;
@@ -11,7 +11,7 @@ import static ui_windows.main_window.filter_window_se.ItemsSelection.PRICE_ITEMS
 public class DataSelectorMenu {
     private static final String SPACE = "     ";
     public static final DataSelectorMenuItem MENU_DATA_CUSTOM_SELECTION = new DataSelectorMenuItem(
-            SPACE + "Запрос" + SPACE, ALL_ITEMS, CoreModule::getCustomItems,
+            SPACE + "Запрос" + SPACE, ALL_ITEMS, InitModule::getCustomItems,
             MainTableContextMenuFactory::createContectMenuForCustomItems);
     public static final DataSelectorMenuItem MENU_DATA_LAST_IMPORT_RESULT = new DataSelectorMenuItem(
             SPACE + "Результаты последнего импорта" + SPACE, ALL_ITEMS,

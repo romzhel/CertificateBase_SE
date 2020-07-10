@@ -31,7 +31,6 @@ public class Folders {
     private File dbBackupFolder;
     private File appLogsFolder;
     private File remoteLogsFolder;
-    private PathFile pathFile;
 
     private Folders() {
     }
@@ -72,7 +71,7 @@ public class Folders {
             copyCashDbFile();
             initFolders();
 
-            Dialogs.showMessage("Подключение к базе данных", "Был найден локальный файл базы данных.\n\n" +
+            Dialogs.showMessageTS("Подключение к базе данных", "Был найден локальный файл базы данных.\n\n" +
                     "Обратите внимание, что все изменения будут сохраняться только в этом файле и никто больше их не увидит.\n\n");
             return;
         }
@@ -83,7 +82,7 @@ public class Folders {
 
         if (files.first().exists()) {
             cashedDbFile = mainDbFile = files.first();
-            Dialogs.showMessage("Подключение к базе данных", "Была найдена локальная копия файла базы данных " +
+            Dialogs.showMessageTS("Подключение к базе данных", "Была найдена локальная копия файла базы данных " +
                     "с предыдующих сессий.\n\n" +
                     "Обратите внимание, такой режим не поддерживает изменение данных.");
             return;

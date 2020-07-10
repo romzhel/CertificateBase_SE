@@ -1,7 +1,7 @@
 package ui_windows.main_window;
 
-import core.CoreModule;
 import core.Dialogs;
+import core.InitModule;
 import files.Folders;
 import files.SelectorExportWindow;
 import files.reports.CertificateMatrixReportToExcel;
@@ -47,14 +47,14 @@ public class MainTableContextMenuFactory {
         MENU_OPEN_ITEM.setOnAction(event -> mainTable.displayEditorWindow());
         MENU_DELETE_ITEMS_FROM_LIST.setOnAction(event -> {
 //            List<Product> itemsForDelete = SHD_SELECTED_PRODUCTS.getData();
-            CoreModule.getCustomItems().removeAll(SHD_SELECTED_PRODUCTS.getData());
-            SHD_DATA_SET.setData(MainTableContextMenuFactory.class, new ArrayList<>(CoreModule.getCustomItems()));
+            InitModule.getCustomItems().removeAll(SHD_SELECTED_PRODUCTS.getData());
+            SHD_DATA_SET.setData(MainTableContextMenuFactory.class, new ArrayList<>(InitModule.getCustomItems()));
 
 //            CoreModule.getProducts().getTableView().getItems().removeAll(itemsForDelete);
 //            mainTable.refresh();
         });
         MENU_DELETE_ALL_ITEMS.setOnAction(event -> {
-            CoreModule.getCustomItems().clear();
+            InitModule.getCustomItems().clear();
             SHD_DATA_SET.setData(MainTableContextMenuFactory.class, new ArrayList<Product>());
 
 //            CoreModule.getProducts().getTableView().getItems().clear();
@@ -62,7 +62,7 @@ public class MainTableContextMenuFactory {
         });
         MENU_ADD_ITEM_TO_CUSTOM.setOnAction(event -> {
 //            ObservableList itemsForAdd = CoreModule.getProducts().getTableView().getSelectionModel().getSelectedItems();
-            CoreModule.getCustomItems().addAll(SHD_SELECTED_PRODUCTS.getData());
+            InitModule.getCustomItems().addAll(SHD_SELECTED_PRODUCTS.getData());
 //            SHD_DATA_SET.setData(new ArrayList<>(CoreModule.getCustomItems()));
         });
         MENU_CHECK_CERTIFICATES.setOnAction(event -> {
