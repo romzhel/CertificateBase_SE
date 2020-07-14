@@ -1,5 +1,7 @@
 package ui_windows.main_window.filter_window_se;
 
+import core.InitModule;
+import core.Initializable;
 import core.Module;
 import core.SharedData;
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +24,7 @@ import static ui_windows.main_window.filter_window_se.ItemsSelection.ALL_ITEMS;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.PRICE_ITEMS;
 import static ui_windows.product.data.DataItem.DATA_EMPTY;
 
-public class Filter_SE implements Module {
+public class Filter_SE implements Module, Initializable {
     private static Filter_SE instance;
     private static final Logger logger = LogManager.getLogger(Filter_SE.class);
 
@@ -36,6 +38,11 @@ public class Filter_SE implements Module {
             instance = new Filter_SE();
         }
         return instance;
+    }
+
+    @Override
+    public void init() throws Exception {
+        SHD_FILTER_PARAMETERS.setData(InitModule.class, new FilterParameters_SE(), NOT_NOTIFY);
     }
 
     public void apply() {

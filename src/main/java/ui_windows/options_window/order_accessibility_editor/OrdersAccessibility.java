@@ -1,10 +1,11 @@
 package ui_windows.options_window.order_accessibility_editor;
 
+import core.Initializable;
 import database.AccessibilityDB;
 
 import java.util.ArrayList;
 
-public class OrdersAccessibility {
+public class OrdersAccessibility implements Initializable {
     private static OrdersAccessibility instance;
     private ArrayList<OrderAccessibility> ordersAccessibility;
     private OrdersAccessibilityTable table;
@@ -20,9 +21,9 @@ public class OrdersAccessibility {
         return instance;
     }
 
-    public OrdersAccessibility getFromDB() {
+    @Override
+    public void init() {
         ordersAccessibility = new AccessibilityDB().getData();
-        return this;
     }
 
     public void addItem(OrderAccessibility oa) {

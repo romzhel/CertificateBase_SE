@@ -1,5 +1,6 @@
 package ui_windows.product;
 
+import core.Initializable;
 import database.ProductTypesDB;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,7 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
 
-public class ProductTypes {
+public class ProductTypes implements Initializable {
     public final static String NO_SELECTED = "не выбрано";
     private static ProductTypes instance;
     private List<ProductType> productTypes;
@@ -24,9 +25,9 @@ public class ProductTypes {
         return instance;
     }
 
-    public ProductTypes getFromDB() {
+    @Override
+    public void init() {
         productTypes = new ProductTypesDB().getData();
-        return this;
     }
 
     public ProductType getById(int id) {

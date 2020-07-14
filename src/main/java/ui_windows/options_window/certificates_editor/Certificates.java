@@ -1,6 +1,7 @@
 package ui_windows.options_window.certificates_editor;
 
 import core.Dialogs;
+import core.Initializable;
 import database.CertificatesDB;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContent;
@@ -8,7 +9,7 @@ import utils.Utils;
 
 import java.util.ArrayList;
 
-public class Certificates {
+public class Certificates implements Initializable {
     private static Certificates instance;
     //    private CertificatesChecker certificatesChecker;
     private ArrayList<Certificate> certificates;
@@ -25,7 +26,8 @@ public class Certificates {
         return instance;
     }
 
-    public void getFromDb() {
+    @Override
+    public void init() {
         certificates = new CertificatesDB().getData();
     }
 

@@ -1,12 +1,13 @@
 package ui_windows.options_window.profile_editor;
 
+import core.Initializable;
 import database.ProfilesDB;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-public class Profiles {
+public class Profiles implements Initializable {
     private static Profiles instance;
     private List<Profile> profiles;
     private ProfilesTable table;
@@ -21,9 +22,9 @@ public class Profiles {
         return instance;
     }
 
-    public Profiles getFromDB() {
+    @Override
+    public void init() {
         profiles = new ProfilesDB().getData();
-        return this;
     }
 
     public void addItem(Profile prof) {

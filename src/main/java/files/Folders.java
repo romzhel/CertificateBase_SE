@@ -2,6 +2,7 @@ package files;
 
 import core.App;
 import core.Dialogs;
+import core.Initializable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui_windows.main_window.MainWindow;
@@ -16,7 +17,7 @@ import java.util.TreeSet;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-public class Folders {
+public class Folders implements Initializable {
     private static final Logger logger = LogManager.getLogger(Folders.class);
     private static Folders instance;
     public static final String APP_FOLDER = System.getProperty("user.home") + "\\AppData\\Roaming\\CertificateBase\\";
@@ -41,6 +42,7 @@ public class Folders {
         return instance;
     }
 
+    @Override
     public void init() throws Exception {
         File oldDbFile = new File(APP_FOLDER + App.getProperties().getDbFileName());
         if (oldDbFile.exists()) {

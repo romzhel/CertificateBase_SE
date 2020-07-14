@@ -1,6 +1,7 @@
 package ui_windows.options_window.product_lgbk;
 
 import core.Dialogs;
+import core.Initializable;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
@@ -13,7 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-public class ProductLgbkGroups {
+public class ProductLgbkGroups implements Initializable {
     private static ProductLgbkGroups instance;
     private ProductLgbk rootNode;
     private TreeItem<ProductLgbk> treeItemRoot;
@@ -31,7 +32,8 @@ public class ProductLgbkGroups {
         return instance;
     }
 
-    public ProductLgbkGroups init() {
+    @Override
+    public void init() {
         lgbkGroups.clear();
         if (ProductLgbks.getInstance().getItems().size() > 0) {
             createFromLgbks(ProductLgbks.getInstance());
@@ -41,7 +43,6 @@ public class ProductLgbkGroups {
         }
 
         getFullTreeSet();
-        return this;
     }
 
     public ArrayList<ProductLgbk> createFromProducts(Products products) {

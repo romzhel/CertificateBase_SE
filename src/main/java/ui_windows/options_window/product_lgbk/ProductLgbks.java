@@ -1,6 +1,7 @@
 package ui_windows.options_window.product_lgbk;
 
 import core.Dialogs;
+import core.Initializable;
 import database.ProductLgbksDB;
 import javafx.scene.control.TreeTableView;
 import ui_windows.options_window.families_editor.ProductFamily;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-public class ProductLgbks {
+public class ProductLgbks implements Initializable {
     private static ProductLgbks instance;
     private List<ProductLgbk> productLgbks;
     private ProductLgbksTable productLgbksTable;
@@ -25,7 +26,8 @@ public class ProductLgbks {
         return instance;
     }
 
-    public void getFromDB() {
+    @Override
+    public void init() {
         productLgbks = new ProductLgbksDB().getData();
     }
 

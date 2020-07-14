@@ -1,6 +1,7 @@
 package ui_windows.options_window.price_lists_editor;
 
 import core.Dialogs;
+import core.Initializable;
 import database.PriceListSheetDB;
 import database.PriceListsDB;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
@@ -9,7 +10,7 @@ import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListShee
 import java.util.ArrayList;
 import java.util.List;
 
-public class PriceLists {
+public class PriceLists implements Initializable {
     private static PriceLists instance;
     private List<PriceList> items;
     private PriceListsTable priceListsTable;
@@ -24,7 +25,8 @@ public class PriceLists {
         return instance;
     }
 
-    public void getFromDB() {
+    @Override
+    public void init() {
         items = new PriceListsDB().getData();
         PriceListSheets sheets = new PriceListSheets().getFromDB();
 

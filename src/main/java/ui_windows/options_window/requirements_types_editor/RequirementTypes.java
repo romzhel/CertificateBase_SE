@@ -1,13 +1,14 @@
 package ui_windows.options_window.requirements_types_editor;
 
 import core.Dialogs;
+import core.Initializable;
 import database.RequirementTypesDB;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-public class RequirementTypes {
+public class RequirementTypes implements Initializable {
     private static RequirementTypes instance;
     private List<RequirementType> requirementTypes;
 
@@ -21,7 +22,8 @@ public class RequirementTypes {
         return instance;
     }
 
-    public void getFromDb() {
+    @Override
+    public void init() {
         requirementTypes = new RequirementTypesDB().getData();
     }
 

@@ -1,5 +1,6 @@
 package ui_windows.options_window.certificates_editor.certificate_content_editor;
 
+import core.Initializable;
 import database.CertificatesContentDB;
 import ui_windows.product.ProductTypes;
 import ui_windows.product.Products;
@@ -7,7 +8,7 @@ import ui_windows.product.Products;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CertificatesContent {
+public class CertificatesContent implements Initializable {
     private static CertificatesContent instance;
     private List<CertificateContent> content;
 
@@ -21,7 +22,8 @@ public class CertificatesContent {
         return instance;
     }
 
-    public void getFromDb() {
+    @Override
+    public void init() {
         content = new CertificatesContentDB().getData();
     }
 

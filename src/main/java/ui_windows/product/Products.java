@@ -1,5 +1,6 @@
 package ui_windows.product;
 
+import core.Initializable;
 import database.ProductsDB;
 import javafx.scene.control.TableView;
 import ui_windows.ExecutionIndicator;
@@ -8,7 +9,7 @@ import utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Products {
+public class Products implements Initializable {
     private static Products instance;
     private List<Product> products;
     private TableView<Product> tableView;
@@ -48,7 +49,8 @@ public class Products {
         return null;
     }
 
-    public void getFromDB() {
+    @Override
+    public void init() {
         products = new ProductsDB().getData();
     }
 

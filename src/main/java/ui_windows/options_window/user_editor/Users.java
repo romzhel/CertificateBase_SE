@@ -1,11 +1,15 @@
 package ui_windows.options_window.user_editor;
 
+import core.Initializable;
 import database.UsersDB;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import utils.Utils;
 
 import java.util.ArrayList;
 
-public class Users {
+public class Users implements Initializable {
+    private static final Logger logger = LogManager.getLogger(Users.class);
     private static Users instance;
     private ArrayList<User> users;
     private UsersTable table;
@@ -22,9 +26,10 @@ public class Users {
         return instance;
     }
 
-    public Users getFromDB() {
+    @Override
+    public void init() {
         users = new UsersDB().getData();
-        return this;
+        logger.info("текущий пользователь - {}", checkCurrentUser(Utils.getComputerName()));
     }
 
     public User checkCurrentUser(String value) {

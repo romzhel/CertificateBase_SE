@@ -1,12 +1,13 @@
 package ui_windows.options_window.families_editor;
 
+import core.Initializable;
 import database.ProductFamiliesDB;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-public class ProductFamilies {
+public class ProductFamilies implements Initializable {
     private static ProductFamilies instance;
     private ProductFamiliesTable productFamiliesTable;
     private List<ProductFamily> productFamilies;
@@ -21,7 +22,8 @@ public class ProductFamilies {
         return instance;
     }
 
-    public void getFromDB() {
+    @Override
+    public void init() {
         productFamilies = new ProductFamiliesDB().getData();
     }
 

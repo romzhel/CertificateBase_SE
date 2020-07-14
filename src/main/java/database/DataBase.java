@@ -1,5 +1,7 @@
 package database;
 
+import core.Initializable;
+import files.Folders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sqlite.SQLiteConfig;
@@ -11,7 +13,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Supplier;
 
-public class DataBase {
+public class DataBase implements Initializable {
     private static final Logger logger = LogManager.getLogger(DataBase.class);
     private static DataBase instance;
     private Connection dbConnection;
@@ -44,16 +46,18 @@ public class DataBase {
         return instance;
     }
 
-    public void firstConnect(File mainDbFile, File cashedDbFile) throws Exception {
+    @Override
+    public void init() throws Exception {
         firstStart = true;
+        File cashedBdFile = Folders.getInstance().getCashedDbFile();
         try {
-            dbConnection = DriverManager.getConnection("jdbc:sqlite:" + cashedDbFile.getPath(), config.toProperties());
-            dbFile = mainDbFile;
+            dbConnection = DriverManager.getConnection("jdbc:sqlite:" + cashedBdFile.getPath(), config.toProperties());
+            dbFile = Folders.getInstance().getMainDbFile();
 
-            logger.debug("cashed db file {} is connected, journaling mode {}", cashedDbFile, getDbJournalingMode());
+            logger.debug("cashed db file {} is connected, journaling mode {}", cashedBdFile, getDbJournalingMode());
             logger.debug("main db file is {}", dbFile);
         } catch (SQLException e2) {
-            logger.fatal("can't connect to DB file {}: {}", cashedDbFile, e2.getMessage());
+            logger.fatal("can't connect to DB file {}: {}", cashedBdFile, e2.getMessage());
             throw new RuntimeException(e2);
         }
     }

@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import preloader.Notification;
 import ui_windows.main_window.DataSelectorMenu;
-import ui_windows.main_window.filter_window_se.FilterParameters_SE;
 import ui_windows.main_window.filter_window_se.Filter_SE;
 import ui_windows.options_window.certificates_editor.Certificates;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContent;
@@ -22,86 +21,14 @@ import ui_windows.options_window.user_editor.Users;
 import ui_windows.product.Product;
 import ui_windows.product.ProductTypes;
 import ui_windows.product.Products;
-import utils.Utils;
 
 import java.util.HashSet;
 import java.util.List;
 
-import static core.SharedData.NOT_NOTIFY;
-import static core.SharedData.SHD_FILTER_PARAMETERS;
-
 public class InitModule {
-    private static HashSet<Product> customItems = new HashSet<>();
     private static final Logger logger = LogManager.getLogger(InitModule.class);
+    private static HashSet<Product> customItems = new HashSet<>();
     private Application application;
-
-    public void init(Application application) throws Exception {
-        this.application = application;
-        String[] initStages = {
-                "Инициализация папок и подключения к сетевым ресурсам",
-                "Инициализация подключения к БД",
-                "Инициализация профилей",
-                "Инициализация пользователей",
-                "Инициализация прав текущего пользователя",
-                "Инициализация кодов доступности для заказа",
-                "Инициализация типов норм для сертификатов",
-                "Инициализация типов продукции",
-                "Инициализация сертификатов",
-                "Инициализация семейств продукции",
-                "Инициализация иерархии продукции",
-                "Инициализация продукции",
-                "Инициализация фильтра",
-                "Инициализация вспомогательных элементов",
-                "Инициализация прайс-листов",
-        };
-        int stageOrder = 0;
-
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        Folders.getInstance().init();
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        DataBase.getInstance().firstConnect(Folders.getInstance().getMainDbFile(), Folders.getInstance().getCashedDbFile());
-
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        Profiles.getInstance().getFromDB();
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        Users.getInstance().getFromDB();
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        Users.getInstance().checkCurrentUser(Utils.getComputerName());
-
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        OrdersAccessibility.getInstance().getFromDB();
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        RequirementTypes.getInstance().getFromDb();
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        ProductTypes.getInstance().getFromDB();
-
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        CertificatesContent.getInstance().getFromDb();
-        Certificates.getInstance().getFromDb();
-
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        ProductFamilies.getInstance().getFromDB();
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        ProductLgbks.getInstance().getFromDB();
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        Products.getInstance().getFromDB();
-
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        Filter_SE.getInstance();
-        SHD_FILTER_PARAMETERS.setData(InitModule.class, new FilterParameters_SE(), NOT_NOTIFY);
-
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        ProductLgbkGroups.getInstance().init();
-        logAndNotifyPreloader(initStages[stageOrder++]);
-        PriceLists.getInstance().getFromDB();
-
-        DataBase.getInstance().disconnect();
-    }
-
-    private void logAndNotifyPreloader(String details) throws Exception {
-        logger.info(details);
-        application.notifyPreloader(Notification.build(details + "..."));
-    }
 
     public static HashSet<Product> getCustomItems() {
         return customItems;
@@ -113,5 +40,41 @@ public class InitModule {
         InitModule.customItems.addAll(customItems);
 //        MainWindow.getController().getDataSelectorMenu().selectMenuItem(DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION);
         DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION.activate();
+    }
+
+    public void init(Application application) throws Exception {
+        this.application = application;
+        Object[][] initStages = {
+                {"Инициализация папок и подключения к сетевым ресурсам", Folders.getInstance()},
+                {"Инициализация подключения к БД", DataBase.getInstance()},
+                {"Инициализация профилей", Profiles.getInstance()},
+                {"Инициализация пользователей", Users.getInstance()},
+                {"Инициализация прав текущего пользователя", null},
+                {"Инициализация кодов доступности для заказа", OrdersAccessibility.getInstance()},
+                {"Инициализация типов норм для сертификатов", RequirementTypes.getInstance()},
+                {"Инициализация типов продукции", ProductTypes.getInstance()},
+                {"Инициализация содержимого сертификатов", CertificatesContent.getInstance()},
+                {"Инициализация сертификатов", Certificates.getInstance()},
+                {"Инициализация семейств продукции", ProductFamilies.getInstance()},
+                {"Инициализация иерархии продукции", ProductLgbks.getInstance()},
+                {"Инициализация продукции", Products.getInstance()},
+                {"Инициализация фильтра", Filter_SE.getInstance()},
+                {"Инициализация вспомогательных элементов", ProductLgbkGroups.getInstance()},
+                {"Инициализация прайс-листов", PriceLists.getInstance()},
+        };
+
+        for (Object[] initStage : initStages) {
+            logAndNotifyPreloader(initStage[0].toString());
+            if (initStage[1] != null) {
+                ((Initializable) initStage[1]).init();
+            }
+        }
+
+        DataBase.getInstance().disconnect();
+    }
+
+    private void logAndNotifyPreloader(String details) throws Exception {
+        logger.info(details);
+        application.notifyPreloader(Notification.build(details + "..."));
     }
 }
