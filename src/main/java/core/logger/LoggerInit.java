@@ -1,5 +1,7 @@
 package core.logger;
 
+import core.Dialogs;
+import javafx.application.Platform;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -7,9 +9,17 @@ import org.apache.logging.log4j.core.config.builder.api.*;
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import utils.Utils;
 
+import java.io.File;
+
 public class LoggerInit {
 
-    public LoggerInit() {
+    public LoggerInit init() {
+        if (!(new File(System.getProperty("user.dir") + "\\_lib").exists())) {
+            Dialogs.showMessageTS("Ошибка инициализации", "Программа не может быть запущена, так как не " +
+                    "обнаружена папка с библиотеками '_lib'");
+            Platform.exit();
+        }
+
         ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
 
         builder.addProperty("basePath", System.getProperty("user.home") + "/AppData/Roaming/CertificateBase/");
@@ -41,5 +51,7 @@ public class LoggerInit {
         } catch (IOException e) {
             e.printStackTrace();
         }*/
+
+        return this;
     }
 }

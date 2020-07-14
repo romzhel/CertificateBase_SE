@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 import static ui_windows.options_window.profile_editor.SimpleRight.HIDE;
 
 public class MainWindow extends Application {
-    private static final LoggerInit loggerInit = new LoggerInit();
+    private static final LoggerInit loggerInit = new LoggerInit().init();
     private static final Logger logger = LogManager.getLogger(MainWindow.class);
     private static Stage mainStage;
     private static AnchorPane rootAnchorPane;
