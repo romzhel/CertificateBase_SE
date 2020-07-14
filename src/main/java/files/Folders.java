@@ -79,7 +79,7 @@ public class Folders {
         TreeSet<File> files = new TreeSet<>((o1, o2) -> o2.getName().compareTo(o1.getName()));
         files.addAll(Arrays.asList(dBfilesList));
 
-        if (files.first().exists()) {
+        if (files.size() > 0 && files.first().exists()) {
             cashedDbFile = mainDbFile = files.first();
             Dialogs.showMessageTS("Подключение к базе данных", "Была найдена локальная копия файла базы данных " +
                     "с предыдующих сессий.\n\n" +
