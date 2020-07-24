@@ -5,7 +5,6 @@ import core.Dialogs;
 import core.Initializable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ui_windows.main_window.MainWindow;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,6 +55,7 @@ public class Folders implements Initializable {
         }
 
         File remoteDbFile = new File(App.getProperties().getRemoteDbFolder() + App.getProperties().getDbFileName());
+        logger.debug("remote db file name = {}", remoteDbFile.getPath());
         if (remoteDbFile.exists()) {
             logger.debug("Remote db file {} is found", remoteDbFile);
             mainDbFile = remoteDbFile;
@@ -89,13 +89,13 @@ public class Folders implements Initializable {
             return;
         }
 
-        mainDbFile = Dialogs.selectDBFile(MainWindow.getMainStage());
+        /*mainDbFile = Dialogs.selectDBFile(MainWindow.getMainStage());
         if (mainDbFile != null) {
             logger.debug("Custom db file {} was selected", mainDbFile);
             copyCashDbFile();
             initFolders();
             return;
-        }
+        }*/
 
         logger.fatal("No db file was found");
         throw new RuntimeException("Файл базы данных не был найден.");

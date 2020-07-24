@@ -65,7 +65,7 @@ public class FilterParameters_SE {
         lgbks = new TreeSet<>((o1, o2) -> o1.getLgbk().compareTo(o2.getLgbk()));
         hierarchies = new TreeSet<>((o1, o2) -> o1.getHierarchy().compareTo(o2.getHierarchy()));
         customProperties = new TreeSet<>(Arrays.asList(DATA_EMPTY, DATA_COUNTRY, DATA_DCHAIN, DATA_RESPONSIBLE,
-                /*DATA_CERTIFICATE,*/ DATA_IN_WHICH_PRICE_LIST, DATA_TYPE_DESCRIPTION));
+                /*DATA_CERTIFICATE,*/ DATA_IN_WHICH_PRICE_LIST, DATA_TYPE_DESCRIPTION, DATA_DESCRIPTION_RU, DATA_DESCRIPTION_EN));
     }
 
     public FilterParameters_SE setItems(ItemsSelection selection) {

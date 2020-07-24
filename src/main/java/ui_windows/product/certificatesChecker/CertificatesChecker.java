@@ -154,8 +154,8 @@ public class CertificatesChecker {
     }
 
     private boolean isNamesMatches(String prodName, Certificate cert, String contentName) {
-        prodName = prodName.replaceAll("[\\s/()]", "").trim();
-        contentName = contentName.replaceAll("[\\s/()]", "").trim();
+        prodName = prodName.replaceAll("[\\.\\s/()]", "").trim();
+        contentName = contentName.replaceAll("[\\.\\s/()]", "").trim();
         String contentValue;
 
         if (contentName.matches(".+[x]{2,}.*")) {

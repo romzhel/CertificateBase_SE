@@ -24,7 +24,7 @@ public enum CustomValueMatcher {
     REGULAR_EXPRESSION{
         boolean matches(String text, String pattern) {
             try {
-                return text.matches(pattern);
+                return text.toLowerCase().matches(pattern.toLowerCase());
             } catch (Exception e) {
                 return false;
             }
