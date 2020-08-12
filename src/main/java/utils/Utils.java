@@ -29,6 +29,7 @@ import java.util.concurrent.CountDownLatch;
 
 
 public class Utils {
+//    private static final Logger logger = LogManager.getLogger(Utils.class);
 
     public static void clearControls(AnchorPane root) {
         for (Node n : root.getChildren()) {
@@ -393,30 +394,32 @@ public class Utils {
     }
 
     public static void copyFilesToClipboard(List<File> files) {
-        if (files.size() > 0) {
-            Clipboard clipboard = Clipboard.getSystemClipboard();
+        Platform.runLater(() -> {
+            if (files.size() > 0) {
+                Clipboard clipboard = Clipboard.getSystemClipboard();
 
-            HashSet<File> resFiles = new HashSet<>(files);
-            ArrayList<File> filesForCopy = new ArrayList<>();
+                HashSet<File> resFiles = new HashSet<>(files);
+                ArrayList<File> filesForCopy = new ArrayList<>();
 
-            ClipboardContent cc = new ClipboardContent();
-            for (File file:resFiles) {
-                if (file != null) {
-                    filesForCopy.add(file);
+                ClipboardContent cc = new ClipboardContent();
+                for (File file : resFiles) {
+                    if (file != null) {
+                        filesForCopy.add(file);
+                    }
                 }
+                cc.putFiles(filesForCopy);
+                clipboard.setContent(cc);
+                String filesName = "";
+                for (File file : filesForCopy) {
+                    filesName += " - " + file.getName() + "\n";
+                }
+                Dialogs.showMessage("Копирование в буфер обмена",
+                        "Следующие файлы были вставлены в буфер обмена:\n" + filesName, 800);
+            } else {
+                Dialogs.showMessage("Буфер обмена", "Нет подходящих файлов для копирования в буфер обмена.");
             }
-
-            cc.putFiles(filesForCopy);
-            clipboard.setContent(cc);
-            String filesName = "";
-            for (File file : filesForCopy) {
-                filesName += " - " + file.getName() + "\n";
-            }
-            Dialogs.showMessage("Копирование в буфер обмена",
-                    "Следующие файлы были вставлены в буфер обмена:\n" + filesName, 800);
-        } else {
-            Dialogs.showMessage("Буфер обмена", "Нет подходящих файлов для копирования в буфер обмена.");
-        }
+//        logger.trace("clipboard finished");
+        });
     }
 
     public static void copyFilesToClipboardTS(List<File> files) {
@@ -481,7 +484,17 @@ public class Utils {
         return null;
     }
 
-    public static String getExactTime(){
+    public static String getExactTime() {
         return new SimpleDateFormat("hh:mm:ss.SSS").format(new Date());
+    }
+
+    public static Path getFileFromMultiLocation(String fileName, Path... locations) throws Exception {
+        for (Path location : locations) {
+            Path fileLocation = location.resolve(fileName);
+            if (Files.exists(fileLocation)) {
+                return fileLocation;
+            }
+        }
+        throw new RuntimeException("Не найден файл " + fileName);
     }
 }

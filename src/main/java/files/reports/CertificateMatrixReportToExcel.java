@@ -12,14 +12,16 @@ import utils.Utils;
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 public class CertificateMatrixReportToExcel {
+    public static CellStyle HYPERLINK_STYLE;
     private File file;
     private Workbook workbook;
 
-    public CertificateMatrixReportToExcel(ArrayList<CertificateRequestResult> items) {
+    public CertificateMatrixReportToExcel(List<CertificateRequestResult> items) {
         workbook = new HSSFWorkbook();
+        HYPERLINK_STYLE = getHyperLinkStyle();
         HSSFSheet sheet = (HSSFSheet) workbook.createSheet("Сертификаты");
         String[] titles = new String[]{"№ п/п", "Заказной номер", "Наименование", "Описание"};
         file = null;
@@ -58,7 +60,7 @@ public class CertificateMatrixReportToExcel {
                 String fgh = rr.getFiles().get(i).getName();
                 link.setAddress(fgh);
                 cell.setHyperlink(link);
-                cell.setCellStyle(getHyperLinkStyle());
+                cell.setCellStyle(HYPERLINK_STYLE);
 
                 addColumns = addColumns < rr.getFiles().size() ? rr.getFiles().size() : addColumns;
             }

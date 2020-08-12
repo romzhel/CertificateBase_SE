@@ -27,6 +27,7 @@ import ui_windows.main_window.filter_window_se.FilterParameters_SE;
 import ui_windows.options_window.profile_editor.Profile;
 import ui_windows.options_window.user_editor.Users;
 import utils.Utils;
+import utils.files.ResourceSynchronizer;
 
 import java.io.File;
 import java.util.Arrays;
@@ -131,6 +132,8 @@ public class MainWindow extends Application {
             mainStage.show();
             mainStage.setMinHeight(mainStage.getHeight());
             mainStage.setMinWidth(mainStage.getWidth());
+
+            ResourceSynchronizer.synchronize(Folders.getInstance().getCertFolder().toPath(), Folders.getInstance().getCashedCertFolder());
 
 //            new AddActions().make();
 

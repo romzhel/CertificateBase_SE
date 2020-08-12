@@ -136,9 +136,19 @@ public class CertificateVerificationTable {
                     String fileName = tableView.getSelectionModel().getSelectedItem().getFile();
 
                     if (fileName != null && !fileName.isEmpty()) {
-                        File certFile = new File(Folders.getInstance().getCertFolder().getPath() + "\\" + fileName);
+                        File certFile = null;
+                        try {
+                            certFile = Utils.getFileFromMultiLocation(fileName,
+                                    Folders.getInstance().getCashedCertFolder(),
+                                    Folders.getInstance().getCertFolder().toPath()
+                            ).toFile();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
-                        if (certFile != null && certFile.exists()) Utils.openFile(certFile);
+                        if (certFile.exists()) {
+                            Utils.openFile(certFile);
+                        }
                     }
                 }
             }

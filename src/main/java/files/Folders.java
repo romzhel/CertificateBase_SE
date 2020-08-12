@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -30,6 +32,7 @@ public class Folders implements Initializable {
     private File dbBackupFolder;
     private File appLogsFolder;
     private File remoteLogsFolder;
+    private Path cashedCertFolder = Paths.get(APP_FOLDER, "_certs");
 
     private Folders() {
     }
@@ -174,5 +177,9 @@ public class Folders implements Initializable {
 
     public File getRemoteLogsFolder() {
         return remoteLogsFolder;
+    }
+
+    public Path getCashedCertFolder() {
+        return cashedCertFolder;
     }
 }

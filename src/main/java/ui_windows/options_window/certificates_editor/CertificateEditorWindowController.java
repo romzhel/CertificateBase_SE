@@ -15,7 +15,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class CertificateEditorWindowController implements Initializable {
-    private CertificatesContentTable certificatesContentTable;
 
     @FXML
     TableView<CertificateContent> tvContent;
@@ -75,12 +74,12 @@ public class CertificateEditorWindowController implements Initializable {
     }
 
     public void addItem() {
-        CertificateContentActions.addItem(certificatesContentTable);
+        CertificateContentActions.addItem(CertificatesContentTable.getInstance());
     }
 
     public void editItem() {
-        certificatesContentTable.setEditModeActive(true);
-        certificatesContentTable.setEditMode(tvContent.getSelectionModel().getSelectedIndex());
+        CertificatesContentTable.getInstance().setEditModeActive(true);
+        CertificatesContentTable.getInstance().setEditMode(tvContent.getSelectionModel().getSelectedIndex());
     }
 
     public void deleteItem() {
@@ -101,13 +100,5 @@ public class CertificateEditorWindowController implements Initializable {
 
     public void countryKey() {
 
-    }
-
-    public CertificatesContentTable getCertificatesContentTable() {
-        return certificatesContentTable;
-    }
-
-    public void setCertificatesContentTable(CertificatesContentTable certificatesContentTable) {
-        this.certificatesContentTable = certificatesContentTable;
     }
 }

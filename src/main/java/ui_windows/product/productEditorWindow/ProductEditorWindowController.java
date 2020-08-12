@@ -30,11 +30,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static core.SharedData.SHD_SELECTED_PRODUCTS;
 
 public class ProductEditorWindowController implements Initializable {
+    private static final Logger logger = LogManager.getLogger(ProductEditorWindowController.class);
     @FXML
     public TextField tfMaterial;
     @FXML
@@ -70,17 +72,9 @@ public class ProductEditorWindowController implements Initializable {
     @FXML
     public RadioMenuItem rmiTypeFilter;
     @FXML
-    TableView<CertificateVerificationItem> tvCertVerification;
-    @FXML
     public ComboBox<String> cbFamily;
     @FXML
     public TextField tfPm;
-    @FXML
-    Button btnApply;
-    @FXML
-    CheckBox cbxOrderable;
-    @FXML
-    ContextMenu cmCertActions;
     @FXML
     public ListView<String> lHistory;
     @FXML
@@ -99,10 +93,17 @@ public class ProductEditorWindowController implements Initializable {
     public TextField tfWeight;
     @FXML
     public TextField tfLocalPrice;
+    @FXML
+    TableView<CertificateVerificationItem> tvCertVerification;
+    @FXML
+    Button btnApply;
+    @FXML
+    CheckBox cbxOrderable;
+    @FXML
+    ContextMenu cmCertActions;
     private MultiEditor multiEditor;
     private CertificateVerificationTable certificateVerificationTable;
     private ComboBoxEqTypeSelector comboBoxEqTypeSelector;
-    private static final Logger logger = LogManager.getLogger(ProductEditorWindowController.class);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -192,6 +193,27 @@ public class ProductEditorWindowController implements Initializable {
             if (cv.getFile() != null && !cv.getFile().isEmpty()) {
                 File file = new File(Folders.getInstance().getCertFolder().getPath() + "\\" + cv.getFile());
                 if (file.exists() && file.getPath().endsWith(".pdf")) files.add(file);
+            }
+        }
+        Utils.copyFilesToClipboard(files);
+    }
+
+    private void getCertificateFiles(List<CertificateVerificationItem> selectedItems) {
+        ArrayList<File> files = new ArrayList<>();
+        for (CertificateVerificationItem cv : selectedItems) {
+            if (cv.getFile() != null && !cv.getFile().isEmpty()) {
+                File file = null;
+                try {
+                    file = Utils.getFileFromMultiLocation(cv.getFile(),
+                            Folders.getInstance().getCashedCertFolder(),
+                            Folders.getInstance().getCertFolder().toPath())
+                            .toFile();
+                } catch (Exception e) {
+                    logger.error("Ошибка {} получения файла {}", e.getMessage(), cv.getFile(), e);
+                }
+                if (file.exists() && file.getPath().endsWith(".pdf")) {
+                    files.add(file);
+                }
             }
         }
         Utils.copyFilesToClipboard(files);
