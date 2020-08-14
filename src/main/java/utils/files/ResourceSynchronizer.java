@@ -16,7 +16,7 @@ public class ResourceSynchronizer extends SimpleFileVisitor<Path> implements Run
     private ResourceSynchronizer() {
     }
 
-    public static void synchronize(Path sourceFolder, Path targetFolder) {
+    public static void synchronize(Path sourceFolder, Path targetFolder) throws Exception {
         if (instance == null) {
             instance = new ResourceSynchronizer();
         }

@@ -133,7 +133,11 @@ public class MainWindow extends Application {
             mainStage.setMinHeight(mainStage.getHeight());
             mainStage.setMinWidth(mainStage.getWidth());
 
-            ResourceSynchronizer.synchronize(Folders.getInstance().getCertFolder().toPath(), Folders.getInstance().getCashedCertFolder());
+            try {
+                ResourceSynchronizer.synchronize(Folders.getInstance().getCertFolder().toPath(), Folders.getInstance().getCashedCertFolder());
+            } catch (Exception e) {
+                logger.error("Ошибка запуска синхронайзера {}", e.getMessage(), e);
+            }
 
 //            new AddActions().make();
 
