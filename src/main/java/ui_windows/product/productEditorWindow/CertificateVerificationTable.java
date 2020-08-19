@@ -86,9 +86,16 @@ public class CertificateVerificationTable {
                                 if (!isEmpty()) {
                                     setText(item);
 
-                                    File file = new File(Folders.getInstance().getCertFolder().getPath() + "\\" + item);
-                                    if (file.exists()) setTextFill(Color.GREEN);
-                                    else setTextFill(Color.RED);
+                                    File file = null;
+                                    try {
+                                        file = Utils.getFileFromMultiLocation(item, Folders.getInstance().getCashedCertFolder(),
+                                                Folders.getInstance().getCertFolder().toPath()).toFile();
+
+                                        if (file.exists()) setTextFill(Color.GREEN);
+                                        else setTextFill(Color.RED);
+                                    } catch (Exception e) {
+                                        setTextFill(Color.RED);
+                                    }
                                 }
                             }
                         };
