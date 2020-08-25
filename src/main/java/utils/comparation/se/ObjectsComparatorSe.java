@@ -1,6 +1,6 @@
 package utils.comparation.se;
 
-import core.Dialogs;
+import ui.Dialogs;
 
 import java.lang.reflect.Field;
 

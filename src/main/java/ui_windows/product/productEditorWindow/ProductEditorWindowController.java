@@ -1,6 +1,5 @@
 package ui_windows.product.productEditorWindow;
 
-import core.Dialogs;
 import database.ProductsDB;
 import files.Folders;
 import javafx.collections.ObservableList;
@@ -12,6 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ui.Dialogs;
 import ui_windows.main_window.filter_window_se.Filter_SE;
 import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
 import ui_windows.options_window.families_editor.ProductFamilies;
@@ -29,9 +29,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.ArrayList;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static core.SharedData.SHD_SELECTED_PRODUCTS;
 
@@ -115,7 +118,7 @@ public class ProductEditorWindowController implements Initializable {
         }
 
         certificateVerificationTable = new CertificateVerificationTable(this);
-        certificateVerificationTable.display(editedItems, new CheckParameters());
+        certificateVerificationTable.display(editedItems, CheckParameters.getDefault());
         comboBoxEqTypeSelector = new ComboBoxEqTypeSelector(cbType, certificateVerificationTable);
 
         multiEditor = new MultiEditor(editedItems, this);
@@ -158,14 +161,14 @@ public class ProductEditorWindowController implements Initializable {
     public void actionSelectManualFile() {
         File manualFile = Dialogs.selectFile(CertificateEditorWindow.getStage());
         if (manualFile != null) {
-            if (new File(Folders.getInstance().getManualsFolder().getPath() + "\\" + manualFile.getName()).exists()) {
+            if (Files.exists(Folders.getInstance().getManualsFolder().resolve(manualFile.getName()))) {
                 Dialogs.showMessage("Добавление описания", "Описание с таким именем уже существует");
             } else {
-                File destination = new File(Folders.getInstance().getManualsFolder().getPath() + "\\" +
+                Path destination = Folders.getInstance().getManualsFolder().resolve(
                         Utils.getControlValue(ProductEditorWindow.getRootAnchorPane(), "tfFileName"));
 
                 try {
-                    Files.copy(manualFile.toPath(), destination.toPath());
+                    Files.copy(manualFile.toPath(), destination);
                     Utils.setColor(ProductEditorWindow.getRootAnchorPane(), "tfFileName", Color.GREEN);
                 } catch (IOException e) {
                     Utils.setColor(ProductEditorWindow.getRootAnchorPane(), "tfFileName", Color.RED);
@@ -179,44 +182,28 @@ public class ProductEditorWindowController implements Initializable {
         logger.info("Getting selected certificates");
         CertificateVerificationItem cv = tvCertVerification.getSelectionModel().getSelectedItem();
         if (cv == null) return;
-
-        File file = new File(Folders.getInstance().getCertFolder().getPath() + "\\" + cv.getFile());
-        ArrayList<File> files = new ArrayList<>();
-        if (file.exists() && file.getPath().endsWith(".pdf")) files.add(file);
-        Utils.copyFilesToClipboard(files);
+        copyToClipBoardCertificatesFiles(Collections.singletonList(cv));
     }
 
     public void getAllCertificatesFiles() {
         logger.info("Getting all certificates");
-        ArrayList<File> files = new ArrayList<>();
-        for (CertificateVerificationItem cv : tvCertVerification.getItems()) {
-            if (cv.getFile() != null && !cv.getFile().isEmpty()) {
-                File file = new File(Folders.getInstance().getCertFolder().getPath() + "\\" + cv.getFile());
-                if (file.exists() && file.getPath().endsWith(".pdf")) files.add(file);
-            }
-        }
-        Utils.copyFilesToClipboard(files);
+        copyToClipBoardCertificatesFiles(tvCertVerification.getItems());
     }
 
-    private void getCertificateFiles(List<CertificateVerificationItem> selectedItems) {
-        ArrayList<File> files = new ArrayList<>();
-        for (CertificateVerificationItem cv : selectedItems) {
-            if (cv.getFile() != null && !cv.getFile().isEmpty()) {
-                File file = null;
-                try {
-                    file = Utils.getFileFromMultiLocation(cv.getFile(),
-                            Folders.getInstance().getCashedCertFolder(),
-                            Folders.getInstance().getCertFolder().toPath())
-                            .toFile();
-                } catch (Exception e) {
-                    logger.error("Ошибка {} получения файла {}", e.getMessage(), cv.getFile(), e);
-                }
-                if (file.exists() && file.getPath().endsWith(".pdf")) {
-                    files.add(file);
-                }
-            }
-        }
-        Utils.copyFilesToClipboard(files);
+    private void copyToClipBoardCertificatesFiles(List<CertificateVerificationItem> items) {
+        Utils.copyFilesToClipboard(items.stream()
+                .map(certificateVerificationItem -> Paths.get(certificateVerificationItem.getFile()))
+                .filter(fileName -> fileName.toString().endsWith(".pdf"))
+                .distinct()
+                .map(fileName -> {
+                    try {
+                        return Folders.getInstance().getCalcCertFile(fileName).toFile();
+                    } catch (Exception e) {
+                        Dialogs.showMessageTS("Ошибка копирования файлов сертификатов в буфер обмена", e.getMessage());
+                        return null;
+                    }
+                })
+                .collect(Collectors.toList()));
     }
 
     public void configNorms() {

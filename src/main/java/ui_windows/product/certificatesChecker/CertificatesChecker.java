@@ -1,6 +1,8 @@
 package ui_windows.product.certificatesChecker;
 
 import javafx.collections.ObservableList;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.Certificates;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
@@ -9,11 +11,13 @@ import ui_windows.product.Product;
 import utils.Utils;
 
 import java.util.Date;
+import java.util.List;
 import java.util.TreeSet;
 
 import static ui_windows.product.certificatesChecker.CheckStatusResult.STATUS_OK;
 
 public class CertificatesChecker {
+    private static final Logger logger = LogManager.getLogger(CertificatesChecker.class);
     public final static String NOT_OK = "НЕ ОК";
     public final static String OK = "ОК";
     public final static String EXPIRED = ", истек ";
@@ -27,7 +31,7 @@ public class CertificatesChecker {
     public CertificatesChecker(Product product) {
         init();
 
-        checkExistingCertificates(product, new CheckParameters());
+        checkExistingCertificates(product, CheckParameters.getDefault());
         checkStatusResult = new NormsChecker(product, resultTableItems).getCheckStatusResult();
     }
 
@@ -38,7 +42,7 @@ public class CertificatesChecker {
         checkStatusResult = new NormsChecker(product, resultTableItems).getCheckStatusResult();
     }
 
-    public CertificatesChecker(ObservableList<Product> checkedProducts, CheckParameters checkParameters) {
+    public CertificatesChecker(List<Product> checkedProducts, CheckParameters checkParameters) {
         init();
 
         for (Product product : checkedProducts) {
@@ -164,11 +168,14 @@ public class CertificatesChecker {
             contentValue = contentName + "(-|\\d+).*";
         }
 
-        boolean namesWithNumbersAndMatches = prodName.matches("(?i)" + contentValue);
-        boolean namesTheSame = prodName.equals(contentName);
-        boolean namesOnlyTextAndHaveTheSameBegin = prodName.matches("^(?i)[A-Z]+$") && prodName.startsWith(contentName);
-
-        return namesTheSame || namesOnlyTextAndHaveTheSameBegin || namesWithNumbersAndMatches;
+        if (cert.isFullNameMatch()) {
+            boolean namesTheSame = prodName.equals(contentName);
+            return namesTheSame;
+        } else {
+            boolean namesWithNumbersAndMatches = prodName.matches("(?i)" + contentValue);
+            boolean namesOnlyTextAndHaveTheSameBegin = prodName.matches("^(?i)[A-Z]+$") && prodName.startsWith(contentName);
+            return namesOnlyTextAndHaveTheSameBegin || namesWithNumbersAndMatches;
+        }
     }
 
     public TreeSet<CertificateVerificationItem> getResultTableItems() {

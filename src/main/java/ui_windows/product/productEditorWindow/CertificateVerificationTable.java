@@ -11,13 +11,13 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
+import ui.Dialogs;
 import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
 import utils.Utils;
 
-import java.io.File;
 import java.util.TreeSet;
 
 import static ui_windows.product.certificatesChecker.CertificateVerificationItem.ABSENT_TEXT;
@@ -86,13 +86,9 @@ public class CertificateVerificationTable {
                                 if (!isEmpty()) {
                                     setText(item);
 
-                                    File file = null;
                                     try {
-                                        file = Utils.getFileFromMultiLocation(item, Folders.getInstance().getCashedCertFolder(),
-                                                Folders.getInstance().getCertFolder().toPath()).toFile();
-
-                                        if (file.exists()) setTextFill(Color.GREEN);
-                                        else setTextFill(Color.RED);
+                                        Folders.getInstance().getCalcCertFile(item);
+                                        setTextFill(Color.GREEN);
                                     } catch (Exception e) {
                                         setTextFill(Color.RED);
                                     }
@@ -140,22 +136,15 @@ public class CertificateVerificationTable {
         tableView.setOnMouseClicked(event -> {//double click on product
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() == 2) {
-                    String fileName = tableView.getSelectionModel().getSelectedItem().getFile();
+                    CertificateVerificationItem cvi = tableView.getSelectionModel().getSelectedItem();
+                    if (cvi == null) {
+                        return;
+                    }
 
-                    if (fileName != null && !fileName.isEmpty()) {
-                        File certFile = null;
-                        try {
-                            certFile = Utils.getFileFromMultiLocation(fileName,
-                                    Folders.getInstance().getCashedCertFolder(),
-                                    Folders.getInstance().getCertFolder().toPath()
-                            ).toFile();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        if (certFile.exists()) {
-                            Utils.openFile(certFile);
-                        }
+                    try {
+                        Utils.openFile(Folders.getInstance().getCalcCertFile(cvi.getFile()).toFile());
+                    } catch (Exception e) {
+                        Dialogs.showMessageTS("Ошибка открытия файла сертификата", e.getMessage());
                     }
                 }
             }

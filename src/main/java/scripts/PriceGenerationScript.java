@@ -1,10 +1,10 @@
 package scripts;
 
-import core.Dialogs;
 import files.Folders;
 import files.price_to_excel.ExportPriceListToExcel_SE;
 import files.reports.ReportToExcel;
 import javafx.application.Platform;
+import ui.Dialogs;
 import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
@@ -61,8 +61,8 @@ public class PriceGenerationScript {
                 }
 
                 if (priceListFile != null) {
-                    outOfPriceFile = new File(Folders.getInstance().getTempFolder().getPath() + "\\" +
-                            "out_of_price_report_" + Utils.getDateTimeForFileName() + ".xlsx");
+                    outOfPriceFile = Folders.getInstance().getTempFolder().resolve(
+                            "out_of_price_report_" + Utils.getDateTimeForFileName() + ".xlsx").toFile();
 
                     DataItem[] columns = new DataItem[]{DATA_FAMILY_NAME, DATA_RESPONSIBLE, DATA_ORDER_NUMBER,
                             DATA_ARTICLE, DATA_DESCRIPTION, DATA_COUNTRY_WITH_COMMENTS, DATA_DCHAIN_WITH_COMMENT,
@@ -85,8 +85,8 @@ public class PriceGenerationScript {
 
                         if (previousPriceList != null) {
                             pricesComparator.compare(previousPriceList, priceListFile);
-                            String fileName = String.format("%s\\price_comparison_report_%s vs %s.xlsx", Folders.getInstance()
-                                    .getTempFolder().getPath(), priceListFile.getName(), previousPriceList.getName());
+                            String fileName = String.format("%s\\price_comparison_report_%s vs %s.xlsx",
+                                    Folders.getInstance().getTempFolder(), priceListFile.getName(), previousPriceList.getName());
                             priceComparisonFile = new File(fileName);
                             pricesComparator.exportToExcel(priceComparisonFile);
 

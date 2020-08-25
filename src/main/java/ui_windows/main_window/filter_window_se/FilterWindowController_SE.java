@@ -1,6 +1,5 @@
 package ui_windows.main_window.filter_window_se;
 
-import core.Dialogs;
 import core.Module;
 import core.SharedData;
 import javafx.fxml.FXML;
@@ -10,6 +9,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.WindowEvent;
+import ui.Dialogs;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.data.DataItem;

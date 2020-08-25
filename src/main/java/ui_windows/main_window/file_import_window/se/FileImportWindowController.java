@@ -1,6 +1,5 @@
 package ui_windows.main_window.file_import_window.se;
 
-import core.Dialogs;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -9,6 +8,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
+import ui.Dialogs;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.main_window.file_import_window.FileImportTable;
 import ui_windows.product.data.DataItem;

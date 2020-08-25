@@ -1,10 +1,11 @@
 package files;
 
 import core.App;
-import core.Dialogs;
 import core.Initializable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ui.Dialogs;
+import utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,25 +15,25 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.TreeSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class Folders implements Initializable {
+    public static final Path APP_FOLDER = Paths.get(System.getProperty("user.home"), "AppData", "Roaming", "CertificateBase");
     private static final Logger logger = LogManager.getLogger(Folders.class);
     private static Folders instance;
-    public static final String APP_FOLDER = System.getProperty("user.home") + "\\AppData\\Roaming\\CertificateBase\\";
-    private String currentFolder;
-    private File tempFolder;
-    private File mainDbFile;
-    private File cashedDbFile;
-    private File certFolder;
-    private File manualsFolder;
-    private File templatesFolder;
-    private File dbBackupFolder;
-    private File appLogsFolder;
-    private File remoteLogsFolder;
-    private Path cashedCertFolder = Paths.get(APP_FOLDER, "_certs");
+    private final Path cashedCertFolder = APP_FOLDER.resolve("_certs");
+    private Path tempFolder;
+    private Path mainDbFile;
+    private Path cashedDbFile;
+    private Path certFolder;
+    private Path manualsFolder;
+    private Path templatesFolder;
+    private Path dbBackupFolder;
+    private Path appLogsFolder;
+    private Path remoteLogsFolder;
 
     private Folders() {
     }
@@ -46,30 +47,30 @@ public class Folders implements Initializable {
 
     @Override
     public void init() throws Exception {
-        File oldDbFile = new File(APP_FOLDER + App.getProperties().getDbFileName());
-        if (oldDbFile.exists()) {
-            oldDbFile.delete();
+        if (Files.notExists(APP_FOLDER)) {
+            Files.createDirectory(APP_FOLDER);
         }
 
-        cashedDbFile = new File(APP_FOLDER + new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss-SSS_")
+        Path oldDbFile = APP_FOLDER.resolve(App.getProperties().getDbFileName());
+        Files.deleteIfExists(oldDbFile);
+
+        cashedDbFile = APP_FOLDER.resolve(new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss-SSS_")
                 .format(new Date()) + App.getProperties().getDbFileName());
-        if (!cashedDbFile.getParentFile().exists()) {
-            cashedDbFile.getParentFile().mkdir();
-        }
 
-        File remoteDbFile = new File(App.getProperties().getRemoteDbFolder() + App.getProperties().getDbFileName());
-        logger.debug("remote db file name = {}", remoteDbFile.getPath());
-        if (remoteDbFile.exists()) {
+        Path remoteDbFile = Paths.get(App.getProperties().getRemoteDbFolder(), App.getProperties().getDbFileName());
+        logger.debug("remote db file name = {}", remoteDbFile);
+        mainDbFile = remoteDbFile;
+
+        if (Files.exists(remoteDbFile)) {
             logger.debug("Remote db file {} is found", remoteDbFile);
-            mainDbFile = remoteDbFile;
 
             copyCashDbFile();
             initFolders();
             return;
         }
 
-        File currentFolderDbFile = new File(System.getProperty("user.dir") + "\\" + App.getProperties().getDbFileName());
-        if (currentFolderDbFile.exists()) {
+        Path currentFolderDbFile = Paths.get(System.getProperty("user.dir"), App.getProperties().getDbFileName());
+        if (Files.exists(currentFolderDbFile)) {
             logger.debug("Current folder db file {} is found", currentFolderDbFile);
             mainDbFile = currentFolderDbFile;
             copyCashDbFile();
@@ -80,15 +81,18 @@ public class Folders implements Initializable {
             return;
         }
 
-        File[] dBfilesList = new File(Folders.APP_FOLDER).listFiles(pathname -> pathname.getName().endsWith(".db"));
-        TreeSet<File> files = new TreeSet<>((o1, o2) -> o2.getName().compareTo(o1.getName()));
-        files.addAll(Arrays.asList(dBfilesList));
+        List<Path> cashedDbFiles = Files.walk(APP_FOLDER, 1)
+                .filter(path -> Files.isRegularFile(path) && path.getFileName().toString().endsWith(".db"))
+                .peek(path -> logger.debug("кэшированная ДБ {}", path))
+                .sorted((o1, o2) -> o2.getFileName().toString().compareTo(o1.getFileName().toString()))
+                .collect(Collectors.toList());
 
-        if (files.size() > 0 && files.first().exists()) {
-            cashedDbFile = mainDbFile = files.first();
+        if (cashedDbFiles.size() > 0) {
+            mainDbFile = cashedDbFile = cashedDbFiles.get(0);
             Dialogs.showMessageTS("Подключение к базе данных", "Не удаётся подключиться к базе данных в " +
                     "сети. Но была найдена кэшированная локальная копия файла базы данных от предыдующей сессии.\n\n" +
                     "Обратите внимание, такой режим подключения к базе поддерживает только просмотр данных.\n\n");
+            initFolders();
             return;
         }
 
@@ -106,12 +110,12 @@ public class Folders implements Initializable {
 
     private void copyCashDbFile() throws Exception {
         try {
-            logger.debug("Start copy cashing file {} to {}", mainDbFile, cashedDbFile);
-            Files.copy(mainDbFile.toPath(), cashedDbFile.toPath(), REPLACE_EXISTING);
+            logger.debug("Start copy cashing DB file {} to {}", mainDbFile, cashedDbFile);
+            Files.copy(mainDbFile, cashedDbFile, REPLACE_EXISTING);
             logger.debug("Copy process finished");
         } catch (Exception e) {
             logger.error("Cashed db file copying error: {}", e.getMessage());
-            if (!cashedDbFile.exists()) {
+            if (Files.notExists(cashedDbFile)) {
                 throw new RuntimeException("Cashed db file is absent or corrupted");
             }
         }
@@ -119,63 +123,88 @@ public class Folders implements Initializable {
 
     private void initFolders() throws Exception {
         logger.debug("Initializing folders");
-        certFolder = new File(mainDbFile.getParent() + "\\_certs");
-        manualsFolder = new File(mainDbFile.getParent() + "\\_manuals");
-        dbBackupFolder = new File(mainDbFile.getParent() + "\\_db_backups");
-        templatesFolder = new File(mainDbFile.getParent() + "\\_templates");
-        appLogsFolder = new File(APP_FOLDER + "logs");
-        remoteLogsFolder = new File(App.getProperties().getRemoteDbFolder() + "_logs");
-//        remoteLogsFolder = new File(mainDbFile.getParent()  + "\\_logs");
-        if (!appLogsFolder.exists()) {
-            appLogsFolder.mkdir();
-        }
-        if (!remoteLogsFolder.exists()) {
-            remoteLogsFolder.mkdir();
-        }
+        certFolder = mainDbFile.getParent().resolve("_certs");
+        logger.debug("certFolder = {}", certFolder);
+        manualsFolder = Paths.get(App.getProperties().getRemoteDbFolder(), "_manuals");
+        logger.debug("manualsFolder = {}", manualsFolder);
+        dbBackupFolder = Paths.get(App.getProperties().getRemoteDbFolder(), "_db_backups");
+        logger.debug("dbBackupFolder = {}", dbBackupFolder);
+        templatesFolder = Paths.get(App.getProperties().getRemoteDbFolder(), "_templates");
+        logger.debug("templatesFolder = {}", templatesFolder);
+        remoteLogsFolder = Paths.get(App.getProperties().getRemoteDbFolder(), "_logs");
+        logger.debug("remoteLogsFolder = {}", remoteLogsFolder);
+
+        initLocalFolders();
+
+        //TODO может быть ошибка при отсутствии доступа к диску
+        Arrays.stream(new Path[]{certFolder, manualsFolder, dbBackupFolder, templatesFolder, remoteLogsFolder,
+                appLogsFolder, tempFolder})
+                .filter(Files::notExists)
+                .peek(path -> logger.debug("папка {} отсутствует", path))
+                .forEach(path -> {
+                    try {
+                        Files.createDirectory(path);
+                    } catch (IOException e) {
+                        logger.warn("ошибка создания папки {} - {}", path, e.getMessage());
+                    }
+                });
+    }
+
+    private void initLocalFolders() {
+        appLogsFolder = APP_FOLDER.resolve("logs");
+        logger.debug("appLogsFolder = {}", appLogsFolder);
 
         try {
             File tempFile = File.createTempFile("temp-file", ".tmp");
-            tempFolder = new File(tempFile.getParent() + "\\CertificateBase");
+            tempFolder = tempFile.toPath().getParent().resolve("CertificateBase");
+            logger.debug("tempFolder = {}", tempFolder);
             tempFile.delete();
-            tempFolder.mkdir();
         } catch (IOException ioe) {
-            logger.error("Can't create temp folder: {}", ioe.getMessage());
+            logger.error("Can't calc temp folder: {}", ioe.getMessage());
         }
     }
 
-    public File getMainDbFile() {
+    public Path getCalcCertFile(String fileName) throws Exception {
+        return Utils.getFileFromMultiLocation(Paths.get(fileName), cashedCertFolder, certFolder);
+    }
+
+    public Path getCalcCertFile(Path fileName) throws Exception {
+        return Utils.getFileFromMultiLocation(fileName, cashedCertFolder, certFolder);
+    }
+
+    public Path getMainDbFile() {
         return mainDbFile;
     }
 
-    public File getCashedDbFile() {
+    public Path getCashedDbFile() {
         return cashedDbFile;
     }
 
-    public File getCertFolder() {
+    public Path getCertFolder() {
         return certFolder;
     }
 
-    public File getManualsFolder() {
+    public Path getManualsFolder() {
         return manualsFolder;
     }
 
-    public File getTempFolder() {
+    public Path getTempFolder() {
         return tempFolder;
     }
 
-    public File getDbBackupFolder() {
+    public Path getDbBackupFolder() {
         return dbBackupFolder;
     }
 
-    public File getTemplatesFolder() {
+    public Path getTemplatesFolder() {
         return templatesFolder;
     }
 
-    public File getAppLogsFolder() {
+    public Path getAppLogsFolder() {
         return appLogsFolder;
     }
 
-    public File getRemoteLogsFolder() {
+    public Path getRemoteLogsFolder() {
         return remoteLogsFolder;
     }
 

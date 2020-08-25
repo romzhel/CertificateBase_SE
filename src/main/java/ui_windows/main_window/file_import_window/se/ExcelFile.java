@@ -1,11 +1,11 @@
 package ui_windows.main_window.file_import_window.se;
 
-import core.Dialogs;
 import files.DataSize;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import ui.Dialogs;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.main_window.file_import_window.RowData;
 import ui_windows.product.Product;

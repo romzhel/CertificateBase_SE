@@ -17,6 +17,10 @@ public class ResourceSynchronizer extends SimpleFileVisitor<Path> implements Run
     }
 
     public static void synchronize(Path sourceFolder, Path targetFolder) throws Exception {
+        if (sourceFolder == targetFolder) {
+            return;
+        }
+
         if (instance == null) {
             instance = new ResourceSynchronizer();
         }

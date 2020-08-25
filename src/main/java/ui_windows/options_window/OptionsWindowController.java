@@ -1,6 +1,5 @@
 package ui_windows.options_window;
 
-import core.Dialogs;
 import database.ProfilesDB;
 import files.Folders;
 import javafx.fxml.FXML;
@@ -9,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ui.Dialogs;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
 import ui_windows.options_window.certificates_editor.CertificateEditorWindowActions;
@@ -49,52 +49,37 @@ import static ui_windows.Mode.EDIT;
 
 public class OptionsWindowController implements Initializable {
 
-    @FXML
-    TableView<RequirementType> tvCertificateTypes;
-
+    private static final Logger logger = LogManager.getLogger(OptionsWindowController.class);
     @FXML
     public ContextMenu cmCertTypes;
-
-    @FXML
-    TableView<Certificate> tvCertificates;
-
-    @FXML
-    TableView<ProductFamily> tvFamilies;
-
     @FXML
     public ContextMenu cmFamilies;
-
-    @FXML
-    TreeTableView<ProductLgbk> tvLgbk;
-
     @FXML
     public ContextMenu cmLgbkHierarchy;
-
-    @FXML
-    TableView<OrderAccessibility> tvOrdersAccessibility;
-
     @FXML
     public ContextMenu cmOrderable;
-
-    @FXML
-    TableView<Profile> tvProfiles;
-
-    @FXML
-    TableView<User> tvUsers;
-
-    @FXML
-    TabPane tpOptions;
-
-    @FXML
-    ContextMenu cmCertificates;
-
-    @FXML
-    TableView<PriceList> tvPriceLists;
-
     @FXML
     public ContextMenu cmPriceListsTable;
-
-    private static final Logger logger = LogManager.getLogger(OptionsWindowController.class);
+    @FXML
+    TableView<RequirementType> tvCertificateTypes;
+    @FXML
+    TableView<Certificate> tvCertificates;
+    @FXML
+    TableView<ProductFamily> tvFamilies;
+    @FXML
+    TreeTableView<ProductLgbk> tvLgbk;
+    @FXML
+    TableView<OrderAccessibility> tvOrdersAccessibility;
+    @FXML
+    TableView<Profile> tvProfiles;
+    @FXML
+    TableView<User> tvUsers;
+    @FXML
+    TabPane tpOptions;
+    @FXML
+    ContextMenu cmCertificates;
+    @FXML
+    TableView<PriceList> tvPriceLists;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -207,9 +192,19 @@ public class OptionsWindowController implements Initializable {
     }
 
     public void actionOpenCertificateFile() {
-        File certFile = new File(Folders.getInstance().getCertFolder() + "\\" +
-                tvCertificates.getSelectionModel().getSelectedItem().getFileName());
-        Utils.openFile(certFile);
+        Certificate selectedCertificate = tvCertificates.getSelectionModel().getSelectedItem();
+        if (selectedCertificate == null) {
+            return;
+        }
+
+        File certFile = null;
+        try {
+            certFile = Folders.getInstance().getCalcCertFile(selectedCertificate.getFileName()).toFile();
+            Utils.openFile(certFile);
+        } catch (Exception e) {
+            logger.error("ошибка открытия файла сертификата {}", certFile);
+            Dialogs.showMessageTS("Ошибка открытия файла сертификата", e.getMessage());
+        }
     }
 
     public void actionAddFamily() {

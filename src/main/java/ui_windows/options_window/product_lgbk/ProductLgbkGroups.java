@@ -1,10 +1,10 @@
 package ui_windows.options_window.product_lgbk;
 
-import core.Dialogs;
 import core.Initializable;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
+import ui.Dialogs;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
 import utils.ItemsGroup;

@@ -1,10 +1,10 @@
 package files.reports;
 
-import core.Dialogs;
 import files.ExcelCellStyleFactory;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.*;
+import ui.Dialogs;
 import ui_windows.main_window.MainWindow;
 import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;

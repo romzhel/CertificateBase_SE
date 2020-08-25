@@ -1,6 +1,5 @@
 package files.reports;
 
-import core.Dialogs;
 import files.ExcelCellStyleFactory;
 import javafx.application.Platform;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -10,6 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import ui.Dialogs;
 import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.MainWindow;
 import ui_windows.product.Product;
@@ -41,7 +41,7 @@ public class PriceComparisonMergerResultToExcel {
         this.reportFile = reportFile;
         String firstName = pricesComparator.getFile1().getName();
         String secondName = pricesComparator.getFile2() != null ? pricesComparator.getFile2().getName() : "online price";
-        String name = String.format("PriceComparisonResult %s vs %s", secondName, firstName);
+        String name = String.format("PriceComparisonResult %s vs %s", secondName, firstName).replaceAll("\\.xlsx$", "");
 
         workbook = new XSSFWorkbook();
         new ExcelCellStyleFactory(workbook);
@@ -63,8 +63,13 @@ public class PriceComparisonMergerResultToExcel {
             for (MergerResultItem<Product> resultItem : pricesComparator.getMerger().getResult().getResultItems()) {
                 row = sheet.createRow(rowNum++);
 
+                for (int i = 0; i <= sheetTitles.length + values().length * 2; i++) {
+                    fillCell(row.createCell(i), "");
+                }
+
                 boolean isGone = false;
                 for (ObjectsComparatorResultSe<Product> objCompRes : resultItem.getDetails()) {
+
                     if (objCompRes == null) {
                         fillCell(row.createCell(colIndex++), " ");
                         fillCell(row.createCell(colIndex++), " ");

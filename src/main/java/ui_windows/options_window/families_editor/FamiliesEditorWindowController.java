@@ -1,10 +1,10 @@
 package ui_windows.options_window.families_editor;
 
-import core.Dialogs;
 import database.ProductFamiliesDB;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
+import ui.Dialogs;
 import ui_windows.options_window.product_lgbk.ProductLgbks;
 import utils.Utils;
 

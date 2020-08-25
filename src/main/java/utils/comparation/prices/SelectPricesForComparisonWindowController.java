@@ -1,6 +1,5 @@
 package utils.comparation.prices;
 
-import core.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -8,6 +7,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
+import ui.Dialogs;
 import ui_windows.main_window.MainWindow;
 
 import java.io.File;

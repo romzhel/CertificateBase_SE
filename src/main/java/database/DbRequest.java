@@ -1,9 +1,9 @@
 package database;
 
-import core.Dialogs;
 import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ui.Dialogs;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

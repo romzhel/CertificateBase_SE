@@ -1,11 +1,11 @@
 package ui_windows.login_window;
 
-import core.Dialogs;
 import database.UsersDB;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.PasswordField;
 import javafx.scene.input.KeyCode;
+import ui.Dialogs;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.profile_editor.Profile;
 import ui_windows.options_window.user_editor.User;

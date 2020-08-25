@@ -49,10 +49,10 @@ public class DataBase implements Initializable {
     @Override
     public void init() throws Exception {
         firstStart = true;
-        File cashedBdFile = Folders.getInstance().getCashedDbFile();
+        File cashedBdFile = Folders.getInstance().getCashedDbFile().toFile();
         try {
             dbConnection = DriverManager.getConnection("jdbc:sqlite:" + cashedBdFile.getPath(), config.toProperties());
-            dbFile = Folders.getInstance().getMainDbFile();
+            dbFile = Folders.getInstance().getMainDbFile().toFile();
 
             logger.debug("cashed db file {} is connected, journaling mode {}", cashedBdFile, getDbJournalingMode());
             logger.debug("main db file is {}", dbFile);

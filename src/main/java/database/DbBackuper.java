@@ -10,8 +10,10 @@ import utils.Archiver;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.TreeSet;
 
@@ -24,15 +26,7 @@ public class DbBackuper extends DbRequest {
     public DbBackuper() {
         try {
 //            Statement backupStatement = connection.createStatement();
-            final File cashedDbFile = Folders.getInstance().getCashedDbFile();
-
-            if (!Folders.getInstance().getTempFolder().exists()) {
-                Folders.getInstance().getTempFolder().mkdir();
-            }
-
-            if (!Folders.getInstance().getDbBackupFolder().exists()) {
-                Folders.getInstance().getDbBackupFolder().mkdir();
-            }
+            final Path cashedDbFile = Folders.getInstance().getCashedDbFile();
 
             /*logger.debug("start backup db to {}", cashedDbFile);
             backupStatement.executeUpdate("backup to '" + cashedDbFile + "';");
@@ -40,7 +34,7 @@ public class DbBackuper extends DbRequest {
 
             logger.debug("start copy db to {}", cashedDbFile);
             try {
-                Files.copy(DataBase.getInstance().getDbFile().toPath(), cashedDbFile.toPath(), REPLACE_EXISTING);
+                Files.copy(DataBase.getInstance().getDbFile().toPath(), cashedDbFile, REPLACE_EXISTING);
             } catch (IOException e) {
                 logger.error("db backup copy process error: {}", e.getMessage());
             }
@@ -49,18 +43,18 @@ public class DbBackuper extends DbRequest {
             new Thread(() -> {
                 try {
                     String currDateTime = new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss").format(new Date());
-                    File localDbZipFile = new File(Folders.getInstance().getTempFolder().getPath() + "\\" +
+                    Path localDbZipFile = Folders.getInstance().getTempFolder().resolve(
                             App.getProperties().getDbFileName() + "_backup_" + currDateTime + "_" +
-                            Users.getInstance().getCurrentUser().getSurname() + ".zip");
+                                    Users.getInstance().getCurrentUser().getSurname() + ".zip");
 
-                    File remoteDbZipFile = new File(Folders.getInstance().getDbBackupFolder() + "\\" + localDbZipFile.getName());
+                    Path remoteDbZipFile = Folders.getInstance().getDbBackupFolder().resolve(localDbZipFile.getFileName());
 
-                    Archiver.addToArchive(cashedDbFile, localDbZipFile);
+                    Archiver.addToArchive(Collections.singletonList(cashedDbFile.toFile()), localDbZipFile.toFile());
                     logger.debug("db file {} was added to archive {}", cashedDbFile, localDbZipFile);
-                    Files.copy(localDbZipFile.toPath(), remoteDbZipFile.toPath());
+                    Files.copy(localDbZipFile, remoteDbZipFile);
                     logger.debug("local db backup archive {} was copied to {}", localDbZipFile, remoteDbZipFile);
 
-                    File[] filesList = remoteDbZipFile.getParentFile().listFiles(pathname -> pathname.getName().endsWith(".zip"));
+                    File[] filesList = remoteDbZipFile.getParent().toFile().listFiles(pathname -> pathname.getName().endsWith(".zip"));
                     if (filesList.length > BACKUP_COPIES) {
 
                         TreeSet<File> files = new TreeSet<>((o1, o2) -> (int) (o1.lastModified() - o2.lastModified()));

@@ -1,6 +1,5 @@
 package ui_windows.options_window.user_editor;
 
-import core.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
@@ -8,6 +7,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
+import ui.Dialogs;
 import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.profile_editor.Profiles;
 import utils.Utils;

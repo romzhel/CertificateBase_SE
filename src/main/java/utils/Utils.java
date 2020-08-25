@@ -1,6 +1,5 @@
 package utils;
 
-import core.Dialogs;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -13,6 +12,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import ui.Dialogs;
 import ui_windows.options_window.OptionsWindow;
 import ui_windows.options_window.requirements_types_editor.RequirementType;
 
@@ -25,7 +25,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
 
 
 public class Utils {
@@ -244,7 +243,7 @@ public class Utils {
     }
 
     public static String getDateTimeForFileName() {
-        return new SimpleDateFormat("yyyy.MM.dd HH-mm-ss").format(new Date());
+        return new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss").format(new Date());
     }
 
     public static String getDate(Date date) {
@@ -288,8 +287,9 @@ public class Utils {
 
         String[] tempArr = text.split("[\\,\\;]");
         for (String s : tempArr) {
-            if (!s.trim().isEmpty()) {
-                temp.add(s.trim());
+            String st = s.trim();
+            if (!st.isEmpty()) {
+                temp.add(st);
             }
         }
         return temp;
@@ -409,36 +409,14 @@ public class Utils {
                 }
                 cc.putFiles(filesForCopy);
                 clipboard.setContent(cc);
-                String filesName = "";
-                for (File file : filesForCopy) {
-                    filesName += " - " + file.getName() + "\n";
-                }
+
                 Dialogs.showMessage("Копирование в буфер обмена",
-                        "Следующие файлы были вставлены в буфер обмена:\n" + filesName, 800);
+                        "В буфер обмена было вставлено файлов: " + filesForCopy.size());
             } else {
                 Dialogs.showMessage("Буфер обмена", "Нет подходящих файлов для копирования в буфер обмена.");
             }
 //        logger.trace("clipboard finished");
         });
-    }
-
-    public static void copyFilesToClipboardTS(List<File> files) {
-        if (!Thread.currentThread().getName().equals("JavaFX Application Thread")) {
-            CountDownLatch inputWaiting = new CountDownLatch(1);
-
-            Platform.runLater(() -> {
-                copyFilesToClipboard(files);
-                inputWaiting.countDown();
-            });
-
-            try {
-                inputWaiting.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        } else {
-            copyFilesToClipboard(files);
-        }
     }
 
     public static void deleteFolder(Path pathForDeleting) throws IOException {
@@ -488,8 +466,16 @@ public class Utils {
         return new SimpleDateFormat("hh:mm:ss.SSS").format(new Date());
     }
 
-    public static Path getFileFromMultiLocation(String fileName, Path... locations) throws Exception {
+    public static Path getFileFromMultiLocation(Path fileName, Path... locations) throws Exception {
+        if (fileName == null || fileName.toString().isEmpty()) {
+            throw new RuntimeException("Пустое имя файла");
+        }
+
         for (Path location : locations) {
+            if (location == null) {
+                continue;
+            }
+
             Path fileLocation = location.resolve(fileName);
             if (Files.exists(fileLocation)) {
                 return fileLocation;

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane prefHeight="342.0" prefWidth="475.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Separator layoutX="114.0" layoutY="210.0" prefHeight="4.0" prefWidth="351.0"/>
+      <Separator layoutX="175.0" layoutY="157.0" prefHeight="4.0" prefWidth="290.0"/>
+      <Separator layoutX="268.0" layoutY="98.0" prefHeight="4.0" prefWidth="197.0"/>
+      <Separator layoutX="156.0" layoutY="49.0" prefHeight="4.0" prefWidth="309.0"/>
+      <CheckBox fx:id="cbxStrongFilter" layoutX="14.0" layoutY="14.0" mnemonicParsing="false"
+                text="Строгий отбор сертификатов (с фильтром по имени и типу)"/>
+      <RadioButton fx:id="rbtnResultArchive" layoutX="31.0" layoutY="174.0" mnemonicParsing="false" text="Архив"/>
+      <RadioButton fx:id="rbtnResultFiles" layoutX="296.0" layoutY="174.0" mnemonicParsing="false" text="Файлы"/>
+      <TextField fx:id="tfResultPath" layoutX="31.0" layoutY="114.0" prefHeight="25.0" prefWidth="351.0"
+                 promptText="если необходимо, то укажите папку"/>
+      <Button fx:id="btnBrowse" layoutX="382.0" layoutY="114.0" mnemonicParsing="false" prefHeight="25.0"
+              prefWidth="72.0" text="Обзор"/>
+      <Label layoutX="14.0" layoutY="90.0" text="Сохранить результат в (при необходимости):"/>
+      <RadioButton fx:id="rbtnCopyClipBoard" layoutX="31.0" layoutY="229.0" mnemonicParsing="false"
+                   text="Скопировать в буфер обмена"/>
+      <RadioButton fx:id="rbtnOpenFolder" layoutX="296.0" layoutY="229.0" mnemonicParsing="false" text="Открыть папку"/>
+      <Label layoutX="14.0" layoutY="149.0" text="Сохранить результат в виде:"/>
+      <Button fx:id="btnOk" layoutX="83.0" layoutY="290.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="129.0"
+              text="ОК"/>
+      <Button fx:id="btnCancel" layoutX="255.0" layoutY="290.0" mnemonicParsing="false" prefHeight="25.0"
+              prefWidth="129.0" text="Отмена"/>
+      <CheckBox fx:id="cbxOpenSummaryReport" layoutX="31.0" layoutY="254.0" mnemonicParsing="false"
+                text="Открыть сводный файл отчёта"/>
+      <Label layoutX="14.0" layoutY="202.0" text="По завершению:"/>
+      <Label layoutX="14.0" layoutY="41.0" text="Сортировка позиций по:"/>
+      <RadioButton fx:id="rbtnSortByArticle" layoutX="31.0" layoutY="65.0" mnemonicParsing="false" text="Артикулу"/>
+      <RadioButton fx:id="rbtnSortByOrderNumber" layoutX="296.0" layoutY="65.0" mnemonicParsing="false"
+                   text="Заказному номеру"/>
+   </children>
+</AnchorPane>

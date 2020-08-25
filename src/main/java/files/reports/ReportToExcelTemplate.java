@@ -1,9 +1,9 @@
 package files.reports;
 
-import core.Dialogs;
 import javafx.application.Platform;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
+import ui.Dialogs;
 import ui_windows.main_window.MainWindow;
 import utils.Utils;
 

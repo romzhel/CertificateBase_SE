@@ -1,31 +1,25 @@
 package ui_windows.main_window;
 
-import core.Dialogs;
 import core.InitModule;
-import files.Folders;
+import core.reports.CertificatesReport;
 import files.SelectorExportWindow;
-import files.reports.CertificateMatrixReportToExcel;
 import files.reports.ReportToExcel;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ui.CertificatesReportDialog;
+import ui.CertificatesReportDialogParams;
+import ui.Dialogs;
 import ui_windows.ExecutionIndicator;
 import ui_windows.product.Product;
-import ui_windows.product.certificatesChecker.CertificateVerificationItem;
-import ui_windows.product.certificatesChecker.CertificatesChecker;
-import ui_windows.product.certificatesChecker.CheckParameters;
 import ui_windows.product.data.DataItem;
-import ui_windows.request.CertificateRequestResult;
 import utils.Utils;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static core.SharedData.SHD_DATA_SET;
 import static core.SharedData.SHD_SELECTED_PRODUCTS;
@@ -66,13 +60,11 @@ public class MainTableContextMenuFactory {
 //            SHD_DATA_SET.setData(new ArrayList<>(CoreModule.getCustomItems()));
         });
         MENU_CHECK_CERTIFICATES.setOnAction(event -> {
-            new Thread(() -> {
-                logger.info("Get certificates report");
-                ExecutionIndicator.getInstance().start();
-                startCertsReport(mainTable);
-                ExecutionIndicator.getInstance().stop();
-                logger.info("Certificates report is finished");
-            }).start();
+//            new Thread(() -> {
+//                logger.info("Start certificates report");
+            startCertsReport(mainTable);
+//                logger.info("Certificates report is finished");
+//            }).start();
         });
         MENU_EXPORT.setOnAction(event -> {
             ArrayList<DataItem> columns = new SelectorExportWindow(MainWindow.getMainStage()).getColumns();
@@ -87,78 +79,38 @@ public class MainTableContextMenuFactory {
         });
     }
 
-    private static void startCertsReport(MainTable mainTable) {
-        logger.trace("certificates reporting started for {} items", mainTable.getItemsForReport().size());
-        List<CertificateRequestResult> results = new ArrayList<>();
-        Set<File> lostFiles = new HashSet<>();
-        Set<File> allFiles = new HashSet<>();
-
-        Set<File> neededFiles = new HashSet<>();
-        Set<File> allNeededFiles = new HashSet<>();
-
-        for (Product product : mainTable.getItemsForReport()) {
-//            logger.trace("finding certs for {}", product);
-            neededFiles.clear();
-//            Set<File> foundFiles = new HashSet<>();
-            CertificatesChecker certificatesChecker = new CertificatesChecker(product, new CheckParameters());
-            for (CertificateVerificationItem cvi : certificatesChecker.getResultTableItems()) {
-                if (cvi.getCertificate() != null && cvi.getCertificate().getFileName() != null && !cvi.getCertificate().getFileName().isEmpty()) {
-                    File certificateFile = new File(Folders.getInstance().getCertFolder() + "\\" + cvi.getCertificate().getFileName());
-                    neededFiles.add(certificateFile);
-                }
-            }
-
-            allNeededFiles.addAll(neededFiles);
-            results.add(new CertificateRequestResult(product, new ArrayList<>(neededFiles)));
-//            allFiles.addAll(foundFiles);
-        }
-
-        for (File file : allNeededFiles) {
-            File targetTempFolder = new File(Folders.getInstance().getTempFolder() + "\\" + file.getName());
-            logger.trace("try to copy certificate file {} -> {}", file, targetTempFolder);
-
-            try {
-                if (!targetTempFolder.exists()) {
-                    Files.copy(Utils.getFileFromMultiLocation(
-                            file.getName(),
-                            Folders.getInstance().getCashedCertFolder(), Folders.getInstance().getCertFolder().toPath()
-                            ),
-                            targetTempFolder.toPath());
-                }
-                allFiles.add(targetTempFolder);
-            } catch (Exception ee) {
-                logger.trace("copying error {}", ee.getMessage());
-//                Dialogs.showMessage("Ошибка копирования файла", ee.getMessage());
-                lostFiles.add(file);
-            }
-        }
-
-        if (lostFiles.size() > 0) {
-            String message = "";
-            for (File file : lostFiles) {
-                message = message.concat("\n").concat("- ").concat(file.getName());
-            }
-
-            Dialogs.showMessageTS("Создание отчёта по сертификатам", "Не удалось найти следующие файлы:" + message);
-
-            for (CertificateRequestResult crr : results) {
-                crr.getFiles().removeAll(lostFiles);
-            }
-        }
-
-//        File excelFile = ExcelFile.exportToFile(results);
-        File excelFile = new CertificateMatrixReportToExcel(results).getFile();
-
-        if (excelFile == null) {
-            Dialogs.showMessage("Ошибка создания файла Excel", "Не удалось создать файл сводного отчёта" +
-                    " Excel, тем не менее файлы сертификатов помещены в буфер обмена для дальнейшего использования");
-            Utils.copyFilesToClipboard(new ArrayList<>(allFiles));
+    private static void startCertsReport(final MainTable mainTable) {
+        logger.trace("запуск отчёта по сертификатам, позиций: {}", mainTable.getItemsForReport().size());
+        CertificatesReportDialogParams params = CertificatesReportDialogParams.create();
+        try {
+            params = CertificatesReportDialog.create().showAndGetParams(params);
+            logger.debug("параметры создания отчёта {}", params);
+        } catch (RuntimeException re) {
+            logger.info("операция отменена пользователем");
+            return;
+        } catch (Exception e) {
+            logger.error("ошибка отчёта по сертификатам {}", e.getMessage(), e);
             return;
         }
-//        logger.trace("copy {} files to clipboard", allFiles.size());
-        allFiles.add(excelFile);
-        Utils.copyFilesToClipboard(new ArrayList<>(allFiles));
-//        logger.trace("certs reporting finished");
+
+        CertificatesReportDialogParams finalParams = params;
+        Thread certificateReportThread = new Thread(() -> {
+            logger.trace("запуск потока формирования отчёта по сертификатам");
+            ExecutionIndicator.getInstance().start();
+            try {
+                new CertificatesReport().check(mainTable.getItemsForReport(), finalParams);
+            } /*catch (RuntimeException re) {
+                logger.warn("{}", re.getMessage(), re);
+            }*/ catch (Exception e) {
+                logger.error("ошибка создания отчёта по сертификатам {}", e.getMessage(), e);
+                Dialogs.showMessageTS("Отчёт по сертификатам", "Произошла ошибка:\n\n" + e.getMessage());
+            } finally {
+                ExecutionIndicator.getInstance().stop();
+            }
+        });
+        certificateReportThread.setName("cert report thread");
+        certificateReportThread.setDaemon(true);
+        certificateReportThread.start();
     }
 
     public static ContextMenu createContextMenuForAllData() {

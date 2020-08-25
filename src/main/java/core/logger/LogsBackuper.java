@@ -6,6 +6,7 @@ import utils.Archiver;
 import java.io.File;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 
 public class LogsBackuper {
@@ -25,14 +26,14 @@ public class LogsBackuper {
         String currDateTime;
         File localLogZipFile;
 
-        File[] logsList = Folders.getInstance().getAppLogsFolder().listFiles(file -> file.getName().endsWith(".log"));
+        File[] logsList = Folders.getInstance().getAppLogsFolder().toFile().listFiles(file -> file.getName().endsWith(".log"));
         for (File logFile : logsList) {
             try {
                 currDateTime = new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss").format(logFile.lastModified());
                 localLogZipFile = new File(String.format("%s\\%s_%s.zip", Folders.getInstance().getAppLogsFolder(),
                         System.getProperty("user.name"), currDateTime));
 
-                Archiver.addToArchive(logFile, localLogZipFile);
+                Archiver.addToArchive(Collections.singletonList(logFile), localLogZipFile);
                 if (localLogZipFile.exists()) {
                     Files.deleteIfExists(logFile.toPath());
                 }
@@ -42,7 +43,7 @@ public class LogsBackuper {
             }
         }
 
-        File[] archivesList = Folders.getInstance().getAppLogsFolder().listFiles(file -> file.getName().endsWith(".zip"));
+        File[] archivesList = Folders.getInstance().getAppLogsFolder().toFile().listFiles(file -> file.getName().endsWith(".zip"));
         for (File archiveFile : archivesList) {
             try {
                 File remoteLogZipFile = new File(Folders.getInstance().getRemoteLogsFolder() + "\\" + archiveFile.getName());

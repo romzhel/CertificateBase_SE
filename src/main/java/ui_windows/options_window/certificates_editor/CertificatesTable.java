@@ -10,8 +10,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
-import java.io.File;
-
 public class CertificatesTable {
     private static CertificatesTable instance;
     private TableView<Certificate> tableView;
@@ -64,9 +62,12 @@ public class CertificatesTable {
                         if (!isEmpty()) {
                             setText(item);
 
-                            File file = new File(Folders.getInstance().getCertFolder().getPath() + "\\" + item);
-                            if (file.exists()) setTextFill(Color.GREEN);
-                            else setTextFill(Color.RED);
+                            try {
+                                Folders.getInstance().getCalcCertFile(item);
+                                setTextFill(Color.GREEN);
+                            } catch (Exception e) {
+                                setTextFill(Color.RED);
+                            }
                         }
                     }
                 };

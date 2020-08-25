@@ -1,12 +1,12 @@
 package ui_windows.options_window.certificates_editor;
 
-import core.Dialogs;
 import database.CertificatesContentDB;
 import database.CertificatesDB;
 import files.Folders;
 import javafx.application.Platform;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import ui.Dialogs;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContentActions;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContent;
@@ -19,6 +19,7 @@ import utils.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
@@ -105,10 +106,10 @@ public class CertificateEditorWindowActions {
             Utils.setControlValueLVfromAL(root, "lvNorms", RequirementTypes.getInstance().getRequirementsList(cert.getNorms()));
             Utils.setControlValue(root, "tfFileName", cert.getFileName());
 
-            File certFile = new File(Folders.getInstance().getCertFolder() + "\\" + cert.getFileName());
-            if (certFile.exists()) {
+            try {
+                Folders.getInstance().getCalcCertFile(cert.getFileName());
                 Utils.setColor(CertificateEditorWindow.getRootAnchorPane(), "tfFileName", Color.GREEN);
-            } else {
+            } catch (Exception e) {
                 Utils.setColor(CertificateEditorWindow.getRootAnchorPane(), "tfFileName", Color.RED);
             }
 
@@ -166,14 +167,14 @@ public class CertificateEditorWindowActions {
     public static void selectFile() {
         File certFile = Dialogs.selectFile(CertificateEditorWindow.getStage());
         if (certFile != null) {
-            if (new File(Folders.getInstance().getCertFolder().getPath() + "\\" + certFile.getName()).exists()) {
+            if (Files.exists(Folders.getInstance().getCertFolder().resolve(certFile.getName()))) {
                 Dialogs.showMessage("Добавление сертификата", "Файл сертификата с таким именем уже существует.\n" +
                         "Проверьте, возможно, сертификат уже есть в базе");
             } else {
-                File destination = new File(Folders.getInstance().getCertFolder().getPath() + "\\" + certFile.getName());
+                Path destination = Folders.getInstance().getCertFolder().resolve(certFile.getName());
 
                 try {
-                    Files.copy(certFile.toPath(), destination.toPath());
+                    Files.copy(certFile.toPath(), destination);
                     Utils.setControlValue((AnchorPane) CertificateEditorWindow.getStage().getScene().getRoot(),
                             "tfFileName", certFile.getName());
                     Utils.setColor(CertificateEditorWindow.getRootAnchorPane(), "tfFileName", Color.GREEN);

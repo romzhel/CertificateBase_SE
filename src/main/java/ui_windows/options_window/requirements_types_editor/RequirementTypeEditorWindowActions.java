@@ -1,9 +1,9 @@
 package ui_windows.options_window.requirements_types_editor;
 
-import core.Dialogs;
 import database.RequirementTypesDB;
 import javafx.application.Platform;
 import javafx.scene.layout.AnchorPane;
+import ui.Dialogs;
 import ui_windows.options_window.certificates_editor.Certificates;
 import utils.Utils;
 

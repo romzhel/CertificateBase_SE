@@ -1,6 +1,6 @@
 package ui_windows.product;
 
-import core.Dialogs;
+import ui.Dialogs;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.main_window.file_import_window.SingleProductsComparator;
 import ui_windows.options_window.user_editor.Users;

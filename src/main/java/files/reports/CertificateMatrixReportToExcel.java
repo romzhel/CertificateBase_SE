@@ -1,83 +1,146 @@
 package files.reports;
 
-import core.Dialogs;
+import core.reports.CertificatesReportResult;
+import files.ExcelCellStyleFactory;
 import files.Folders;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.*;
-import ui_windows.request.CertificateRequestResult;
+import org.apache.poi.ss.util.CellRangeAddress;
 import utils.Utils;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static files.ExcelCellStyleFactory.*;
 
 public class CertificateMatrixReportToExcel {
+    private static final Logger logger = LogManager.getLogger(CertificateMatrixReportToExcel.class);
     public static CellStyle HYPERLINK_STYLE;
+    int rowNum;
     private File file;
-    private Workbook workbook;
+    private HSSFWorkbook workbook;
 
-    public CertificateMatrixReportToExcel(List<CertificateRequestResult> items) {
+    public CertificateMatrixReportToExcel(Collection<CertificatesReportResult> productCertificatesReport) throws Exception {
+        logger.trace("запуск создания отчёта в Excel");
         workbook = new HSSFWorkbook();
+        new ExcelCellStyleFactory(workbook);
+
         HYPERLINK_STYLE = getHyperLinkStyle();
         HSSFSheet sheet = (HSSFSheet) workbook.createSheet("Сертификаты");
         String[] titles = new String[]{"№ п/п", "Заказной номер", "Наименование", "Описание"};
+        int[] width = new int[]{2500, 5000, 5000, 10000};
         file = null;
 
-        int rowNum = 0;
+        rowNum = 0;
         HSSFCell cell;
         HSSFRow row;
-        HSSFCellStyle cellStyle = (HSSFCellStyle) workbook.createCellStyle();
-        cellStyle.setAlignment(HorizontalAlignment.CENTER);
-        int addColumns = 0;
 
-        //fill data
-        for (CertificateRequestResult rr : items) {
-            rowNum++;
-            row = sheet.createRow(rowNum);
-
-            cell = row.createCell(0, CellType.STRING);
-            cell.setCellStyle(cellStyle);
-            cell.setCellValue(rowNum);
-
-            cell = row.createCell(1, CellType.STRING);
-            cell.setCellStyle(cellStyle);
-            cell.setCellValue(rr.getProduct().getMaterial());
-
-            cell = row.createCell(2, CellType.STRING);
-            cell.setCellStyle(cellStyle);
-            cell.setCellValue(rr.getProduct().getArticle());
-
-            cell = row.createCell(3, CellType.STRING);
-            cell.setCellValue(rr.getProduct().getDescriptionRuEn());
-
-            for (int i = 0; i < rr.getFiles().size(); i++) {
-                cell = row.createCell(4 + i, CellType.STRING);
-                cell.setCellValue(rr.getFiles().get(i).getName());
-                final Hyperlink link = workbook.getCreationHelper().createHyperlink(HyperlinkType.URL);
-                String fgh = rr.getFiles().get(i).getName();
-                link.setAddress(fgh);
-                cell.setHyperlink(link);
-                cell.setCellStyle(HYPERLINK_STYLE);
-
-                addColumns = addColumns < rr.getFiles().size() ? rr.getFiles().size() : addColumns;
-            }
-        }
+        HashMap<String, Integer> displayedNorms = new HashMap<>();
 
         //title row
         row = sheet.createRow(0);
-        for (int col = 0; col < titles.length + addColumns; col++) {
-            cell = row.createCell(col, CellType.STRING);
-            cell.setCellStyle(cellStyle);
-            if (col < titles.length) cell.setCellValue(titles[col]);
-            else cell.setCellValue("Файл сертификата " + (col - 3));
-            sheet.autoSizeColumn(col);
+        for (int column = 0; column < titles.length; column++) {
+            cell = row.createCell(column, CellType.STRING);
+            cell.setCellStyle(ExcelCellStyleFactory.CELL_STYLE_CENTER_BOLD);
+            cell.setCellValue(titles[column]);
+            sheet.setColumnWidth(column, width[column]);
         }
+
+        //fill data
+        int itemIndex = 0;
+        for (CertificatesReportResult crr : productCertificatesReport) {
+//            logger.trace("добавление сведений по {}", crr.getProduct());
+            row = sheet.createRow(++rowNum);
+            fillProductData(row, new HSSFCellStyle[]{CELL_STYLE_CENTER, CELL_STYLE_LEFT}, ++itemIndex, crr);
+
+            int rowOffset = 0;
+            int col;
+            for (Map.Entry<String, List<Path>> normAndCertFiles : crr.getCertFilesGroupedByNorms().entrySet()) {
+                if (normAndCertFiles.getValue().size() == 0) {
+                    continue;
+                }
+
+                if (displayedNorms.containsKey(normAndCertFiles.getKey())) {
+                    col = displayedNorms.get(normAndCertFiles.getKey());
+                } else {
+                    col = displayedNorms.values().stream().max(Integer::compareTo).orElse(titles.length - 1) + 1;
+                    displayedNorms.put(normAndCertFiles.getKey(), col);
+                    HSSFRow titleRow = sheet.getRow(0);
+                    cell = titleRow.createCell(col, CellType.STRING);
+                    cell.setCellStyle(ExcelCellStyleFactory.CELL_STYLE_CENTER_BOLD);
+                    cell.setCellValue("регламент " + normAndCertFiles.getKey());
+                }
+
+                for (Path fileName : normAndCertFiles.getValue()) {
+                    row = sheet.getRow(rowNum);
+
+                    int fileRowOffset = normAndCertFiles.getValue().indexOf(fileName);
+                    if (fileRowOffset > 0) {
+                        row = sheet.getRow(rowNum + fileRowOffset);
+                        row = row == null ? sheet.createRow(rowNum + fileRowOffset) : row;
+                        rowOffset = Math.max(rowOffset, fileRowOffset);
+                        fillProductData(row, new HSSFCellStyle[]{CELL_STYLE_CENTER_GRAY, CELL_STYLE_LEFT_GRAY}, itemIndex, crr);
+                    }
+
+                    cell = row.createCell(col, CellType.STRING);
+                    cell.setCellValue(fileName.toString());
+                    final Hyperlink link = workbook.getCreationHelper().createHyperlink(HyperlinkType.URL);
+                    link.setAddress(fileName.toString());
+                    cell.setHyperlink(link);
+                    cell.setCellStyle(HYPERLINK_STYLE);
+                }
+            }
+            rowNum += rowOffset;
+        }
+
+        int maxColIndex = displayedNorms.values().stream().max(Integer::compareTo).orElse(0);
+        for (int colIndex = titles.length; colIndex <= maxColIndex; colIndex++) {
+            sheet.autoSizeColumn(colIndex);
+        }
+
+        sheet.createFreezePane(0, 1);
+        int lastCol = displayedNorms.values().stream().max(Integer::compareTo).orElse(titles.length - 1);
+        sheet.setAutoFilter(new CellRangeAddress(0, rowNum, 0, lastCol));
 
         //output to file
         saveToExcelFile();
+    }
+
+    private int fillProductData(HSSFRow row, HSSFCellStyle[] styles, int itemIndex, CertificatesReportResult crr) {
+        HSSFCell cell;
+        int locCol = 0;
+
+        HSSFCellStyle cellCenterStyle = styles[0];
+        HSSFCellStyle cellLeftStyle = styles[1];
+
+        cell = row.createCell(locCol++, CellType.STRING);
+        cell.setCellStyle(cellCenterStyle);
+        cell.setCellValue(itemIndex);
+
+        cell = row.createCell(locCol++, CellType.STRING);
+        cell.setCellStyle(cellCenterStyle);
+        cell.setCellValue(crr.getProduct().getMaterial());
+
+        cell = row.createCell(locCol++, CellType.STRING);
+        cell.setCellStyle(cellCenterStyle);
+        cell.setCellValue(crr.getProduct().getArticle());
+
+        cell = row.createCell(locCol++, CellType.STRING);
+        cell.setCellStyle(cellLeftStyle);
+        cell.setCellValue(crr.getProduct().getDescriptionRuEn());
+
+        //избегаем отображения текста на соседней ячейке
+        cell = row.createCell(locCol, CellType.STRING);
+        cell.setCellValue("");
+        return itemIndex;
     }
 
     public File getFile() {
@@ -94,36 +157,23 @@ public class CertificateMatrixReportToExcel {
         return style;
     }
 
-    private boolean saveToExcelFile() {
+    private void saveToExcelFile() throws Exception {
+        logger.trace("сохранение Exсel в файл");
         String fileExtension = workbook instanceof HSSFWorkbook ? ".xls" : ".xlsx";
-        file = new File(Folders.getInstance().getTempFolder().getPath() + "\\" +
-                "Отчет_" + Utils.getDateTime().replaceAll(":", "-") + fileExtension);
+        file = Folders.getInstance().getTempFolder()
+                .resolve("Отчет_" + Utils.getDateTime().replaceAll(":", "-") + fileExtension)
+                .toFile();
 
-        try {
-            FileOutputStream outFile = new FileOutputStream(file);
-            workbook.write(outFile);
+//        try {
+        FileOutputStream outFile = new FileOutputStream(file);
+        workbook.write(outFile);
 
-            workbook.close();
-            outFile.close();
-
-            System.out.println("Created file: " + file.getAbsolutePath());
-            openFile();
-            return true;
-        } catch (Exception e) {
-            System.out.println("error of excel file creating " + e.getMessage());
-            Dialogs.showMessage("Ошибка создания файла", e.getMessage());
-            return false;
-        }
-    }
-
-    public boolean openFile() {
-        try {
-            Desktop.getDesktop().open(file);
-            return true;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            Dialogs.showMessage("Ошибка открытия файла", e.getMessage());
-            return false;
-        }
+        workbook.close();
+        outFile.close();
+//        } catch (Exception e) {
+//            System.out.println("error of excel file creating " + e.getMessage());
+//            Dialogs.showMessage("Ошибка создания файла", e.getMessage());
+//            return false;
+//        }
     }
 }

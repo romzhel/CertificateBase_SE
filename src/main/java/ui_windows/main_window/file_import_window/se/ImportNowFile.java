@@ -1,11 +1,11 @@
 package ui_windows.main_window.file_import_window.se;
 
-import core.Dialogs;
 import database.DataBase;
 import database.ProductsDB;
 import files.reports.NowImportResultToExcel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ui.Dialogs;
 import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.product.Product;

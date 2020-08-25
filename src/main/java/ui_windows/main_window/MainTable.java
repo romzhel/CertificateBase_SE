@@ -1,6 +1,5 @@
 package ui_windows.main_window;
 
-import core.Dialogs;
 import core.Module;
 import core.SharedData;
 import javafx.application.Platform;
@@ -14,6 +13,7 @@ import javafx.scene.input.MouseButton;
 import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ui.Dialogs;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
 import ui_windows.product.Product;
@@ -50,7 +50,7 @@ public class MainTable implements Module {
     }
 
     private void init() {
-        executorService = Executors.newFixedThreadPool(10);
+        executorService = Executors.newFixedThreadPool(4);
         initTable(tvTable);
         initContextMenu();
         initTableColumns();
@@ -115,17 +115,22 @@ public class MainTable implements Module {
                                     setText(item);
 
                                     final Product product = param.getTableView().getItems().get(getIndex());
-
+                                    long t1 = System.currentTimeMillis();
+//                                    logger.debug("запуск проверки {}", product);
                                     Runnable certCheck = () -> {
-                                        CertificatesChecker certificatesChecker = new CertificatesChecker(product, new CheckParameters());
+                                        CertificatesChecker certificatesChecker = new CertificatesChecker(product, CheckParameters.getDefault());
+
+//                                        logger.debug("сертификат {} проверен за {} мс", product, System.currentTimeMillis() - t1);
 
                                         Platform.runLater(() -> {
                                             getStyleClass().add(certificatesChecker.getCheckStatusResultStyle(getStyleClass()));
                                             setTooltip(new Tooltip(certificatesChecker.getCheckStatusResult().getText()));
+//                                            logger.debug("результат проверки {} отображен за {}", product, System.currentTimeMillis() - t1);
                                         });
                                     };
 
                                     executorService.execute(certCheck);
+//                                    certCheck.run();
                                 }
                             }
                         };

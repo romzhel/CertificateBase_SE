@@ -449,12 +449,12 @@ public enum DataItem {
     DATA_CERTIFICATE(32, "Наличие сертификатов", null) {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
-            cell.setCellValue(new CertificatesChecker(product, new CheckParameters()).getCheckStatusResult().getText());
+            cell.setCellValue(new CertificatesChecker(product, CheckParameters.getDefault()).getCheckStatusResult().getText());
             cell.setCellStyle(CELL_ALIGN_LEFT);
         }
 
         public Object getValue(Product product) {
-            return new CertificatesChecker(product, new CheckParameters()).getCheckStatusResult().getText();
+            return new CertificatesChecker(product, CheckParameters.getDefault()).getCheckStatusResult().getText();
         }
     },
     DATA_NORMS_MODE(33, "Добавление/замещение норм", "normsMode") {

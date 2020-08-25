@@ -1,9 +1,9 @@
 package ui_windows.options_window.product_lgbk;
 
-import core.Dialogs;
 import core.Initializable;
 import database.ProductLgbksDB;
 import javafx.scene.control.TreeTableView;
+import ui.Dialogs;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.product.Product;
 

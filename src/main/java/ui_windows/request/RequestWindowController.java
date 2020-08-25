@@ -1,6 +1,5 @@
 package ui_windows.request;
 
-import core.Dialogs;
 import core.InitModule;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -8,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+import ui.Dialogs;
 import ui_windows.ExecutionIndicator;
 import ui_windows.product.Product;
 import ui_windows.product.Products;

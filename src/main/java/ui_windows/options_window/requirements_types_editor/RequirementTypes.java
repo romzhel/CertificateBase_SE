@@ -1,8 +1,8 @@
 package ui_windows.options_window.requirements_types_editor;
 
-import core.Dialogs;
 import core.Initializable;
 import database.RequirementTypesDB;
+import ui.Dialogs;
 
 import java.util.ArrayList;
 import java.util.List;

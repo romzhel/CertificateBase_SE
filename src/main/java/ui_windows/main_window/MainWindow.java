@@ -4,7 +4,6 @@ package ui_windows.main_window;
 
 import com.sun.javafx.application.LauncherImpl;
 import core.App;
-import core.Dialogs;
 import core.InitModule;
 import core.logger.LoggerInit;
 import core.logger.LogsBackuper;
@@ -22,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import preloader.AppPreloader;
+import ui.Dialogs;
 import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.filter_window_se.FilterParameters_SE;
 import ui_windows.options_window.profile_editor.Profile;
@@ -30,6 +30,7 @@ import utils.Utils;
 import utils.files.ResourceSynchronizer;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.concurrent.Executors;
@@ -134,12 +135,12 @@ public class MainWindow extends Application {
             mainStage.setMinWidth(mainStage.getWidth());
 
             try {
-                ResourceSynchronizer.synchronize(Folders.getInstance().getCertFolder().toPath(), Folders.getInstance().getCashedCertFolder());
+                ResourceSynchronizer.synchronize(Folders.getInstance().getCertFolder(), Folders.getInstance().getCashedCertFolder());
             } catch (Exception e) {
-                logger.error("Ошибка запуска синхронайзера {}", e.getMessage(), e);
+                logger.warn("Ошибка запуска синхронайзера {}", e.getMessage());
             }
 
-//            new AddActions().make();
+//            AddActions.make();
 
 //        OptionsWindow certificateOverviewWindow = new OptionsWindow();
 //        certificateOverviewWindow.open();
@@ -160,21 +161,20 @@ public class MainWindow extends Application {
             }
 
             try {
-                File tempFolder = Folders.getInstance().getTempFolder();
+                Path tempFolder = Folders.getInstance().getTempFolder();
                 String[] filesList;
-                if (tempFolder != null && tempFolder.exists()
-                        && (filesList = tempFolder.list((dir, name) -> name.matches(".*\\.xlsx?$"))) != null
+                if ((filesList = tempFolder.toFile().list((dir, name) -> name.matches(".*\\.xlsx?$"))) != null
                         && filesList.length > 0) {
-                    Utils.openFile(Folders.getInstance().getTempFolder());
+                    Utils.openFile(Folders.getInstance().getTempFolder().toFile());
 
                     if (Dialogs.confirmTS("Удаление временной папки",
                             "Временная папка не пуста.\n\nУдалить временную папку и все файлы внутри неё?\n")) {
-                        Utils.deleteFolder(Folders.getInstance().getTempFolder().toPath());
+                        Utils.deleteFolder(Folders.getInstance().getTempFolder());
                     }
                 }
                 logger.info("app closed");
 
-                File[] dBfilesList = new File(Folders.APP_FOLDER).listFiles(pathname -> pathname.getName().endsWith(".db"));
+                File[] dBfilesList = Folders.APP_FOLDER.toFile().listFiles(pathname -> pathname.getName().endsWith(".db"));
                 TreeSet<File> files = new TreeSet<>((o1, o2) -> o2.getName().compareTo(o1.getName()));
                 files.addAll(Arrays.asList(dBfilesList));
 

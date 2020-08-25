@@ -5,7 +5,11 @@ public class CheckParameters {
     private boolean useTemporaryTypeId = false;
     private boolean isEqTypeFiltered = true;
 
-    public CheckParameters() {
+    private CheckParameters() {
+    }
+
+    public static CheckParameters getDefault() {
+        return new CheckParameters();
     }
 
     public int getTemporaryTypeId() {

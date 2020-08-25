@@ -1,6 +1,5 @@
 package ui_windows.main_window;
 
-import core.Dialogs;
 import files.Folders;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,6 +8,7 @@ import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import scripts.PriceGenerationScript;
+import ui.Dialogs;
 import ui_windows.ExecutionIndicator;
 import ui_windows.login_window.LoginWindow;
 import ui_windows.main_window.file_import_window.se.ImportNowFile;
@@ -103,8 +103,8 @@ public class MainWindowsController implements Initializable {
             }
 
             if (isFullPackage) {
-                File importReportFile = new File(Folders.getInstance().getTempFolder().getPath() + "\\" +
-                        "import_report_" + Utils.getDateTimeForFileName() + ".xlsx");
+                File importReportFile = Folders.getInstance().getTempFolder().resolve(
+                        "import_report_" + Utils.getDateTimeForFileName() + ".xlsx").toFile();
                 importReportFile = importNowFile.getReportFile(importReportFile);
                 new PriceGenerationScript().run(0, PriceGenerationScript.REPORTS_FOR_CHECK);
                 Utils.openFile(importReportFile.getParentFile());

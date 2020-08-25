@@ -1,8 +1,8 @@
 package ui_windows.options_window.certificates_editor.certificate_content_editor;
 
-import core.Dialogs;
 import database.CertificatesContentDB;
 import database.ProductTypesDB;
+import ui.Dialogs;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.Certificates;
 import ui_windows.product.ProductType;

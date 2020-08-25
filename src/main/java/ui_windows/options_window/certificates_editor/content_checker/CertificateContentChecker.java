@@ -1,6 +1,5 @@
 package ui_windows.options_window.certificates_editor.content_checker;
 
-import core.Dialogs;
 import core.InitModule;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -9,6 +8,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import ui.Dialogs;
 import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.certificates_editor.Certificate;
