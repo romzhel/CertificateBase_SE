@@ -33,11 +33,7 @@ import static ui.CertificatesReportDialogParams.Params.*;
 public class CertificatesReport {
     private static final Logger logger = LogManager.getLogger(CertificatesReport.class);
 
-    public CertificatesReport() {
-
-    }
-
-    public void check(List<Product> productsForCheck, CertificatesReportDialogParams params) throws Exception {
+    public void treat(List<Product> productsForCheck, CertificatesReportDialogParams params) throws Exception {
         long t1 = System.currentTimeMillis();
         logger.trace("запуск скрипта формирования отчёта {} позиций с параметрами {}", productsForCheck.size(), params);
         ConcurrentLinkedQueue<CertificatesReportResult> results = new ConcurrentLinkedQueue<>();
@@ -65,9 +61,14 @@ public class CertificatesReport {
         logger.trace("для отчёта необходимо {} файлов сертификатов", allNeededFileNames.size());
 
         List<Path> existingFiles = allNeededFileNames.stream()
-                .filter(fileName -> fileName != null && !fileName.isEmpty() &&
-                        (Files.exists(Folders.getInstance().getCashedCertFolder().resolve(fileName)) ||
-                                Files.exists(Folders.getInstance().getCertFolder().resolve(fileName))))
+                .filter(fileName -> {
+                    try {
+                        return fileName != null && !fileName.isEmpty() && (Files.exists(
+                                Folders.getInstance().getCalcCertFile(fileName)));
+                    } catch (Exception e) {
+                        return false;
+                    }
+                })
                 .map(Paths::get)
                 .collect(Collectors.toList());
         logger.trace("найдено имеющихся файлов: {}", existingFiles.size());

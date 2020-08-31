@@ -1,6 +1,5 @@
 package ui_windows.main_window.file_import_window.se;
 
-import database.DataBase;
 import database.ProductsDB;
 import files.reports.NowImportResultToExcel;
 import org.apache.logging.log4j.LogManager;
@@ -11,44 +10,32 @@ import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
 import utils.DoublesPreprocessor;
+import utils.comparation.se.Comparator;
 import utils.comparation.se.*;
 
 import java.io.File;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.concurrent.Callable;
+import java.util.*;
 
 import static utils.comparation.se.ComparingParameters.WITHOUT_GONE;
 
-public class ImportNowFile implements Callable<File> {
+public class ImportNowFile {
+    private static final Logger logger = LogManager.getLogger(ImportNowFile.class);
     private ComparisonResult<Product> result;
-    private File reportFile;
     private Comparator<Product> comparator;
     private FileImport fileImport;
-    private static final Logger logger = LogManager.getLogger(ImportNowFile.class);
 
     public ImportNowFile() {
         comparator = new Comparator<>();
         fileImport = new FileImport();
     }
 
-    public boolean treat(List<File> files) {
-        if (files == null) {
-            return false;
+    public void treat(List<File> files) throws Exception {
+        if (files == null || files.size() == 0 || files.stream().allMatch(Objects::isNull)) {
+            throw new RuntimeException("Не выбраны файлы для импорта");
         }
 
-        HashSet<Product> changedItemsForDB = new HashSet<>();
-
-        boolean isThereFiles = false;
+        Set<Product> changedItemsForDB = new HashSet<>();
         for (File file : files) {
-            if (file == null) {
-                continue;
-            }
-            isThereFiles = true;
-
             fileImport.getProductsInManualMode(file);
 
             if (fileImport.isDeleteOldStatistic() && files.indexOf(file) < 1) {
@@ -60,10 +47,6 @@ public class ImportNowFile implements Callable<File> {
             comparator.compare(Products.getInstance().getItems(), new DoublesPreprocessor(fileImport.getProductItems()).getTreatedItems(),
                     new ComparingParameters(new Adapter<Product>().convert(importParameters), new ComparingRulesImportNow(), WITHOUT_GONE));
             comparator.fixChanges();
-        }
-
-        if (!isThereFiles) {
-            return false;
         }
 
         result = comparator.getComparisonResult();
@@ -82,7 +65,7 @@ public class ImportNowFile implements Callable<File> {
             if (changedItemsForDB.size() > 0)
                 new ProductsDB().updateData(new ArrayList<>(changedItemsForDB));//save changed items to db
 
-            Statement vacuumStatement = null;
+            /*Statement vacuumStatement = null;
             try {
                 vacuumStatement = DataBase.getInstance().getDbConnection().createStatement();
                 logger.debug("db file vacuum started");
@@ -90,16 +73,10 @@ public class ImportNowFile implements Callable<File> {
                 logger.debug("db file vacuum finished");
             } catch (SQLException e) {
                 logger.warn("sql request vacuum error: {}", e.getMessage());
-            }
+            }*/
 
             logger.info("DB updating is finished");
         }
-        return true;
-    }
-
-    @Override
-    public File call() throws Exception {
-        return reportFile;
     }
 
     public File getReportFile(File targetFile) {

@@ -11,7 +11,8 @@
             <menus>
                 <Menu fx:id="miFile" mnemonicParsing="false" text="   Файл   ">
                     <items>
-                        <MenuItem fx:id="mniOpenNow" mnemonicParsing="false" onAction="#openNow" text="     Обновить данные     " />
+                        <MenuItem fx:id="mniOpenNow" mnemonicParsing="false" onAction="#importFromNow"
+                                  text="     Обновить данные     "/>
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <Menu fx:id="mPriceList" mnemonicParsing="false" text="     Сгенерировать прайс лист     " />
                   <MenuItem mnemonicParsing="false" onAction="#comparePriceLists" text="     Сравнить прайс-листы     " />

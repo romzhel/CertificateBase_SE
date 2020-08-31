@@ -88,31 +88,37 @@ public class MainWindowsController implements Initializable {
         }
     }
 
-    public void openNow() {
-        new Thread(() -> {
-            ExecutionIndicator.getInstance().start();
-            boolean isFullPackage = Dialogs.confirmTS("Формирование полного пакета отчётов",
-                    "Желаете сформировать полный пакет отчётов?");
+    public void importFromNow() {
+        Thread nowImportThread = new Thread(() -> {
+            try {
+                ExecutionIndicator.getInstance().start();
+                boolean isFullPackage = Dialogs.confirmTS("Формирование полного пакета отчётов",
+                        "Желаете сформировать полный пакет отчётов?");
 
-            ImportNowFile importNowFile = new ImportNowFile();
-            boolean isTreatedData = importNowFile.treat(new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
-                    "Выбор файла с выгрузкой", Dialogs.EXCEL_FILES, null));
+                ImportNowFile importNowFile = new ImportNowFile();
+                importNowFile.treat(new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
+                        "Выбор файла с выгрузкой", Dialogs.EXCEL_FILES, null));
 
-            if (!isTreatedData) {
-                return;
+                if (isFullPackage) {
+                    File importReportFile = Folders.getInstance().getTempFolder().resolve(
+                            "import_report_" + Utils.getDateTimeForFileName() + ".xlsx").toFile();
+                    importReportFile = importNowFile.getReportFile(importReportFile);
+                    new PriceGenerationScript().run(0, PriceGenerationScript.REPORTS_FOR_CHECK);
+                    Utils.openFile(importReportFile.getParentFile());
+                } else {
+                    Utils.openFile(importNowFile.getReportFile(null));
+                }
+            } catch (RuntimeException re) {
+                logger.warn("{}", re.getMessage());
+            } catch (Exception e) {
+                logger.error("ошибка импорта NOW {}", e.getMessage(), e);
+            } finally {
+                ExecutionIndicator.getInstance().stop();
             }
-
-            if (isFullPackage) {
-                File importReportFile = Folders.getInstance().getTempFolder().resolve(
-                        "import_report_" + Utils.getDateTimeForFileName() + ".xlsx").toFile();
-                importReportFile = importNowFile.getReportFile(importReportFile);
-                new PriceGenerationScript().run(0, PriceGenerationScript.REPORTS_FOR_CHECK);
-                Utils.openFile(importReportFile.getParentFile());
-            } else {
-                Utils.openFile(importNowFile.getReportFile(null));
-            }
-            ExecutionIndicator.getInstance().stop();
-        }).start();
+        });
+        nowImportThread.setDaemon(true);
+        nowImportThread.setName("NOW import thread");
+        nowImportThread.start();
     }
 
     public void comparePriceLists() {

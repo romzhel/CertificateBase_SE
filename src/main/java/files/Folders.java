@@ -54,8 +54,7 @@ public class Folders implements Initializable {
         Path oldDbFile = APP_FOLDER.resolve(App.getProperties().getDbFileName());
         Files.deleteIfExists(oldDbFile);
 
-        cashedDbFile = APP_FOLDER.resolve(new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss-SSS_")
-                .format(new Date()) + App.getProperties().getDbFileName());
+        cashedDbFile = getCalcedCashedDbFileName();
 
         Path remoteDbFile = Paths.get(App.getProperties().getRemoteDbFolder(), App.getProperties().getDbFileName());
         logger.debug("remote db file name = {}", remoteDbFile);
@@ -106,6 +105,11 @@ public class Folders implements Initializable {
 
         logger.fatal("No db file was found");
         throw new RuntimeException("Файл базы данных не был найден.");
+    }
+
+    public Path getCalcedCashedDbFileName() throws Exception {
+        return APP_FOLDER.resolve(new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss-SSS_")
+                .format(new Date()) + App.getProperties().getDbFileName());
     }
 
     private void copyCashDbFile() throws Exception {

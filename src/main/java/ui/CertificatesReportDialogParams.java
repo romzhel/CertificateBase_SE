@@ -20,7 +20,7 @@ public class CertificatesReportDialogParams {
         needToOpenReport = true;
     }
 
-    public static CertificatesReportDialogParams create() {
+    public static CertificatesReportDialogParams createDefault() {
         return new CertificatesReportDialogParams();
     }
 

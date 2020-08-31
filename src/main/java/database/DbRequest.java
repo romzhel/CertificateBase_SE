@@ -7,7 +7,6 @@ import ui.Dialogs;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 public class DbRequest {
     protected PreparedStatement getData, addData, updateData, deleteData;
@@ -15,7 +14,7 @@ public class DbRequest {
     private static final Logger logger = LogManager.getLogger(DbRequest.class);
 
     public DbRequest() {
-        connection = DataBase.getInstance().reconnect();
+        connection = DataBase.getInstance().getDbConnection();
     }
 
     public void logAndMessage(String text) {
@@ -26,9 +25,9 @@ public class DbRequest {
     public void finalActions() {
         try {
             connection.setAutoCommit(true);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            DataBase.getInstance().requestToDisconnect();
+        } catch (Exception e) {
+            logger.error("ошибка БД {}", e.getMessage(), e);
         }
-        DataBase.getInstance().requestToDisconnect();
     }
 }

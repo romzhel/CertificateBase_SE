@@ -168,9 +168,8 @@ public class CertificatesChecker {
             contentValue = contentName + "(-|\\d+).*";
         }
 
-        if (cert.isFullNameMatch()) {
-            boolean namesTheSame = prodName.equals(contentName);
-            return namesTheSame;
+        if (prodName.equals(contentName)) {
+            return true;
         } else {
             boolean namesWithNumbersAndMatches = prodName.matches("(?i)" + contentValue);
             boolean namesOnlyTextAndHaveTheSameBegin = prodName.matches("^(?i)[A-Z]+$") && prodName.startsWith(contentName);

@@ -50,7 +50,7 @@ public class MainTable implements Module {
     }
 
     private void init() {
-        executorService = Executors.newFixedThreadPool(4);
+        executorService = Executors.newFixedThreadPool(8);
         initTable(tvTable);
         initContextMenu();
         initTableColumns();
@@ -171,7 +171,11 @@ public class MainTable implements Module {
     }
 
     public void close() {
-        executorService.shutdown();
+        try {
+            executorService.shutdown();
+        } catch (Exception e) {
+
+        }
     }
 
     public void refresh() {

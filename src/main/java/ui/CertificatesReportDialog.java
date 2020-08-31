@@ -10,6 +10,7 @@ import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import static ui.CertificatesReportDialogParams.Params.*;
 
@@ -45,9 +46,7 @@ public class CertificatesReportDialog {
     }
 
     public CertificatesReportDialogParams showAndGetParams(CertificatesReportDialogParams params) {
-        ToggleGroup resultTypeGroup = new ToggleGroup();
-        rbtnResultArchive.setToggleGroup(resultTypeGroup);
-        rbtnResultFiles.setToggleGroup(resultTypeGroup);
+        ToggleGroup resultTypeGroup = createToggleGroup(rbtnResultArchive, rbtnResultFiles);
         rbtnResultArchive.setSelected(params.getOutput() == ARCHIVE);
         rbtnResultFiles.setSelected(params.getOutput() == FILES);
 
@@ -55,9 +54,7 @@ public class CertificatesReportDialog {
             params.setOutput(newValue == rbtnResultArchive ? ARCHIVE : FILES);
         });
 
-        ToggleGroup finalActionsGroup = new ToggleGroup();
-        rbtnCopyClipBoard.setToggleGroup(finalActionsGroup);
-        rbtnOpenFolder.setToggleGroup(finalActionsGroup);
+        ToggleGroup finalActionsGroup = createToggleGroup(rbtnCopyClipBoard, rbtnOpenFolder);
         rbtnCopyClipBoard.setSelected(params.getFinalActions() == COPY_TO_BUFFER);
         rbtnOpenFolder.setSelected(params.getFinalActions() == OPEN_FOLDER);
 
@@ -65,9 +62,7 @@ public class CertificatesReportDialog {
             params.setFinalActions(newValue == rbtnCopyClipBoard ? COPY_TO_BUFFER : OPEN_FOLDER);
         });
 
-        ToggleGroup sortOrderToggleGroup = new ToggleGroup();
-        rbtnSortByArticle.setToggleGroup(sortOrderToggleGroup);
-        rbtnSortByOrderNumber.setToggleGroup(sortOrderToggleGroup);
+        ToggleGroup sortOrderToggleGroup = createToggleGroup(rbtnSortByArticle, rbtnSortByOrderNumber);
         rbtnSortByArticle.setSelected(params.getSortOrder() == SORT_BY_ARTICLE);
         rbtnSortByOrderNumber.setSelected(params.getSortOrder() == SORT_BY_ORDER_NUMBER);
 
@@ -116,5 +111,11 @@ public class CertificatesReportDialog {
         }
 
         return params;
+    }
+
+    private ToggleGroup createToggleGroup(RadioButton... radioButtons) {
+        ToggleGroup resultTypeGroup = new ToggleGroup();
+        Arrays.stream(radioButtons).forEach(radioButton -> radioButton.setToggleGroup(resultTypeGroup));
+        return resultTypeGroup;
     }
 }

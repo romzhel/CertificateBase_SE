@@ -5,10 +5,16 @@ import files.Folders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.sqlite.SQLiteConfig;
+import org.sqlite.SQLiteDataSource;
+import ui.Dialogs;
 import ui_windows.ExecutionIndicator;
 
 import java.io.File;
-import java.sql.*;
+import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Supplier;
@@ -22,12 +28,16 @@ public class DataBase implements Initializable {
     private boolean firstStart;
     private Supplier<Boolean> disconnectLink;
     private SQLiteConfig config;
+    private SQLiteDataSource sqLiteDataSource;
 
     private DataBase() throws Exception {
         try {
-            Class.forName("org.sqlite.JDBC");
-            config = new SQLiteConfig();
-            config.setJournalMode(SQLiteConfig.JournalMode.TRUNCATE);
+            SQLiteConfig sqLiteConfig = new SQLiteConfig();
+            sqLiteConfig.setJournalMode(SQLiteConfig.JournalMode.TRUNCATE);
+            sqLiteDataSource = new SQLiteDataSource(sqLiteConfig);
+//            Class.forName("org.sqlite.JDBC");
+//            config = new SQLiteConfig();
+//            config.setJournalMode(SQLiteConfig.JournalMode.TRUNCATE);
             disconnectLink = this::disconnect;
         } catch (Exception e) {
             logger.fatal(e.getMessage());
@@ -49,9 +59,13 @@ public class DataBase implements Initializable {
     @Override
     public void init() throws Exception {
         firstStart = true;
-        File cashedBdFile = Folders.getInstance().getCashedDbFile().toFile();
+        Path cashedBdFile = Folders.getInstance().getCashedDbFile();
         try {
-            dbConnection = DriverManager.getConnection("jdbc:sqlite:" + cashedBdFile.getPath(), config.toProperties());
+//            dbConnection = DriverManager.getConnection("jdbc:sqlite:" + cashedBdFile.getPath(), config.toProperties());
+
+            sqLiteDataSource.setUrl("jdbc:sqlite:" + cashedBdFile.toString());
+            dbConnection = sqLiteDataSource.getConnection();
+
             dbFile = Folders.getInstance().getMainDbFile().toFile();
 
             logger.debug("cashed db file {} is connected, journaling mode {}", cashedBdFile, getDbJournalingMode());
@@ -70,7 +84,10 @@ public class DataBase implements Initializable {
 
         try {
             if (dbConnection.isClosed()) {
-                dbConnection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getPath(), config.toProperties());
+//                dbConnection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getPath(), config.toProperties());
+
+                sqLiteDataSource.setUrl("jdbc:sqlite:" + dbFile.getPath());
+                dbConnection = sqLiteDataSource.getConnection();
 
                 logger.debug("main db file {} is connected", dbFile);
 
@@ -139,7 +156,13 @@ public class DataBase implements Initializable {
     }
 
     public Connection getDbConnection() {
-        return dbConnection;
+        try {
+            return dbConnection.isClosed() ? reconnect() : dbConnection;
+        } catch (SQLException e) {
+            logger.fatal("error getting db connection {}", e.getMessage(), e);
+            Dialogs.showMessageTS("Обращение к базе данных", "Ошибка подключения");
+            throw new RuntimeException("error getting db connection");
+        }
     }
 
     public File getDbFile() {

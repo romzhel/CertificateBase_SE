@@ -201,13 +201,14 @@ public class MainWindow extends Application {
 
     @Override
     public void stop() {
-        DataBase.getInstance().disconnect();
-
         try {
-            MainWindow.getMainTable().close();
+            DataBase.getInstance().disconnect();
         } catch (Exception e) {
 
         }
+
+        MainWindow.getMainTable().close();
+
         try {
             super.stop();
         } catch (Exception e) {
