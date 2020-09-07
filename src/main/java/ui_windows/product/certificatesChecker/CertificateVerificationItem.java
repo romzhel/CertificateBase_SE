@@ -43,14 +43,6 @@ public class CertificateVerificationItem {
         return norm + ", " + matchedPart + ", " + prodType + ", " + file + ", " + status;
     }
 
-    public static String getAbsentText() {
-        return ABSENT_TEXT;
-    }
-
-    public static String getNotOkText() {
-        return NOT_OK_TEXT;
-    }
-
     public String getNorm() {
         return norm;
     }

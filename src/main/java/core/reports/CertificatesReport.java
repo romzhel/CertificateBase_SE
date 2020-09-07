@@ -49,7 +49,7 @@ public class CertificatesReport {
                     );
 
                     for (CertificateVerificationItem cvi : certsChecker.getResultTableItems()) {
-                        if (!cvi.getFile().isEmpty()) {
+                        if (cvi.getStatus().startsWith(CertificatesChecker.OK) && !cvi.getFile().isEmpty()) {
                             crr.addCertificateFile(cvi.getNorm(), cvi.getFile());
                             allNeededFileNames.add(cvi.getFile());
                         }
