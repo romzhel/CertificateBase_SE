@@ -66,8 +66,6 @@ public class CertificateEditorWindowActions {
 
                         Platform.runLater(() -> CertificatesTable.getInstance().getTableView().refresh());//refresh table
 
-                        System.out.println(cert.toString());
-
                         close();
                     }
 

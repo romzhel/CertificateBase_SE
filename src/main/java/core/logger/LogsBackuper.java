@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LogsBackuper {
     private static LogsBackuper instance = null;
@@ -25,13 +27,22 @@ public class LogsBackuper {
     public void backup() {
         String currDateTime;
         File localLogZipFile;
+        Pattern datePattern = Pattern.compile("\\d.*\\d");
+        Matcher matcher;
 
         File[] logsList = Folders.getInstance().getAppLogsFolder().toFile().listFiles(file -> file.getName().endsWith(".log"));
         for (File logFile : logsList) {
             try {
-                currDateTime = new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss").format(logFile.lastModified());
-                localLogZipFile = new File(String.format("%s\\%s_%s.zip", Folders.getInstance().getAppLogsFolder(),
-                        System.getProperty("user.name"), currDateTime));
+                matcher = datePattern.matcher(logFile.getName());
+                currDateTime = matcher.find() ?
+                        logFile.getName().substring(matcher.start(), matcher.end()) :
+                        new SimpleDateFormat("yyyy.MM.dd_HH-mm_ss").format(logFile.lastModified());
+
+                localLogZipFile = new File(String.format("%s\\%s_%s%s.zip",
+                        Folders.getInstance().getAppLogsFolder(),
+                        System.getProperty("user.name"),
+                        currDateTime,
+                        logFile.getName().contains("error") ? "_error" : ""));
 
                 Archiver.addToArchive(Collections.singletonList(logFile), localLogZipFile);
                 if (localLogZipFile.exists()) {
@@ -43,16 +54,18 @@ public class LogsBackuper {
             }
         }
 
-        File[] archivesList = Folders.getInstance().getAppLogsFolder().toFile().listFiles(file -> file.getName().endsWith(".zip"));
-        for (File archiveFile : archivesList) {
-            try {
-                File remoteLogZipFile = new File(Folders.getInstance().getRemoteLogsFolder() + "\\" + archiveFile.getName());
-                Files.copy(archiveFile.toPath(), remoteLogZipFile.toPath());
-                if (remoteLogZipFile.exists()) {
-                    Files.deleteIfExists(archiveFile.toPath());
+        if (Files.exists(Folders.getInstance().getRemoteLogsFolder())) {
+            File[] archivesList = Folders.getInstance().getAppLogsFolder().toFile().listFiles(file -> file.getName().endsWith(".zip"));
+            for (File archiveFile : archivesList) {
+                try {
+                    File remoteLogZipFile = new File(Folders.getInstance().getRemoteLogsFolder() + "\\" + archiveFile.getName());
+                    Files.copy(archiveFile.toPath(), remoteLogZipFile.toPath());
+                    if (remoteLogZipFile.exists()) {
+                        Files.deleteIfExists(archiveFile.toPath());
+                    }
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
             }
         }
     }

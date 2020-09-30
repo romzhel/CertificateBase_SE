@@ -21,6 +21,9 @@ public class DbBackuper extends DbRequest {
     private static final Logger logger = LogManager.getLogger(DbBackuper.class);
 
     public DbBackuper() throws Exception {
+    }
+
+    public static void run() throws Exception {
         final Path cashedDbFile = Folders.getInstance().getCalcedCashedDbFileName();
         logger.debug("start copy db to {}", cashedDbFile);
         try {
@@ -30,9 +33,9 @@ public class DbBackuper extends DbRequest {
             throw new RuntimeException(String.format("ошибка копирования файла DB %s -> %s",
                     Folders.getInstance().getMainDbFile(), cashedDbFile));
         }
-        logger.debug("copy process is finished");
+        logger.debug("db copy process is finished");
 
-        new Thread(() -> {
+        Thread backupThread = new Thread(() -> {
             try {
                 String currDateTime = new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss").format(new Date());
                 Path localDbZipFile = Folders.getInstance().getTempFolder().resolve(
@@ -43,25 +46,29 @@ public class DbBackuper extends DbRequest {
 
                 Archiver.addToArchive(Collections.singletonList(cashedDbFile.toFile()), localDbZipFile.toFile());
                 logger.debug("db file {} was added to archive {}", cashedDbFile, localDbZipFile);
-                Files.copy(localDbZipFile, remoteDbZipFile);
-                logger.debug("local db backup archive {} was copied to {}", localDbZipFile, remoteDbZipFile);
+                if (Files.exists(remoteDbZipFile.getParent())) {
+                    Files.copy(localDbZipFile, remoteDbZipFile);
+                    logger.debug("local db backup archive {} was copied to {}", localDbZipFile, remoteDbZipFile);
 
-                Files.walk(Folders.getInstance().getDbBackupFolder(), 1)
-                        .filter(path -> path.toString().endsWith(".zip"))
-                        .sorted((p1, p2) -> Long.compare(p2.toFile().lastModified(), p1.toFile().lastModified()))
+                    Files.walk(Folders.getInstance().getDbBackupFolder(), 1)
+                            .filter(path -> path.toString().endsWith(".zip"))
+                            .sorted((p1, p2) -> Long.compare(p2.toFile().lastModified(), p1.toFile().lastModified()))
 //                        .peek(path -> logger.trace("сортировка бэкапов {}", path))
-                        .skip(BACKUP_COPIES)
-                        .peek(path -> logger.trace("удаление старого файла бэкапа {}", path))
-                        .forEach(path -> {
-                            try {
-                                Files.deleteIfExists(path);
-                            } catch (IOException e) {
-                                logger.warn("ошибка удаления {} {}", path, e.getMessage());
-                            }
-                        });
+                            .skip(BACKUP_COPIES)
+                            .peek(path -> logger.trace("удаление старого файла бэкапа {}", path))
+                            .forEach(path -> {
+                                try {
+                                    Files.deleteIfExists(path);
+                                } catch (IOException e) {
+                                    logger.warn("ошибка удаления {} {}", path, e.getMessage());
+                                }
+                            });
+                }
             } catch (Exception e) {
                 logger.warn("error db backuping {}", e.getMessage(), e);
             }
-        }).start();
+        });
+        backupThread.setName("DB Backup Thread");
+        backupThread.start();
     }
 }

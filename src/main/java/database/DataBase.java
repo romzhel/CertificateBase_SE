@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.function.Supplier;
 
 public class DataBase implements Initializable {
     private static final Logger logger = LogManager.getLogger(DataBase.class);
@@ -26,7 +25,6 @@ public class DataBase implements Initializable {
     private File dbFile;
     private Timer timer;
     private boolean firstStart;
-    private Supplier<Boolean> disconnectLink;
     private SQLiteConfig config;
     private SQLiteDataSource sqLiteDataSource;
 
@@ -38,7 +36,6 @@ public class DataBase implements Initializable {
 //            Class.forName("org.sqlite.JDBC");
 //            config = new SQLiteConfig();
 //            config.setJournalMode(SQLiteConfig.JournalMode.TRUNCATE);
-            disconnectLink = this::disconnect;
         } catch (Exception e) {
             logger.fatal(e.getMessage());
             throw new RuntimeException(e);
@@ -101,27 +98,33 @@ public class DataBase implements Initializable {
     }
 
     public void requestToDisconnect() {
-        timer = new Timer(true);
+        if (timer != null) {
+            timer.cancel();
+            logger.trace("disconnection timer was cancelled");
+        }
+
+        timer = new Timer("DB Disconnector Thread", true);
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                disconnectLink.get();
+                disconnect();
             }
-        }, 3000);
-        logger.debug("db delayed disconnection timer started");
+        }, 5000);
+        logger.debug("operation completed, db delayed disconnection timer started");
     }
 
     public boolean disconnect() {
+        timer = null;
         try {
             if (!dbConnection.isClosed()) {
+                dbConnection.close();
+                logger.debug("db disconnected");
+
                 if (firstStart) {
                     firstStart = false;
                 } else {
-                    new DbBackuper();
+                    DbBackuper.run();
                 }
-
-                dbConnection.close();
-                logger.debug("db disconnected");
 
                 ExecutionIndicator.getInstance().stop();
             }
