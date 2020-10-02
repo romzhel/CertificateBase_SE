@@ -148,8 +148,9 @@ public class Folders implements Initializable {
                 .forEach(path -> {
                     try {
                         Files.createDirectory(path);
+                        logger.trace("папка {} была создана", path);
                     } catch (IOException e) {
-                        logger.warn("ошибка создания папки {} - {}", path, e.getMessage());
+                        logger.error("ошибка создания папки {} - {}", path, e.getMessage());
                     }
                 });
     }

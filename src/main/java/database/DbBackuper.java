@@ -65,7 +65,7 @@ public class DbBackuper extends DbRequest {
                             });
                 }
             } catch (Exception e) {
-                logger.warn("error db backuping {}", e.getMessage(), e);
+                logger.error("error db backup {}", e.getMessage(), e);
             }
         });
         backupThread.setName("DB Backup Thread");
