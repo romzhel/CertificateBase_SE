@@ -10,7 +10,6 @@ import ui_windows.main_window.file_import_window.FileImportParameter;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
 import utils.DoublesPreprocessor;
-import utils.comparation.se.Comparator;
 import utils.comparation.se.*;
 
 import java.io.File;
@@ -21,11 +20,11 @@ import static utils.comparation.se.ComparingParameters.WITHOUT_GONE;
 public class ImportNowFile {
     private static final Logger logger = LogManager.getLogger(ImportNowFile.class);
     private ComparisonResult<Product> result;
-    private Comparator<Product> comparator;
+    private ProductsComparator comparator;
     private FileImport fileImport;
 
     public ImportNowFile() {
-        comparator = new Comparator<>();
+        comparator = new ProductsComparator();
         fileImport = new FileImport();
     }
 

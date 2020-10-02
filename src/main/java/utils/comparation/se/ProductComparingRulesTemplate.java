@@ -18,14 +18,19 @@ public abstract class ProductComparingRulesTemplate implements ComparingRules<Pr
 
     @Override
     public boolean isTheSameItem(Param<Product> params) {
-        String prod1 = params.getObject1().getMaterial().replaceAll("(\\-)*(\\:)*(VBPZ)*(BPZ)*", "");
-        String prod2 = params.getObject2().getMaterial().replaceAll("(\\-)*(\\:)*(VBPZ)*(BPZ)*", "");
+        String prod1 = treatMaterial(params.getObject1().getMaterial());
+        String prod2 = treatMaterial(params.getObject2().getMaterial());
 
-        if (prod2.matches("^0+\\d+$")) {
-            prod2 = prod2.replaceAll("^0+", "");
-        }
+//        if (prod2.matches("^0+\\d+$")) {
+//            prod2 = prod2.replaceAll("^0+", "");
+//        }
 
         return prod1.equals(prod2);
+    }
+
+    @Override
+    public String treatMaterial(String material) {
+        return material.replaceAll("(^0+)*(\\-)*(\\:)*(VBPZ)*(BPZ)*", "");
     }
 
     @Override

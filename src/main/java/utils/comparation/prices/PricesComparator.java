@@ -11,9 +11,9 @@ import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListShee
 import ui_windows.product.Product;
 import utils.comparation.merger.ComparisonResultMerger;
 import utils.comparation.se.Adapter;
-import utils.comparation.se.Comparator;
 import utils.comparation.se.ComparingParameters;
 import utils.comparation.se.ComparingRulesPricesComparison;
+import utils.comparation.se.ProductsComparator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -79,7 +79,7 @@ public class PricesComparator {
 
             FileImportParameter[] params = oldPriceFi.getExcelFile().getMapper().getParameters().toArray(new FileImportParameter[]{});
 
-            Comparator<Product> comparator = new Comparator<>();
+            ProductsComparator comparator = new ProductsComparator();
             comparator.compare(oldPriceItems, newPriceItems,
                     new ComparingParameters(new Adapter<Product>().convert(params),
                             new ComparingRulesPricesComparison(param -> {
