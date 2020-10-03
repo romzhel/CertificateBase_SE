@@ -7,6 +7,7 @@ import ui.CertificatesReportDialogParams;
 import ui.Dialogs;
 import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.MainTable;
+import ui_windows.product.certificatesChecker.CertificatesChecker;
 
 public class CertificatesReportScript {
     private static final Logger logger = LogManager.getLogger(CertificatesReportScript.class);
@@ -34,7 +35,16 @@ public class CertificatesReportScript {
             logger.trace("запуск потока формирования отчёта по сертификатам");
             ExecutionIndicator.getInstance().start();
             try {
+                CertificatesChecker.minCheckTime = 1000;
+                CertificatesChecker.maxCheckTime = 0;
+                CertificatesChecker.averageCheckTime = 2;
+                CertificatesChecker.minNormsTime = 1000;
+                CertificatesChecker.maxNormsTime = 0;
+                CertificatesChecker.averageNormsTime = 2;
                 new CertificatesReport().treat(mainTable.getItemsForReport(), finalParams);
+                logger.info("поиск сертификатов (мин/ср/макс) {}/{}/{}, проверка норм (мин/ср/макс) {}/{}/{}",
+                        CertificatesChecker.minCheckTime, CertificatesChecker.averageCheckTime, CertificatesChecker.maxCheckTime,
+                        CertificatesChecker.minNormsTime, CertificatesChecker.averageNormsTime, CertificatesChecker.maxNormsTime);
             } catch (Exception e) {
                 logger.error("ошибка создания отчёта по сертификатам {}", e.getMessage(), e);
                 Dialogs.showMessageTS("Отчёт по сертификатам", "Произошла ошибка:\n\n" + e.getMessage());

@@ -6,10 +6,12 @@ import org.apache.logging.log4j.Logger;
 import ui_windows.options_window.certificates_editor.Certificate;
 import ui_windows.options_window.certificates_editor.Certificates;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
+import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContent;
 import ui_windows.options_window.requirements_types_editor.RequirementTypes;
 import ui_windows.product.Product;
 import utils.Utils;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
@@ -17,13 +19,19 @@ import java.util.TreeSet;
 import static ui_windows.product.certificatesChecker.CheckStatusResult.STATUS_OK;
 
 public class CertificatesChecker {
-    private static final Logger logger = LogManager.getLogger(CertificatesChecker.class);
     public final static String NOT_OK = "НЕ ОК";
     public final static String OK = "ОК";
     public final static String EXPIRED = ", истек ";
     public final static String BAD_COUNTRY = ", нет страны ";
     public final static String CERT_NO_NEEDED = "Сертификаты не требуются";
     public final static String ALL_COUNTRIES = "--";
+    private static final Logger logger = LogManager.getLogger(CertificatesChecker.class);
+    public static long minCheckTime = 1000;
+    public static long maxCheckTime = 0;
+    public static long averageCheckTime = 2;
+    public static long minNormsTime = 1000;
+    public static long maxNormsTime = 0;
+    public static long averageNormsTime = 2;
     private TreeSet<CertificateVerificationItem> resultTableItems;
     private CheckStatusResult checkStatusResult = STATUS_OK;
     private TreeSet<String> productTypes;
@@ -37,9 +45,21 @@ public class CertificatesChecker {
 
     public CertificatesChecker(Product product, CheckParameters checkParameters) {
         init();
-
+        long t0 = System.currentTimeMillis();
         checkExistingCertificates(product, checkParameters);
+        long checkTime = System.currentTimeMillis() - t0;
+
+        long t1 = System.currentTimeMillis();
         checkStatusResult = new NormsChecker(product, resultTableItems).getCheckStatusResult();
+        long normsTime = System.currentTimeMillis() - t1;
+
+        minCheckTime = Math.min(minCheckTime, checkTime);
+        maxCheckTime = Math.max(maxCheckTime, checkTime);
+        averageCheckTime = (averageCheckTime + checkTime) / 2;
+
+        minNormsTime = Math.min(minNormsTime, normsTime);
+        maxNormsTime = Math.max(maxNormsTime, normsTime);
+        averageNormsTime = (averageNormsTime + normsTime) / 2;
     }
 
     public CertificatesChecker(List<Product> checkedProducts, CheckParameters checkParameters) {
@@ -66,37 +86,45 @@ public class CertificatesChecker {
 
     private void checkExistingCertificates(Product product, CheckParameters checkParameters) {
         TreeSet<String> prodNames = new TreeSet<>();
-        for (Certificate cert : Certificates.getInstance().getCertificates()) {//check all certificates
-            prodNames.clear();//forming comparing product values (article / material)
-            prodNames.add(Utils.toEN(product.getArticle()).toUpperCase());
-            if (cert.isMaterialMatch()) prodNames.add(Utils.toEN(product.getMaterial()).toUpperCase());
+        prodNames.add(Utils.toEN(product.getArticle()).toUpperCase());
+        prodNames.add(Utils.toEN(product.getMaterial()).toUpperCase());
 
-            for (CertificateContent content : cert.getContent()) {//check all content
+        int cycle = 0;
+        for (String lookedName : prodNames) {
+            cycle++;
+            for (CertificateContent cc : CertificatesContent.getInstance().getMapContent()
+                    .getOrDefault(lookedName.substring(0, 2), Collections.emptySet())) {
+                Certificate cert = Certificates.getInstance().getCertificateByID(cc.getCertId());
+
+                if (!cert.isMaterialMatch() && cycle > 1) {
+                    break;
+                }
+
                 boolean fullNameMatch = cert.isFullNameMatch();
                 boolean productTypeNotDefined = product.getType_id() == 0;
                 boolean productTypeDefinedAndMatches = product.getType_id() > 0 &&
-                        product.getType_id() == content.getProductType().getId();
+                        product.getType_id() == cc.getProductType().getId();
                 boolean changedProductTypeNotDefined = checkParameters.getTemporaryTypeId() == 0;
                 boolean changedProductTypeDefinedAndMatch = checkParameters.getTemporaryTypeId() > 0 &&
-                        checkParameters.getTemporaryTypeId() == content.getProductType().getId();
+                        checkParameters.getTemporaryTypeId() == cc.getProductType().getId();
 
                 boolean usualWay = !checkParameters.isUseTemporaryTypeId() && (productTypeNotDefined || productTypeDefinedAndMatches);
                 boolean temporaryWay = checkParameters.isUseTemporaryTypeId() && (changedProductTypeNotDefined || changedProductTypeDefinedAndMatch);
 
                 if (fullNameMatch || usualWay || temporaryWay) {
-                    for (String contentName : Utils.stringToList(content.getEquipmentName())) {//check all content names
+                    for (String contentName : Utils.stringToList(cc.getEquipmentName())) {//check all content names
 
                         for (String prod : prodNames) {//compare product article / material with certificate content
 
                             if (isNamesMatches(prod, cert, contentName)) {//add prod type from certificate for allowing of selection
-                                if (content.getProductType().getType() != null && !content.getProductType().getType().isEmpty()) {
-                                    productTypes.add(content.getProductType().getType());
+                                if (cc.getProductType().getType() != null && !cc.getProductType().getType().isEmpty()) {
+                                    productTypes.add(cc.getProductType().getType());
                                 }
 
                                 boolean typeNotDefined = (!checkParameters.isUseTemporaryTypeId() && productTypeNotDefined) ||
                                         (checkParameters.isUseTemporaryTypeId() && changedProductTypeNotDefined);
-                                if (!content.getEquipmentName().isEmpty() && !fullNameMatch && typeNotDefined &&
-                                        checkParameters.isEqTypeFiltered() && !isMatchEquipTypeName(product, content))
+                                if (!cc.getEquipmentName().isEmpty() && !fullNameMatch && typeNotDefined &&
+                                        checkParameters.isEqTypeFiltered() && !isMatchEquipTypeName(product, cc))
                                     continue;
 
                                 String status = getStatusString(product, cert);
@@ -106,7 +134,7 @@ public class CertificatesChecker {
 
                                 for (String normName : norms.split("\\,")) {
                                     resultTableItems.add(new CertificateVerificationItem(normName.trim(), contentName,
-                                            content.getProductType().getType(), cert.getFileName(), status,
+                                            cc.getProductType().getType(), cert.getFileName(), status,
                                             cert.getExpirationDate(), cert, product));
 
                                 }
@@ -114,7 +142,9 @@ public class CertificatesChecker {
                         }
                     }
                 }
+
             }
+
         }
     }
 

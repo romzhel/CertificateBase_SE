@@ -39,7 +39,7 @@ public class CertificatesReport {
         ConcurrentLinkedQueue<CertificatesReportResult> results = new ConcurrentLinkedQueue<>();
         ConcurrentSkipListSet<String> allNeededFileNames = new ConcurrentSkipListSet<>();
 
-        productsForCheck.parallelStream()
+        productsForCheck/*.parallelStream()*/
                 .forEach(product -> {
 //                    logger.trace("обработка {}", product);
                     CertificatesReportResult crr = new CertificatesReportResult(product);

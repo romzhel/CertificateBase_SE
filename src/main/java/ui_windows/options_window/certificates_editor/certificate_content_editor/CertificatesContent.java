@@ -5,12 +5,12 @@ import database.CertificatesContentDB;
 import ui_windows.product.ProductTypes;
 import ui_windows.product.Products;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class CertificatesContent implements Initializable {
     private static CertificatesContent instance;
     private List<CertificateContent> content;
+    private Map<String, Set<CertificateContent>> mapContent;
 
     private CertificatesContent() {
     }
@@ -25,6 +25,19 @@ public class CertificatesContent implements Initializable {
     @Override
     public void init() {
         content = new CertificatesContentDB().getData();
+        mapContent = new HashMap<>();
+        for (CertificateContent cont : content) {
+            String[] names = cont.getEquipmentName().split(",");
+            for (String name : names) {
+                name = name.length() > 2 ? name.substring(0, 2) : name.trim();
+                mapContent.computeIfPresent(name, (s, certificateContents) -> {
+                    Set<CertificateContent> resultSet = new HashSet<>(certificateContents);
+                    resultSet.add(cont);
+                    return resultSet;
+                });
+                mapContent.putIfAbsent(name, Collections.singleton(cont));
+            }
+        }
     }
 
     public List<CertificateContent> getItems() {
@@ -82,5 +95,9 @@ public class CertificatesContent implements Initializable {
         }
 
         return null;
+    }
+
+    public Map<String, Set<CertificateContent>> getMapContent() {
+        return mapContent;
     }
 }
