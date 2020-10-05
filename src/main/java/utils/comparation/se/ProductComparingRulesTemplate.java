@@ -2,6 +2,7 @@ package utils.comparation.se;
 
 import javafx.util.Callback;
 import ui_windows.product.Product;
+import utils.comparation.products.ProductNameResolver;
 
 import static ui_windows.product.data.DataItem.*;
 
@@ -30,7 +31,7 @@ public abstract class ProductComparingRulesTemplate implements ComparingRules<Pr
 
     @Override
     public String treatMaterial(String material) {
-        return material.replaceAll("(^0+)*(\\-)*(\\:)*(VBPZ)*(BPZ)*", "");
+        return ProductNameResolver.resolve(material);
     }
 
     @Override

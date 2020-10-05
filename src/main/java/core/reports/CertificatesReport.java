@@ -57,6 +57,7 @@ public class CertificatesReport {
 
                     results.add(crr);
                 });
+        logger.info("найдено {} совпадений", CertificatesChecker.count);
 
         logger.trace("для отчёта необходимо {} файлов сертификатов", allNeededFileNames.size());
 

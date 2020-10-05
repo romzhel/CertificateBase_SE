@@ -24,8 +24,6 @@ import ui_windows.product.productEditorWindow.ProductEditorWindow;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static core.SharedData.SHD_CUSTOM_DATA;
 import static ui_windows.Mode.EDIT;
@@ -33,7 +31,7 @@ import static ui_windows.main_window.DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION
 
 public class MainTable implements Module {
     private static TableView<Product> tvTable;
-    private ExecutorService executorService;
+//    private ExecutorService executorService;
     private static final Logger logger = LogManager.getLogger(MainTable.class);
 
     public MainTable(TableView<Product> tvTable) {
@@ -50,7 +48,7 @@ public class MainTable implements Module {
     }
 
     private void init() {
-        executorService = Executors.newFixedThreadPool(8);
+//        executorService = Executors.newFixedThreadPool(8);
         initTable(tvTable);
         initContextMenu();
         initTableColumns();
@@ -129,8 +127,8 @@ public class MainTable implements Module {
                                         });
                                     };
 
-                                    executorService.execute(certCheck);
-//                                    certCheck.run();
+//                                    executorService.execute(certCheck);
+                                    certCheck.run();
                                 }
                             }
                         };
@@ -172,7 +170,7 @@ public class MainTable implements Module {
 
     public void close() {
         try {
-            executorService.shutdown();
+//            executorService.shutdown();
         } catch (Exception e) {
 
         }

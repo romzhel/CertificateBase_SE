@@ -4,6 +4,8 @@ import files.Folders;
 import files.price_to_excel.ExportPriceListToExcel_SE;
 import files.reports.ReportToExcel;
 import javafx.application.Platform;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
 import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.DataSelectorMenu;
@@ -28,6 +30,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static ui_windows.product.data.DataItem.*;
 
 public class PriceGenerationScript {
+    public static final Logger logger = LogManager.getLogger(PriceGenerationScript.class);
     public final static int ONLY_PRICE = 0;
     public final static int REPORTS_FOR_CHECK = 1;
     public final static int REPORTS_FOR_USING = 2;
@@ -37,7 +40,7 @@ public class PriceGenerationScript {
             ExecutionIndicator.getInstance().start();
             PriceList priceList = PriceLists.getInstance().getItems().get(priceIndex);
             priceList.generate();
-            System.out.println("new price list generated");
+            logger.trace("прайс-лист сгенерирован");
 
             File priceListFile = null;
             File outOfPriceFile = null;

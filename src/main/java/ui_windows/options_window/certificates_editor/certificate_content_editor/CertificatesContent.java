@@ -2,12 +2,15 @@ package ui_windows.options_window.certificates_editor.certificate_content_editor
 
 import core.Initializable;
 import database.CertificatesContentDB;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.product.ProductTypes;
 import ui_windows.product.Products;
 
 import java.util.*;
 
 public class CertificatesContent implements Initializable {
+    public static final Logger logger = LogManager.getLogger(CertificatesContent.class);
     private static CertificatesContent instance;
     private List<CertificateContent> content;
     private Map<String, Set<CertificateContent>> mapContent;
@@ -25,11 +28,12 @@ public class CertificatesContent implements Initializable {
     @Override
     public void init() {
         content = new CertificatesContentDB().getData();
-        mapContent = new HashMap<>();
+        long t0 = System.currentTimeMillis();
+        mapContent = new HashMap<>(2000);
         for (CertificateContent cont : content) {
-            String[] names = cont.getEquipmentName().split(",");
+            String[] names = cont.getEquipmentName().split("[,;]");
             for (String name : names) {
-                name = name.length() > 2 ? name.substring(0, 2) : name.trim();
+                name = name.replaceAll("\\s", "");
                 mapContent.computeIfPresent(name, (s, certificateContents) -> {
                     Set<CertificateContent> resultSet = new HashSet<>(certificateContents);
                     resultSet.add(cont);
@@ -38,6 +42,8 @@ public class CertificatesContent implements Initializable {
                 mapContent.putIfAbsent(name, Collections.singleton(cont));
             }
         }
+        logger.trace("хэш мэп контента сертификатов сформирован за {} мсек", System.currentTimeMillis() - t0);
+        System.out.print("");
     }
 
     public List<CertificateContent> getItems() {
