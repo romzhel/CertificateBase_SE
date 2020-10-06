@@ -38,7 +38,11 @@ public class Test {
                 "S55560-F117",
                 "S55384-C886-F100",
                 "S588/12",
-                "SV24V-150W-A5"
+                "SV24V-150W-A5",
+                "ACXxx.xxx",
+                "FCAxxx-A1",
+                "CMD.xx",
+                "M3C700"
         };
 //        Pattern pattern = Pattern.compile("^(\\d*?[A-Z]*?\\d*?[A-Z]+)(.*[-/]*.*)$");
 //        Pattern pattern = Pattern.compile("^([A-Z0-9]*[A-Z]+)(\\d*.*[-/]*.*)$");
@@ -56,6 +60,12 @@ public class Test {
             } else {
                 System.out.println("не совпало");
             }
+        }
+
+        System.out.println("----------------------------------");
+
+        for (String s : spec) {
+            System.out.println(s + " -> " + s.replaceAll("\\s*(x+.*$)*", ""));
         }
 
     }

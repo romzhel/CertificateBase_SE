@@ -4,14 +4,14 @@ import ui_windows.product.Product;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CertificatesReportResult {
     private Product product;
-    private HashMap<String, List<Path>> certFilesGroupedByNorms;
+    private HashMap<String, Set<Path>> certFilesGroupedByNorms;
 
     public CertificatesReportResult(Product product) {
         this.product = product;
@@ -20,11 +20,11 @@ public class CertificatesReportResult {
 
     public void addCertificateFile(String norm, String fileName) {
         if (certFilesGroupedByNorms.containsKey(norm)) {
-            List<Path> list = new ArrayList<>(certFilesGroupedByNorms.get(norm));
-            list.add(Paths.get(fileName));
-            certFilesGroupedByNorms.put(norm, list);
+            Set<Path> set = new HashSet<>(certFilesGroupedByNorms.get(norm));
+            set.add(Paths.get(fileName));
+            certFilesGroupedByNorms.put(norm, set);
         } else {
-            certFilesGroupedByNorms.put(norm, Collections.singletonList(Paths.get(fileName)));
+            certFilesGroupedByNorms.put(norm, Collections.singleton(Paths.get(fileName)));
         }
     }
 
@@ -32,7 +32,7 @@ public class CertificatesReportResult {
         return product;
     }
 
-    public HashMap<String, List<Path>> getCertFilesGroupedByNorms() {
+    public HashMap<String, Set<Path>> getCertFilesGroupedByNorms() {
         return certFilesGroupedByNorms;
     }
 }

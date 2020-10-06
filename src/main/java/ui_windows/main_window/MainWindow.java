@@ -186,6 +186,7 @@ public class MainWindow extends Application {
 
                 Configuration conf = ((LoggerContext) LogManager.getContext(false)).getConfiguration();
                 conf.getAppenders().get("FILE").stop();
+                conf.getAppenders().get("FILE_ERRORS").stop();
                 System.out.println(Folders.getInstance().getAppLogsFolder());
 //                new Thread(() -> {
                 ScheduledExecutorService logsTreatment = Executors.newSingleThreadScheduledExecutor();

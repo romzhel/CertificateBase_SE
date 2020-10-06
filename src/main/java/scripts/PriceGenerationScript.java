@@ -77,7 +77,7 @@ public class PriceGenerationScript {
                     DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION.activate();
 
 
-                    System.out.println("out of price report generated");
+                    logger.trace("out of price report generated");
 
                     PricesComparator pricesComparator = new PricesComparator();
                     if (priceList == pricesComparator.getCOMPARED_PRICE_LIST()) {
@@ -93,12 +93,12 @@ public class PriceGenerationScript {
                             priceComparisonFile = new File(fileName);
                             pricesComparator.exportToExcel(priceComparisonFile);
 
-                            System.out.println("price lists have been compared");
+                            logger.trace("price lists have been compared");
                         } else {
-                            System.out.println("price list for comparing wasn't select");
+                            logger.trace("price list for comparing wasn't select");
                         }
                     } else {
-                        System.out.println("try to compare different price lists - ignored");
+                        logger.trace("try to compare different price lists - ignored");
                     }
                 }
 
@@ -110,7 +110,7 @@ public class PriceGenerationScript {
 //                OutlookEmailSender outlookEmailSender = new OutlookEmailSender();
 //                outlookEmailSender.send();
             } catch (Exception e) {
-                System.out.println(e.getMessage() + "\n" + e.getStackTrace());
+                logger.error("ошибка генерации прайс-листа {}", e.getMessage(), e);
             }
             ExecutionIndicator.getInstance().stop();
         }).start();

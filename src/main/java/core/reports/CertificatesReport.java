@@ -85,8 +85,8 @@ public class CertificatesReport {
 
         logger.trace("удаление отсутствующих файлов из отчёта");
         for (CertificatesReportResult crr : results) {
-            for (Map.Entry<String, List<Path>> entry : crr.getCertFilesGroupedByNorms().entrySet()) {
-                List<Path> filePaths = new ArrayList<>(entry.getValue());
+            for (Map.Entry<String, Set<Path>> entry : crr.getCertFilesGroupedByNorms().entrySet()) {
+                Set<Path> filePaths = new HashSet<>(entry.getValue());
                 filePaths.removeAll(absentFiles);
                 entry.setValue(filePaths);
             }

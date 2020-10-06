@@ -33,7 +33,7 @@ public class CertificatesContent implements Initializable {
         for (CertificateContent cont : content) {
             String[] names = cont.getEquipmentName().split("[,;]");
             for (String name : names) {
-                name = name.replaceAll("\\s", "");
+                name = name.replaceAll("\\s*(x+.*$)*", "");
                 mapContent.computeIfPresent(name, (s, certificateContents) -> {
                     Set<CertificateContent> resultSet = new HashSet<>(certificateContents);
                     resultSet.add(cont);

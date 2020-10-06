@@ -16,8 +16,8 @@ import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static files.ExcelCellStyleFactory.*;
 
@@ -63,7 +63,7 @@ public class CertificateMatrixReportToExcel {
 
             int rowOffset = 0;
             int col;
-            for (Map.Entry<String, List<Path>> normAndCertFiles : crr.getCertFilesGroupedByNorms().entrySet()) {
+            for (Map.Entry<String, Set<Path>> normAndCertFiles : crr.getCertFilesGroupedByNorms().entrySet()) {
                 if (normAndCertFiles.getValue().size() == 0) {
                     continue;
                 }
@@ -79,10 +79,11 @@ public class CertificateMatrixReportToExcel {
                     cell.setCellValue("регламент " + normAndCertFiles.getKey());
                 }
 
+                int fileRowOffset = 0;
                 for (Path fileName : normAndCertFiles.getValue()) {
                     row = sheet.getRow(rowNum);
 
-                    int fileRowOffset = normAndCertFiles.getValue().indexOf(fileName);
+//                    int fileRowOffset = normAndCertFiles.getValue().indexOf(fileName);
                     if (fileRowOffset > 0) {
                         row = sheet.getRow(rowNum + fileRowOffset);
                         row = row == null ? sheet.createRow(rowNum + fileRowOffset) : row;
@@ -96,6 +97,7 @@ public class CertificateMatrixReportToExcel {
                     link.setAddress(fileName.toString());
                     cell.setHyperlink(link);
                     cell.setCellStyle(HYPERLINK_STYLE);
+                    fileRowOffset++;
                 }
             }
             rowNum += rowOffset;

@@ -21,8 +21,6 @@ import java.util.regex.Pattern;
 import static ui_windows.product.certificatesChecker.CheckStatusResult.STATUS_OK;
 
 public class CertificatesChecker {
-    //группа 1 - смешанное/буквенное значение, группа 2 - цифровое
-    public static Pattern PATTERN = Pattern.compile("^(\\d*?[A-Z]*?\\d*[A-Z]+)?(\\d+)?([0-9-/]*.*)$");
     //                  Pattern pattern = Pattern.compile("^(\\d*?[A-Z]+?\\d*[A-Z]+)?(\\d+)?([0-9-/]*.*)$");
     public final static String NOT_OK = "НЕ ОК";
     public final static String OK = "ОК";
@@ -31,16 +29,18 @@ public class CertificatesChecker {
     public final static String CERT_NO_NEEDED = "Сертификаты не требуются";
     public final static String ALL_COUNTRIES = "--";
     private static final Logger logger = LogManager.getLogger(CertificatesChecker.class);
+    //группа 1 - смешанное/буквенное значение, группа 2 - цифровое
+    public static Pattern PATTERN = Pattern.compile("^(\\d*?[A-Z]*?\\d*[A-Z]+)?(\\d+)?([0-9-/]*.*)$");
     public static long minCheckTime = 1000;
     public static long maxCheckTime = 0;
     public static long averageCheckTime = 2;
     public static long minNormsTime = 1000;
     public static long maxNormsTime = 0;
     public static long averageNormsTime = 2;
+    public static int count;
     private TreeSet<CertificateVerificationItem> resultTableItems;
     private CheckStatusResult checkStatusResult = STATUS_OK;
     private TreeSet<String> productTypes;
-    public static int count;
 
     public CertificatesChecker(Product product) {
         init();
@@ -91,10 +91,10 @@ public class CertificatesChecker {
     }
 
     private void checkExistingCertificates(Product product, CheckParameters checkParameters) {
-       /* if (product.getArticle().matches("SV24V-150W-A5")) {
+        /*if (product.getArticle().matches("M3C700")) {
             System.out.println();
-        }*/
-
+        }
+*/
         int nameCount = 0;
         for (String prodName : new String[]{product.getArticle(), product.getMaterial()}) {
             nameCount++;
@@ -119,7 +119,7 @@ public class CertificatesChecker {
                             continue;
                         }
 
-                        boolean fullNameMatch = cert.isFullNameMatch();
+                        boolean fullNameMatch = cert.isFullNameMatch() && prodName.length() == originalLength;
                         boolean productTypeNotDefined = product.getType_id() == 0;
                         boolean productTypeDefinedAndMatches = product.getType_id() > 0 &&
                                 product.getType_id() == cc.getProductType().getId();
@@ -141,6 +141,8 @@ public class CertificatesChecker {
                                     checkParameters.isEqTypeFiltered() && !isMatchEquipTypeName(product, cc))
                                 continue;
 
+                            count++;
+
                             String status = getStatusString(product, cert);
 
                             //                                foundNorms.addAll(Utils.getNumberALfromStringEnum(cert.getNorms()));
@@ -150,82 +152,15 @@ public class CertificatesChecker {
                                 resultTableItems.add(new CertificateVerificationItem(normName.trim(), prodName,
                                         cc.getProductType().getType(), cert.getFileName(), status,
                                         cert.getExpirationDate(), cert, product));
-
                             }
-
                         }
                     }
                     prodName = prodName.substring(0, prodName.length() - 1);
                 }
             } catch (Exception e) {
-                logger.error("ошибка поиска сертификатов для: '{}' - {}", prodName, e.getMessage());
+                logger.warn("ошибка поиска сертификатов для: '{}' - {}", prodName, e.getMessage());
             }
         }
-
-
-            /*int cycle = 0;
-            for (String lookedName : prodNames) {
-                cycle++;
-
-                try {
-                for (CertificateContent cc : CertificatesContent.getInstance().getMapContent()
-                        .getOrDefault(lookedName.substring(0, 3), Collections.emptySet())) {
-                    Certificate cert = Certificates.getInstance().getCertificateByID(cc.getCertId());
-
-                    if (!cert.isMaterialMatch() && cycle > 1) {
-                        break;
-                    }
-
-                    boolean fullNameMatch = cert.isFullNameMatch();
-                    boolean productTypeNotDefined = product.getType_id() == 0;
-                    boolean productTypeDefinedAndMatches = product.getType_id() > 0 &&
-                            product.getType_id() == cc.getProductType().getId();
-                    boolean changedProductTypeNotDefined = checkParameters.getTemporaryTypeId() == 0;
-                    boolean changedProductTypeDefinedAndMatch = checkParameters.getTemporaryTypeId() > 0 &&
-                            checkParameters.getTemporaryTypeId() == cc.getProductType().getId();
-
-                    boolean usualWay = !checkParameters.isUseTemporaryTypeId() && (productTypeNotDefined || productTypeDefinedAndMatches);
-                    boolean temporaryWay = checkParameters.isUseTemporaryTypeId() && (changedProductTypeNotDefined || changedProductTypeDefinedAndMatch);
-
-                    if (fullNameMatch || usualWay || temporaryWay) {
-                        for (String contentName : Utils.stringToList(cc.getEquipmentName())) {//check all content names
-
-//                        for (String prod : prodNames) {//compare product article / material with certificate content
-
-                            if (isNamesMatches(lookedName, cert, contentName)) {//add prod type from certificate for allowing of selection
-                                if (cc.getProductType().getType() != null && !cc.getProductType().getType().isEmpty()) {
-                                    productTypes.add(cc.getProductType().getType());
-                                }
-
-                                boolean typeNotDefined = (!checkParameters.isUseTemporaryTypeId() && productTypeNotDefined) ||
-                                        (checkParameters.isUseTemporaryTypeId() && changedProductTypeNotDefined);
-                                if (!cc.getEquipmentName().isEmpty() && !fullNameMatch && typeNotDefined &&
-                                        checkParameters.isEqTypeFiltered() && !isMatchEquipTypeName(product, cc))
-                                    continue;
-
-                                String status = getStatusString(product, cert);
-
-//                                foundNorms.addAll(Utils.getNumberALfromStringEnum(cert.getNorms()));
-                                String norms = RequirementTypes.getInstance().getNormsShortNamesByIds(cert.getNorms());
-
-                                for (String normName : norms.split("\\,")) {
-                                    resultTableItems.add(new CertificateVerificationItem(normName.trim(), contentName,
-                                            cc.getProductType().getType(), cert.getFileName(), status,
-                                            cert.getExpirationDate(), cert, product));
-
-                                }
-                            }
-//                        }
-                        }
-                    }
-
-                }
-                } catch (Exception e) {
-                    System.out.printf("looked name = %s\n", lookedName);
-                }
-            }*/
-
-        count += resultTableItems.size();
     }
 
     private String getStatusString(Product product, Certificate cert) {
@@ -265,26 +200,6 @@ public class CertificatesChecker {
             }
         }
         return false;
-    }
-
-    private boolean isNamesMatches(String prodName, Certificate cert, String contentName) {
-        prodName = prodName.replaceAll("[\\.\\s/()]", "").trim();
-        contentName = contentName.replaceAll("[\\.\\s/()]", "").trim();
-        String contentValue;
-
-        if (contentName.matches(".+[x]{2,}.*")) {
-            contentValue = contentName.replaceAll("[x]{2,}", ".*");
-        } else {
-            contentValue = contentName + "(-|\\d+).*";
-        }
-
-        if (prodName.equals(contentName)) {
-            return true;
-        } else {
-            boolean namesWithNumbersAndMatches = prodName.matches("(?i)" + contentValue);
-            boolean namesOnlyTextAndHaveTheSameBegin = prodName.matches("^(?i)[A-Z]+$") && prodName.startsWith(contentName);
-            return namesOnlyTextAndHaveTheSameBegin || namesWithNumbersAndMatches;
-        }
     }
 
     public TreeSet<CertificateVerificationItem> getResultTableItems() {
