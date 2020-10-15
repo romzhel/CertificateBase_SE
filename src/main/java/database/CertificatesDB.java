@@ -22,7 +22,7 @@ public class CertificatesDB extends DbRequest {
             deleteData = connection.prepareStatement("DELETE FROM certificates " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            logAndMessage("prepared statements exception: " + e.getMessage());
+            logAndMessage("prepared statements exception: ", e);
             finalActions();
         }
     }
@@ -38,7 +38,7 @@ public class CertificatesDB extends DbRequest {
 
             rs.close();
         } catch (SQLException e) {
-            logAndMessage("SQL exception cert types: " + e.getMessage());
+            logAndMessage("SQL exception cert types: ", e);
         }
         return certificates;
     }
@@ -63,11 +63,11 @@ public class CertificatesDB extends DbRequest {
                     return true;
                 }
             } else {
-                logAndMessage("Certificate DB insert error");
+                logAndMessage("Certificate DB insert error", new RuntimeException());
             }
 
         } catch (SQLException e) {
-            logAndMessage("Certificate BD inserting error " + e.getMessage());
+            logAndMessage("Certificate BD inserting error ", e);
         } finally {
             finalActions();
         }
@@ -89,11 +89,11 @@ public class CertificatesDB extends DbRequest {
             if (updateData.executeUpdate() > 0) {//successful
                 return true;
             } else {
-                logAndMessage("Certificate BD updating error ");
+                logAndMessage("Certificate BD updating error ", new RuntimeException());
             }
 
         } catch (SQLException e) {
-            logAndMessage("Certificate BD updating error " + e.getMessage());
+            logAndMessage("Certificate BD updating error ", e);
         } finally {
             finalActions();
         }
@@ -107,10 +107,10 @@ public class CertificatesDB extends DbRequest {
             if (deleteData.executeUpdate() > 0) {//successful
                 return true;
             } else {
-                logAndMessage("Certificate BD deleting error");
+                logAndMessage("Certificate BD deleting error", new RuntimeException());
             }
         } catch (SQLException e) {
-            logAndMessage("Certificate BD deleting error " + e.getMessage());
+            logAndMessage("Certificate BD deleting error ", e);
         } finally {
             finalActions();
         }

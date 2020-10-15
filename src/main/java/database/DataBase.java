@@ -74,9 +74,11 @@ public class DataBase implements Initializable {
     }
 
     public Connection reconnect() {
+        logger.debug("reconnecting to db, disconnection timer {}", timer);
         if (timer != null) {
             timer.cancel();
-            logger.debug("db delayed disconnection timer is cancelled");
+            timer = null;
+            logger.debug("db delayed disconnection timer {} is cancelled", timer);
         }
 
         try {
@@ -98,19 +100,15 @@ public class DataBase implements Initializable {
     }
 
     public void requestToDisconnect() {
-        if (timer != null) {
-            timer.cancel();
-            logger.trace("disconnection timer was cancelled");
-        }
-
         timer = new Timer("DB Disconnector Thread", true);
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                logger.debug("timer {} expired", timer);
                 disconnect();
             }
         }, 5000);
-        logger.debug("operation completed, db delayed disconnection timer started");
+        logger.debug("operation completed, db delayed disconnection timer started {}", timer);
     }
 
     public boolean disconnect() {
@@ -123,7 +121,7 @@ public class DataBase implements Initializable {
                 if (firstStart) {
                     firstStart = false;
                 } else {
-                    DbBackuper.run();
+//                    DbBackuper.run(); //TODO перенести до изменений в базе
                 }
 
                 ExecutionIndicator.getInstance().stop();

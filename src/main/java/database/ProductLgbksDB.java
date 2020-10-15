@@ -22,7 +22,7 @@ public class ProductLgbksDB extends DbRequest {
             deleteData = connection.prepareStatement("DELETE FROM lgbk " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            logAndMessage("product lgbk prepared statements exception: " + e.getMessage());
+            logAndMessage("product lgbk prepared statements exception: ", e);
             finalActions();
         }
     }
@@ -38,7 +38,7 @@ public class ProductLgbksDB extends DbRequest {
 
             rs.close();
         } catch (SQLException e) {
-            logAndMessage("SQL exception product lgbk get data");
+            logAndMessage("SQL exception product lgbk get data", e);
         }
         return productLgbks;
     }
@@ -64,10 +64,10 @@ public class ProductLgbksDB extends DbRequest {
                     return true;
                 }
             } else {
-                logAndMessage("Ошибка добавления lgbk в БД");
+                logAndMessage("", new RuntimeException("Ошибка добавления lgbk в БД"));
             }
         } catch (SQLException e) {
-            logAndMessage("exception of writing to BD (lgbk)");
+            logAndMessage("", new RuntimeException("exception of writing to BD (lgbk)"));
         } finally {
             finalActions();
         }
@@ -93,10 +93,10 @@ public class ProductLgbksDB extends DbRequest {
             if (result > 0) {//successful
                 return true;
             } else {
-                logAndMessage("Ошибка обновления LGBK в БД");
+                logAndMessage("", new RuntimeException("Ошибка обновления LGBK в БД"));
             }
         } catch (SQLException e) {
-            logAndMessage("exception of updating lgbk in BD " + e.getMessage());
+            logAndMessage("exception of updating lgbk in BD ", e);
         } finally {
             finalActions();
         }
@@ -116,7 +116,7 @@ public class ProductLgbksDB extends DbRequest {
                 }
             }
         } catch (SQLException e) {
-            logAndMessage("exception of removing lgbk from DB");
+            logAndMessage("exception of removing lgbk from DB", e);
         } finally {
             finalActions();
         }

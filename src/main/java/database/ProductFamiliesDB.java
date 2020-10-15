@@ -19,7 +19,7 @@ public class ProductFamiliesDB extends DbRequest {
             deleteData = connection.prepareStatement("DELETE FROM productFamilies " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            logAndMessage("product families prepared statements exception");
+            logAndMessage("", new RuntimeException("product families prepared statements exception"));
             finalActions();
         }
     }
@@ -35,7 +35,7 @@ public class ProductFamiliesDB extends DbRequest {
 
             rs.close();
         } catch (SQLException e) {
-            logAndMessage("SQL exception product families get data");
+            logAndMessage("", new RuntimeException("SQL exception product families get data"));
         }
         return productFamilies;
     }
@@ -53,10 +53,10 @@ public class ProductFamiliesDB extends DbRequest {
                     return true;
                 }
             } else {
-                logAndMessage("exception of inserting to BD (family)");
+                logAndMessage("", new RuntimeException("exception of inserting to BD (family)"));
             }
         } catch (SQLException e) {
-            logAndMessage("exception of inserting to BD (family)");
+            logAndMessage("exception of inserting to BD (family)", e);
         } finally {
             finalActions();
         }
@@ -72,10 +72,10 @@ public class ProductFamiliesDB extends DbRequest {
             if (updateData.executeUpdate() > 0) {//successful
                 return true;
             } else {
-                logAndMessage("exception of updating family in BD");
+                logAndMessage("", new RuntimeException("exception of updating family in BD"));
             }
         } catch (SQLException e) {
-            logAndMessage("exception of updating family in BD");
+            logAndMessage("exception of updating family in BD", e);
         } finally {
             finalActions();
         }
@@ -95,7 +95,7 @@ public class ProductFamiliesDB extends DbRequest {
                 }
             }
         } catch (SQLException e) {
-            logAndMessage("exception of removing family from DB " + e.getMessage());
+            logAndMessage("exception of removing family from DB ", e);
         } finally {
             finalActions();
         }

@@ -22,7 +22,7 @@ public class UsersDB extends DbRequest {
             deleteData = connection.prepareStatement("DELETE FROM users " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            logAndMessage("users prepared statements exception" + e.getMessage());
+            logAndMessage("users prepared statements exception", e);
             finalActions();
         }
     }
@@ -38,7 +38,7 @@ public class UsersDB extends DbRequest {
 
             rs.close();
         } catch (SQLException e) {
-            logAndMessage("SQL exception users getting" + e.getMessage());
+            logAndMessage("SQL exception users getting", e);
         }
         return users;
 
@@ -62,10 +62,10 @@ public class UsersDB extends DbRequest {
                     return true;
                 }
             } else {
-                logAndMessage("SQL exception users inserting");
+                logAndMessage("", new RuntimeException("SQL exception users inserting"));
             }
         } catch (SQLException e) {
-            logAndMessage("SQL exception users inserting " + e.getMessage());
+            logAndMessage("SQL exception users inserting ", e);
         } finally {
             finalActions();
         }
@@ -86,10 +86,10 @@ public class UsersDB extends DbRequest {
             if (updateData.executeUpdate() > 0) {//successful
                 return true;
             } else {
-                logAndMessage("SQL exception users updating ");
+                logAndMessage("", new RuntimeException("SQL exception users updating"));
             }
         } catch (SQLException e) {
-            logAndMessage("SQL exception users updating " + e.getMessage());
+            logAndMessage("SQL exception users updating ", e);
         } finally {
             finalActions();
         }
@@ -103,10 +103,10 @@ public class UsersDB extends DbRequest {
             if (deleteData.executeUpdate() > 0) {//successful
                 return true;
             } else {
-                logAndMessage("SQL exception users deleting ");
+                logAndMessage("", new RuntimeException("SQL exception users deleting "));
             }
         } catch (SQLException e) {
-            logAndMessage("SQL exception users updating " + e.getMessage());
+            logAndMessage("SQL exception users updating ", e);
         } finally {
             finalActions();
         }

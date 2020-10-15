@@ -14,16 +14,17 @@ public class DbRequest {
     private static final Logger logger = LogManager.getLogger(DbRequest.class);
 
     public DbRequest() {
-        connection = DataBase.getInstance().getDbConnection();
+        connection = DataBase.getInstance().reconnect();
     }
 
-    public void logAndMessage(String text) {
-        Platform.runLater(() -> Dialogs.showMessage("Ошибка работы с базой данных", text));
-        logger.error("db error {}", text);
+    public void logAndMessage(String text, Throwable ex) {
+        Platform.runLater(() -> Dialogs.showMessage("Ошибка работы с базой данных: ", text + "\n" + ex.getMessage()));
+        logger.error("db error {}", ex.getMessage(), ex);
     }
 
     public void finalActions() {
         try {
+            logger.trace("final actions");
             connection.setAutoCommit(true);
             DataBase.getInstance().requestToDisconnect();
         } catch (Exception e) {

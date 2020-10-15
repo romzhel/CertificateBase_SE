@@ -21,7 +21,7 @@ public class CertificatesContentDB extends DbRequest {
             deleteData = connection.prepareStatement("DELETE FROM certificatesContent " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            logAndMessage("CertificatesContentDB prepared statements exception, " + e.getMessage());
+            logAndMessage("CertificatesContentDB prepared statements exception, ", e);
             finalActions();
         }
     }
@@ -38,7 +38,7 @@ public class CertificatesContentDB extends DbRequest {
             rs.close();
 
         } catch (SQLException e) {
-            logAndMessage("SQL exception of getting cert content: " + e.getMessage());
+            logAndMessage("SQL exception of getting cert content: ", e);
         }
         return content;
 
@@ -59,7 +59,7 @@ public class CertificatesContentDB extends DbRequest {
 
             for (int res : result) {
                 if (res != 1) {
-                    logAndMessage("Данный контент не был добавлен в БД");
+                    logAndMessage("", new RuntimeException("Данный контент не был добавлен в БД"));
                     return false;
                 }
             }
@@ -77,11 +77,11 @@ public class CertificatesContentDB extends DbRequest {
 
                 rs.close();
             } else {
-                logAndMessage("CertificateContent DB insert error ");
+                logAndMessage("", new RuntimeException("CertificateContent DB insert error"));
                 return false;
             }
         } catch (SQLException e) {
-            logAndMessage("exception of writing content to BD: " + e.getMessage() + "\n" + e.getStackTrace());
+            logAndMessage("exception of writing content to BD: ", e);
         } finally {
             finalActions();
         }
@@ -103,12 +103,12 @@ public class CertificatesContentDB extends DbRequest {
 
             for (int res : result) {
                 if (res != 1) {
-                    logAndMessage("CertificateContent DB update error");
+                    logAndMessage("", new RuntimeException("CertificateContent DB update error"));
                     return false;
                 }
             }
         } catch (SQLException e) {
-            logAndMessage("exception of updating content in BD: " + e.getMessage());
+            logAndMessage("exception of updating content in BD: ", e);
         } finally {
             finalActions();
         }
@@ -130,7 +130,7 @@ public class CertificatesContentDB extends DbRequest {
                 }
             }
         } catch (SQLException e) {
-            logAndMessage("exception of removing content from DB: " + e.getMessage());
+            logAndMessage("exception of removing content from DB: ", e);
         } finally {
             finalActions();
         }

@@ -30,7 +30,7 @@ public class ProductsDB extends DbRequest {
             deleteData = connection.prepareStatement("DELETE FROM products " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            logAndMessage("products prepared statements exception: " + e.getMessage());
+            logAndMessage("products prepared statements exception: ", e);
             finalActions();
         }
     }
@@ -46,7 +46,7 @@ public class ProductsDB extends DbRequest {
 
             rs.close();
         } catch (SQLException e) {
-            logAndMessage("SQL exception products, " + e.getMessage());
+            logAndMessage("SQL exception products, ", e);
         }
         return products;
     }
@@ -98,17 +98,17 @@ public class ProductsDB extends DbRequest {
 
                 for (int res : result) {
                     if (res != 1) {
-                        logAndMessage("Данные продукты не были обновлены в БД");
+                        logAndMessage("", new RuntimeException("Данные продукты не были обновлены в БД"));
                         return false;
                     }
                 }
             }
         } catch (SQLException e) {
-            logAndMessage("Ошибка обновления продуктов в БД");
+            logAndMessage("", new RuntimeException("Ошибка обновления продуктов в БД"));
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                logAndMessage("Ошибка отката неудачного обновления продуктов в БД");
+                logAndMessage("Ошибка отката неудачного обновления продуктов в БД", e);
             }
             return false;
         } finally {
@@ -164,13 +164,13 @@ public class ProductsDB extends DbRequest {
 
                 for (int res : result) {
                     if (res != 1) {
-                        logAndMessage("Данные продукты не были добавлены в БД");
+                        logAndMessage("", new RuntimeException("Данные продукты не были добавлены в БД"));
                         return false;
                     }
                 }
             }
         } catch (SQLException e) {
-            logAndMessage("exception of putting to product BD, " + e.getMessage());
+            logAndMessage("exception of putting to product BD, ", e);
             try {
                 connection.rollback();
             } catch (SQLException ex) {

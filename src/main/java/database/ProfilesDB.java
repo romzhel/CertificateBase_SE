@@ -22,7 +22,7 @@ public class ProfilesDB extends DbRequest {
                     "certificates = ?, families = ?, orderable = ?, users = ?, price_lists = ? WHERE id = ?");
             deleteData = connection.prepareStatement("DELETE FROM profiles WHERE id = ?");
         } catch (SQLException e) {
-            logAndMessage("prepared statements exception" + e.getMessage());
+            logAndMessage("prepared statements exception", e);
             finalActions();
         }
     }
@@ -38,7 +38,7 @@ public class ProfilesDB extends DbRequest {
 
             rs.close();
         } catch (SQLException e) {
-            logAndMessage("profiles getting from DB error " + e.getMessage());
+            logAndMessage("profiles getting from DB error ", e);
         }
         return profiles;
     }
@@ -64,11 +64,11 @@ public class ProfilesDB extends DbRequest {
                     return true;
                 }
             } else {
-                logAndMessage("profile inserting into DB error");
+                logAndMessage("", new RuntimeException("profile inserting into DB error"));
             }
 
         } catch (SQLException e) {
-            logAndMessage("profile inserting into DB error");
+            logAndMessage("profile inserting into DB error", e);
         } finally {
             finalActions();
         }
@@ -92,10 +92,10 @@ public class ProfilesDB extends DbRequest {
             if (updateData.executeUpdate() > 0) {//successful
                 return true;
             } else {
-                logAndMessage("profile updating in DB error");
+                logAndMessage("", new RuntimeException("profile updating in DB error"));
             }
         } catch (SQLException e) {
-            logAndMessage("profile updating in DB error");
+            logAndMessage("profile updating in DB error", e);
         } finally {
             finalActions();
         }
@@ -115,7 +115,7 @@ public class ProfilesDB extends DbRequest {
                 }
             }
         } catch (SQLException e) {
-            logAndMessage("exception of removing product type(s) from DB");
+            logAndMessage("exception of removing product type(s) from DB", e);
         } finally {
             finalActions();
         }

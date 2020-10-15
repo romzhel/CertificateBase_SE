@@ -20,7 +20,7 @@ public class ProductTypesDB extends DbRequest {
             deleteData = connection.prepareStatement("DELETE FROM productTypes " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            logAndMessage("product types prepared statements exception");
+            logAndMessage("product types prepared statements exception", e);
             finalActions();
         }
     }
@@ -36,7 +36,7 @@ public class ProductTypesDB extends DbRequest {
 
             rs.close();
         } catch (SQLException e) {
-            logAndMessage("SQL exception productTypes get data");
+            logAndMessage("SQL exception productTypes get data", e);
         }
         return productTypes;
     }
@@ -55,10 +55,10 @@ public class ProductTypesDB extends DbRequest {
 
                 return true;
             } else {
-                logAndMessage("Ошибка добавления типа оборудования в БД");
+                logAndMessage("", new RuntimeException("Ошибка добавления типа оборудования в БД"));
             }
         } catch (SQLException e) {
-            logAndMessage("exception of writing product type to BD");
+            logAndMessage("exception of writing product type to B", e);
         } finally {
             finalActions();
         }
@@ -75,10 +75,10 @@ public class ProductTypesDB extends DbRequest {
             if (updateData.executeUpdate() > 0) {//successful
                 return true;
             } else {
-                logAndMessage("Ошибка обновления типа оборудования в БД");
+                logAndMessage("", new RuntimeException("Ошибка обновления типа оборудования в БД"));
             }
         } catch (SQLException e) {
-            logAndMessage("exception of updating product type to BD");
+            logAndMessage("exception of updating product type to BD", e);
         } finally {
             finalActions();
         }
@@ -98,7 +98,7 @@ public class ProductTypesDB extends DbRequest {
                 }
             }
         } catch (SQLException e) {
-            logAndMessage("exception of removing product type(s) from DB");
+            logAndMessage("exception of removing product type(s) from DB", e);
         } finally {
             finalActions();
         }

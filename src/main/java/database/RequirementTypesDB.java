@@ -20,7 +20,7 @@ public class RequirementTypesDB extends DbRequest {
             deleteData = connection.prepareStatement("DELETE FROM requirementTypes " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            logAndMessage("add data prepared statement exception, " + e.getMessage());
+            logAndMessage("add data prepared statement exception, ", e);
             finalActions();
         }
     }
@@ -36,7 +36,7 @@ public class RequirementTypesDB extends DbRequest {
 
             rs.close();
         } catch (SQLException e) {
-            logAndMessage("SQL exception cert types, " + e.getMessage());
+            logAndMessage("SQL exception cert types, ", e);
         }
         return requirementTypes;
     }
@@ -55,10 +55,10 @@ public class RequirementTypesDB extends DbRequest {
                     return true;
                 }
             } else {
-                logAndMessage("SQL exception inserting cert types");
+                logAndMessage("", new RuntimeException("SQL exception inserting cert types"));
             }
         } catch (SQLException e) {
-            logAndMessage("SQL exception inserting cert types");
+            logAndMessage("SQL exception inserting cert types", e);
         } finally {
             finalActions();
         }
@@ -74,10 +74,10 @@ public class RequirementTypesDB extends DbRequest {
             if (updateData.executeUpdate() > 0) {//successful
                 return true;
             } else {
-                logAndMessage("SQL exception updating cert types");
+                logAndMessage("", new RuntimeException("SQL exception updating cert types"));
             }
         } catch (SQLException e) {
-            logAndMessage("SQL exception updating cert types " + e.getMessage());
+            logAndMessage("SQL exception updating cert types ", e);
         } finally {
             finalActions();
         }
@@ -91,10 +91,10 @@ public class RequirementTypesDB extends DbRequest {
             if (deleteData.executeUpdate() > 0) {//successful
                 return true;
             } else {
-                logAndMessage("SQL exception inserting cert types");
+                logAndMessage("", new RuntimeException("SQL exception inserting cert types"));
             }
         } catch (SQLException e) {
-            logAndMessage("SQL exception deleting cert types");
+            logAndMessage("SQL exception deleting cert types", e);
         } finally {
             finalActions();
         }

@@ -26,7 +26,7 @@ public class PriceListSheetDB extends DbRequest {
             deleteData = connection.prepareStatement("DELETE FROM priceListSheets " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            logAndMessage("priceListSheets prepared statements exception" + e.getMessage());
+            logAndMessage("priceListSheets prepared statements exception", e);
             finalActions();
         }
     }
@@ -44,7 +44,7 @@ public class PriceListSheetDB extends DbRequest {
             rs.close();
 
         } catch (SQLException e) {
-            logAndMessage("SQL exception priceListSheets" + e.getMessage());
+            logAndMessage("SQL exception priceListSheets", e);
         }
 
         return priceListSheets;
@@ -76,11 +76,11 @@ public class PriceListSheetDB extends DbRequest {
                     return true;
                 }
             } else {
-                logAndMessage("PriceListSheet DB answer error");
+                logAndMessage("PriceListSheet DB answer error", new RuntimeException());
             }
 
         } catch (SQLException e) {
-            logAndMessage("exception of PriceListSheet writing to BD" + e.getMessage());
+            logAndMessage("exception of PriceListSheet writing to BD", e);
         } finally {
             finalActions();
         }
@@ -109,11 +109,11 @@ public class PriceListSheetDB extends DbRequest {
             if (updateData.executeUpdate() > 0) {//successful
                 return true;
             } else {
-                logAndMessage("PriceListSheet DB update error");
+                logAndMessage("PriceListSheet DB update error", new RuntimeException());
             }
 
         } catch (SQLException e) {
-            logAndMessage("exception of PriceListSheet writing to BD" + e.getMessage());
+            logAndMessage("exception of PriceListSheet writing to BD", e);
         } finally {
             finalActions();
         }
@@ -127,11 +127,11 @@ public class PriceListSheetDB extends DbRequest {
             if (deleteData.executeUpdate() > 0) {//successful
                 return true;
             } else {
-                logAndMessage("PriceListSheet DB delete error");
+                logAndMessage("PriceListSheet DB delete error", new RuntimeException());
             }
 
         } catch (SQLException e) {
-            logAndMessage("exception of PriceListSheet deleting in BD" + e.getMessage());
+            logAndMessage("exception of PriceListSheet deleting in BD", e);
         } finally {
             finalActions();
         }

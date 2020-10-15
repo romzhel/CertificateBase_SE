@@ -23,7 +23,7 @@ public class AccessibilityDB extends DbRequest {
             deleteData = connection.prepareStatement("DELETE FROM order_accessibility " +
                     "WHERE id = ?");
         } catch (SQLException e) {
-            logAndMessage("order_accessibility_editor prepared statements exception" + e.getMessage());
+            logAndMessage("order_accessibility_editor prepared statements exception", e);
             finalActions();
         }
     }
@@ -40,7 +40,7 @@ public class AccessibilityDB extends DbRequest {
             rs.close();
 
         } catch (SQLException e) {
-            logAndMessage("SQL exception order accessibility" + e.getMessage());
+            logAndMessage("SQL exception order accessibility", e);
         }
 
         return ordersAccessibility;
@@ -66,11 +66,11 @@ public class AccessibilityDB extends DbRequest {
                     return true;
                 }
             } else {
-                logAndMessage("OrderAccessibility DB answer error");
+                logAndMessage("OrderAccessibility DB answer error", new RuntimeException(""));
             }
 
         } catch (SQLException e) {
-            logAndMessage("exception of order accessibility writing to BD" + e.getMessage());
+            logAndMessage("exception of order accessibility writing to BD", e);
         } finally {
             finalActions();
         }
@@ -92,11 +92,11 @@ public class AccessibilityDB extends DbRequest {
             if (updateData.executeUpdate() > 0) {//successful
                 return true;
             } else {
-                logAndMessage("OrderAccessibility DB update error");
+                logAndMessage("OrderAccessibility DB update error", new RuntimeException());
             }
 
         } catch (SQLException e) {
-            logAndMessage("exception of order accessibility writing to BD" + e.getMessage());
+            logAndMessage("exception of order accessibility writing to BD", e);
         } finally {
             finalActions();
         }
@@ -110,11 +110,11 @@ public class AccessibilityDB extends DbRequest {
             if (deleteData.executeUpdate() > 0) {//successful
                 return true;
             } else {
-                logAndMessage("OrderAccessibility DB delete error");
+                logAndMessage("", new RuntimeException("OrderAccessibility DB delete error"));
             }
 
         } catch (SQLException e) {
-            logAndMessage("exception of order accessibility deleting in BD" + e.getMessage());
+            logAndMessage("exception of order accessibility deleting in BD", e);
         } finally {
             finalActions();
         }
