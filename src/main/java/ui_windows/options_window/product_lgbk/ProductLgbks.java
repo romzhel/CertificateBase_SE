@@ -7,9 +7,7 @@ import ui.Dialogs;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.product.Product;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 public class ProductLgbks implements Initializable {
     private static ProductLgbks instance;
@@ -32,19 +30,17 @@ public class ProductLgbks implements Initializable {
     }
 
     public void addItem(ProductLgbk productLgbk) {
-        if (new ProductLgbksDB().putData(productLgbk)) {
-            productLgbks.add(productLgbk);
-
-            TreeTableView<ProductLgbk> tableView = productLgbksTable.getTableView();
-            ProductLgbkGroups.getInstance().createFromLgbks(this);
-            tableView.setRoot(ProductLgbkGroups.getInstance().getFullTreeSet());
-        }
+        addItems(Collections.singleton(productLgbk));
     }
 
-    public void addItems(ArrayList<ProductLgbk> items) {
-        for (ProductLgbk productLgbk : items) {
-            if (new ProductLgbksDB().putData(productLgbk)) {
-                productLgbks.add(productLgbk);
+    public void addItems(Collection<ProductLgbk> items) {
+        if (new ProductLgbksDB().putData(items)) {
+            productLgbks.addAll(items);
+            ProductLgbkGroups.getInstance().createFromLgbks(this);
+
+            if (productLgbksTable != null) {
+                TreeTableView<ProductLgbk> tableView = productLgbksTable.getTableView();
+                tableView.setRoot(ProductLgbkGroups.getInstance().getFullTreeSet());
             }
         }
     }

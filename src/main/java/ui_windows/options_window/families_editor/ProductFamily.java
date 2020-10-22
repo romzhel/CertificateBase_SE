@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ProductFamily implements PriceListContentItem {
+    public static ProductFamily UNKNOWN = new ProductFamily();
     private int id;
     private StringProperty name;
     private StringProperty responsible;

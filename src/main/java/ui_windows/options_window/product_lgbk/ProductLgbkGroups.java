@@ -4,6 +4,8 @@ import core.Initializable;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
@@ -15,6 +17,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 public class ProductLgbkGroups implements Initializable {
+    private static final Logger logger = LogManager.getLogger(ProductLgbkGroups.class);
     private static ProductLgbkGroups instance;
     private ProductLgbk rootNode;
     private TreeItem<ProductLgbk> treeItemRoot;
@@ -81,6 +84,8 @@ public class ProductLgbkGroups implements Initializable {
 
     public void createFromLgbks(ProductLgbks productLgbks) {
         lgbkGroups.clear();
+
+        //1-ый проход - ROOT && GROUP nodes
         for (ProductLgbk lgbk : productLgbks.getItems()) {
             if (lgbk.getNodeType() == ProductLgbk.ROOT_NODE) {
                 rootNode = lgbk;
@@ -89,7 +94,12 @@ public class ProductLgbkGroups implements Initializable {
                 lgbkGroups.add(new ItemsGroup<ProductLgbk, ProductLgbk>(lgbk,
                         (o1, o2) -> o1.getHierarchy().compareToIgnoreCase(o2.getHierarchy())));
                 continue;
-            } else if (lgbk.getNodeType() == ProductLgbk.ITEM_NODE) {
+            }
+        }
+
+        //2-ой проход ITEM nodes
+        for (ProductLgbk lgbk : productLgbks.getItems()) {
+            if (lgbk.getNodeType() == ProductLgbk.ITEM_NODE) {
                 Iterator<ItemsGroup<ProductLgbk, ProductLgbk>> iterator = lgbkGroups.iterator();
                 boolean wasFound = false;
                 while (iterator.hasNext()) {
@@ -101,7 +111,7 @@ public class ProductLgbkGroups implements Initializable {
                     }
                 }
                 if (!wasFound) {
-                    System.out.println(lgbk.getLgbk() + "/" + lgbk.getHierarchy() + " was not added due group absent !!!");
+                    logger.error("lgbk '{}' was not added due group absent !!!", lgbk.toString());
                 }
             }
         }
@@ -189,12 +199,12 @@ public class ProductLgbkGroups implements Initializable {
 
                 if (comp4.contains(comp3) && !comp3.isEmpty() || comp3.isEmpty() && comp4.isEmpty()) {
                     result.setLgbkItem(tempLgbk);
-                    return result;
+                    break;
                 }
             }
         }
 
-        return null;
+        return result;
     }
 
     public String getFullDescription(ProductLgbk productLgbk) {

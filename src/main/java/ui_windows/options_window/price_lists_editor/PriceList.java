@@ -121,7 +121,7 @@ public class PriceList {
     }*/
 
     public ArrayList<PriceStructure> generate() {
-        priceStructures = new ArrayList<>(2);
+        priceStructures = new ArrayList<>(10);
         problemItems = new ArrayList<>();
 
         for (PriceListSheet priceListSheet : sheets) {

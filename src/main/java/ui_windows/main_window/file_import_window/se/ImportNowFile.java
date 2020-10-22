@@ -2,6 +2,7 @@ package ui_windows.main_window.file_import_window.se;
 
 import database.ProductsDB;
 import files.reports.NowImportResultToExcel;
+import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
@@ -50,8 +51,8 @@ public class ImportNowFile {
 
         result = comparator.getComparisonResult();
 
-        Dialogs.showMessageTS("Результаты импорта", "Новых позиций: " +
-                result.getNewItems().size() + "\nИзменённых позиций: " + result.getChangedItems().size());
+        Platform.runLater(() -> Dialogs.showMessage("Результаты импорта", "Новых позиций: " +
+                result.getNewItems().size() + "\nИзменённых позиций: " + result.getChangedItems().size()));
 
         if (result.getChangedItems().size() + result.getNewItems().size() > 0) {
             changedItemsForDB.addAll(result.getChangedItems());

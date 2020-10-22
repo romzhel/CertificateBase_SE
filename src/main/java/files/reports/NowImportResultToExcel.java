@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.List;
 
 import static ui_windows.product.data.DataItem.*;
 
@@ -81,7 +81,7 @@ public class NowImportResultToExcel {
         }
     }
 
-    private void fillValues(ArrayList<ObjectsComparatorResultSe<Product>> resultItems) {
+    private void fillValues(List<ObjectsComparatorResultSe<Product>> resultItems) {
         XSSFRow row;
 
         for (ObjectsComparatorResultSe<Product> resultItem : resultItems) {

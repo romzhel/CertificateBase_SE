@@ -1,11 +1,12 @@
 package utils.comparation.se;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ComparisonResult<T> {
-    private ArrayList<ObjectsComparatorResultSe<T>> newItemsResult;
-    private ArrayList<ObjectsComparatorResultSe<T>> changedItemsResult;
-    private ArrayList<ObjectsComparatorResultSe<T>> goneItemsResult;
+    private List<ObjectsComparatorResultSe<T>> newItemsResult;
+    private List<ObjectsComparatorResultSe<T>> changedItemsResult;
+    private List<ObjectsComparatorResultSe<T>> goneItemsResult;
 
     public ComparisonResult() {
         newItemsResult = new ArrayList<>();
@@ -31,20 +32,20 @@ public class ComparisonResult<T> {
         }
     }
 
-    public ArrayList<ObjectsComparatorResultSe<T>> getNewItemsResult() {
+    public List<ObjectsComparatorResultSe<T>> getNewItemsResult() {
         return newItemsResult;
     }
 
-    public ArrayList<ObjectsComparatorResultSe<T>> getChangedItemsResult() {
+    public List<ObjectsComparatorResultSe<T>> getChangedItemsResult() {
         return changedItemsResult;
     }
 
-    public ArrayList<ObjectsComparatorResultSe<T>> getGoneItemsResult() {
+    public List<ObjectsComparatorResultSe<T>> getGoneItemsResult() {
         return goneItemsResult;
     }
 
-    public ArrayList<T> getNewItems() {
-        ArrayList<T> items = new ArrayList<>();
+    public List<T> getNewItems() {
+        List<T> items = new ArrayList<>();
         for (ObjectsComparatorResultSe<T> res : newItemsResult) {
             if (res.getItem_after() != null) {
                 items.add(res.getItem_after());
@@ -53,8 +54,8 @@ public class ComparisonResult<T> {
         return items;
     }
 
-    public ArrayList<T> getChangedItems() {
-        ArrayList<T> items = new ArrayList<>();
+    public List<T> getChangedItems() {
+        List<T> items = new ArrayList<>();
         for (ObjectsComparatorResultSe<T> res : changedItemsResult) {
             if (res.getItem() != null) {
                 items.add(res.getItem());
@@ -63,8 +64,8 @@ public class ComparisonResult<T> {
         return items;
     }
 
-    public ArrayList<T> getGoneItems() {
-        ArrayList<T> items = new ArrayList<>();
+    public List<T> getGoneItems() {
+        List<T> items = new ArrayList<>();
         for (ObjectsComparatorResultSe<T> res : goneItemsResult) {
             if (res.getItem() != null) {
                 items.add(res.getItem());

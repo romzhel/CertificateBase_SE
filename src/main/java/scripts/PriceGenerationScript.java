@@ -88,9 +88,9 @@ public class PriceGenerationScript {
 
                         if (previousPriceList != null) {
                             pricesComparator.compare(previousPriceList, priceListFile);
-                            String fileName = String.format("%s\\price_comparison_report_%s vs %s.xlsx",
+                            String fileName = String.format("%s\\price_comparison_report_%s vs %s",
                                     Folders.getInstance().getTempFolder(), priceListFile.getName(), previousPriceList.getName());
-                            priceComparisonFile = new File(fileName);
+                            priceComparisonFile = new File(fileName.replaceAll(".xlsx", "").concat(".xlsx"));
                             pricesComparator.exportToExcel(priceComparisonFile);
 
                             logger.trace("price lists have been compared");

@@ -65,7 +65,7 @@ public class ComparingRulesImportNow extends ProductComparingRulesTemplate imple
             String impCodes = "";
             for (Field field : result.getChangedFields()) {
                 try {
-                    String infoPart = String.format("%s: %s -> %s, ", field.getName(),
+                    String infoPart = String.format(" %s: %s -> %s, ", field.getName(),
                             field.get(result.getItem_before()), field.get(result.getItem_after()));
                     comment = comment.concat(infoPart);
                     consoleComment.append(result.getItem().getArticle()).append(" (").

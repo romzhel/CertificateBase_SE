@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class ProductLgbksDB extends DbRequest {
 
@@ -43,35 +44,38 @@ public class ProductLgbksDB extends DbRequest {
         return productLgbks;
     }
 
-    public boolean putData(ProductLgbk pl) {
-        int index = 1;
+    public boolean putData(Collection<ProductLgbk> pls) {
         try {
-            addData.setString(index++, pl.getLgbk());
-            addData.setString(index++, pl.getHierarchy());
-            addData.setString(index++, pl.getDescription_en());
-            addData.setInt(index++, pl.getFamilyId());
-            addData.setBoolean(index++, pl.isNotUsed());
-            addData.setInt(index++, pl.getNodeType());
-            addData.setString(index++, pl.getDescription_ru());
-            addData.setString(index++, pl.getNormsList().getStringLine());
 
-            if (addData.executeUpdate() > 0) {//successful
-                ResultSet rs = addData.getGeneratedKeys();
+            for (ProductLgbk pl : pls) {
+                int index = 1;
+                addData.setString(index++, pl.getLgbk());
+                addData.setString(index++, pl.getHierarchy());
+                addData.setString(index++, pl.getDescription_en());
+                addData.setInt(index++, pl.getFamilyId());
+                addData.setBoolean(index++, pl.isNotUsed());
+                addData.setInt(index++, pl.getNodeType());
+                addData.setString(index++, pl.getDescription_ru());
+                addData.setString(index++, pl.getNormsList().getStringLine());
+                addData.addBatch();
+            }
 
-                if (rs.next()) {
-                    pl.setId(rs.getInt(1));
-//                        System.out.println("new product lgbk ID = " + rs.getInt(1));
-                    return true;
+            connection.setAutoCommit(false);
+            int[] result = addData.executeBatch();
+            connection.commit();
+
+            for (int res : result) {
+                if (res != 1) {
+                    logAndMessage("", new RuntimeException("Данные LGBK/Hierarchy не были добавлены в БД"));
+                    return false;
                 }
-            } else {
-                logAndMessage("", new RuntimeException("Ошибка добавления lgbk в БД"));
             }
         } catch (SQLException e) {
             logAndMessage("", new RuntimeException("exception of writing to BD (lgbk)"));
         } finally {
             finalActions();
         }
-        return false;
+        return true;
     }
 
     public boolean updateData(ProductLgbk pl) {

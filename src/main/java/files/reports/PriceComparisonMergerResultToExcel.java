@@ -41,7 +41,7 @@ public class PriceComparisonMergerResultToExcel {
         this.reportFile = reportFile;
         String firstName = pricesComparator.getFile1().getName();
         String secondName = pricesComparator.getFile2() != null ? pricesComparator.getFile2().getName() : "online price";
-        String name = String.format("PriceComparisonResult %s vs %s", secondName, firstName).replaceAll("\\.xlsx$", "");
+        String name = String.format("PriceComparisonResult %s vs %s", secondName, firstName).replaceAll(".xlsx", "");
 
         workbook = new XSSFWorkbook();
         new ExcelCellStyleFactory(workbook);

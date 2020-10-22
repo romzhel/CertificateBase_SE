@@ -17,7 +17,7 @@ public class Test {
 //        System.out.println(numbers.matches("^\\d+$"));
 
         //содержит символы - и /
-        String[] spec = {
+       /* String[] spec = {
                 "G120P-11/32B",
                 "AP 221/10",
                 "PBA-1191-ULC",
@@ -66,7 +66,36 @@ public class Test {
 
         for (String s : spec) {
             System.out.println(s + " -> " + s.replaceAll("\\s*(x+.*$)*", ""));
+        }*/
+
+
+        System.out.println("=====================================");
+        String[] lgbks = new String[]{
+                "BA1DQ",
+                "1SIPA",
+                "1SIRZ",
+                "BM3DA",
+                "1SMKA"
+        };
+//        Pattern pattern1 = Pattern.compile("^\\d?([A-Z0-9]{3}).*$");
+        Pattern pattern1 = Pattern.compile("(\\d)?([A-Z0-9]{3})(.*)?");
+        for (String l : lgbks) {
+            Matcher matcher = pattern1.matcher(l);
+            if (matcher.matches()) {
+                for (int i = 0; i < matcher.groupCount(); i++) {
+                    System.out.print("\t" + i + ". " + matcher.group(i) + "\n");
+                }
+                System.out.println();
+            } else {
+                System.out.println("не совпало");
+            }
+
         }
 
+        String name = "price_comparison_report_PL_FY21_2020.10.16.xlsx vs PL_FY21_2020.10.01.xlsx";
+        name = name.replaceAll(".xlsx", "");
+        System.out.println(name);
     }
+
+
 }

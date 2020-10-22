@@ -118,7 +118,7 @@ public class ProductsDB extends DbRequest {
         return true;
     }
 
-    public boolean putData(ArrayList<Product> alpr) {
+    public boolean putData(List<Product> alpr) {
         int j = 0;
         try {
             int count = 0;

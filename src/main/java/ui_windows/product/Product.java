@@ -427,6 +427,11 @@ public class Product implements Cloneable {
         return result == null ? defaultValue : result;
     }
 
+    public int getProductFamilyId() {
+        ProductFamily pf = getProductFamily();
+        return pf != null ? pf.getId() : -1;
+    }
+
     public ProductFamily getProductFamily() {
         if (family_id != null && family_id > 0) {
             return ProductFamilies.getInstance().getFamilyById(family_id);
@@ -434,7 +439,7 @@ public class Product implements Cloneable {
             if (lgbk == null) return null;
 
             LgbkAndParent lgbkAndParent = ProductLgbkGroups.getInstance().getLgbkAndParent(new ProductLgbk(this));
-            if (lgbkAndParent != null) return lgbkAndParent.getProductFamily();
+            /*if (lgbkAndParent != null) return lgbkAndParent.getProductFamily();
 
             if ((hierarchy == null || hierarchy.isEmpty()) && material != null) {
                 Product product = Products.getInstance().getItemByMaterialOrArticle(
@@ -446,7 +451,7 @@ public class Product implements Cloneable {
                 }
 
 //                System.out.println("product for material: " + material + " not found");
-            }
+            }*/
 
             return lgbkAndParent != null ? lgbkAndParent.getProductFamily() : null;
         }

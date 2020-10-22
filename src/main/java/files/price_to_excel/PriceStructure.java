@@ -57,7 +57,7 @@ public class PriceStructure {
 
         executorService.shutdown();
         try {
-            executorService.awaitTermination(3, TimeUnit.MINUTES);
+            executorService.awaitTermination(30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

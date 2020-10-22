@@ -79,16 +79,20 @@
                         <CheckBox fx:id="cbxNeedAction" contentDisplay="CENTER" layoutX="910.0" layoutY="40.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="147.0" text="Требуется проверка   " visible="false" />
                         <TextField fx:id="tfFileName" editable="false" layoutX="124.0" layoutY="414.0" prefHeight="25.0" prefWidth="363.0" />
                         <Separator layoutX="552.0" layoutY="414.0" orientation="VERTICAL" prefHeight="148.0" prefWidth="12.0" />
-                        <Separator layoutX="97.0" layoutY="572.0" prefHeight="3.0" prefWidth="964.0" />
+                        <Separator layoutX="97.0" layoutY="572.0" prefHeight="3.0" prefWidth="964.0"/>
                         <Label layoutX="10.0" layoutY="564.0" prefHeight="17.0" prefWidth="169.0" text="Сертификаты">
                             <font>
-                                <Font name="System Bold" size="12.0" />
+                                <Font name="System Bold" size="12.0"/>
                             </font>
                         </Label>
-                        <Button fx:id="btnSelectManualFile" layoutX="490.0" layoutY="414.0" mnemonicParsing="false" onAction="#actionSelectManualFile" text="Обзор" />
-                        <TextArea fx:id="taComments" layoutX="124.0" layoutY="475.0" prefHeight="84.0" prefWidth="416.0" />
-                        <Button fx:id="btnApply" layoutX="220.0" layoutY="745.0" mnemonicParsing="false" onAction="#apply" prefWidth="150.0" text="Сохранить" />
-                        <Button layoutX="612.0" layoutY="745.0" mnemonicParsing="false" onAction="#cancel" prefWidth="150.0" text="Закрыть" />
+                        <Button fx:id="btnSelectManualFile" layoutX="490.0" layoutY="414.0" mnemonicParsing="false"
+                                onAction="#actionSelectManualFile" text="Обзор"/>
+                        <TextArea fx:id="taComments" layoutX="124.0" layoutY="475.0" prefHeight="84.0"
+                                  prefWidth="416.0"/>
+                        <Button fx:id="btnApply" layoutX="220.0" layoutY="745.0" mnemonicParsing="false"
+                                onAction="#apply" prefWidth="150.0" text="Сохранить"/>
+                        <Button layoutX="612.0" layoutY="745.0" mnemonicParsing="false" onAction="#cancel"
+                                prefWidth="150.0" text="Закрыть"/>
                         <CheckBox fx:id="cbxNotUsed" contentDisplay="CENTER" layoutX="624.0" layoutY="40.0"
                                   mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0"
                                   prefWidth="156.0" stylesheets="@../css/checkboxes_styles.css"
@@ -106,7 +110,7 @@
                         <TextField fx:id="tfManHier" editable="false" layoutX="123.0" layoutY="212.0" prefHeight="25.0"
                                    prefWidth="628.0"/>
                         <Label alignment="CENTER_RIGHT" layoutX="23.0" layoutY="216.0" prefHeight="17.0"
-                               prefWidth="92.0" text="Назначение"/>
+                               prefWidth="92.0" text="Направление"/>
                         <TextField fx:id="tfMinOrder" editable="false" layoutX="125.0" layoutY="329.0" prefHeight="25.0"
                                    prefWidth="86.0"/>
                         <Label alignment="CENTER_RIGHT" layoutX="29.0" layoutY="333.0" prefHeight="17.0"
