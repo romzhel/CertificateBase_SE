@@ -25,8 +25,8 @@ import static ui_windows.main_window.filter_window_se.ItemsSelection.PRICE_ITEMS
 import static ui_windows.product.data.DataItem.DATA_EMPTY;
 
 public class Filter_SE implements Module, Initializable {
-    private static Filter_SE instance;
     private static final Logger logger = LogManager.getLogger(Filter_SE.class);
+    private static Filter_SE instance;
 
     private Filter_SE() {
         SHD_DATA_SET.subscribe(this);
@@ -68,11 +68,9 @@ public class Filter_SE implements Module, Initializable {
         } catch (PatternSyntaxException e) {
             System.out.println(e.getMessage());
             pattern = Pattern.compile(
-                    String.format(".*%s.*", parameters.getSearchText().replaceAll("[\\*\\(\\)\\[\\]]", ".*")),
+                    String.format(".*%s.*", parameters.getSearchText().replaceAll("[*()\\[\\]]", ".*")),
                     Pattern.CASE_INSENSITIVE);
         }
-
-//        System.out.println(Utils.getExactTime());
 
         boolean searchTextMatches;
         boolean priceMatches;
@@ -80,6 +78,10 @@ public class Filter_SE implements Module, Initializable {
         boolean lgbkMatches;
         boolean hierarchyMatch;
         boolean customMatches;
+
+        long tMin = 999L;
+        long tMax = 0L;
+        long tAvr = 10L;
 
         for (Product product : dataSet) {
             searchTextMatches = pattern.matcher(product.getArticle()).matches() || pattern.matcher(product.getMaterial()).matches();
@@ -100,13 +102,21 @@ public class Filter_SE implements Module, Initializable {
             if (searchTextMatches && priceMatches && familyMatches && lgbkMatches && hierarchyMatch && customMatches) {
                 result.add(product);
 
+                long t = System.currentTimeMillis();
                 parameters.getFamilies().add(product.getProductFamilyDefValue(FAMILY_NOT_ASSIGNED));
 
-                ProductLgbk lgbk = ProductLgbkGroups.getInstance().getLgbkAndParent(new ProductLgbk(product)).getLgbkItem();
+                ProductLgbk productLgbk = new ProductLgbk(product);
+                ProductLgbk lgbk = ProductLgbkGroups.getInstance().getLgbkAndParent(productLgbk).getLgbkItem();
                 parameters.getLgbks().add(lgbk == null || lgbk.getLgbk().isEmpty() ? LGBK_NO_DATA : lgbk);
                 parameters.getHierarchies().add(lgbk == null || lgbk.getHierarchy().isEmpty() ? LGBK_NO_DATA : lgbk);
+
+                long tEl = System.currentTimeMillis() - t;
+                tMin = Math.min(tMin, tEl);
+                tMax = Math.max(tMin, tEl);
+                tAvr = (tAvr + tEl) / 2;
             }
         }
+        logger.debug("t filter parameters filling min/avg/max : {}/{}/{}", tMin, tAvr, tMax);
         logger.debug("finding process finished, results: {}, time elapsed: {} ms", result.size(), System.currentTimeMillis() - t1);
 
 //        System.out.println(Utils.getExactTime() + " result arraylist filled");

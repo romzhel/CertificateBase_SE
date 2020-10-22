@@ -8,7 +8,7 @@ import ui_windows.product.data.DataItem;
 import utils.SearchBox;
 
 import java.util.Arrays;
-import java.util.TreeSet;
+import java.util.HashSet;
 
 import static ui_windows.main_window.filter_window_se.CustomValueMatcher.START_WITH;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.ALL_ITEMS;
@@ -45,10 +45,10 @@ public class FilterParameters_SE {
     private CustomValueMatcher customValueMatcher;
     private static SearchBox searchBox = new SearchBox();
     private IntegerProperty lastChange;
-    private TreeSet<ProductFamily> families;
-    private TreeSet<ProductLgbk> lgbks;
-    private TreeSet<ProductLgbk> hierarchies;
-    private TreeSet<DataItem> customProperties;
+    private HashSet<ProductFamily> families;
+    private HashSet<ProductLgbk> lgbks;
+    private HashSet<ProductLgbk> hierarchies;
+    private HashSet<DataItem> customProperties;
 
     public FilterParameters_SE() {
         filterItems = ALL_ITEMS;
@@ -61,10 +61,10 @@ public class FilterParameters_SE {
         lastChange = new SimpleIntegerProperty(-1);
 //        lastChange.addListener((observable, oldValue, newValue) -> System.out.println("filter last change value = " + (int) newValue));
 
-        families = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
-        lgbks = new TreeSet<>((o1, o2) -> o1.getLgbk().compareTo(o2.getLgbk()));
-        hierarchies = new TreeSet<>((o1, o2) -> o1.getHierarchy().compareTo(o2.getHierarchy()));
-        customProperties = new TreeSet<>(Arrays.asList(DATA_EMPTY, DATA_COUNTRY, DATA_DCHAIN, DATA_RESPONSIBLE,
+        families = new HashSet<>();
+        lgbks = new HashSet<>();
+        hierarchies = new HashSet<>();
+        customProperties = new HashSet<>(Arrays.asList(DATA_EMPTY, DATA_COUNTRY, DATA_DCHAIN, DATA_RESPONSIBLE,
                 /*DATA_CERTIFICATE,*/ DATA_IN_WHICH_PRICE_LIST, DATA_TYPE_DESCRIPTION, DATA_DESCRIPTION_RU, DATA_DESCRIPTION_EN));
     }
 
@@ -170,11 +170,11 @@ public class FilterParameters_SE {
         return searchBox;
     }
 
-    public TreeSet<ProductFamily> getFamilies() {
+    public HashSet<ProductFamily> getFamilies() {
         return families;
     }
 
-    public TreeSet<ProductLgbk> getLgbks() {
+    public HashSet<ProductLgbk> getLgbks() {
         return lgbks;
     }
 
@@ -182,11 +182,11 @@ public class FilterParameters_SE {
         return lastChange.get();
     }
 
-    public TreeSet<ProductLgbk> getHierarchies() {
+    public HashSet<ProductLgbk> getHierarchies() {
         return hierarchies;
     }
 
-    public TreeSet<DataItem> getCustomProperties() {
+    public HashSet<DataItem> getCustomProperties() {
         return customProperties;
     }
 

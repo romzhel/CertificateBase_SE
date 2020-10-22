@@ -3,7 +3,7 @@ package ui_windows.main_window.filter_window_se;
 import javafx.scene.control.ComboBox;
 import javafx.util.StringConverter;
 
-import java.util.TreeSet;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -11,12 +11,13 @@ import java.util.function.Supplier;
 public class Selector<T> {
     private ComboBox<T> comboBox;
     private int changeLevel;
-    private Supplier<TreeSet<T>> valuesSupplier;
+    private Supplier<Set<T>> valuesSupplier;
     private Supplier<T> valueSupplier;
     private Consumer<T> valueSetter;
     private Consumer<Selector<T>> syncAction;
+    private Function<T, String> converter;
 
-    public Selector(ComboBox<T> comboBox, Function<T, String> converter, int changeLevel, Supplier<TreeSet<T>> valuesSupplier,
+    public Selector(ComboBox<T> comboBox, Function<T, String> converter, int changeLevel, Supplier<Set<T>> valuesSupplier,
                     Supplier<T> valueSupplier, Consumer<T> valueSetter, Consumer<Selector<T>> syncAction) {
         super();
         comboBox.setConverter(new StringConverter<T>() {
@@ -32,6 +33,7 @@ public class Selector<T> {
         });
 
         this.comboBox = comboBox;
+        this.converter = converter;
         this.changeLevel = changeLevel;
         this.valueSupplier = valueSupplier;
         this.valuesSupplier = valuesSupplier;
@@ -47,6 +49,7 @@ public class Selector<T> {
 
             comboBox.getItems().clear();
             comboBox.getItems().addAll(valuesSupplier.get());
+            comboBox.getItems().sort((o1, o2) -> converter.apply(o1).compareToIgnoreCase(converter.apply(o2)));
         }
 
         if (!comboBox.getItems().contains(valueSupplier.get())) {
