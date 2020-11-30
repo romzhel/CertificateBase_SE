@@ -14,6 +14,7 @@ import ui_windows.product.ProductTypes;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
 import utils.Countries;
+import utils.PriceLGBK;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -541,7 +542,19 @@ public enum DataItem {
             return product.getProductForPrint() == null || product.getProductForPrint().isEmpty() ?
                     product.getMaterial() : product.getProductForPrint();
         }
-    };
+    },
+    DATA_LGBK_PRICE(40, "LGBK для прайса", "lgbk") {
+        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(PriceLGBK.getpriceLgbk(product));
+            cell.setCellStyle(CELL_ALIGN_CENTER);
+        }
+
+        public Object getValue(Product product) {
+            return PriceLGBK.getpriceLgbk(product);
+        }
+    },
+    ;
 
     private int id;
     private String displayingName;

@@ -8,6 +8,7 @@ import ui_windows.product.Product;
 import ui_windows.product.Products;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckStatusResult;
+import utils.PriceLGBK;
 
 import java.util.ArrayList;
 import java.util.TreeSet;
@@ -40,7 +41,7 @@ public class PriceStructure {
         int contentMode = priceListSheet.getContentMode();
         if (contentMode == CONTENT_MODE_FAMILY) priceListSheet.getContentTable().switchContentMode(CONTENT_MODE_LGBK);
 
-        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
         for (Product product : Products.getInstance().getItems()) {
             executorService.execute(() -> {
                 if (product.isPrice() && priceListSheet.isInPrice(product)) {
@@ -68,14 +69,14 @@ public class PriceStructure {
     public synchronized void addProduct(Product product) {
         correctItems.add(product);
         for (LgbkGroup group : lgbkGroups) {
-            String l = product.getLgbk();
+            String l = PriceLGBK.getpriceLgbk(product);
             String n = group.getName();
             if (l.equals(n)) {
                 group.addProduct(product);
                 return;
             }
         }
-        LgbkGroup newGroup = new LgbkGroup(product.getLgbk(), priceListSheet);
+        LgbkGroup newGroup = new LgbkGroup(PriceLGBK.getpriceLgbk(product), priceListSheet);
         newGroup.addProduct(product);
         lgbkGroups.add(newGroup);
     }
