@@ -2,16 +2,19 @@ package utils.comparation.se;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ComparisonResult<T> {
     private List<ObjectsComparatorResultSe<T>> newItemsResult;
     private List<ObjectsComparatorResultSe<T>> changedItemsResult;
     private List<ObjectsComparatorResultSe<T>> goneItemsResult;
+    private List<ObjectsComparatorResultSe<T>> nonChangedItemsResult;
 
     public ComparisonResult() {
         newItemsResult = new ArrayList<>();
         changedItemsResult = new ArrayList<>();
         goneItemsResult = new ArrayList<>();
+        nonChangedItemsResult = new ArrayList<>();
     }
 
     public void addNewItemResult(ObjectsComparatorResultSe<T> result) {
@@ -32,6 +35,12 @@ public class ComparisonResult<T> {
         }
     }
 
+    public void addNonChangedItemResult(ObjectsComparatorResultSe<T> result) {
+        if (result != null) {
+            nonChangedItemsResult.add(result);
+        }
+    }
+
     public List<ObjectsComparatorResultSe<T>> getNewItemsResult() {
         return newItemsResult;
     }
@@ -42,6 +51,10 @@ public class ComparisonResult<T> {
 
     public List<ObjectsComparatorResultSe<T>> getGoneItemsResult() {
         return goneItemsResult;
+    }
+
+    public List<ObjectsComparatorResultSe<T>> getNonChangedItemsResult() {
+        return nonChangedItemsResult;
     }
 
     public List<T> getNewItems() {
@@ -72,5 +85,12 @@ public class ComparisonResult<T> {
             }
         }
         return items;
+    }
+
+    public List<T> getNonChangedItems() {
+        return nonChangedItemsResult.stream()
+                .map(ocr -> ocr.getItem())
+                .filter(item -> item != null)
+                .collect(Collectors.toList());
     }
 }

@@ -51,8 +51,10 @@ public class ImportNowFile {
 
         result = comparator.getComparisonResult();
 
-        Platform.runLater(() -> Dialogs.showMessage("Результаты импорта", "Новых позиций: " +
-                result.getNewItems().size() + "\nИзменённых позиций: " + result.getChangedItems().size()));
+        Platform.runLater(() -> Dialogs.showMessage("Результаты импорта",
+                String.format("Новых позиций: %d\nИзменённых позиций: %d\nАктуальных позиций: %d\nНенайденных позиций: %d",
+                        result.getNewItems().size(), result.getChangedItems().size(), result.getNonChangedItems().size(),
+                        result.getGoneItems().size())));
 
         if (result.getChangedItems().size() + result.getNewItems().size() > 0) {
             changedItemsForDB.addAll(result.getChangedItems());

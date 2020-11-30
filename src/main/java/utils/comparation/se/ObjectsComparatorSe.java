@@ -33,6 +33,7 @@ public class ObjectsComparatorSe<T extends Cloneable> {
             }
         }
 
-        return ocr.getChangedFields().size() > 0 ? ocr : null;
+//        return ocr.getChangedFields().size() > 0 ? ocr : null;
+        return ocr;
     }
 }

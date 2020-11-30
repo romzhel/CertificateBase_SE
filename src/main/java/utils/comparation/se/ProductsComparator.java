@@ -34,8 +34,10 @@ public class ProductsComparator implements Comparator<Product> {
         ObjectsComparatorSe<Product> objectsComparator = new ObjectsComparatorSe<>();
         comparingParameters = parameters;
 
+        Map<String, Product> goneItems = collectionToMap(items1, parameters);
+//        Map<String, Product> goneItems = parameters.isCheckGoneItems() ? collectionToMap(items1, parameters) : new HashMap<>();
         Map<String, Product> changedItems = collectionToMap(items2, parameters);
-        Map<String, Product> goneItems = parameters.isCheckGoneItems() ? collectionToMap(items1, parameters) : new HashMap<>();
+        Map<String, Product> nonChangedItems = new HashMap<>();
         logger.trace("подготовка к сравнению завершена, прошло времени {}", System.currentTimeMillis() - t0);
 
         Product item2;
@@ -45,7 +47,12 @@ public class ProductsComparator implements Comparator<Product> {
             item2 = changedItems.get(material);
 
             if (item2 != null) {
-                comparisonResult.addChangedItemResult(objectsComparator.compare(item1, item2, parameters));
+                ObjectsComparatorResultSe<Product> ocr = objectsComparator.compare(item1, item2, parameters);
+                if (ocr.getChangedFields().size() > 0) {
+                    comparisonResult.addChangedItemResult(ocr);
+                } else {
+                    comparisonResult.addNonChangedItemResult(ocr);
+                }
 
                 goneItems.remove(material);
                 changedItems.remove(material);
@@ -63,7 +70,7 @@ public class ProductsComparator implements Comparator<Product> {
             comparisonResult.addGoneItemResult(new ObjectsComparatorResultSe<>(item, null, parameters.getFields()));
         }
 
-        logger.trace("реульаты сравнения готовы, прошло времени {}", System.currentTimeMillis() - t0);
+        logger.trace("результаты сравнения готовы, прошло времени {}", System.currentTimeMillis() - t0);
 
         return comparisonResult;
     }
