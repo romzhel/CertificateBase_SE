@@ -13,6 +13,7 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PriceList {
     private int id = -1;
@@ -120,7 +121,7 @@ public class PriceList {
         return pls == null || cost == 0.0 ? 0.0 : cost * (1.0 - (double) pls.getDiscount() / 100);
     }*/
 
-    public ArrayList<PriceStructure> generate() {
+    public List<PriceStructure> generate() {
         priceStructures = new ArrayList<>(10);
         problemItems = new ArrayList<>();
 

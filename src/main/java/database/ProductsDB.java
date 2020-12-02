@@ -16,14 +16,14 @@ public class ProductsDB extends DbRequest {
         try {
             addData = connection.prepareStatement("INSERT INTO " +
                             "products (material, article, hierarchy, lgbk, family, end_of_service, dangerous, " +
-                            "country, dchain, description_ru, description_en, price, history, " +
+                            "country, dchain, description_ru, description_en, price, not_used, history, " +
                             "last_change_date, file_name, comments, replacement, type_id, change_codes, product_print," +
                             "last_import_codes, norms_list, norms_mode, min_order, packet_size, lead_time, weight, local_price) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = connection.prepareStatement("UPDATE products " +
                     "SET article = ?, hierarchy = ?, lgbk = ?, family = ?, end_of_service = ?, dangerous = ?, country = ?, " +
-                    "dchain = ?, description_ru = ?, description_en = ?, price = ?, history = ?," +
+                    "dchain = ?, description_ru = ?, description_en = ?, price = ?, not_used = ?, history = ?," +
                     "last_change_date = ?, file_name = ?, comments = ?, replacement = ?, type_id = ?, change_codes = ?, " +
                     "product_print = ?, last_import_codes = ?, norms_list = ?, norms_mode = ?, min_order = ?, packet_size = ?, " +
                     "lead_time = ?, weight = ?, local_price = ? WHERE material = ?");
@@ -70,6 +70,7 @@ public class ProductsDB extends DbRequest {
                     updateData.setString(++count, alpr.get(j).getDescriptionru());
                     updateData.setString(++count, alpr.get(j).getDescriptionen());
                     updateData.setBoolean(++count, alpr.get(j).isPrice());
+                    updateData.setBoolean(++count, alpr.get(j).isBlocked());
                     updateData.setString(++count, alpr.get(j).getHistory());
                     updateData.setString(++count, alpr.get(j).getLastChangeDate());
                     updateData.setString(++count, alpr.get(j).getFileName());
@@ -138,6 +139,7 @@ public class ProductsDB extends DbRequest {
                     addData.setString(++count, alpr.get(j).getDescriptionru());
                     addData.setString(++count, alpr.get(j).getDescriptionen());
                     addData.setBoolean(++count, alpr.get(j).isPrice());
+                    addData.setBoolean(++count, alpr.get(j).isBlocked());
                     addData.setString(++count, alpr.get(j).getHistory());
                     addData.setString(++count, alpr.get(j).getLastChangeDate());
                     addData.setString(++count, alpr.get(j).getFileName());

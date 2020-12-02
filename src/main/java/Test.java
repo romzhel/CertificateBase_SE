@@ -1,6 +1,3 @@
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class Test {
     public static void main(String[] args) {
 //        String text = "(\\-,)*(\\:)*(VBPZ)*(;BPZ)*( s)*([/()]";
@@ -69,7 +66,7 @@ public class Test {
         }*/
 
 
-        System.out.println("=====================================");
+        /*System.out.println("=====================================");
         String[] lgbks = new String[]{
                 "BA1DQ",
                 "1SIPA",
@@ -94,7 +91,7 @@ public class Test {
 
         String name = "price_comparison_report_PL_FY21_2020.10.16.xlsx vs PL_FY21_2020.10.01.xlsx";
         name = name.replaceAll(".xlsx", "");
-        System.out.println(name);
+        System.out.println(name);*/
     }
 
 

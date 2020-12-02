@@ -1,6 +1,5 @@
 package ui_windows.product.productEditorWindow;
 
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -18,31 +17,37 @@ import ui_windows.product.Product;
 import ui_windows.product.Products;
 import utils.Utils;
 
+import java.util.List;
+
 import static ui_windows.options_window.profile_editor.SimpleRight.*;
 
-public class ProductEditorWindow extends OrdinalWindow {
+public class ProductEditorWindow extends OrdinalWindow<ProductEditorWindowController> {
 
-    public ProductEditorWindow(Mode editorMode, ObservableList<Product> selectedProducts) {
+    public ProductEditorWindow(Mode editorMode, List<Product> selectedProducts) {
         super(MainWindow.getMainStage(), Modality.APPLICATION_MODAL,
                 editorMode, "/fxml/productEditorWindow.fxml", "");
 
-        ProductEditorWindowController pewc = (ProductEditorWindowController) loader.getController();
+        ProductEditorWindowController pewc = loader.getController();
         rootAnchorPane = pewc.apRoot;
 
-            if (selectedProducts.size() == 1) {
-                Product product = selectedProducts.get(0);
-                String lastUpdate = product.getLastChangeDate() == null ? "нет данных" : product.getLastChangeDate();
-                stage.setTitle("Продукт " + product.getArticle() + " (посл. обновление: " + lastUpdate + ")");
-                product.displayInEditorWindow(pewc);
-            } else if (selectedProducts.size() > 1) {
-                stage.setTitle("Элементов выбрано: " + selectedProducts.size());
-            }
+        if (selectedProducts.size() == 1) {
+            Product product = selectedProducts.get(0);
+            String lastUpdate = product.getLastChangeDate() == null ? "нет данных" : product.getLastChangeDate();
+            stage.setTitle("Продукт " + product.getArticle() + " (посл. обновление: " + lastUpdate + ")");
+            product.displayInEditorWindow(pewc);
+        } else if (selectedProducts.size() > 1) {
+            stage.setTitle("Элементов выбрано: " + selectedProducts.size());
+        }
 
-
-        applyProfileSimple(Users.getInstance().getCurrentUser().getProfile().getProducts());
+        applyProfile(Users.getInstance().getCurrentUser().getProfile().getProducts(), pewc);
 
         stage.setResizable(true);
         stage.show();
+    }
+
+    public void applyProfile(SimpleRight sr, ProductEditorWindowController controller) {
+        applyProfileSimple(Users.getInstance().getCurrentUser().getProfile().getProducts());
+        controller.cbxBlocked.setDisable(sr != FULL);
     }
 
     @Override

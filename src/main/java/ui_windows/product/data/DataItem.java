@@ -15,14 +15,16 @@ import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckParameters;
 import utils.Countries;
 import utils.PriceLGBK;
+import utils.PriceUtils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static files.ExcelCellStyleFactory.*;
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_FAMILY;
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_LGBK;
-import static ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet.LANG_RU;
 
 public enum DataItem {
     DATA_EMPTY(0, "", null) {
@@ -114,62 +116,69 @@ public enum DataItem {
     },
     DATA_LOCAL_PRICE_LIST(8, "Локальный прайс (В прайс-листе)", null) {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
-            cell.setCellType(CellType.NUMERIC);
+            double cost = getCost(product, options);
 
-            Object opt = null;
-            if (options != null) {
-                opt = options.getOrDefault("priceListSheet", null);
-            }
-
-            if (opt instanceof PriceListSheet) {
-                PriceListSheet pls = (PriceListSheet) opt;
-
-                if (product.getLocalPrice() > 0) {
-                    double correction = 1D - ((double) pls.getDiscount() / 100);
-                    if (correction > 0.4) {
-                        cell.setCellValue(product.getLocalPrice() * correction);
-                    } else {
-                        System.out.println("price list sheet " + pls.getSheetName() + ", discount = " + ((int) correction * 100) + " %");
-                        cell.setCellValue(product.getLocalPrice());
-                    }
-                    cell.setCellStyle(CELL_CURRENCY_FORMAT);
-                } else {
-                    cell.setCellType(CellType.STRING);
-                    cell.setCellStyle(CELL_ALIGN_CENTER);
-                    cell.setCellValue(pls.getLanguage() == LANG_RU ? "По запросу" : "By request");
-                }
+            if (cost > 0) {
+                cell.setCellType(CellType.NUMERIC);
+                cell.setCellValue(cost);
+                cell.setCellStyle(CELL_CURRENCY_FORMAT);
             } else {
-                for (PriceList priceList : PriceLists.getInstance().getItems()) {
-                    for (PriceListSheet pls : priceList.getSheets()) {
-                        if (pls.getContentMode() == CONTENT_MODE_FAMILY)
-                            pls.getContentTable().switchContentMode(CONTENT_MODE_LGBK);
-                        if (pls.isInPrice(product)) {
-                            double correction = 1D - ((double) pls.getDiscount() / 100);
-                            if (correction > 0.4) {
-                                cell.setCellValue(product.getLocalPrice() * correction);
-                            } else {
-                                System.out.println("price list sheet " + pls.getSheetName() + ", discount = " + ((int) correction * 100) + " %");
-                                cell.setCellValue(product.getLocalPrice());
-                            }
-                            cell.setCellStyle(CELL_CURRENCY_FORMAT);
-                        }
-                    }
-                }
+                cell.setCellType(CellType.STRING);
+                cell.setCellStyle(CELL_ALIGN_CENTER);
+//                cell.setCellValue(pls.getLanguage() == LANG_RU ? "По запросу" : "By request");
+                cell.setCellValue("По запросу");
             }
         }
 
         public Object getValue(Product product) {
-            return null;
+            return getCost(product, null);
+        }
+
+        private double getCost(Product product, Map<String, Object> options) {
+            List<PriceListSheet> treatedSheets = new ArrayList<>();
+            Object opt = options != null ? options.getOrDefault("priceListSheet", null) : null;
+
+            if (opt instanceof PriceListSheet) {
+                treatedSheets.add((PriceListSheet) opt);
+            } else {
+                for (PriceList priceList : PriceLists.getInstance().getItems()) {
+                    treatedSheets.addAll(priceList.getSheets());
+                }
+            }
+
+            for (PriceListSheet pls : treatedSheets) {
+                if (!pls.isInPrice(product)) {
+                    continue;
+                }
+
+                if (pls.getContentMode() == CONTENT_MODE_FAMILY)
+                    pls.getContentTable().switchContentMode(CONTENT_MODE_LGBK);
+
+//                double correction = 1D - ((double) pls.getDiscount() / 100);
+                if (pls.getDiscount() <= 30) {
+                    return PriceUtils.addDiscount(product.getLocalPrice(), pls.getDiscount());
+                } else {
+                    System.out.println("price list sheet " + pls.getSheetName() + ", discount = " + pls.getDiscount() + " %");
+                    return PriceUtils.roundCost(product.getLocalPrice());
+                }
+            }
+
+            return 0.0;
         }
     },
     DATA_IN_WHICH_PRICE_LIST(9, "В каком прайс-листе", null) {
         private String getPriceSheetName(Product product) {
+            if (!product.isPrice() || product.isBlocked()) {
+                return "";
+            }
+
             String result = "";
+
             for (PriceList priceList : PriceLists.getInstance().getItems()) {
                 for (PriceListSheet pls : priceList.getSheets()) {
                     if (pls.isInPrice(product)) {
-                        result += result == "" ? priceList.getName() + "/" + pls.getSheetName() :
-                                "\n" + priceList.getName() + "/" + pls.getSheetName();
+                        result += result == "" ? priceList.getName() + " / " + pls.getSheetName() :
+                                "; " + priceList.getName() + " / " + pls.getSheetName();
                     }
                 }
             }
@@ -554,7 +563,17 @@ public enum DataItem {
             return PriceLGBK.getpriceLgbk(product);
         }
     },
-    ;
+    DATA_IS_BLOCKED(41, "Блокировка", "isBlocked") {
+        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(product.isBlocked() ? "Блокирована>" : "Доступна");
+            cell.setCellStyle(CELL_ALIGN_LEFT);
+        }
+
+        public Object getValue(Product product) {
+            return product.isBlocked();
+        }
+    };
 
     private int id;
     private String displayingName;

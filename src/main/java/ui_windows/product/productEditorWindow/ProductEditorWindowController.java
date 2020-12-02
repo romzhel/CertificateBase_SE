@@ -43,6 +43,8 @@ public class ProductEditorWindowController implements Initializable {
     @FXML
     public TextField tfMaterial;
     @FXML
+    public TextField tfMaterialPrint;
+    @FXML
     public TextField tfArticle;
     @FXML
     public TextField tfDangerous;
@@ -55,7 +57,7 @@ public class ProductEditorWindowController implements Initializable {
     @FXML
     public CheckBox cbxPrice;
     @FXML
-    public CheckBox cbxArchive;
+    public CheckBox cbxBlocked;
     @FXML
     public TextField tfLgbk;
     @FXML
@@ -95,6 +97,10 @@ public class ProductEditorWindowController implements Initializable {
     @FXML
     public TextField tfWeight;
     @FXML
+    public TextField tfPriceListIncl;
+    @FXML
+    public TextField tfPriceListInclCost;
+    @FXML
     public TextField tfLocalPrice;
     @FXML
     TableView<CertificateVerificationItem> tvCertVerification;
@@ -129,6 +135,16 @@ public class ProductEditorWindowController implements Initializable {
             String prevType = cbType.getValue();
             certificateVerificationTable.display(certificateVerificationTable.getCheckParameters().setEqTypeFiltered(newValue));
             comboBoxEqTypeSelector.refresh(prevType);
+        });
+
+        cbxBlocked.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                cbxBlocked.setStyle("-fx-text-fill: red; -fx-border-color: red; -fx-outer-border: red; mark-color: red; -fx-mark-color: red;");
+                cbxPrice.setDisable(true);
+            } else {
+                cbxBlocked.setStyle("");
+                cbxPrice.setDisable(false);
+            }
         });
 
         initFamilySelector();

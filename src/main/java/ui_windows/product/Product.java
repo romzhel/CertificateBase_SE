@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Product implements Cloneable {
     public final String NO_DATA = "нет данных";
@@ -37,6 +38,7 @@ public class Product implements Cloneable {
     private String descriptionru = "";
     private String descriptionen = "";
     private Boolean price = false;
+    private Boolean isBlocked = false;
     private String changecodes = "";
     private String lastImportcodes = "";
 
@@ -74,6 +76,7 @@ public class Product implements Cloneable {
         descriptionru = pewc.taDescription.getText();
         descriptionen = pewc.taDescriptionEn.getText();
         price = pewc.cbxPrice.isSelected();
+        isBlocked = pewc.cbxBlocked.isSelected();
         changecodes = "";
         lastImportcodes = "";
 
@@ -128,6 +131,7 @@ public class Product implements Cloneable {
         descriptionru = nullToEmpty(rs.getString("description_ru"));
         descriptionen = nullToEmpty(rs.getString("description_en"));
         price = rs.getBoolean("price");
+        isBlocked = rs.getBoolean("not_used");
 
         history = rs.getString("history");
         lastChangeDate = rs.getString("last_change_date");
@@ -166,6 +170,7 @@ public class Product implements Cloneable {
 
     public void displayInEditorWindow(ProductEditorWindowController pewc) {
         pewc.tfMaterial.setText(material);
+        pewc.tfMaterialPrint.setText(productForPrint);
         pewc.taDescription.setText(descriptionru);
         pewc.taDescription.setEditable(descriptionru != null);
         pewc.taDescriptionEn.setText(descriptionen);
@@ -176,6 +181,13 @@ public class Product implements Cloneable {
         pewc.tfEndOfService.setText(endofservice);
         pewc.tfDangerous.setText(dangerous);
         pewc.tfCountry.setText(Countries.getCombinedName(country));
+
+        String plt = DataItem.DATA_IN_WHICH_PRICE_LIST.getValue(this).toString();
+        pewc.tfPriceListIncl.setText(plt);
+        double pr = (double) DataItem.DATA_LOCAL_PRICE_LIST.getValue(this);
+        pewc.tfPriceListInclCost.setText(plt == null || plt.isEmpty() ? "" :
+                pr == 0.0 ? "Нет данных" : String.format("%.2f", pr));
+
         if (dchain != null)
             pewc.tfAccessibility.setText(OrdersAccessibility.getInstance().getCombineOrderAccessibility(dchain));
         if (price != null) {
@@ -183,6 +195,19 @@ public class Product implements Cloneable {
         } else {
             pewc.cbxPrice.setIndeterminate(true);
             pewc.cbxPrice.setDisable(true);
+        }
+        if (isBlocked != null) {
+            pewc.cbxBlocked.setSelected(isBlocked);
+            if (isBlocked) {
+                pewc.cbxBlocked.setStyle("-fx-text-fill: red; -fx-border-color: red; -fx-outer-border: red; mark-color: red; -fx-mark-color: red;");
+                pewc.cbxPrice.setDisable(true);
+            } else {
+                pewc.cbxBlocked.setStyle("");
+                pewc.cbxPrice.setDisable(false);
+            }
+        } else {
+            pewc.cbxBlocked.setIndeterminate(true);
+            pewc.cbxBlocked.setDisable(true);
         }
         pewc.lHistory.getItems().clear();
         pewc.lHistory.getItems().addAll(history.split("\\|"));
@@ -214,7 +239,7 @@ public class Product implements Cloneable {
         if (localPrice != null)
             pewc.tfLocalPrice.setText(localPrice == 0 ? NO_DATA : String.format("%,.2f", localPrice));
 
-        ArrayList<String> items = ProductFamilies.getInstance().getFamiliesNames();//add all families and display value
+        List<String> items = ProductFamilies.getInstance().getFamiliesNames();//add all families and display value
         items.add(0, "");
         pewc.cbFamily.getItems().addAll(items);
         ProductFamily productFamily = getProductFamily();
@@ -534,6 +559,10 @@ public class Product implements Cloneable {
         return localPrice;
     }
 
+    public void setLocalPrice(Double localPrice) {
+        this.localPrice = localPrice;
+    }
+
     public int getLeadTimeRu() {
         return getLeadTime() > 0 ? getLeadTime() + 14 : 0;
     }
@@ -546,7 +575,7 @@ public class Product implements Cloneable {
         return new ArrayList<Integer>(ProductLgbkGroups.getInstance().getGlobalNormIds(new ProductLgbk(this)));
     }
 
-    public void setLocalPrice(Double localPrice) {
-        this.localPrice = localPrice;
+    public Boolean isBlocked() {
+        return isBlocked;
     }
 }

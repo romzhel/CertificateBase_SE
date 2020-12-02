@@ -44,7 +44,7 @@ public class PriceStructure {
         ExecutorService executorService = Executors.newFixedThreadPool(2);
         for (Product product : Products.getInstance().getItems()) {
             executorService.execute(() -> {
-                if (product.isPrice() && priceListSheet.isInPrice(product)) {
+                if (product.isPrice() && !product.isBlocked() && priceListSheet.isInPrice(product)) {
                     CheckStatusResult checkingResult = new CertificatesChecker(product).getCheckStatusResult();
                     if (priceListSheet.isCheckCert() && checkingResult.equals(STATUS_OK) ||
                             !priceListSheet.isCheckCert() && !checkingResult.equals(STATUS_NOT_OK)) {
