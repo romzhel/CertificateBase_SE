@@ -16,7 +16,8 @@ public class ComparationParameterSets {
                 new MultiEditorItem(DATA_REPLACEMENT, true),
                 new MultiEditorItem(DATA_COMMENT, true),
                 new MultiEditorItem(DATA_IS_IN_PRICE, true),
-                new MultiEditorItem(DATA_IS_BLOCKED, true)
+                new MultiEditorItem(DATA_IS_BLOCKED, true),
+                new MultiEditorItem(DATA_IS_PRICE_HIDDEN, true)
         };
         return parameters;
     }
@@ -32,6 +33,7 @@ public class ComparationParameterSets {
                 new MultiEditorItem(DATA_COMMENT, true),
                 new MultiEditorItem(DATA_IS_IN_PRICE, true),
                 new MultiEditorItem(DATA_IS_BLOCKED, true),
+                new MultiEditorItem(DATA_IS_PRICE_HIDDEN, true),
 
                 new MultiEditorItem(DATA_LGBK, false),
                 new MultiEditorItem(DATA_HIERARCHY, false),

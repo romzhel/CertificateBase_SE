@@ -118,7 +118,7 @@ public enum DataItem {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             double cost = getCost(product, options);
 
-            if (cost > 0) {
+            if (!product.isPriceHidden() && cost > 0) {
                 cell.setCellType(CellType.NUMERIC);
                 cell.setCellValue(cost);
                 cell.setCellStyle(CELL_CURRENCY_FORMAT);
@@ -131,6 +131,10 @@ public enum DataItem {
         }
 
         public Object getValue(Product product) {
+            if (product == null) {
+                return 0.0;
+            }
+
             return getCost(product, null);
         }
 
@@ -168,7 +172,7 @@ public enum DataItem {
     },
     DATA_IN_WHICH_PRICE_LIST(9, "В каком прайс-листе", null) {
         private String getPriceSheetName(Product product) {
-            if (!product.isPrice() || product.isBlocked()) {
+            if (product.isPrice() == null || product.isBlocked() == null || !product.isPrice() || product.isBlocked()) {
                 return "";
             }
 
@@ -401,7 +405,7 @@ public enum DataItem {
             return getFamilyResponsible(product);
         }
     },
-    DATA_IS_IN_PRICE(27, "Включена в прайс", "price") {
+    DATA_IS_IN_PRICE(27, "Назначена в прайс", "price") {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.isPrice() ? "В прайсе" : "Не в прайсе");
@@ -539,7 +543,7 @@ public enum DataItem {
             return product.getGlobalNorms();
         }
     },
-    DATA_ORDER_NUMBER_PRINT_NOT_EMPTY(39, "Заказной номер для печати (или заказной номер)", null) {
+    DATA_ORDER_NUMBER_PRINT_NOT_EMPTY(39, "Заказной номер SSN для печати (или заказной номер)", null) {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getProductForPrint() == null || product.getProductForPrint().isEmpty() ?
@@ -563,15 +567,40 @@ public enum DataItem {
             return PriceLGBK.getpriceLgbk(product);
         }
     },
-    DATA_IS_BLOCKED(41, "Блокировка", "isBlocked") {
+    DATA_IS_BLOCKED(41, "Блокировка", "blocked") {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
-            cell.setCellValue(product.isBlocked() ? "Блокирована>" : "Доступна");
+            cell.setCellValue(product.isBlocked() ? "Заблокирована" : "Не заблокирована");
             cell.setCellStyle(CELL_ALIGN_LEFT);
         }
 
         public Object getValue(Product product) {
             return product.isBlocked();
+        }
+    },
+    DATA_IS_PRICE_HIDDEN(42, "Сокрытие стоимости в прайсе", "priceHidden") {
+        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(product.isPriceHidden() ? "Скрыта" : "Отображена");
+            cell.setCellStyle(CELL_ALIGN_LEFT);
+        }
+
+        public Object getValue(Product product) {
+            return product.isPriceHidden();
+        }
+    },
+    DATA_ARTICLE_GAMMA(43, "Артикул (SSN для GAMMA)", "article") {
+        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(getValue(product).toString());
+            cell.setCellStyle(CELL_ALIGN_LEFT);
+        }
+
+        public Object getValue(Product product) {
+            return product.getProductFamily() == null
+                    ? ProductFamily.UNKNOWN.getName()
+                    : product.getProductFamily().getName().equals("GAMMA")
+                    ? DATA_ORDER_NUMBER_PRINT_NOT_EMPTY.getValue(product) : product.getArticle();
         }
     };
 
@@ -583,33 +612,6 @@ public enum DataItem {
         this.id = id;
         this.displayingName = displayingName;
         field = getFieldByName(fieldName);
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getDisplayingName() {
-        return displayingName;
-    }
-
-    public Field getField() {
-        return field;
-    }
-
-    public abstract void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options);
-
-    public abstract Object getValue(Product product);
-
-    private Field getFieldByName(String fieldName) {
-        if (fieldName != null && !fieldName.trim().isEmpty()) {
-            try {
-                return Product.class.getDeclaredField(fieldName);
-            } catch (NoSuchFieldException e) {
-                System.out.println("field " + fieldName + " not found");
-            }
-        }
-        return null;
     }
 
     public static DataItem getByDisplayingName(String lookingForDisplayingName) {
@@ -637,5 +639,32 @@ public enum DataItem {
             }
         }
         return DATA_EMPTY;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getDisplayingName() {
+        return displayingName;
+    }
+
+    public Field getField() {
+        return field;
+    }
+
+    public abstract void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options);
+
+    public abstract Object getValue(Product product);
+
+    private Field getFieldByName(String fieldName) {
+        if (fieldName != null && !fieldName.trim().isEmpty()) {
+            try {
+                return Product.class.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                System.out.println("field " + fieldName + " not found");
+            }
+        }
+        return null;
     }
 }

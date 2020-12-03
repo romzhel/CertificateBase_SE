@@ -208,12 +208,17 @@ public class ProductLgbkGroups implements Initializable {
     }
 
     public String getFullDescription(ProductLgbk productLgbk) {
-        if (productLgbk == null || productLgbk.getLgbk() == null || productLgbk.getHierarchy() == null) return "";
+        if (productLgbk == null || productLgbk.getLgbk() == null || productLgbk.getHierarchy() == null) {
+            return "";
+        }
 
         LgbkAndParent lgbkAndParent = getLgbkAndParent(productLgbk);
-        if (lgbkAndParent == null) return "";
+        if (lgbkAndParent == null) {
+            return "";
+        }
 
-        return lgbkAndParent.getLgbkParent().getDescription() + " / " + lgbkAndParent.getLgbkItem().getDescription();
+        return (lgbkAndParent.getLgbkParent() != null ? lgbkAndParent.getLgbkParent().getDescription() : "") + " / " +
+                (lgbkAndParent.getLgbkItem() != null ? lgbkAndParent.getLgbkItem().getDescription() : "");
     }
 
     public TreeItem<ProductLgbk> getTreeItem(ProductLgbk lookingForLgbk) {

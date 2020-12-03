@@ -9,6 +9,7 @@ import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.price_lists_editor.PriceLists;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.product.Product;
+import utils.PriceUtils;
 import utils.comparation.merger.ComparisonResultMerger;
 import utils.comparation.se.Adapter;
 import utils.comparation.se.ComparingParameters;
@@ -17,20 +18,21 @@ import utils.comparation.se.ProductsComparator;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_FAMILY;
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_LGBK;
 import static ui_windows.product.data.DataItem.DATA_LOCAL_PRICE;
 
 public class PricesComparator {
+    public static final PriceList COMPARED_PRICE_LIST = PriceLists.getInstance().getItems().get(0);//internal price list
     private File file1;
     private File file2;
     private File comparisonResultFile;
     private ComparisonResultMerger<Product> merger;
     private FileImport oldPriceFi;
-    public static final PriceList COMPARED_PRICE_LIST = PriceLists.getInstance().getItems().get(0);//internal price list
 
-    public void compare(ArrayList<File> priceListFiles) {
+    public void compare(List<File> priceListFiles) {
         if (priceListFiles != null) {
             file1 = priceListFiles.get(0);
             file2 = priceListFiles.get(1);
@@ -86,7 +88,7 @@ public class PricesComparator {
                                 if (file2 == null) {//online price
                                     if (param.getField() == DATA_LOCAL_PRICE.getField()) {
                                         Product clone = param.getObject2().clone();
-                                        double cost = param.getObject2().getLocalPrice() * (1.0 - (double) priceListSheet.getDiscount() / 100);
+                                        double cost = PriceUtils.addDiscount(param.getObject2().getLocalPrice(), priceListSheet.getDiscount());
                                         clone.setLocalPrice(cost);
                                         param.setObject2(clone);
                                     }

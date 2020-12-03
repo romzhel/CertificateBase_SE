@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ProductFamily implements PriceListContentItem {
-    public static ProductFamily UNKNOWN = new ProductFamily();
+    public static ProductFamily UNKNOWN = new ProductFamily("Не известно");
     private int id;
     private StringProperty name;
     private StringProperty responsible;

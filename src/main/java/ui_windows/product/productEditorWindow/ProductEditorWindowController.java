@@ -23,6 +23,7 @@ import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.product.certificatesChecker.CheckParameters;
 import ui_windows.product.productEditorWindow.configNormsWindow.ConfigNormsWindow;
+import utils.PriceBox;
 import utils.Utils;
 
 import java.io.File;
@@ -113,6 +114,7 @@ public class ProductEditorWindowController implements Initializable {
     private MultiEditor multiEditor;
     private CertificateVerificationTable certificateVerificationTable;
     private ComboBoxEqTypeSelector comboBoxEqTypeSelector;
+    private PriceBox priceBox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -126,6 +128,7 @@ public class ProductEditorWindowController implements Initializable {
         certificateVerificationTable = new CertificateVerificationTable(this);
         certificateVerificationTable.display(editedItems, CheckParameters.getDefault());
         comboBoxEqTypeSelector = new ComboBoxEqTypeSelector(cbType, certificateVerificationTable);
+        priceBox = new PriceBox(tfPriceListInclCost);
 
         multiEditor = new MultiEditor(editedItems, this);
 
@@ -237,5 +240,9 @@ public class ProductEditorWindowController implements Initializable {
 
     public CertificateVerificationTable getCertificateVerificationTable() {
         return certificateVerificationTable;
+    }
+
+    public PriceBox getPriceBox() {
+        return priceBox;
     }
 }

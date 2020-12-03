@@ -27,10 +27,11 @@ import utils.comparation.prices.SelectPricesForComparisonWindow;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainWindowsController implements Initializable {
+    private static final Logger logger = LogManager.getLogger(MainWindowsController.class);
     private final String SPACE = "     ";
     @FXML
     public Menu miDataSource;
@@ -54,7 +55,6 @@ public class MainWindowsController implements Initializable {
     MenuItem miOptions;
     private MainTable mainTable;
     private DataSelectorMenu dataSelectorMenu;
-    private static final Logger logger = LogManager.getLogger(MainWindowsController.class);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -122,7 +122,7 @@ public class MainWindowsController implements Initializable {
     }
 
     public void comparePriceLists() {
-        ArrayList<File> priceListFiles = new SelectPricesForComparisonWindow().getPriceListFiles();
+        List<File> priceListFiles = new SelectPricesForComparisonWindow().getPriceListFiles();
         if (priceListFiles.get(0) != null) {
             new Thread(() -> {
                 logger.info("Starting price-list comparing {} vs {}", priceListFiles.get(0), priceListFiles.get(1));

@@ -38,7 +38,9 @@ public class Product implements Cloneable {
     private String descriptionru = "";
     private String descriptionen = "";
     private Boolean price = false;
-    private Boolean isBlocked = false;
+    private Boolean blocked = false;
+    private Boolean priceHidden = false;
+
     private String changecodes = "";
     private String lastImportcodes = "";
 
@@ -56,7 +58,7 @@ public class Product implements Cloneable {
     private Integer packetSize = 0;
     private Integer leadTime = 0;
     private Double weight;
-    private Double localPrice;
+    private Double localPrice = 0.0;
 
     public Product() {
     }
@@ -76,7 +78,8 @@ public class Product implements Cloneable {
         descriptionru = pewc.taDescription.getText();
         descriptionen = pewc.taDescriptionEn.getText();
         price = pewc.cbxPrice.isSelected();
-        isBlocked = pewc.cbxBlocked.isSelected();
+        blocked = pewc.cbxBlocked.isSelected();
+        priceHidden = pewc.getPriceBox().getButtonStatus();
         changecodes = "";
         lastImportcodes = "";
 
@@ -131,7 +134,8 @@ public class Product implements Cloneable {
         descriptionru = nullToEmpty(rs.getString("description_ru"));
         descriptionen = nullToEmpty(rs.getString("description_en"));
         price = rs.getBoolean("price");
-        isBlocked = rs.getBoolean("not_used");
+        blocked = rs.getBoolean("not_used");
+        priceHidden = rs.getBoolean("archive");
 
         history = rs.getString("history");
         lastChangeDate = rs.getString("last_change_date");
@@ -185,8 +189,9 @@ public class Product implements Cloneable {
         String plt = DataItem.DATA_IN_WHICH_PRICE_LIST.getValue(this).toString();
         pewc.tfPriceListIncl.setText(plt);
         double pr = (double) DataItem.DATA_LOCAL_PRICE_LIST.getValue(this);
-        pewc.tfPriceListInclCost.setText(plt == null || plt.isEmpty() ? "" :
-                pr == 0.0 ? "Нет данных" : String.format("%.2f", pr));
+        pewc.getPriceBox().setValue(plt == null || plt.isEmpty() ? "" :
+                pr == 0.0 ? "Нет данных" : String.format("%,.2f", pr));
+        pewc.getPriceBox().setButtonStatus(priceHidden);
 
         if (dchain != null)
             pewc.tfAccessibility.setText(OrdersAccessibility.getInstance().getCombineOrderAccessibility(dchain));
@@ -196,9 +201,9 @@ public class Product implements Cloneable {
             pewc.cbxPrice.setIndeterminate(true);
             pewc.cbxPrice.setDisable(true);
         }
-        if (isBlocked != null) {
-            pewc.cbxBlocked.setSelected(isBlocked);
-            if (isBlocked) {
+        if (blocked != null) {
+            pewc.cbxBlocked.setSelected(blocked);
+            if (blocked) {
                 pewc.cbxBlocked.setStyle("-fx-text-fill: red; -fx-border-color: red; -fx-outer-border: red; mark-color: red; -fx-mark-color: red;");
                 pewc.cbxPrice.setDisable(true);
             } else {
@@ -367,8 +372,10 @@ public class Product implements Cloneable {
         this.descriptionru = descriptionru;
     }
 
-    public boolean isPrice() {
-        return price;
+    public Boolean isPrice() {
+        return price == null
+                ? null
+                : blocked == null ? price : price && !blocked;
     }
 
     public void setPrice(boolean price) {
@@ -576,6 +583,14 @@ public class Product implements Cloneable {
     }
 
     public Boolean isBlocked() {
-        return isBlocked;
+        return blocked;
+    }
+
+    public Boolean isPriceHidden() {
+        return priceHidden;
+    }
+
+    public void setPriceHidden(Boolean priceHidden) {
+        this.priceHidden = priceHidden;
     }
 }

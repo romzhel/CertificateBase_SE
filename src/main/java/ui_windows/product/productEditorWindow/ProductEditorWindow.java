@@ -48,6 +48,7 @@ public class ProductEditorWindow extends OrdinalWindow<ProductEditorWindowContro
     public void applyProfile(SimpleRight sr, ProductEditorWindowController controller) {
         applyProfileSimple(Users.getInstance().getCurrentUser().getProfile().getProducts());
         controller.cbxBlocked.setDisable(sr != FULL);
+        controller.getPriceBox().setButtonDisabled(sr != FULL);
     }
 
     @Override
@@ -83,6 +84,6 @@ public class ProductEditorWindow extends OrdinalWindow<ProductEditorWindowContro
     }
 
     public ProductEditorWindowController getController() {
-        return (ProductEditorWindowController) loader.getController();
+        return loader.getController();
     }
 }

@@ -5,6 +5,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.options_window.profile_editor.SimpleRight;
 import utils.Utils;
 
@@ -18,14 +20,16 @@ public abstract class OrdinalWindow<T> {
     protected static AnchorPane rootAnchorPane;
     protected static FXMLLoader loader;
     protected T controller;
+    public static final Logger logger = LogManager.getLogger(OrdinalWindow.class);
 
     public OrdinalWindow(Stage parentStage, Modality modality, Mode mode, String resourceName, String title) {
+        logger.trace("загрузка формы '{}'", resourceName);
         this.mode = mode;
         loader = new FXMLLoader(getClass().getResource(resourceName));
         try {
             rootAnchorPane = loader.load();
         } catch (IOException e) {
-            System.out.println("error xml file loading " + resourceName + ", " + e.getMessage());
+            logger.error("error fxml file loading", e);
         }
 
         stage = new Stage();
@@ -37,6 +41,10 @@ public abstract class OrdinalWindow<T> {
         stage.setResizable(false);
 
         controller = loader.getController();
+
+        stage.setOnCloseRequest(event -> {
+            System.out.println("closing");
+        });
     }
 
     public static Stage getStage() {
@@ -55,12 +63,12 @@ public abstract class OrdinalWindow<T> {
         stage.close();
     }
 
+    public static FXMLLoader getLoader() {
+        return loader;
+    }
+
     public void applyProfileSimple(SimpleRight sr) {
         boolean editorRights = (sr != FULL);
         Utils.disableEditing(rootAnchorPane, editorRights);
-    }
-
-    public static FXMLLoader getLoader() {
-        return loader;
     }
 }
