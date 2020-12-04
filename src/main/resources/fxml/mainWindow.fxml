@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <AnchorPane minHeight="650.0" minWidth="1250.0" prefHeight="650.0" prefWidth="1250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.main_window.MainWindowsController">
@@ -26,6 +25,8 @@
             <Menu mnemonicParsing="false" text="   Запросы   ">
               <items>
                 <MenuItem fx:id="miRequestCertExistence" mnemonicParsing="false" onAction="#actionRequest" text="     Заказные позиции     " />
+                  <MenuItem mnemonicParsing="false" onAction="#actionRequestByShortArticles"
+                            text="     Отчёт наличия позиций по сокращенному артикулу     "/>
               </items>
             </Menu>
             <Menu fx:id="miDataSource" mnemonicParsing="false" text="   Данные   " />
@@ -49,10 +50,11 @@
         <Label fx:id="lbRecordCount" layoutX="1092.0" layoutY="578.0" text="ХХХХХХХ" AnchorPane.bottomAnchor="42.0" AnchorPane.rightAnchor="58.0" />
       <Pane layoutY="770.0" prefHeight="25.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
       <ProgressBar fx:id="pbExecuted" layoutX="993.0" layoutY="5.0" prefWidth="200.0" progress="0.0" visible="false" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
-      <ImageView fx:id="ivFilter" fitHeight="25.0" fitWidth="50.0" layoutX="620.0" layoutY="586.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="39.0" AnchorPane.leftAnchor="620.0">
-         <image>
-            <Image url="@../../../resources/images/filter.png" />
-         </image>
-      </ImageView>
+        <ImageView fx:id="ivFilter" fitHeight="25.0" fitWidth="50.0" layoutX="620.0" layoutY="586.0" pickOnBounds="true"
+                   preserveRatio="true" visible="false" AnchorPane.bottomAnchor="39.0" AnchorPane.leftAnchor="620.0">
+            <image>
+                <!--            <Image url="../images/filter.png" />-->
+            </image>
+        </ImageView>
     </children>
 </AnchorPane>

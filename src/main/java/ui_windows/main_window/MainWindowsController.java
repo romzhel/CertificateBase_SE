@@ -24,6 +24,8 @@ import ui_windows.request.RequestWindow;
 import utils.Utils;
 import utils.comparation.prices.PricesComparator;
 import utils.comparation.prices.SelectPricesForComparisonWindow;
+import utils.requests_handlers.ArticlesRequestHandler;
+import utils.requests_handlers.ProductsRequestHandler;
 
 import java.io.File;
 import java.net.URL;
@@ -158,7 +160,18 @@ public class MainWindowsController implements Initializable {
 
     public void actionRequest() {
         logger.info("Opening positions request window");
-        new RequestWindow();
+        String request = new RequestWindow().showAndGetValues();
+        if (!request.isEmpty()) {
+            ProductsRequestHandler.getInstance().findAndShowProductsFromText(request);
+        }
+    }
+
+    public void actionRequestByShortArticles() {
+        logger.info("Opening positions request by short articles window");
+        String request = new RequestWindow().showAndGetValues();
+        if (!request.isEmpty()) {
+            ArticlesRequestHandler.getInstance().createArticleExistingReport(request);
+        }
     }
 
     public DataSelectorMenu getDataSelectorMenu() {
