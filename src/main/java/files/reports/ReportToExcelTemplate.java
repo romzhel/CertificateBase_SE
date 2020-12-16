@@ -17,10 +17,13 @@ public abstract class ReportToExcelTemplate implements Callable<File> {
     protected File saveToExcelFile() {
         final String fileExtension = workbook instanceof HSSFWorkbook ? ".xls" : ".xlsx";
 
+        reportFile = null;
+        reportFile = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(), "Выбор места сохранения",
+                Dialogs.EXCEL_FILES, "report_" + Utils.getDateTime().replaceAll(":", "-")
+                        + fileExtension).get(0);
+
         if (reportFile == null) {
-            reportFile = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(), "Выбор места сохранения",
-                    Dialogs.EXCEL_FILES, "report_" + Utils.getDateTime().replaceAll(":", "-")
-                            + fileExtension).get(0);
+            throw new RuntimeException("При сохранении не выбрано имя файла");
         }
 
         try {
