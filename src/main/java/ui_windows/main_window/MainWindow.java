@@ -46,7 +46,7 @@ public class MainWindow extends Application {
     private static AnchorPane rootAnchorPane;
     private static MenuItem miOptions;
     private static FXMLLoader fxmlLoader;
-    private static MainWindowsController controller;
+    private static MainWindowController controller;
 
     public static void main(String[] args) {
         LauncherImpl.launchApplication(MainWindow.class, AppPreloader.class, args);
@@ -72,7 +72,7 @@ public class MainWindow extends Application {
         return mainStage;
     }
 
-    public static MainWindowsController getController() {
+    public static MainWindowController getController() {
         return controller;
     }
 
@@ -103,7 +103,7 @@ public class MainWindow extends Application {
             fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/mainWindow.fxml"));
             rootAnchorPane = fxmlLoader.load();
 
-            controller = (MainWindowsController) fxmlLoader.getController();
+            controller = (MainWindowController) fxmlLoader.getController();
             Scene scene = new Scene(rootAnchorPane);
 
             scene.setOnKeyPressed(event -> {

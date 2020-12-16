@@ -221,7 +221,7 @@ public class MainTable implements Module {
         tvTable.getItems().clear();
         tvTable.getItems().addAll(itemsForDisplaying);
         tvTable.refresh();
-        MainWindowsController mwc = MainWindow.getController();
+        MainWindowController mwc = MainWindow.getController();
         if (mwc != null) {
             mwc.lbRecordCount.setText(String.valueOf(tvTable.getItems().size()));
         }

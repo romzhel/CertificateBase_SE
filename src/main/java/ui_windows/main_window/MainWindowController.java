@@ -32,8 +32,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class MainWindowsController implements Initializable {
-    private static final Logger logger = LogManager.getLogger(MainWindowsController.class);
+public class MainWindowController implements Initializable {
+    private static final Logger logger = LogManager.getLogger(MainWindowController.class);
     private final String SPACE = "     ";
     @FXML
     public Menu miDataSource;
@@ -170,7 +170,11 @@ public class MainWindowsController implements Initializable {
         logger.info("Opening positions request by short articles window");
         String request = new RequestWindow().showAndGetValues();
         if (!request.isEmpty()) {
-            ArticlesRequestHandler.getInstance().createArticleExistingReport(request);
+            try {
+                ArticlesRequestHandler.getInstance().createArticleExistingReport(request);
+            } catch (Exception e) {
+                logger.warn(e.getMessage());
+            }
         }
     }
 
