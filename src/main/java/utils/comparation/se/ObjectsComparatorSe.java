@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 public class ObjectsComparatorSe<T extends Cloneable> {
     Param<T> param;
 
-    public ObjectsComparatorResultSe<T> compare(T object1, T object2, ComparingParameters ocps) {
+    public ObjectsComparatorResultSe<T> compare(T object1, T object2, ComparingParameters<T> ocps) {
         ObjectsComparatorResultSe<T> ocr = new ObjectsComparatorResultSe<>(object1, object2);
         for (Field field : ocps.getFields()) {
             param = new Param<>(object1, object2, field);
