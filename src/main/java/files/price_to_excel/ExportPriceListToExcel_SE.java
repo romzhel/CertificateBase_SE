@@ -76,7 +76,7 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
             resultFile = Folders.getInstance().getTempFolder().resolve(targetFileName + ".xlsx").toFile();
             Files.copy(templateFile.toPath(), resultFile.toPath(), REPLACE_EXISTING);
         } catch (Exception e) {
-            Dialogs.showMessage("Ошибка копирования шаблона", "Ошибка копирования файла шаблона: " + e.getMessage());
+            Dialogs.showMessageTS("Ошибка копирования шаблона", "Ошибка копирования файла шаблона: " + e.getMessage());
             return false;
         }
 

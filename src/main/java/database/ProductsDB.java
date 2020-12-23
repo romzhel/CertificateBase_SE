@@ -19,15 +19,16 @@ public class ProductsDB extends DbRequest {
                             "products (material, article, hierarchy, lgbk, family, end_of_service, dangerous, " +
                             "country, dchain, description_ru, description_en, price, not_used, archive, history, " +
                             "last_change_date, file_name, comments, replacement, type_id, change_codes, product_print," +
-                            "last_import_codes, norms_list, norms_mode, min_order, packet_size, lead_time, weight, local_price) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                            "last_import_codes, norms_list, norms_mode, min_order, packet_size, lead_time, weight, " +
+                            "local_price, warranty) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = connection.prepareStatement("UPDATE products " +
                     "SET article = ?, hierarchy = ?, lgbk = ?, family = ?, end_of_service = ?, dangerous = ?, country = ?, " +
                     "dchain = ?, description_ru = ?, description_en = ?, price = ?, not_used = ?, archive = ?, history = ?," +
                     "last_change_date = ?, file_name = ?, comments = ?, replacement = ?, type_id = ?, change_codes = ?, " +
                     "product_print = ?, last_import_codes = ?, norms_list = ?, norms_mode = ?, min_order = ?, packet_size = ?, " +
-                    "lead_time = ?, weight = ?, local_price = ? WHERE material = ?");
+                    "lead_time = ?, weight = ?, local_price = ?, warranty = ? WHERE material = ?");
             deleteData = connection.prepareStatement("DELETE FROM products " +
                     "WHERE id = ?");
         } catch (SQLException e) {
@@ -36,19 +37,19 @@ public class ProductsDB extends DbRequest {
         }
     }
 
-    public ArrayList getData() {
+    public List<Product> getData() throws Exception {
         ArrayList<Product> products = new ArrayList<>();
-        try {
-            ResultSet rs = connection.prepareStatement("SELECT * FROM products").executeQuery();
+//        try {
+        ResultSet rs = connection.prepareStatement("SELECT * FROM products").executeQuery();
 
-            while (rs.next()) {
-                products.add(new Product(rs));
-            }
-
-            rs.close();
-        } catch (SQLException e) {
-            logAndMessage("SQL exception products, ", e);
+        while (rs.next()) {
+            products.add(new Product(rs));
         }
+
+        rs.close();
+//        } catch (SQLException e) {
+//            logAndMessage("SQL exception products, ", e);
+//        }
         return products;
     }
 
@@ -132,36 +133,37 @@ public class ProductsDB extends DbRequest {
         return true;
     }
 
-    public int setData(List<Product> alpr, int count, int j, PreparedStatement updateData) throws SQLException {
-        updateData.setString(++count, alpr.get(j).getArticle());
-        updateData.setString(++count, alpr.get(j).getHierarchy());
-        updateData.setString(++count, alpr.get(j).getLgbk());
-        updateData.setInt(++count, alpr.get(j).getFamily_id());
-        updateData.setString(++count, alpr.get(j).getEndofservice());
-        updateData.setString(++count, alpr.get(j).getDangerous());
-        updateData.setString(++count, alpr.get(j).getCountry());
-        updateData.setString(++count, alpr.get(j).getDchain());
-        updateData.setString(++count, alpr.get(j).getDescriptionru());
-        updateData.setString(++count, alpr.get(j).getDescriptionen());
-        updateData.setBoolean(++count, alpr.get(j).isPrice());
-        updateData.setBoolean(++count, alpr.get(j).isBlocked());
-        updateData.setBoolean(++count, alpr.get(j).isPriceHidden());
-        updateData.setString(++count, alpr.get(j).getHistory());
-        updateData.setString(++count, alpr.get(j).getLastChangeDate());
-        updateData.setString(++count, alpr.get(j).getFileName());
-        updateData.setString(++count, alpr.get(j).getComments());
-        updateData.setString(++count, alpr.get(j).getReplacement());
-        updateData.setInt(++count, alpr.get(j).getType_id());
-        updateData.setString(++count, alpr.get(j).getChangecodes());
-        updateData.setString(++count, alpr.get(j).getProductForPrint());
-        updateData.setString(++count, alpr.get(j).getLastImportcodes());
-        updateData.setString(++count, alpr.get(j).getNormsList().getStringLine());
-        updateData.setInt(++count, alpr.get(j).getNormsMode());
-        updateData.setInt(++count, alpr.get(j).getMinOrder());
-        updateData.setInt(++count, alpr.get(j).getPacketSize());
-        updateData.setInt(++count, alpr.get(j).getLeadTime());
-        updateData.setDouble(++count, alpr.get(j).getWeight());
-        updateData.setDouble(++count, alpr.get(j).getLocalPrice());
+    public int setData(List<Product> alpr, int count, int j, PreparedStatement prepStat) throws SQLException {
+        prepStat.setString(++count, alpr.get(j).getArticle());
+        prepStat.setString(++count, alpr.get(j).getHierarchy());
+        prepStat.setString(++count, alpr.get(j).getLgbk());
+        prepStat.setInt(++count, alpr.get(j).getFamily_id());
+        prepStat.setString(++count, alpr.get(j).getEndofservice());
+        prepStat.setString(++count, alpr.get(j).getDangerous());
+        prepStat.setString(++count, alpr.get(j).getCountry());
+        prepStat.setString(++count, alpr.get(j).getDchain());
+        prepStat.setString(++count, alpr.get(j).getDescriptionru());
+        prepStat.setString(++count, alpr.get(j).getDescriptionen());
+        prepStat.setBoolean(++count, alpr.get(j).isPrice());
+        prepStat.setBoolean(++count, alpr.get(j).isBlocked());
+        prepStat.setBoolean(++count, alpr.get(j).isPriceHidden());
+        prepStat.setString(++count, alpr.get(j).getHistory());
+        prepStat.setString(++count, alpr.get(j).getLastChangeDate());
+        prepStat.setString(++count, alpr.get(j).getFileName());
+        prepStat.setString(++count, alpr.get(j).getComments());
+        prepStat.setString(++count, alpr.get(j).getReplacement());
+        prepStat.setInt(++count, alpr.get(j).getType_id());
+        prepStat.setString(++count, alpr.get(j).getChangecodes());
+        prepStat.setString(++count, alpr.get(j).getProductForPrint());
+        prepStat.setString(++count, alpr.get(j).getLastImportcodes());
+        prepStat.setString(++count, alpr.get(j).getNormsList().getStringLine());
+        prepStat.setInt(++count, alpr.get(j).getNormsMode());
+        prepStat.setInt(++count, alpr.get(j).getMinOrder());
+        prepStat.setInt(++count, alpr.get(j).getPacketSize());
+        prepStat.setInt(++count, alpr.get(j).getLeadTime());
+        prepStat.setDouble(++count, alpr.get(j).getWeight());
+        prepStat.setDouble(++count, alpr.get(j).getLocalPrice());
+        prepStat.setInt(++count, alpr.get(j).getWarranty());
         return count;
     }
 

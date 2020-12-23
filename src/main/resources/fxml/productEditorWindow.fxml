@@ -173,6 +173,10 @@
                                    prefHeight="25.0" prefWidth="114.0"/>
                         <Label alignment="CENTER_RIGHT" layoutX="617.0" layoutY="365.0" prefHeight="17.0"
                                prefWidth="98.0" text="Цена в прайсе"/>
+                        <TextField fx:id="tfWarranty" editable="false" layoutX="970.0" layoutY="329.0" prefHeight="25.0"
+                                   prefWidth="86.0"/>
+                        <Label alignment="CENTER_RIGHT" layoutX="827.0" layoutY="333.0" prefHeight="17.0"
+                               prefWidth="133.0" text="Гарантия, лет"/>
                     </children>
                 </AnchorPane>
             </content>

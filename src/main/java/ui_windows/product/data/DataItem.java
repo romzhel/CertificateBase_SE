@@ -602,6 +602,17 @@ public enum DataItem {
                     : product.getProductFamily().getName().equals("GAMMA")
                     ? DATA_ORDER_NUMBER_PRINT_NOT_EMPTY.getValue(product) : product.getArticle();
         }
+    },
+    DATA_WARRANTY(44, "Гарантия, лет", "warranty") {
+        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.NUMERIC);
+            cell.setCellValue((int) getValue(product));
+            cell.setCellStyle(CELL_ALIGN_CENTER);
+        }
+
+        public Object getValue(Product product) {
+            return product.getWarranty() == null || product.getWarranty() < 2 ? 1 : product.getWarranty();
+        }
     };
 
     private int id;

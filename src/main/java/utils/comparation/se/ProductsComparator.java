@@ -44,7 +44,7 @@ public class ProductsComparator implements Comparator<Product> {
         String material;
         for (Product item1 : items1) {
 
-            if (item1.getMaterial().equals("QRC1A2.1341C27")) {
+            if (item1.getMaterial().equals("410355768")) {
                 System.out.println();
             }
 

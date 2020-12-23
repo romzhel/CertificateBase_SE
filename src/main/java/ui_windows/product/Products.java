@@ -50,7 +50,7 @@ public class Products implements Initializable {
     }
 
     @Override
-    public void init() {
+    public void init() throws Exception {
         products = new ProductsDB().getData();
     }
 

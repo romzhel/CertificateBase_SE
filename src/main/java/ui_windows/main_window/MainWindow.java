@@ -31,6 +31,7 @@ import utils.files.ResourceSynchronizer;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.concurrent.Executors;
@@ -87,6 +88,12 @@ public class MainWindow extends Application {
                     App.getProperties().getVersion(), App.getProperties().getDbFileName());
 
             new InitModule().init(this);
+        } catch (SQLException sqle) {
+            logger.fatal("SQL error: {}", sqle.getMessage(), sqle);
+            Dialogs.showMessageTS("Ошибка инициализации приложения", "Во время инициализации программы " +
+                    "произошла ошибка\n\n" + sqle.getMessage() + ", причиной которой может стать использование устаревшей " +
+                    "версии программы\n\n");
+            Platform.exit();
         } catch (Exception e) {
             logger.fatal("App init error: {}", e.getMessage(), e);
             Dialogs.showMessageTS("Ошибка инициализации приложения", "Во время инициализации программы " +

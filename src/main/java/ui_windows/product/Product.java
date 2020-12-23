@@ -41,6 +41,7 @@ public class Product implements Cloneable {
     private Boolean price = false;
     private Boolean blocked = false;
     private Boolean priceHidden = false;
+    private Integer warranty = 0;
 
     private String changecodes = "";
     private String lastImportcodes = "";
@@ -117,6 +118,11 @@ public class Product implements Cloneable {
         leadTime = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_LEAD_TIME_EU)));
         weight = getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_WEIGHT)));
         localPrice = getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_LOCAL_PRICE)));
+        try {
+            warranty = Integer.valueOf(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_WARRANTY)));
+        } catch (Exception e) {
+            warranty = 0;
+        }
     }
 
     public Product(ResultSet rs) throws SQLException {
@@ -137,6 +143,7 @@ public class Product implements Cloneable {
         price = rs.getBoolean("price");
         blocked = rs.getBoolean("not_used");
         priceHidden = rs.getBoolean("archive");
+        warranty = rs.getInt("warranty");
 
         history = rs.getString("history");
         lastChangeDate = rs.getString("last_change_date");
@@ -253,6 +260,8 @@ public class Product implements Cloneable {
             pewc.cbFamily.setValue(productFamily.getName());
             pewc.tfPm.setText(productFamily.getResponsible());
         }
+
+        pewc.tfWarranty.setText(DataItem.DATA_WARRANTY.getValue(this).toString());
     }
 
     public boolean isOrderableCalculated() {
@@ -593,5 +602,13 @@ public class Product implements Cloneable {
 
     public void setPriceHidden(Boolean priceHidden) {
         this.priceHidden = priceHidden;
+    }
+
+    public Integer getWarranty() {
+        return warranty;
+    }
+
+    public void setWarranty(Integer warranty) {
+        this.warranty = warranty;
     }
 }
