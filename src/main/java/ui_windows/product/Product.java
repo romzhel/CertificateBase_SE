@@ -13,6 +13,7 @@ import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.product.data.DataItem;
 import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 import utils.Countries;
+import utils.PriceUtils;
 import utils.comparation.se.Cloneable;
 
 import java.io.File;
@@ -242,7 +243,7 @@ public class Product implements Cloneable {
         if (leadTime != null) pewc.tfLeadTime.setText(leadTime == 0 ? NO_DATA : String.valueOf(getLeadTimeRu()));
         if (weight != null) pewc.tfWeight.setText(weight == 0 ? NO_DATA : String.valueOf(weight));
         if (localPrice != null)
-            pewc.tfLocalPrice.setText(localPrice == 0 ? NO_DATA : String.format("%,.2f", localPrice));
+            pewc.tfLocalPrice.setText(localPrice == 0 ? NO_DATA : String.format("%,.2f", PriceUtils.roundCost(localPrice)));
 
         List<String> items = ProductFamilies.getInstance().getFamiliesNames();//add all families and display value
         items.add(0, "");

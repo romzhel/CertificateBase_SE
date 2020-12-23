@@ -8,7 +8,9 @@
       <Label alignment="CENTER_RIGHT" layoutX="49.0" layoutY="33.0" prefHeight="17.0" prefWidth="70.0" text="Название" textAlignment="CENTER" AnchorPane.leftAnchor="49.0" AnchorPane.topAnchor="33.0" />
       <DatePicker fx:id="dpDatePicker" layoutX="142.0" layoutY="233.0" promptText="Выберите дату" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="233.0" />
       <Label alignment="CENTER_RIGHT" layoutX="21.0" layoutY="237.0" prefHeight="17.0" prefWidth="105.0" text="Срок действия" textAlignment="CENTER" AnchorPane.leftAnchor="21.0" AnchorPane.topAnchor="237.0" />
-      <Label alignment="CENTER_RIGHT" layoutX="652.0" layoutY="30.0" prefHeight="17.0" prefWidth="125.0" text="Страны производства" textAlignment="CENTER" AnchorPane.leftAnchor="652.0" AnchorPane.topAnchor="30.0" />
+      <Label alignment="CENTER_RIGHT" layoutX="652.0" layoutY="69.0" prefHeight="17.0" prefWidth="125.0"
+             text="Страны производства" textAlignment="CENTER" AnchorPane.leftAnchor="652.0"
+             AnchorPane.topAnchor="69.0"/>
       <Label alignment="CENTER_RIGHT" layoutX="43.0" layoutY="265.0" prefHeight="17.0" prefWidth="84.0" text="Имя файла" textAlignment="CENTER" AnchorPane.leftAnchor="43.0" AnchorPane.topAnchor="265.0" />
       <TextField fx:id="tfFileName" editable="false" layoutX="142.0" layoutY="263.0" prefHeight="25.0" prefWidth="423.0" promptText="Нажмите кнопку Обзор для выбора" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="263.0" />
       <Button fx:id="btnApply" layoutX="251.0" layoutY="705.0" mnemonicParsing="false" onAction="#apply" prefHeight="25.0" prefWidth="150.0" text="Сохранить" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="251.0" />
@@ -28,16 +30,34 @@
       </TableView>
       <ComboBox fx:id="cbCountrySelect" editable="true" layoutX="652.0" layoutY="261.0" prefHeight="25.0" prefWidth="259.0" promptText="Выберите или введите название страны" AnchorPane.leftAnchor="652.0" AnchorPane.topAnchor="261.0" />
       <Button fx:id="btnAddCountry" layoutX="916.0" layoutY="261.0" mnemonicParsing="false" onAction="#addCountry" prefHeight="25.0" prefWidth="97.0" text="Добавить" AnchorPane.leftAnchor="916.0" AnchorPane.topAnchor="261.0" />
-      <ListView fx:id="lvCountries" layoutX="652.0" layoutY="53.0" onKeyPressed="#countryKey" prefHeight="205.0" prefWidth="361.0" AnchorPane.leftAnchor="652.0" AnchorPane.topAnchor="53.0" />
-      <Separator layoutX="639.0" layoutY="27.0" orientation="VERTICAL" prefHeight="261.0" prefWidth="6.0" AnchorPane.leftAnchor="639.0" AnchorPane.topAnchor="27.0" />
-      <ListView fx:id="lvNorms" layoutX="140.0" layoutY="65.0" onKeyPressed="#normsKey" prefHeight="109.0" prefWidth="490.0" AnchorPane.leftAnchor="140.0" AnchorPane.topAnchor="65.0" />
-      <Label alignment="CENTER_RIGHT" layoutX="12.0" layoutY="212.0" prefHeight="17.0" prefWidth="114.0" text="Совпадение имени" textAlignment="CENTER" AnchorPane.leftAnchor="12.0" AnchorPane.topAnchor="212.0" />
-      <Label alignment="CENTER_RIGHT" layoutX="14.0" layoutY="65.0" prefHeight="17.0" prefWidth="105.0" text="Регламенты" textAlignment="CENTER" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="65.0" />
-      <CheckBox fx:id="ckbNameMatch" contentDisplay="GRAPHIC_ONLY" layoutX="141.0" layoutY="212.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="20.0" text="CheckBox" AnchorPane.leftAnchor="141.0" AnchorPane.topAnchor="212.0" />
-      <Separator layoutX="12.0" layoutY="293.0" prefHeight="0.0" prefWidth="1003.0" />
-      <Button fx:id="btnAddNorm" layoutX="533.0" layoutY="178.0" mnemonicParsing="false" onAction="#addNorm" prefHeight="25.0" prefWidth="97.0" text="Добавить" AnchorPane.leftAnchor="533.0" AnchorPane.topAnchor="178.0" />
-      <ComboBox fx:id="cbNormSelect" editable="true" layoutX="142.0" layoutY="178.0" prefHeight="25.0" prefWidth="388.0" promptText="Выберите или введите название регламента" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="178.0" />
-      <CheckBox fx:id="ckbMaterialMatch" contentDisplay="GRAPHIC_ONLY" layoutX="418.0" layoutY="212.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="29.0" text="CheckBox" AnchorPane.leftAnchor="418.0" AnchorPane.topAnchor="212.0" />
-      <Label alignment="CENTER_RIGHT" layoutX="254.0" layoutY="212.0" prefHeight="17.0" prefWidth="156.0" text="Поиск в заказном номере" textAlignment="CENTER" AnchorPane.leftAnchor="254.0" AnchorPane.topAnchor="212.0" />
+      <ListView fx:id="lvCountries" layoutX="652.0" layoutY="91.0" onKeyPressed="#countryKey" prefHeight="167.0"
+                prefWidth="361.0" AnchorPane.leftAnchor="652.0" AnchorPane.topAnchor="91.0"/>
+      <Separator layoutX="639.0" layoutY="27.0" orientation="VERTICAL" prefHeight="261.0" prefWidth="6.0"
+                 AnchorPane.leftAnchor="639.0" AnchorPane.topAnchor="27.0"/>
+      <ListView fx:id="lvNorms" layoutX="140.0" layoutY="65.0" onKeyPressed="#normsKey" prefHeight="109.0"
+                prefWidth="490.0" AnchorPane.leftAnchor="140.0" AnchorPane.topAnchor="65.0"/>
+      <Label alignment="CENTER_RIGHT" layoutX="12.0" layoutY="212.0" prefHeight="17.0" prefWidth="114.0"
+             text="Совпадение имени" textAlignment="CENTER" AnchorPane.leftAnchor="12.0" AnchorPane.topAnchor="212.0"/>
+      <Label alignment="CENTER_RIGHT" layoutX="14.0" layoutY="65.0" prefHeight="17.0" prefWidth="105.0"
+             text="Регламенты" textAlignment="CENTER" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="65.0"/>
+      <CheckBox fx:id="ckbNameMatch" contentDisplay="GRAPHIC_ONLY" layoutX="141.0" layoutY="212.0"
+                mnemonicParsing="false" prefHeight="17.0" prefWidth="20.0" text="CheckBox" AnchorPane.leftAnchor="141.0"
+                AnchorPane.topAnchor="212.0"/>
+      <Separator layoutX="12.0" layoutY="293.0" prefHeight="0.0" prefWidth="1003.0"/>
+      <Button fx:id="btnAddNorm" layoutX="533.0" layoutY="178.0" mnemonicParsing="false" onAction="#addNorm"
+              prefHeight="25.0" prefWidth="97.0" text="Добавить" AnchorPane.leftAnchor="533.0"
+              AnchorPane.topAnchor="178.0"/>
+      <ComboBox fx:id="cbNormSelect" editable="true" layoutX="142.0" layoutY="178.0" prefHeight="25.0" prefWidth="388.0"
+                promptText="Выберите или введите название регламента" AnchorPane.leftAnchor="142.0"
+                AnchorPane.topAnchor="178.0"/>
+      <CheckBox fx:id="ckbMaterialMatch" contentDisplay="GRAPHIC_ONLY" layoutX="418.0" layoutY="212.0"
+                mnemonicParsing="false" prefHeight="17.0" prefWidth="29.0" text="CheckBox" AnchorPane.leftAnchor="418.0"
+                AnchorPane.topAnchor="212.0"/>
+      <Label alignment="CENTER_RIGHT" layoutX="254.0" layoutY="212.0" prefHeight="17.0" prefWidth="156.0"
+             text="Поиск в заказном номере" textAlignment="CENTER" AnchorPane.leftAnchor="254.0"
+             AnchorPane.topAnchor="212.0"/>
+      <Separator layoutX="650.0" layoutY="59.0" prefHeight="3.0" prefWidth="361.0"/>
+      <CheckBox fx:id="cbxNotUsed" layoutX="652.0" layoutY="33.0" mnemonicParsing="false" prefHeight="17.0"
+                prefWidth="280.0" text="Не используется"/>
    </children>
 </AnchorPane>

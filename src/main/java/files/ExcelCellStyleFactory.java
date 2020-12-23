@@ -21,11 +21,10 @@ public class ExcelCellStyleFactory {
     public static HSSFCellStyle CELL_STYLE_CENTER_GRAY;
     public static HSSFCellStyle CELL_STYLE_LEFT;
 
-    public ExcelCellStyleFactory(Workbook excelDoc) {
-        init(excelDoc);
+    public ExcelCellStyleFactory() {
     }
 
-    public void init(Workbook excelDoc) {
+    public static void init(Workbook excelDoc) {
         if (excelDoc instanceof XSSFWorkbook) {
             CELL_ALIGN_LEFT = excelDoc.createCellStyle();
             CELL_ALIGN_LEFT.setAlignment(HorizontalAlignment.LEFT);

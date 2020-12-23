@@ -1,14 +1,19 @@
 package utils.comparation.se;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class ComparisonResult<T> {
-    private List<ObjectsComparatorResultSe<T>> newItemsResult;
-    private List<ObjectsComparatorResultSe<T>> changedItemsResult;
-    private List<ObjectsComparatorResultSe<T>> goneItemsResult;
-    private List<ObjectsComparatorResultSe<T>> nonChangedItemsResult;
+@Getter
+public abstract class ComparisonResult<T> {
+    protected List<ObjectsComparatorResultSe<T>> newItemsResult;
+    protected List<ObjectsComparatorResultSe<T>> changedItemsResult;
+    protected List<ObjectsComparatorResultSe<T>> goneItemsResult;
+    protected List<ObjectsComparatorResultSe<T>> nonChangedItemsResult;
 
     public ComparisonResult() {
         newItemsResult = new ArrayList<>();
@@ -41,56 +46,26 @@ public class ComparisonResult<T> {
         }
     }
 
-    public List<ObjectsComparatorResultSe<T>> getNewItemsResult() {
-        return newItemsResult;
-    }
-
-    public List<ObjectsComparatorResultSe<T>> getChangedItemsResult() {
-        return changedItemsResult;
-    }
-
-    public List<ObjectsComparatorResultSe<T>> getGoneItemsResult() {
-        return goneItemsResult;
-    }
-
-    public List<ObjectsComparatorResultSe<T>> getNonChangedItemsResult() {
-        return nonChangedItemsResult;
-    }
-
     public List<T> getNewItems() {
-        List<T> items = new ArrayList<>();
-        for (ObjectsComparatorResultSe<T> res : newItemsResult) {
-            if (res.getItem_after() != null) {
-                items.add(res.getItem_after());
-            }
-        }
-        return items;
+        return extractItems(newItemsResult, ObjectsComparatorResultSe::getItem_after);
     }
 
     public List<T> getChangedItems() {
-        List<T> items = new ArrayList<>();
-        for (ObjectsComparatorResultSe<T> res : changedItemsResult) {
-            if (res.getItem() != null) {
-                items.add(res.getItem());
-            }
-        }
-        return items;
+        return extractItems(changedItemsResult, ObjectsComparatorResultSe::getItem);
     }
 
     public List<T> getGoneItems() {
-        List<T> items = new ArrayList<>();
-        for (ObjectsComparatorResultSe<T> res : goneItemsResult) {
-            if (res.getItem() != null) {
-                items.add(res.getItem());
-            }
-        }
-        return items;
+        return extractItems(goneItemsResult, ObjectsComparatorResultSe::getItem);
     }
 
     public List<T> getNonChangedItems() {
-        return nonChangedItemsResult.stream()
-                .map(ocr -> ocr.getItem())
-                .filter(item -> item != null)
+        return extractItems(nonChangedItemsResult, ObjectsComparatorResultSe::getItem);
+    }
+
+    private List<T> extractItems(List<ObjectsComparatorResultSe<T>> resultList, Function<ObjectsComparatorResultSe<T>, T> function) {
+        return resultList.stream()
+                .map(function)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 }

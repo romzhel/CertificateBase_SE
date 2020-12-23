@@ -26,9 +26,11 @@ import static ui_windows.Mode.EDIT;
 import static ui_windows.options_window.profile_editor.SimpleRight.FULL;
 
 public class CertificateEditorWindowActions {
+    public static final String DELETED_MARK = "%%%_";
 
     public static void apply() {
         AnchorPane root = CertificateEditorWindow.getRootAnchorPane();
+        CertificateEditorWindowController controller = CertificateEditorWindow.getLoader().getController();
 
         if (CertificateEditorWindow.getMode() == ADD) {//adding new record
 
@@ -38,6 +40,8 @@ public class CertificateEditorWindowActions {
 
                 Certificate cert = new Certificate(CertificateEditorWindow.getStage());
                 cert.setUserId(Users.getInstance().getCurrentUser().getId());
+
+                treatDeletedMark(controller, cert);
 
                 if (!Certificates.getInstance().hasDoubles(cert)) {//check duplicates
                     if (new CertificatesDB().putData(cert)) {//write to DB, get cert id
@@ -60,6 +64,8 @@ public class CertificateEditorWindowActions {
                 if (Users.getInstance().getCurrentUser().getProfile().getCertificates() != FULL)
                     cert.setUserId(Users.getInstance().getCurrentUser().getId());
 
+                treatDeletedMark(controller, cert);
+
                 if (!Certificates.getInstance().hasDoubles(cert)) {//check duplicates
                     if (new CertificatesDB().updateData(cert)) {//write to DB
                         CertificateContentActions.saveContent(cert);
@@ -73,6 +79,15 @@ public class CertificateEditorWindowActions {
             } else {
                 Dialogs.showMessage("Пустые поля", "Не все поля заполнены");
             }
+        }
+    }
+
+    public static void treatDeletedMark(CertificateEditorWindowController controller, Certificate cert) {
+        if (controller.cbxNotUsed.isSelected()) {
+            cert.setName(cert.getName().replaceAll("^" + DELETED_MARK, ""));
+            cert.setName(DELETED_MARK + cert.getName());
+        } else {
+            cert.setName(cert.getName().replaceAll("^" + DELETED_MARK, ""));
         }
     }
 
@@ -93,12 +108,15 @@ public class CertificateEditorWindowActions {
     }
 
     public static void displayData() {
+        CertificateEditorWindowController controller = CertificateEditorWindow.getLoader().getController();
         Certificate cert = getItem();
         if (cert != null) {
             init();
             AnchorPane root = (AnchorPane) CertificateEditorWindow.getStage().getScene().getRoot();
 
-            Utils.setControlValue(root, "tfCertName", cert.getName());
+            controller.cbxNotUsed.setSelected(cert.getName().startsWith(DELETED_MARK));
+
+            Utils.setControlValue(root, "tfCertName", cert.getName().replaceAll("^" + DELETED_MARK, ""));
             Utils.setControlValue(root, "dpDatePicker", cert.getExpirationDate());
             Utils.setControlValueLVfromAL(root, "lvCountries", Countries.getCombinedNames(cert.getCountries()));
             Utils.setControlValueLVfromAL(root, "lvNorms", RequirementTypes.getInstance().getRequirementsList(cert.getNorms()));

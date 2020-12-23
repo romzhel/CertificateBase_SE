@@ -15,10 +15,10 @@ public class FileImportWindow extends OrdinalWindow<FileImportWindowController> 
 
         controller = loader.getController();
         controller.init(fileImport);
-        stage.showAndWait();
     }
 
     public List<FileImportParameter> getParameters() {
+        stage.showAndWait();
         return controller.getParameters();
     }
 }

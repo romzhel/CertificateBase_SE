@@ -27,13 +27,12 @@ public class FileImportWindowController implements Initializable {
 
     @FXML
     TableView<FileImportParameter> tvFields;
-
     @FXML
     ComboBox<String> cbSheetNames;
-
     @FXML
     CheckBox cbxDelPrevStat;
-
+    @FXML
+    CheckBox cbxResetCost;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -57,6 +56,11 @@ public class FileImportWindowController implements Initializable {
         cbxDelPrevStat.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != oldValue) {
                 fileImport.setDeleteOldStatistic(newValue);
+            }
+        });
+        cbxResetCost.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != oldValue) {
+                fileImport.setResetCostNonFoundItem(newValue);
             }
         });
     }

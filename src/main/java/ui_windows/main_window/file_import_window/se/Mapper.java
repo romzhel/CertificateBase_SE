@@ -15,6 +15,7 @@ import static ui_windows.product.data.DataItem.*;
 public class Mapper {
     private Map<String, DataItem> nameToDataItemMapping;
     private List<FileImportParameter> parameters;
+    private RowData unprovedTitleRow;
 
     public Mapper() {
         initMapping();
@@ -93,6 +94,7 @@ public class Mapper {
             return true;
         }
 
+        unprovedTitleRow = unprovedTitleRow == null ? rowData : unprovedTitleRow;
         return false;
     }
 
@@ -150,5 +152,9 @@ public class Mapper {
 
     public void setParameters(List<FileImportParameter> parameters) {
         this.parameters = parameters;
+    }
+
+    public RowData getUnprovedTitleRow() {
+        return unprovedTitleRow;
     }
 }

@@ -2,12 +2,13 @@ package utils.comparation.se;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ObjectsComparatorResultSe<T> {
     private T item;
     private T item_before;
     private T item_after;
-    private ArrayList<Field> changedFields;
+    private List<Field> changedFields;
 
     public ObjectsComparatorResultSe() {
     }
@@ -18,7 +19,7 @@ public class ObjectsComparatorResultSe<T> {
         this.item_after = object2;
     }
 
-    public ObjectsComparatorResultSe(T object1, T object2, ArrayList<Field> changedFields) {
+    public ObjectsComparatorResultSe(T object1, T object2, List<Field> changedFields) {
         this.item = object1;
         this.item_after = object2;
         this.changedFields = changedFields;
@@ -32,24 +33,24 @@ public class ObjectsComparatorResultSe<T> {
         return item;
     }
 
+    public void setItem(T item) {
+        this.item = item;
+    }
+
     public T getItem_before() {
         return item_before;
     }
 
-    public ArrayList<Field> getChangedFields() {
+    public void setItem_before(T item_before) {
+        this.item_before = item_before;
+    }
+
+    public List<Field> getChangedFields() {
         return changedFields;
     }
 
     public boolean isChanged() {
         return changedFields.size() > 0;
-    }
-
-    public void setItem(T item) {
-        this.item = item;
-    }
-
-    public void setItem_before(T item_before) {
-        this.item_before = item_before;
     }
 
     public T getItem_after() {

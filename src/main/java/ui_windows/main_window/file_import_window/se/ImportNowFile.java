@@ -20,7 +20,7 @@ import static utils.comparation.se.ComparingParameters.WITHOUT_GONE;
 
 public class ImportNowFile {
     private static final Logger logger = LogManager.getLogger(ImportNowFile.class);
-    private ComparisonResult<Product> result;
+    private ProductsComparisonResult result;
     private ProductsComparator comparator;
     private FileImport fileImport;
 
@@ -35,6 +35,8 @@ public class ImportNowFile {
         }
 
         Set<Product> changedItemsForDB = new HashSet<>();
+        ComparingParameters<Product> comparingParameters = null;
+        boolean resetCostNonFoundItems = false;
         for (File file : files) {
             fileImport.getProductsInManualMode(file);
 
@@ -42,22 +44,43 @@ public class ImportNowFile {
                 changedItemsForDB.addAll(Products.getInstance().resetLastImportCodes());
             }
 
-            FileImportParameter[] importParameters = fileImport.getExcelFile().getMapper().getParameters().toArray(new FileImportParameter[]{});
+            resetCostNonFoundItems |= fileImport.isResetCostNonFoundItem();
 
-            comparator.compare(Products.getInstance().getItems(), new DoublesPreprocessor(fileImport.getProductItems()).getTreatedItems(),
-                    new ComparingParameters(new Adapter<Product>().convert(importParameters), new ComparingRulesImportNow(), WITHOUT_GONE));
-            comparator.fixChanges();
+            FileImportParameter[] importParameters = fileImport.getExcelFile().getMapper().getParameters().toArray(new FileImportParameter[]{});
+            comparingParameters = new ComparingParameters<>(new Adapter<Product>().convert(importParameters),
+                    new ComparingRulesImportNow(), WITHOUT_GONE);
+
+            comparator.compare(Products.getInstance().getItems(),
+                    new DoublesPreprocessor(fileImport.getProductItems()).getTreatedItems(), comparingParameters);
         }
+
+        comparator.fixChanges();
 
         result = comparator.getComparisonResult();
 
-        Platform.runLater(() -> Dialogs.showMessage("Результаты импорта",
-                String.format("Новых позиций: %d\nИзменённых позиций: %d\nАктуальных позиций: %d\nНенайденных позиций: %d",
-                        result.getNewItems().size(), result.getChangedItems().size(), result.getNonChangedItems().size(),
-                        result.getGoneItems().size())));
+        //resetting cost of absent items
+//        List<ObjectsComparatorResultSe<Product>> itemsWithOldPriceResult = result.getItemsWithoutNewPriceResult();
+        List<Product> itemsWithOldPrice = new ArrayList<>();
+        if (resetCostNonFoundItems) {
+            List<ObjectsComparatorResultSe<Product>> itemsWithoutNewPriceResult = result.calcItemsWithoutNewPriceResult();
+            for (ObjectsComparatorResultSe<Product> resultItem : itemsWithoutNewPriceResult) {
+                comparingParameters.getComparingRules().addHistoryComment(resultItem);
+            }
+            itemsWithOldPrice.addAll(result.getItemsWithoutNewPrice());
+        }
 
-        if (result.getChangedItems().size() + result.getNewItems().size() > 0) {
+        Platform.runLater(() -> Dialogs.showMessage("Результаты импорта",
+                String.format("Новых позиций: %d\nИзменённых позиций: %d\nАктуальных позиций: %d\nНенайденных позиций: %d\n" +
+                                "Позиций без цены: %d",
+                        result.getNewItems().size(),
+                        result.getChangedItems().size(),
+                        result.getNonChangedItems().size(),
+                        result.getGoneItems().size(),
+                        itemsWithOldPrice.size())));
+
+        if (result.getChangedItems().size() + result.getNewItems().size() + itemsWithOldPrice.size() > 0) {
             changedItemsForDB.addAll(result.getChangedItems());
+            changedItemsForDB.addAll(itemsWithOldPrice);
             Products.getInstance().getItems().addAll(result.getNewItems());
 
             DataSelectorMenu.MENU_DATA_LAST_IMPORT_RESULT.activate();

@@ -44,7 +44,7 @@ public class PriceComparisonMergerResultToExcel {
         String name = String.format("PriceComparisonResult %s vs %s", secondName, firstName).replaceAll(".xlsx", "");
 
         workbook = new XSSFWorkbook();
-        new ExcelCellStyleFactory(workbook);
+        ExcelCellStyleFactory.init(workbook);
         sheet = workbook.createSheet(Utils.getDateTime().replaceAll("\\:", "_").concat("_").concat(name));
 
 //        Platform.runLater(() -> {
@@ -162,7 +162,7 @@ public class PriceComparisonMergerResultToExcel {
 
     private void fillItemDetails(Product item, XSSFRow row) {
         colIndex = 0;
-        new ExcelCellStyleFactory(workbook);
+        ExcelCellStyleFactory.init(workbook);
         for (DataItem dataItem : values) {
             dataItem.fillExcelCell(row.createCell(colIndex++), item, null);
         }

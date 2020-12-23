@@ -36,7 +36,7 @@ public class ArticlesRequestHandler extends ReportToExcelTemplate {
         return instance;
     }
 
-    public void createArticleExistingReport(String text) {
+    public void createArticleExistingReport(String text) throws Exception {
         logger.trace("запуск отчёта наличия позиций с сокращенными артикулами");
         String[] items = text.split("[,;\\s\n]");
         Set<String> requestItems = Arrays.stream(items)
@@ -55,7 +55,7 @@ public class ArticlesRequestHandler extends ReportToExcelTemplate {
 
         logger.trace("выгрузка в Excel");
         workbook = new XSSFWorkbook();
-        new ExcelCellStyleFactory(workbook);
+        ExcelCellStyleFactory.init(workbook);
         XSSFSheet xssfSheet = (XSSFSheet) workbook.createSheet("Отчёт по артикулам");
 
         int rowIndex = 0;
@@ -73,7 +73,9 @@ public class ArticlesRequestHandler extends ReportToExcelTemplate {
         }
         logger.trace("заголовки созданы");
 
+        int groupStart = 0;
         for (Map.Entry<String, Set<Product>> entry : result.entrySet()) {
+            groupStart = rowIndex;
             colIndex = 0;
             xssfRow = xssfSheet.createRow(rowIndex++);
             xssfCell = xssfRow.createCell(colIndex++);
@@ -91,6 +93,9 @@ public class ArticlesRequestHandler extends ReportToExcelTemplate {
                     die.fillExcelCell(xssfCell, product, null);
                 }
             }
+
+//            xssfRow = xssfSheet.createRow(rowIndex++);
+//            xssfSheet.groupRow(groupStart, rowIndex - 1);
         }
         logger.trace("Данные внесены, создание файла Excel");
 

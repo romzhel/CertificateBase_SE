@@ -31,7 +31,7 @@ public class CertificateMatrixReportToExcel {
     public CertificateMatrixReportToExcel(Collection<CertificatesReportResult> productCertificatesReport) throws Exception {
         logger.trace("запуск создания отчёта в Excel");
         workbook = new HSSFWorkbook();
-        new ExcelCellStyleFactory(workbook);
+        ExcelCellStyleFactory.init(workbook);
 
         HYPERLINK_STYLE = getHyperLinkStyle();
         HSSFSheet sheet = (HSSFSheet) workbook.createSheet("Сертификаты");

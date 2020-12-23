@@ -5,10 +5,14 @@
 <AnchorPane prefHeight="650.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui_windows.main_window.file_import_window.se.FileImportWindowController">
    <children>
       <CheckBox fx:id="cbxDelPrevStat" layoutX="12.0" layoutY="23.0" mnemonicParsing="false" text="Удалить статистику последнего импорта" />
-      <TableView fx:id="tvFields" layoutX="14.0" layoutY="52.0" prefHeight="598.0" prefWidth="790.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="52.0" />
+      <TableView fx:id="tvFields" layoutX="14.0" layoutY="78.0" prefHeight="522.0" prefWidth="790.0"
+                 AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
+                 AnchorPane.topAnchor="78.0"/>
       <ComboBox fx:id="cbSheetNames" layoutX="447.0" layoutY="19.0" prefHeight="25.0" prefWidth="348.0" />
       <Label layoutX="415.0" layoutY="23.0" text="Лист" />
       <Button layoutX="166.0" layoutY="620.0" mnemonicParsing="false" onAction="#startImport" prefHeight="25.0" prefWidth="150.0" text="Импорт" />
       <Button layoutX="494.0" layoutY="620.0" mnemonicParsing="false" onAction="#cancelImport" prefHeight="25.0" prefWidth="150.0" text="Отмена" />
+      <CheckBox fx:id="cbxResetCost" layoutX="12.0" layoutY="50.0" mnemonicParsing="false"
+                text="Сбросить стоимость ненайденных позиций"/>
    </children>
 </AnchorPane>

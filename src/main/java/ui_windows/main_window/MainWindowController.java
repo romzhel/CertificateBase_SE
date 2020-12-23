@@ -111,7 +111,7 @@ public class MainWindowController implements Initializable {
                     Utils.openFile(importNowFile.getReportFile(null));
                 }
             } catch (RuntimeException re) {
-                logger.warn("{}", re.getMessage());
+                logger.warn("{}", re.getMessage(), re);
             } catch (Exception e) {
                 logger.error("ошибка импорта NOW {}", e.getMessage(), e);
             } finally {

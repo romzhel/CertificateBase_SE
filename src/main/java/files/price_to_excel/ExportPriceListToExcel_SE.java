@@ -93,7 +93,7 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
     }
 
     private void fillDoc() {
-        new ExcelCellStyleFactory(excelDoc);
+        ExcelCellStyleFactory.init(excelDoc);
 
         int index = 0;
         String sheetName;

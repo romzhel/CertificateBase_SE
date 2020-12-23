@@ -20,7 +20,7 @@ public class ReportToExcel extends ReportToExcelTemplate {
         ExecutionIndicator.getInstance().start();
         this.reportFile = reportFile;
         workbook = new XSSFWorkbook();
-        new ExcelCellStyleFactory(workbook);
+        ExcelCellStyleFactory.init(workbook);
         XSSFSheet xssfSheet = (XSSFSheet) workbook.createSheet("Отчёт");
 
         int rowIndex = 0;

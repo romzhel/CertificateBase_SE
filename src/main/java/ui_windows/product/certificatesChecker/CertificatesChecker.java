@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui_windows.options_window.certificates_editor.Certificate;
+import ui_windows.options_window.certificates_editor.CertificateEditorWindowActions;
 import ui_windows.options_window.certificates_editor.Certificates;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContent;
@@ -110,6 +111,10 @@ public class CertificatesChecker {
                 while (prodName.length() >= calcName.length()) {
                     for (CertificateContent cc : CertificatesContent.getInstance().getMapContent().getOrDefault(prodName, Collections.emptySet())) {
                         Certificate cert = Certificates.getInstance().getCertificateByID(cc.getCertId());
+
+                        if (cert.getName().startsWith(CertificateEditorWindowActions.DELETED_MARK)) {
+                            continue;
+                        }
 
                         if (cert.isFullNameMatch() && prodName.length() < originalLength) {
                             continue;

@@ -111,7 +111,7 @@ public enum DataItem {
         }
 
         public Object getValue(Product product) {
-            return product.getLocalPrice();
+            return PriceUtils.roundCost(product.getLocalPrice());
         }
     },
     DATA_LOCAL_PRICE_LIST(8, "Локальный прайс (В прайс-листе)", null) {

@@ -1,6 +1,8 @@
 package ui_windows.main_window.file_import_window.se;
 
 import files.DataSize;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -14,10 +16,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ExcelFile {
+    public static final Logger logger = LogManager.getLogger(ExcelFile.class);
     private Workbook workbook;
     private Sheet sheet;
     private Mapper mapper;
@@ -73,12 +75,12 @@ public class ExcelFile {
 
         } while (!isTitleRowFound && rowIndex < dataSize.getRows());
 
-        if (!isTitleRowFound) {
-            System.out.println("titles weren't found, cancelling...");
-            return null;
+        if (!isTitleRowFound) {//todo если не находит автоматически, то после ручного выбора не забирает данные
+            logger.debug("titles row wasn't found, using first row...");
+            mapper.createParameters(mapper.getUnprovedTitleRow());
         }
 
-        System.out.println("titles " + Arrays.toString(titles.getAll()));
+        logger.debug("titles: {}", titles);
 
         return mapper.getParameters();
     }
@@ -107,12 +109,12 @@ public class ExcelFile {
         }
         try {
             workbook.close();
-            System.out.println("workbook closed");
+            logger.trace("workbook closed");
         } catch (IOException e) {
-            System.out.println("workbook not closed");
+            logger.warn("workbook wasn't closed, error: {}", e.getMessage());
         }
-        System.out.println("excelTableValues rows: " + dataSize.getRows());
-        System.out.println("product items: " + products.size());
+        logger.trace("excelTableValues rows: {}", dataSize.getRows());
+        logger.trace("product items: {}", products.size());
 
         return products;
     }
@@ -126,7 +128,7 @@ public class ExcelFile {
     }
 
     private DataSize getSheetDataSize() {
-        System.out.println("reading " + file.getAbsolutePath() + " sheet " + sheet.getSheetName());
+        logger.trace("reading sheet '{} / {}'", file.getAbsolutePath(), sheet.getSheetName());
         Row row;
 
         int colWithData = 0;
@@ -143,7 +145,7 @@ public class ExcelFile {
             }
         }
 
-        System.out.println("размер данных " + (colWithData + 1) + " x " + rowWithData);
+        logger.trace("размер данных: {} x {}", (colWithData + 1), rowWithData);
 
         return new DataSize(colWithData + 1, rowWithData);
     }

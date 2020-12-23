@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class FileImport {
     private ExcelFile excelFile;
     private boolean deleteOldStatistic;
+    private boolean resetCostNonFoundItem;
     private ArrayList<Product> productItems;
 
     public FileImport() {
@@ -32,6 +33,7 @@ public class FileImport {
     public ArrayList<Product> getProductsInManualMode(File file) {
         excelFile = new ExcelFile(file);
         deleteOldStatistic = false;
+        resetCostNonFoundItem = false;
         if (excelFile.open()) {
             AtomicReference<List<FileImportParameter>> parameters = new AtomicReference<>();
             if (!Thread.currentThread().getName().equals("JavaFX Application Thread")) {
@@ -76,5 +78,13 @@ public class FileImport {
 
     public ArrayList<Product> getProductItems() {
         return productItems;
+    }
+
+    public boolean isResetCostNonFoundItem() {
+        return resetCostNonFoundItem;
+    }
+
+    public void setResetCostNonFoundItem(boolean resetCostNonFoundItem) {
+        this.resetCostNonFoundItem = resetCostNonFoundItem;
     }
 }

@@ -16,20 +16,20 @@ import java.util.regex.Pattern;
 
 public class ProductsComparator implements Comparator<Product> {
     public static final Logger logger = LogManager.getLogger(ProductsComparator.class);
-    private ComparingParameters comparingParameters;
-    private ComparisonResult<Product> comparisonResult;
+    private ComparingParameters<Product> comparingParameters;
+    private ProductsComparisonResult comparisonResult;
     private ChangesFixer<Product> changesFixer;
     private Callback<Param<Product>, Param<Product>> customComparingRule;
 
     public ProductsComparator() {
-        comparisonResult = new ComparisonResult<>();
+        comparisonResult = new ProductsComparisonResult();
     }
 
-    public ComparisonResult<Product> compare(Product object1, Product object2, ComparingParameters parameters) {
+    public ComparisonResult<Product> compare(Product object1, Product object2, ComparingParameters<Product> parameters) {
         return compare(Collections.singleton(object1), Collections.singleton(object2), parameters);
     }
 
-    public ComparisonResult<Product> compare(Collection<Product> items1, Collection<Product> items2, ComparingParameters parameters) {
+    public ComparisonResult<Product> compare(Collection<Product> items1, Collection<Product> items2, ComparingParameters<Product> parameters) {
         long t0 = System.currentTimeMillis();
         ObjectsComparatorSe<Product> objectsComparator = new ObjectsComparatorSe<>();
         comparingParameters = parameters;
@@ -43,6 +43,12 @@ public class ProductsComparator implements Comparator<Product> {
         Product item2;
         String material;
         for (Product item1 : items1) {
+
+            if (item1.getMaterial().equals("QRC1A2.1341C27")) {
+                System.out.println();
+            }
+
+
             material = parameters.getComparingRules().treatMaterial(item1.getMaterial());
             item2 = changedItems.get(material);
 
@@ -67,7 +73,7 @@ public class ProductsComparator implements Comparator<Product> {
         }
 
         for (Product item : goneItems.values()) {
-            comparisonResult.addGoneItemResult(new ObjectsComparatorResultSe<>(item, null, parameters.getFields()));
+            comparisonResult.addGoneItemResult(new ObjectsComparatorResultSe<>(item, null, Collections.emptyList()));
         }
 
         logger.trace("результаты сравнения готовы, прошло времени {}", System.currentTimeMillis() - t0);
@@ -138,7 +144,7 @@ public class ProductsComparator implements Comparator<Product> {
         return "not released yet";
     }
 
-    public ComparisonResult<Product> getComparisonResult() {
+    public ProductsComparisonResult getComparisonResult() {
         return comparisonResult;
     }
 
