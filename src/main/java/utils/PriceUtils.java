@@ -15,4 +15,8 @@ public class PriceUtils {
 
         return res.doubleValue();
     }
+
+    public static double getFromString(String textValue) throws Exception {
+        return new BigDecimal(textValue).setScale(4, RoundingMode.HALF_UP).doubleValue();
+    }
 }

@@ -173,7 +173,7 @@ public class Product implements Cloneable {
 
         try {
             text = text.replaceAll("\\,", ".");
-            return Double.parseDouble(text);
+            return PriceUtils.getFromString(text);
         } catch (Exception e) {
             System.out.println(article + ", bad double: " + text);
             return 0.0;
