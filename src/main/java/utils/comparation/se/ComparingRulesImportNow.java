@@ -1,16 +1,12 @@
 package utils.comparation.se;
 
 import javafx.util.Callback;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
 import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
 import utils.Utils;
 
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 import static ui_windows.product.data.DataItem.*;
 

@@ -1,8 +1,12 @@
 package ui_windows.main_window.file_import_window.te;
 
+<<<<<<< HEAD
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+=======
+import javafx.beans.property.ObjectProperty;
+>>>>>>> 3323325 (- TODO // запись в базу, предусмотреть возможность наличия одинаковых заголовков в файле при мипорте)
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;

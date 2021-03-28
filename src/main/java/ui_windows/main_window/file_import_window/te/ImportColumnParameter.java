@@ -32,4 +32,14 @@ public class ImportColumnParameter {
     public ImportColumnParameter(DataItem dataItem) {
         this.dataItem = dataItem;
     }
+
+    @Override
+    public String toString() {
+        return "ImportColumnParameter{" +
+                "columnTitle='" + columnTitle + '\'' +
+                ", dataItem=" + dataItem +
+                ", columnIndex=" + columnIndex +
+                ", options=" + options.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().get())) +
+                '}';
+
 }

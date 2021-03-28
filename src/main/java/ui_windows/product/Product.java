@@ -156,7 +156,6 @@ public class Product implements Cloneable {
         lastChangeDate = rs.getString("last_change_date");
         fileName = rs.getString("file_name");
         comments = rs.getString("comments");
-        commentsPrice = rs.getString("comments_price") == null ? "" : rs.getString("comments_price");
         replacement = rs.getString("replacement");
 
         type_id = rs.getInt("type_id");

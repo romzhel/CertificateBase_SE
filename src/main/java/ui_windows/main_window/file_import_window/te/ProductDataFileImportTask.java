@@ -14,6 +14,7 @@ import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.file_import_window.te.importer.ExcelFileImporter;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
+import ui_windows.product.data.DataItem;
 import utils.Utils;
 import utils.comparation.se.*;
 

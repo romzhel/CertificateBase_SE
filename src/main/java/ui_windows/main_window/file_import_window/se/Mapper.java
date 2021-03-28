@@ -78,7 +78,7 @@ public class Mapper {
 
         for (String key : nameToDataItemMapping.keySet()) {
             if (title.toLowerCase().startsWith(key.toLowerCase())) {
-                return nameToDataItemMapping.getOrDefault(key, DATA_EMPTY);
+                return nameToDataItemMapping.get(key);
             }
         }
 
