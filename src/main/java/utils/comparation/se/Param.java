@@ -1,9 +1,16 @@
 package utils.comparation.se;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.lang.reflect.Field;
 
+@Getter
+@ToString
 public class Param<T> {
     private T object1;
+    @Setter
     private T object2;
     private Field field;
 
@@ -11,21 +18,5 @@ public class Param<T> {
         this.object1 = object1;
         this.object2 = object2;
         this.field = field;
-    }
-
-    public T getObject1() {
-        return object1;
-    }
-
-    public T getObject2() {
-        return object2;
-    }
-
-    public Field getField() {
-        return field;
-    }
-
-    public void setObject2 (T object2) {
-        this.object2 = object2;
     }
 }

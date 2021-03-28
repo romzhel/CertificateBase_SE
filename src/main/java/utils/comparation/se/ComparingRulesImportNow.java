@@ -1,16 +1,19 @@
 package utils.comparation.se;
 
 import javafx.util.Callback;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
 import utils.Utils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.List;
 
 import static ui_windows.product.data.DataItem.*;
 
 public class ComparingRulesImportNow extends ProductComparingRulesTemplate implements ComparingRules<Product> {
+    private static final Logger logger = LogManager.getLogger(ComparingRulesImportNow.class);
 
     public ComparingRulesImportNow() {
     }
@@ -31,7 +34,13 @@ public class ComparingRulesImportNow extends ProductComparingRulesTemplate imple
 
         try {
             params.getField().setAccessible(true);
-            String value2 = params.getField().get(params.getObject2()).toString().trim();
+            Object valueObject = params.getField().get(params.getObject2());
+
+            if (valueObject == null) {
+                return true;
+            }
+
+            String value2 = valueObject.toString().trim();
 
             boolean isNotDataTypeProperty = DataItem.getDataItemByField(params.getField()) != DATA_TYPE;
             boolean isNotNull = params.getObject2() != null;
@@ -44,8 +53,8 @@ public class ComparingRulesImportNow extends ProductComparingRulesTemplate imple
 
                 return true;
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.error("skip checking params {}", params, e);
         }
         return false;
     }
@@ -63,38 +72,38 @@ public class ComparingRulesImportNow extends ProductComparingRulesTemplate imple
 
         } else {//changed
             String impCodes = "";
+            consoleComment.append(result.getItem().getArticle()).append(" (").append(result.getItem().getMaterial()).append(")");
             for (Field field : result.getChangedFields()) {
                 try {
                     field.setAccessible(true);
-                    String infoPart = String.format(" %s: %s -> %s, ", field.getName(),
+                    String infoPart = String.format(" %s: %s -> %s,", field.getName(),
                             field.get(result.getItem_before()), field.get(result.getItem_after()));
                     comment = comment.concat(infoPart);
-                    consoleComment.append(result.getItem().getArticle()).append(" (").
-                            append(result.getItem().getMaterial()).append(")").append(infoPart);
+                    consoleComment.append(infoPart);
                     impCodes = impCodes.concat(field.getName()).concat(",");
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    logger.error("error history comment applying for field '{}' ", field.getName(), e);
                 }
             }
 
-            result.getItem().addHistory(comment.concat("file"));
+            result.getItem().addHistory(comment.concat(" file"));
             result.getItem().addLastImportCodes(impCodes);
 
-            System.out.println(consoleComment.append("file").toString());
+            logger.debug(consoleComment.append(" file").toString());
         }
     }
 
     @Override
-    public boolean addNewItem(Product item, ArrayList<Field> fields) {
+    public boolean addNewItem(Product item, List<Field> fields) {
         if (!fields.contains(DATA_ORDER_NUMBER.getField()) || !fields.contains(DATA_ARTICLE.getField())) {
-            System.out.println(String.format("item %s wasn't added, it haven't main fields", item.toString()));
+            logger.info("item '{}' wasn't added, it haven't main fields", item.toString());
             return false;
         }
 
         String material = item.getMaterial();
         String article = item.getArticle();
         if (material == null || material.isEmpty() || article == null || article.isEmpty()) {
-            System.out.println(String.format("item %s wasn't added, it haven't main values", item.toString()));
+            logger.info("item '{}' wasn't added, it haven't values of main fields", item.toString());
             return false;
         }
 

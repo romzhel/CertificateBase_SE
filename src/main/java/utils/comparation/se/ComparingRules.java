@@ -1,7 +1,7 @@
 package utils.comparation.se;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.List;
 
 public interface ComparingRules<T> {
     boolean isTheSameItem(Param<T> params);
@@ -10,6 +10,8 @@ public interface ComparingRules<T> {
     String treatMaterial(String material);
 
     void addHistoryComment(ObjectsComparatorResultSe<T> result);
-    boolean addNewItem(T item, ArrayList<Field> fields);
+
+    boolean addNewItem(T item, List<Field> fields);
+
     Param<T> applyCustomRule(Param<T> params);
 }

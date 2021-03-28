@@ -1,0 +1,26 @@
+.price-box .toggle-button {
+    -fx-background-color: null;
+    -fx-background-image: url("../images/hide_green.png");
+}
+
+.price-box .toggle-button:selected {
+    -fx-background-image: url("../images/hide_red.png");
+}
+
+.price-box .combined {
+    -fx-background-image: url("../images/hide_combine.png");
+}
+
+.protected-box .toggle-button {
+    -fx-background-color: null;
+    -fx-background-image: url("../images/protected_green.png");
+    -fx-background-size: contain;
+}
+
+.protected-box .toggle-button:selected {
+    -fx-background-image: url("../images/protected_red.png");
+}
+
+.protected-box .combined {
+    -fx-background-image: url("../images/protected_combine.png");
+}

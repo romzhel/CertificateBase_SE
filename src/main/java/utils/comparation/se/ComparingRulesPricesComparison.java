@@ -4,7 +4,7 @@ import javafx.util.Callback;
 import ui_windows.product.Product;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.List;
 
 public class ComparingRulesPricesComparison extends ProductComparingRulesTemplate implements ComparingRules<Product> {
 
@@ -16,7 +16,7 @@ public class ComparingRulesPricesComparison extends ProductComparingRulesTemplat
     }
 
     @Override
-    public boolean addNewItem(Product item, ArrayList<Field> fields) {
+    public boolean addNewItem(Product item, List<Field> fields) {
         return true;
     }
 }

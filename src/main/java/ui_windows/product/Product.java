@@ -1,7 +1,6 @@
 package ui_windows.product;
 
-import ui_windows.main_window.file_import_window.RowData;
-import ui_windows.main_window.file_import_window.se.Mapper;
+import lombok.NoArgsConstructor;
 import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
@@ -21,8 +20,11 @@ import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+@NoArgsConstructor
 public class Product implements Cloneable {
     public final String NO_DATA = "нет данных";
 
@@ -63,8 +65,7 @@ public class Product implements Cloneable {
     private Double weight;
     private Double localPrice = 0.0;
 
-    public Product() {
-    }
+    private final Set<DataItem> protectedData = new HashSet<>();
 
     public Product(ProductEditorWindowController pewc) {
         id = 0;
@@ -90,11 +91,10 @@ public class Product implements Cloneable {
 //        history = pewc.lHistory.toString();///!!!!!! check
         lastChangeDate = "";
         comments = pewc.taComments.getText();
-        commentsPrice = pewc.taCommentsPrice.getText();
         replacement = pewc.tfReplacement.getText();
     }
 
-    public Product(RowData rowData, Mapper mapper) {
+    /*public Product(RowData rowData, Mapper mapper) {
         String cellValue;
         id = 0;
         material = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_ORDER_NUMBER)).replaceAll("\\,", ".");
@@ -125,8 +125,9 @@ public class Product implements Cloneable {
         } catch (Exception e) {
             warranty = 0;
         }
-        commentsPrice = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_COMMENT_PRICE));
     }
+        commentsPrice = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_COMMENT_PRICE));
+    }*/
 
     public Product(ResultSet rs) throws SQLException {
         id = rs.getInt("id");
@@ -169,7 +170,7 @@ public class Product implements Cloneable {
         localPrice = rs.getDouble("local_price");
     }
 
-    private double getDoubleFromString(String text) {
+    /*private double getDoubleFromString(String text) {
         if (text == null || text.isEmpty() || text.equals("По запросу")) return 0.0;
 
         boolean textHasDevider = text.matches("\\d+\\.+\\d+[.,]+\\d+");
@@ -182,7 +183,7 @@ public class Product implements Cloneable {
             System.out.println(article + ", bad double: " + text);
             return 0.0;
         }
-    }
+    }*/
 
     public void displayInEditorWindow(ProductEditorWindowController pewc) {
         pewc.tfMaterial.setText(material);
@@ -581,11 +582,11 @@ public class Product implements Cloneable {
         return leadTime;
     }
 
-    public double getWeight() {
+    public Double getWeight() {
         return weight;
     }
 
-    public double getLocalPrice() {
+    public Double getLocalPrice() {
         return localPrice;
     }
 
@@ -623,5 +624,9 @@ public class Product implements Cloneable {
 
     public void setWarranty(Integer warranty) {
         this.warranty = warranty;
+    }
+
+    public Set<DataItem> getProtectedData() {
+        return protectedData;
     }
 }

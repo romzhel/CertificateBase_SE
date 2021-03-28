@@ -25,6 +25,7 @@ public abstract class OrdinalWindow<T> {
     public OrdinalWindow(Stage parentStage, Modality modality, Mode mode, String resourceName, String title) {
         logger.trace("загрузка формы '{}'", resourceName);
         this.mode = mode;
+
         loader = new FXMLLoader(getClass().getResource(resourceName));
         try {
             rootAnchorPane = loader.load();
@@ -43,7 +44,7 @@ public abstract class OrdinalWindow<T> {
         controller = loader.getController();
 
         stage.setOnCloseRequest(event -> {
-            System.out.println("closing");
+            logger.trace("закрытие формы '{}'", resourceName);
         });
     }
 

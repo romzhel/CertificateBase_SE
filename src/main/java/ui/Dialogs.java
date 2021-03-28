@@ -11,10 +11,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -111,6 +108,17 @@ public class Dialogs {
         } else {
             return selectAnyFile(stage, windowTitle, fileFilter, fileName);
         }
+    }
+
+    public List<File> selectFiles(Stage stage, String windowTitle, FileChooser.ExtensionFilter fileFilter) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(windowTitle);
+        if (fileFilter != null) {
+            fileChooser.getExtensionFilters().add(fileFilter);
+        }
+        List<File> files = fileChooser.showOpenMultipleDialog(stage);
+
+        return files != null ? files : Collections.emptyList();
     }
 
     public File selectFolder(Stage stage, String title) {
