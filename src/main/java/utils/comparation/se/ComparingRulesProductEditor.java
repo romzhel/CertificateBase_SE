@@ -3,7 +3,7 @@ package utils.comparation.se;
 import ui_windows.product.Product;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.List;
 
 public class ComparingRulesProductEditor extends ProductComparingRulesTemplate implements ComparingRules<Product> {
 
@@ -23,7 +23,7 @@ public class ComparingRulesProductEditor extends ProductComparingRulesTemplate i
     }
 
     @Override
-    public boolean addNewItem(Product item, ArrayList<Field> fields) {
+    public boolean addNewItem(Product item, List<Field> fields) {
         return false;
     }
 }

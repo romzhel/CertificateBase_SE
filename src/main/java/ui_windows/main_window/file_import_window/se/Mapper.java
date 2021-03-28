@@ -66,12 +66,20 @@ public class Mapper {
     }
 
     public DataItem getDataItemByTitle(String title) {
-        if (title == null || title.trim().isEmpty()) return DATA_EMPTY;
+        if (title == null || title.trim().isEmpty()) {
+            return DATA_EMPTY;
+        }
+
+        if (nameToDataItemMapping.containsKey(title)) {
+            return nameToDataItemMapping.get(title);
+        }
+
         for (String key : nameToDataItemMapping.keySet()) {
             if (title.toLowerCase().startsWith(key.toLowerCase())) {
-                return nameToDataItemMapping.getOrDefault(key, DATA_EMPTY);
+                return nameToDataItemMapping.get(key);
             }
         }
+
         return DATA_EMPTY;
     }
 

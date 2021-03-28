@@ -13,7 +13,6 @@ public class FileImportWindow extends OrdinalWindow<FileImportWindowController> 
         super(MainWindow.getMainStage(), Modality.APPLICATION_MODAL, null, "/fxml/fileImportWindow.fxml",
                 "Назначение столбцов");
 
-        controller = loader.getController();
         controller.init(fileImport);
     }
 

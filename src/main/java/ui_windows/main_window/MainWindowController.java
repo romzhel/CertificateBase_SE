@@ -1,6 +1,8 @@
 package ui_windows.main_window;
 
-import files.Folders;
+import core.ThreadManager;
+import exceptions.DataNotSelectedException;
+import exceptions.OperationCancelledByUserException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -11,7 +13,9 @@ import scripts.PriceGenerationScript;
 import ui.Dialogs;
 import ui_windows.ExecutionIndicator;
 import ui_windows.login_window.LoginWindow;
-import ui_windows.main_window.file_import_window.se.ImportNowFile;
+import ui_windows.main_window.file_import_window.te.FilesImportParameters;
+import ui_windows.main_window.file_import_window.te.FilesSelectionWindow;
+import ui_windows.main_window.file_import_window.te.ProductDataFileImportTask;
 import ui_windows.main_window.filter_window_se.FilterWindow_SE;
 import ui_windows.options_window.OptionsWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
@@ -91,36 +95,21 @@ public class MainWindowController implements Initializable {
     }
 
     public void importFromNow() {
-        Thread nowImportThread = new Thread(() -> {
-            try {
-                ExecutionIndicator.getInstance().start();
-                boolean isFullPackage = Dialogs.confirmTS("Формирование полного пакета отчётов",
-                        "Желаете сформировать полный пакет отчётов?");
+        FilesImportParameters filesImportParameters = new FilesSelectionWindow().getDataForImport();
 
-                ImportNowFile importNowFile = new ImportNowFile();
-                importNowFile.treat(new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
-                        "Выбор файла с выгрузкой", Dialogs.EXCEL_FILES, null));
-
-                if (isFullPackage) {
-                    File importReportFile = Folders.getInstance().getTempFolder().resolve(
-                            "import_report_" + Utils.getDateTimeForFileName() + ".xlsx").toFile();
-                    importReportFile = importNowFile.getReportFile(importReportFile);
-                    new PriceGenerationScript().run(0, PriceGenerationScript.REPORTS_FOR_CHECK);
-                    Utils.openFile(importReportFile.getParentFile());
-                } else {
-                    Utils.openFile(importNowFile.getReportFile(null));
-                }
-            } catch (RuntimeException re) {
-                logger.warn("{}", re.getMessage(), re);
-            } catch (Exception e) {
-                logger.error("ошибка импорта NOW {}", e.getMessage(), e);
-            } finally {
-                ExecutionIndicator.getInstance().stop();
-            }
-        });
-        nowImportThread.setDaemon(true);
-        nowImportThread.setName("NOW import thread");
-        nowImportThread.start();
+        ThreadManager.startNewThread("NOW import thread",
+                ExecutionIndicator.getInstance().wrapTask(new ProductDataFileImportTask(filesImportParameters)),
+                throwable -> {
+                    if (throwable instanceof OperationCancelledByUserException) {
+                        logger.info("Пользователь отменил операцию импорта");
+                    } else if (throwable instanceof DataNotSelectedException) {
+                        logger.info("Не выбраны файлы для импорта, {}", filesImportParameters);
+                    } else {
+                        logger.error("Произошла ошибка: {}", throwable.getMessage(), throwable);
+                    }
+                    ThreadManager.executeFxTaskSafe(() -> Dialogs.showMessage("Сведения о выполнении", throwable.getMessage()));
+                    return null;
+                });
     }
 
     public void comparePriceLists() {
