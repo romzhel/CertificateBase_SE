@@ -13,6 +13,7 @@ import ui_windows.product.data.DataItem;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class ProductsComparator implements Comparator<Product> {
     public static final Logger logger = LogManager.getLogger(ProductsComparator.class);
@@ -38,17 +39,11 @@ public class ProductsComparator implements Comparator<Product> {
 //        Map<String, Product> goneItems = parameters.isCheckGoneItems() ? collectionToMap(items1, parameters) : new HashMap<>();
         Map<String, Product> changedItems = collectionToMap(items2, parameters);
         Map<String, Product> nonChangedItems = new HashMap<>();
-        logger.trace("подготовка к сравнению завершена, прошло времени {}", System.currentTimeMillis() - t0);
+        logger.trace("подготовка к сравнению завершена, прошло времени {} мс", System.currentTimeMillis() - t0);
 
         Product item2;
         String material;
         for (Product item1 : items1) {
-
-            if (item1.getMaterial().equals("410355768")) {
-                System.out.println();
-            }
-
-
             material = parameters.getComparingRules().treatMaterial(item1.getMaterial());
             item2 = changedItems.get(material);
 
@@ -64,7 +59,7 @@ public class ProductsComparator implements Comparator<Product> {
                 changedItems.remove(material);
             }
         }
-        logger.trace("сравнение завершено, прошло времени {}", System.currentTimeMillis() - t0);
+        logger.trace("сравнение завершено, прошло времени {} мс", System.currentTimeMillis() - t0);
 
         for (Product item : changedItems.values()) {
             if (parameters.getComparingRules().addNewItem(item, parameters.getFields())) {
@@ -91,7 +86,7 @@ public class ProductsComparator implements Comparator<Product> {
         Set<String> lgbkNames = new TreeSet<>(String::compareToIgnoreCase);
         for (ObjectsComparatorResultSe<Product> result : comparisonResult.getChangedItemsResult()) {
             if (changesFixer.fixChanges(result)) {
-                comparingParameters.getComparingRules().addHistoryComment(result);//TODO при импорте 3-х файлов история дублируется
+                comparingParameters.getComparingRules().addHistoryComment(result);
                 if (result.getChangedFields().contains(DataItem.DATA_LGBK.getField()) || result.getChangedFields().contains(DataItem.DATA_HIERARCHY.getField())) {
                     ProductLgbk plOld = ProductLgbks.getInstance().getLgbkByProduct(result.getItem_before());
                     ProductLgbk plNew = ProductLgbks.getInstance().getLgbkByProduct(result.getItem_after());
@@ -148,9 +143,8 @@ public class ProductsComparator implements Comparator<Product> {
         return comparisonResult;
     }
 
-    private Map<String, Product> collectionToMap(Collection<Product> items, ComparingParameters parameters) {
-        Map<String, Product> map = new HashMap<>(20000);
-        items.forEach(product -> map.put(parameters.getComparingRules().treatMaterial(product.getMaterial()), product));
-        return map;
+    private Map<String, Product> collectionToMap(Collection<Product> items, ComparingParameters<?> parameters) {
+        return items.stream()
+                .collect(Collectors.toMap(item -> parameters.getComparingRules().treatMaterial(item.getMaterial()), item -> item));
     }
 }

@@ -9,9 +9,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
+import ui.components.PriceBox;
+import ui.components.ProtectedBox;
 import ui_windows.main_window.filter_window_se.Filter_SE;
 import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
 import ui_windows.options_window.families_editor.ProductFamilies;
@@ -23,7 +26,6 @@ import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.product.certificatesChecker.CheckParameters;
 import ui_windows.product.productEditorWindow.configNormsWindow.ConfigNormsWindow;
-import utils.PriceBox;
 import utils.Utils;
 
 import java.io.File;
@@ -38,7 +40,9 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static core.SharedData.SHD_SELECTED_PRODUCTS;
+import static ui_windows.product.data.DataItem.*;
 
+@Getter
 public class ProductEditorWindowController implements Initializable {
     private static final Logger logger = LogManager.getLogger(ProductEditorWindowController.class);
     @FXML
@@ -117,6 +121,7 @@ public class ProductEditorWindowController implements Initializable {
     private CertificateVerificationTable certificateVerificationTable;
     private ComboBoxEqTypeSelector comboBoxEqTypeSelector;
     private PriceBox priceBox;
+    private ProtectedBox minOrderBox, packetSizeBox, leadTimeBox, weightBox, descriptionBox, descriptionEnBox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -124,6 +129,7 @@ public class ProductEditorWindowController implements Initializable {
         if (SHD_SELECTED_PRODUCTS.getData() instanceof ObservableList) {
             editedItems = SHD_SELECTED_PRODUCTS.getData();
         } else {
+            logger.error("Ошибка получения выбранных элементов SHD_SELECTED_PRODUCTS");
             Dialogs.showMessage("Подробные сведения", "Ошибка определения открываемых элементов");
         }
 
@@ -153,6 +159,13 @@ public class ProductEditorWindowController implements Initializable {
         });
 
         initFamilySelector();
+
+        minOrderBox = new ProtectedBox(tfMinOrder, DATA_MIN_ORDER);
+        packetSizeBox = new ProtectedBox(tfPacketSize, DATA_PACKSIZE);
+        leadTimeBox = new ProtectedBox(tfLeadTime, DATA_LEAD_TIME_EU);
+        weightBox = new ProtectedBox(tfWeight, DATA_WEIGHT);
+        descriptionBox = new ProtectedBox(taDescription, DATA_DESCRIPTION_RU);
+        descriptionEnBox = new ProtectedBox(taDescriptionEn, DATA_DESCRIPTION_EN);
     }
 
     private void initFamilySelector() {
@@ -230,21 +243,5 @@ public class ProductEditorWindowController implements Initializable {
     public void configNorms() {
         logger.info("Opening norms window editor");
         ConfigNormsWindow cnw = new ConfigNormsWindow(ProductEditorWindow.getStage(), multiEditor, certificateVerificationTable);
-    }
-
-    public MultiEditor getMultiEditor() {
-        return multiEditor;
-    }
-
-    public void setMultiEditor(MultiEditor multiEditor) {
-        this.multiEditor = multiEditor;
-    }
-
-    public CertificateVerificationTable getCertificateVerificationTable() {
-        return certificateVerificationTable;
-    }
-
-    public PriceBox getPriceBox() {
-        return priceBox;
     }
 }

@@ -2,10 +2,10 @@ package ui_windows.main_window.filter_window_se;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import ui.components.SearchBox;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.data.DataItem;
-import utils.SearchBox;
 
 import java.util.Arrays;
 import java.util.HashSet;

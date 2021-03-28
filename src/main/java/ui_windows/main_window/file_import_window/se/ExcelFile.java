@@ -102,7 +102,7 @@ public class ExcelFile {
 
             data = new RowData(row, dataSize.getCols());
             if (mapper.isDataRow(data)) {
-                products.add(new Product(data, mapper));
+//                products.add(new Product(data, mapper));
             }
 //            else System.out.println("no data in " + row.getCell(5).getStringCellValue());
 
