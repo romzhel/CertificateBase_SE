@@ -7,27 +7,32 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
 import ui_windows.main_window.file_import_window.te.mapper.ExcelFileRecordToProductMapper;
 import ui_windows.product.Product;
+import utils.DoublesPreprocessor;
 
 import java.io.File;
 import java.util.*;
 
 public class ExcelFileImporter extends AbstractFileImporter {
+    //    private static final Logger logger = LogManager.getLogger(ExcelFileImporter.class);
     private Workbook workbook;
 
     @Override
     public Set<Product> getProducts(String sheetName, List<ImportColumnParameter> params) throws RuntimeException {
         ExcelFileRecordToProductMapper mapper = new ExcelFileRecordToProductMapper();
         Sheet sheet = workbook.getSheet(sheetName);
-        Set<Product> result = new HashSet<>();
+        List<Product> result = new ArrayList<>();
 
         Row row;
-        for (int rowIndex = 1; rowIndex < sheet.getLastRowNum(); rowIndex++) {
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
             if ((row = sheet.getRow(rowIndex)) != null) {
-                result.add(mapper.getProductFromFileRecord(row, params));
+                Product newItem = mapper.getProductFromFileRecord(row, params);
+                result.add(newItem);
             }
         }
 
-        return result;
+        List<Product> singleItems = new DoublesPreprocessor().getTreatedItems(result);
+
+        return new HashSet<>(singleItems);
     }
 
     @Override

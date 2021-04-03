@@ -5,8 +5,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import ui_windows.product.data.DataItem;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -73,7 +71,7 @@ public class FileColumnMappingService {
         }).collect(Collectors.toMap(data -> ((String) data[0]).toLowerCase(), data -> (DataItem) data[1]));
     }
 
-    public Map<String, DataItem> getMappingByColumnTitles(List<String> columnTitles) throws RuntimeException {
+    /*public Map<String, DataItem> getMappingByColumnTitles(List<String> columnTitles) throws RuntimeException {
         logger.debug("input data - column titles: {}", columnTitles);
 
         Set<String> duplicatedTitles = columnTitles.stream()
@@ -104,5 +102,25 @@ public class FileColumnMappingService {
                         return DATA_EMPTY;
                     }
                 }));
+    }*/
+
+    public DataItem getMappingForColumnTitle(String title) {
+        if (titleNameToDataItemMapping.containsKey(title)) {
+            return titleNameToDataItemMapping.get(title);
+        }
+
+        Set<DataItem> calcDataItems = titleNameToDataItemMapping.entrySet().stream()
+                .filter(entry -> title.startsWith(entry.getKey()))
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toSet());
+
+        if (calcDataItems.isEmpty()) {
+            return DATA_EMPTY;
+        } else if (calcDataItems.size() == 1) {
+            return calcDataItems.iterator().next();
+        } else {
+            logger.info("Найдено сопоставление столбца '{}' в несколько свойств: {}", title, Strings.join(calcDataItems, ','));
+            return calcDataItems.iterator().next();
+        }
     }
 }
