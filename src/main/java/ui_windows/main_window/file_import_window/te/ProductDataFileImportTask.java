@@ -8,11 +8,11 @@ import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
+import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.file_import_window.te.importer.ExcelFileImporter;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
-import ui_windows.product.data.DataItem;
 import utils.Utils;
 import utils.comparation.se.*;
 
@@ -61,8 +61,6 @@ public class ProductDataFileImportTask implements Runnable {
 
             importParams.forEach((sheetName, columnParams) -> {
                 logger.debug("import data from file '{}' sheet '{}'", file, sheetName);
-                Map<DataItem, Integer> columnMapping = importUtils.getColumnMapping(columnParams);
-                logger.debug("column mapping: {}", columnMapping);
                 Set<Product> productsFromFile = importer.getProducts(sheetName, columnParams);
                 List<Field> changedFields = columnParams.stream()
                         .filter(param -> param.getDataItem() != DATA_EMPTY)
@@ -122,11 +120,11 @@ public class ProductDataFileImportTask implements Runnable {
             logger.debug("old statistic will be deleted");
         }
 
-        /*if (changedItems.size() + result.getNewItems().size() > 0) {
-            Products.getInstance().getItems().addAll(result.getNewItems());
+        Products.getInstance().getItems().addAll(result.getNewItems());
+        DataSelectorMenu.MENU_DATA_LAST_IMPORT_RESULT.activate();
 
-            DataSelectorMenu.MENU_DATA_LAST_IMPORT_RESULT.activate();
-
+        /*logger.info("update DB");
+        if (changedItems.size() + result.getNewItems().size() > 0) {
             if (result.getNewItems().size() > 0)
                 new ProductsDB().putData(result.getNewItems());// save new items to db
             if (changedItems.size() > 0)

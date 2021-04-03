@@ -51,7 +51,7 @@ public class ImportNowFile {
                     new ComparingRulesImportNow(), WITHOUT_GONE);
 
             comparator.compare(Products.getInstance().getItems(),
-                    new DoublesPreprocessor(fileImport.getProductItems()).getTreatedItems(), comparingParameters);
+                    new DoublesPreprocessor().getTreatedItems(fileImport.getProductItems()), comparingParameters);
         }
 
         comparator.fixChanges();

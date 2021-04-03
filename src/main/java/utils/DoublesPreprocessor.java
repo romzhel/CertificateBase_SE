@@ -1,18 +1,22 @@
 package utils;
 
+import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.product.Product;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
+@NoArgsConstructor
 public class DoublesPreprocessor {
-    private ArrayList<Product> result;
+    private static final Logger logger = LogManager.getLogger(DoublesPreprocessor.class);
 
-    public DoublesPreprocessor(ArrayList<Product> items) {
-        System.out.print("preprocessing doubles.... ");
+    public List<Product> getTreatedItems(List<Product> items) {
+        logger.info("preprocessing doubles.... ");
 
-        ArrayList<String> orderNumbersS = new ArrayList<>();
-        result = items;
+        List<String> orderNumbersS = new ArrayList<>();
         int originalItemsCount = items.size();
 
         HashSet<String> orderNumbers = new HashSet<>();
@@ -22,8 +26,8 @@ public class DoublesPreprocessor {
         }
 
         if (items.size() == orderNumbers.size()) {
-            System.out.println("no doubles were found");
-            return;
+            logger.info("no doubles were found");
+            return items;
         }
 
         int index = 0;
@@ -44,10 +48,8 @@ public class DoublesPreprocessor {
             index++;
         }
 
-        System.out.println("doubles were found, original size: " + originalItemsCount + ", treated size: " + items.size());
-    }
+        logger.info("doubles were found, original size: {}, treated size: {}", originalItemsCount, items.size());
 
-    public ArrayList<Product> getTreatedItems() {
-        return result;
+        return items;
     }
 }

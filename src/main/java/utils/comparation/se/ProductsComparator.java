@@ -144,7 +144,19 @@ public class ProductsComparator implements Comparator<Product> {
     }
 
     private Map<String, Product> collectionToMap(Collection<Product> items, ComparingParameters<?> parameters) {
-        return items.stream()
+        /*Set<Product> dublicatedItems = items.stream()
+                .peek(item -> logger.debug("check doublicates for {}", item))
+                .filter(item -> Collections.frequency(items, item) > 1)
+                .collect(Collectors.toSet());
+
+        if (dublicatedItems.size() > 0) {
+            logger.info("Обнаружено дубликатов: {} ({})", dublicatedItems.size(), Strings.join(dublicatedItems, ','));
+        }*/
+
+        HashSet<Product> set = new HashSet<>(items);
+
+        return set.stream()
+//                .peek(item -> logger.debug("add collection item to map '{}'", item))
                 .collect(Collectors.toMap(item -> parameters.getComparingRules().treatMaterial(item.getMaterial()), item -> item));
     }
 }

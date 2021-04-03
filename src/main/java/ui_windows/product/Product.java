@@ -1,6 +1,8 @@
 package ui_windows.product;
 
 import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
@@ -26,7 +28,8 @@ import java.util.Set;
 
 @NoArgsConstructor
 public class Product implements Cloneable {
-    public final String NO_DATA = "нет данных";
+    private static final Logger logger = LogManager.getLogger(Product.class);
+    public static final String NO_DATA = "нет данных";
 
     private int id;
     private String material;
@@ -293,11 +296,15 @@ public class Product implements Cloneable {
         Product cloneItem = new Product();
         try {
             for (Field field : this.getClass().getDeclaredFields()) {
+                if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
+
                 field.setAccessible(true);
                 field.set(cloneItem, field.get(this));
             }
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            logger.error("Product '{}' clone error {}", this, e.getMessage(), e);
         }
 
         return cloneItem;
