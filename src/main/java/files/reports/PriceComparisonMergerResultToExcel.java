@@ -24,6 +24,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static files.ExcelCellStyleFactory.CELL_ALIGN_HLEFT_BOLD;
 import static ui_windows.product.data.DataItem.*;
@@ -173,8 +175,11 @@ public class PriceComparisonMergerResultToExcel {
 
     private void fillChangeDetails(ObjectsComparatorResultSe<Product> resultItem, int index) {
         XSSFRow row;
-        for (Field field : resultItem.getChangedFields()) {
+        List<Field> fields = resultItem.getChangedFields().stream()
+                .map(param -> param.getDataItem().getField())
+                .collect(Collectors.toList());
 
+        for (Field field : fields) {
             if (resultItem.getChangedFields().indexOf(field) > 0) {
                 row = sheet.createRow(rowNum++);
             } else {

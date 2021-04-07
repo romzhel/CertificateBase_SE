@@ -4,5 +4,7 @@ public enum FilesImportParametersEnum {
     RESET_STATISTIC,
     RESET_NON_FOUND_ITEMS_COST,
     FOR_IMPORT,
-    FOR_LOGGING
+    FOR_LOGGING,
+    APPLY_CHANGES,
+    BLOCK_PROPERTY
 }

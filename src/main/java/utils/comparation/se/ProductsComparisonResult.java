@@ -1,12 +1,14 @@
 package utils.comparation.se;
 
 import lombok.Getter;
+import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
 import ui_windows.product.Product;
-import ui_windows.product.data.DataItem;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ui_windows.product.data.DataItem.DATA_LOCAL_PRICE;
 
 @Getter
 public class ProductsComparisonResult extends ComparisonResult<Product> {
@@ -24,7 +26,7 @@ public class ProductsComparisonResult extends ComparisonResult<Product> {
                 .peek(resultItem -> {
                     resultItem.setItem_before(resultItem.getItem().clone());
                     resultItem.getItem().setLocalPrice(0.0);
-                    resultItem.addChangedField(DataItem.DATA_LOCAL_PRICE.getField());
+                    resultItem.addChangedField(new ImportColumnParameter(DATA_LOCAL_PRICE));
                 })
                 .collect(Collectors.toList());
         return withoutNewPriceResult;

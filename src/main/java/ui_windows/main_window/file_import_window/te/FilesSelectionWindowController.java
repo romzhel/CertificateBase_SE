@@ -16,8 +16,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import static ui_windows.main_window.file_import_window.te.FilesImportParametersEnum.RESET_NON_FOUND_ITEMS_COST;
-import static ui_windows.main_window.file_import_window.te.FilesImportParametersEnum.RESET_STATISTIC;
+import static ui_windows.main_window.file_import_window.te.FilesImportParametersEnum.*;
 
 public class FilesSelectionWindowController implements Initializable {
     private FilesImportParameters filesImportParameters = new FilesImportParameters();
@@ -32,6 +31,8 @@ public class FilesSelectionWindowController implements Initializable {
     private Button btnAdd;
     @FXML
     private Button btnRemove;
+    @FXML
+    private CheckBox chbxApplyChanges;
     @FXML
     private CheckBox chbxResetStatistic;
     @FXML
@@ -58,7 +59,7 @@ public class FilesSelectionWindowController implements Initializable {
 
         btnDown.setOnAction(event -> {
             int sourceIndex = lvFiles.getSelectionModel().getSelectedIndex();
-            if (sourceIndex == lvFiles.getItems().size() - 1) {
+            if (sourceIndex < 0 || sourceIndex == lvFiles.getItems().size() - 1) {
                 return;
             }
 
@@ -82,12 +83,20 @@ public class FilesSelectionWindowController implements Initializable {
             filesImportParameters.setFiles(lvFiles.getItems());
             filesImportParameters.getParams().put(RESET_STATISTIC, chbxResetStatistic.isSelected());
             filesImportParameters.getParams().put(RESET_NON_FOUND_ITEMS_COST, chbxResetCostNonfoundItems.isSelected());
-            ((Stage) btnOk.getScene().getWindow()).close();
+            filesImportParameters.getParams().put(APPLY_CHANGES, chbxApplyChanges.isSelected());
+            btnOk.getScene().getWindow().hide();
         });
 
         btnCancel.setOnAction(event -> {
             filesImportParameters = null;
-            ((Stage) btnCancel.getScene().getWindow()).close();
+            btnCancel.getScene().getWindow().hide();
+        });
+
+        chbxApplyChanges.setOnMouseClicked(event -> {
+            if (!chbxApplyChanges.isSelected() && !Dialogs.confirmTS("Применение изменений",
+                    "Действительно желаете не применять найденные изменения?")) {
+                chbxApplyChanges.setSelected(true);
+            }
         });
 
         chbxResetStatistic.setOnMouseClicked(event -> {
@@ -98,7 +107,7 @@ public class FilesSelectionWindowController implements Initializable {
         });
 
         chbxResetCostNonfoundItems.setOnMouseClicked(event -> {
-            if (chbxResetCostNonfoundItems.isSelected() && !Dialogs.confirmTS("Удаление предыдущей статистики",
+            if (chbxResetCostNonfoundItems.isSelected() && !Dialogs.confirmTS("Удаление стоимости ненайденных позиций",
                     "Действительно желаете удалить стоимость ненайденных позиций?")) {
                 chbxResetCostNonfoundItems.setSelected(false);
             }

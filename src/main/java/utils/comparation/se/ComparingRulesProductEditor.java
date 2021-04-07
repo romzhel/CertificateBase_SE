@@ -1,8 +1,8 @@
 package utils.comparation.se;
 
+import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
 import ui_windows.product.Product;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 public class ComparingRulesProductEditor extends ProductComparingRulesTemplate implements ComparingRules<Product> {
@@ -23,7 +23,7 @@ public class ComparingRulesProductEditor extends ProductComparingRulesTemplate i
     }
 
     @Override
-    public boolean addNewItem(Product item, List<Field> fields) {
+    public boolean addNewItem(Product item, List<ImportColumnParameter> fields) {
         return false;
     }
 }
