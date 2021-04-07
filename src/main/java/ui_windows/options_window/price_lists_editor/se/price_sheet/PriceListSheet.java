@@ -262,8 +262,10 @@ public class PriceListSheet extends Tab {
                                 boolean dchainMatches = product.getDchain().equals(oa.getStatusCode());
                                 boolean dchainMatchesSP = product.getDchain().trim().isEmpty() &&
                                         oa.getStatusCode().trim().isEmpty() && product.isSpProduct();
+                                boolean dchainMatchesSets = product.getDchain().trim().isEmpty() &&
+                                        oa.getStatusCode().trim().isEmpty() && product.getLgbk().startsWith("RU5");
 
-                                if (dchainMatches || dchainMatchesSP) {
+                                if (dchainMatches || dchainMatchesSP || dchainMatchesSets) {
                                     isDchainMatch = true;
                                     break;
                                 }

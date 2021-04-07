@@ -581,7 +581,7 @@ public class Product implements Cloneable {
     }
 
     public int getLeadTimeRu() {
-        return getLeadTime() > 0 ? getLeadTime() + 14 : 0;
+        return getLeadTime() + 14;
     }
 
     public String getDescriptionRuEn() {

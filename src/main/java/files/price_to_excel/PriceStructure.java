@@ -63,7 +63,7 @@ public class PriceStructure {
             e.printStackTrace();
         }
 
-        if (contentMode == CONTENT_MODE_FAMILY) priceListSheet.getContentTable().switchContentMode(CONTENT_MODE_FAMILY);
+//        if (contentMode == CONTENT_MODE_FAMILY) priceListSheet.getContentTable().switchContentMode(CONTENT_MODE_FAMILY);
     }
 
     public synchronized void addProduct(Product product) {

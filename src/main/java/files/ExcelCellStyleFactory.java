@@ -9,11 +9,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelCellStyleFactory {
     public static CellStyle CELL_ALIGN_LEFT;
+    public static CellStyle CELL_ALIGN_LEFT_CENTER;
     public static CellStyle CELL_ALIGN_LEFT_BOLD;
+    public static CellStyle CELL_ALIGN_LEFT_WRAP;
     public static CellStyle CELL_ALIGN_RIGHT;
+    public static CellStyle CELL_ALIGN_RIGHT_CENTER;
     public static CellStyle CELL_ALIGN_CENTER;
     public static CellStyle CELL_ALIGN_CENTER_BOLD;
+    public static CellStyle CELL_ALIGN_CENTER_CENTER;
     public static CellStyle CELL_CURRENCY_FORMAT;
+    public static CellStyle CELL_CURRENCY_FORMAT_CENTER;
 
     public static HSSFCellStyle CELL_STYLE_CENTER_BOLD;
     public static HSSFCellStyle CELL_STYLE_CENTER;
@@ -29,6 +34,13 @@ public class ExcelCellStyleFactory {
             CELL_ALIGN_LEFT = excelDoc.createCellStyle();
             CELL_ALIGN_LEFT.setAlignment(HorizontalAlignment.LEFT);
 
+            CELL_ALIGN_LEFT = excelDoc.createCellStyle();
+            CELL_ALIGN_LEFT.setAlignment(HorizontalAlignment.LEFT);
+
+            CELL_ALIGN_LEFT_CENTER = excelDoc.createCellStyle();
+            CELL_ALIGN_LEFT_CENTER.setAlignment(HorizontalAlignment.LEFT);
+            CELL_ALIGN_LEFT_CENTER.setVerticalAlignment(VerticalAlignment.CENTER);
+
             CELL_ALIGN_LEFT_BOLD = excelDoc.createCellStyle();
             CELL_ALIGN_LEFT_BOLD.setAlignment(HorizontalAlignment.LEFT);
             Font exFont = excelDoc.getFontAt((short) 0);
@@ -42,11 +54,23 @@ public class ExcelCellStyleFactory {
 //        font.setFontHeight((short) 8);
             CELL_ALIGN_LEFT_BOLD.setFont(font);
 
+            CELL_ALIGN_LEFT_WRAP = excelDoc.createCellStyle();
+            CELL_ALIGN_LEFT_WRAP.setAlignment(HorizontalAlignment.LEFT);
+            CELL_ALIGN_LEFT_WRAP.setWrapText(true);
+
             CELL_ALIGN_RIGHT = excelDoc.createCellStyle();
             CELL_ALIGN_RIGHT.setAlignment(HorizontalAlignment.RIGHT);
 
+            CELL_ALIGN_RIGHT_CENTER = excelDoc.createCellStyle();
+            CELL_ALIGN_RIGHT_CENTER.setAlignment(HorizontalAlignment.RIGHT);
+            CELL_ALIGN_RIGHT_CENTER.setVerticalAlignment(VerticalAlignment.CENTER);
+
             CELL_ALIGN_CENTER = excelDoc.createCellStyle();
             CELL_ALIGN_CENTER.setAlignment(HorizontalAlignment.CENTER);
+
+            CELL_ALIGN_CENTER_CENTER = excelDoc.createCellStyle();
+            CELL_ALIGN_CENTER_CENTER.setAlignment(HorizontalAlignment.CENTER);
+            CELL_ALIGN_CENTER_CENTER.setVerticalAlignment(VerticalAlignment.CENTER);
 
             CELL_ALIGN_CENTER_BOLD = excelDoc.createCellStyle();
             CELL_ALIGN_CENTER_BOLD.setAlignment(HorizontalAlignment.CENTER);
@@ -59,6 +83,10 @@ public class ExcelCellStyleFactory {
             CELL_CURRENCY_FORMAT = excelDoc.createCellStyle();
             DataFormat dataFormat = excelDoc.createDataFormat();
             CELL_CURRENCY_FORMAT.setDataFormat(dataFormat.getFormat("# ##0.00\\ [$€-x-euro1];[Red]# ##0.00\\ [$€-x-euro1]"));
+
+            CELL_CURRENCY_FORMAT_CENTER = excelDoc.createCellStyle();
+            CELL_CURRENCY_FORMAT_CENTER.setDataFormat(dataFormat.getFormat("# ##0.00\\ [$€-x-euro1];[Red]# ##0.00\\ [$€-x-euro1]"));
+            CELL_CURRENCY_FORMAT_CENTER.setVerticalAlignment(VerticalAlignment.CENTER);
         } else if (excelDoc instanceof HSSFWorkbook) {
             //HSSFcellStyles
             CELL_STYLE_CENTER = (HSSFCellStyle) excelDoc.createCellStyle();

@@ -41,7 +41,7 @@ public enum DataItem {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getMaterial());
-            cell.setCellStyle(CELL_ALIGN_LEFT);
+            cell.setCellStyle(CELL_ALIGN_LEFT_CENTER);
         }
 
         public Object getValue(Product product) {
@@ -52,7 +52,7 @@ public enum DataItem {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getProductForPrint());
-            cell.setCellStyle(CELL_ALIGN_LEFT);
+            cell.setCellStyle(CELL_ALIGN_LEFT_CENTER);
         }
 
         public Object getValue(Product product) {
@@ -63,7 +63,7 @@ public enum DataItem {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getArticle());
-            cell.setCellStyle(CELL_ALIGN_LEFT);
+            cell.setCellStyle(CELL_ALIGN_LEFT_CENTER);
         }
 
         public Object getValue(Product product) {
@@ -74,7 +74,7 @@ public enum DataItem {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getDescriptionru());
-            cell.setCellStyle(CELL_ALIGN_LEFT);
+            cell.setCellStyle(CELL_ALIGN_LEFT_WRAP);
         }
 
         public Object getValue(Product product) {
@@ -85,7 +85,7 @@ public enum DataItem {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getDescriptionen());
-            cell.setCellStyle(CELL_ALIGN_LEFT);
+            cell.setCellStyle(CELL_ALIGN_LEFT_WRAP);
         }
 
         public Object getValue(Product product) {
@@ -107,7 +107,7 @@ public enum DataItem {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(product.getLocalPrice());
-            cell.setCellStyle(CELL_CURRENCY_FORMAT);
+            cell.setCellStyle(CELL_CURRENCY_FORMAT_CENTER);
         }
 
         public Object getValue(Product product) {
@@ -121,10 +121,10 @@ public enum DataItem {
             if (!product.isPriceHidden() && cost > 0) {
                 cell.setCellType(CellType.NUMERIC);
                 cell.setCellValue(cost);
-                cell.setCellStyle(CELL_CURRENCY_FORMAT);
+                cell.setCellStyle(CELL_CURRENCY_FORMAT_CENTER);
             } else {
                 cell.setCellType(CellType.STRING);
-                cell.setCellStyle(CELL_ALIGN_CENTER);
+                cell.setCellStyle(CELL_ALIGN_CENTER_CENTER);
 //                cell.setCellValue(pls.getLanguage() == LANG_RU ? "По запросу" : "By request");
                 cell.setCellValue("По запросу");
             }
@@ -202,7 +202,7 @@ public enum DataItem {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(product.getLeadTime());
-            cell.setCellStyle(CELL_ALIGN_CENTER);
+            cell.setCellStyle(CELL_ALIGN_CENTER_CENTER);
         }
 
         public Object getValue(Product product) {
@@ -213,7 +213,7 @@ public enum DataItem {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(product.getLeadTimeRu());
-            cell.setCellStyle(CELL_ALIGN_CENTER);
+            cell.setCellStyle(CELL_ALIGN_CENTER_CENTER);
         }
 
         public Object getValue(Product product) {
@@ -224,7 +224,7 @@ public enum DataItem {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(product.getMinOrder());
-            cell.setCellStyle(CELL_ALIGN_CENTER);
+            cell.setCellStyle(CELL_ALIGN_CENTER_CENTER);
         }
 
         public Object getValue(Product product) {
@@ -235,7 +235,7 @@ public enum DataItem {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getLgbk());
-            cell.setCellStyle(CELL_ALIGN_CENTER);
+            cell.setCellStyle(CELL_ALIGN_CENTER_CENTER);
         }
 
         public Object getValue(Product product) {
@@ -257,7 +257,7 @@ public enum DataItem {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(product.getWeight());
-            cell.setCellStyle(CELL_ALIGN_RIGHT);
+            cell.setCellStyle(CELL_ALIGN_RIGHT_CENTER);
         }
 
         public Object getValue(Product product) {
@@ -548,7 +548,7 @@ public enum DataItem {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getProductForPrint() == null || product.getProductForPrint().isEmpty() ?
                     product.getMaterial() : product.getProductForPrint());
-            cell.setCellStyle(CELL_ALIGN_LEFT);
+            cell.setCellStyle(CELL_ALIGN_LEFT_CENTER);
         }
 
         public Object getValue(Product product) {
@@ -560,7 +560,7 @@ public enum DataItem {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(PriceLGBK.getpriceLgbk(product));
-            cell.setCellStyle(CELL_ALIGN_CENTER);
+            cell.setCellStyle(CELL_ALIGN_CENTER_CENTER);
         }
 
         public Object getValue(Product product) {
@@ -607,11 +607,22 @@ public enum DataItem {
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue((int) getValue(product));
-            cell.setCellStyle(CELL_ALIGN_CENTER);
+            cell.setCellStyle(CELL_ALIGN_CENTER_CENTER);
         }
 
         public Object getValue(Product product) {
             return product.getWarranty() == null || product.getWarranty() < 2 ? 1 : product.getWarranty();
+        }
+    },
+    DATA_DESCRIPTION_WRAP(45, "Описание (с переносом текста)", null) {
+        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(product.getDescriptionRuEn());
+            cell.setCellStyle(CELL_ALIGN_LEFT_WRAP);
+        }
+
+        public Object getValue(Product product) {
+            return product.getDescriptionRuEn();
         }
     };
 

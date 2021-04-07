@@ -107,7 +107,17 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
             Cell dateInfo = excelDoc.getSheetAt(index).getRow(1).getCell(0);
             dateInfo.setCellValue(dateInfo.getStringCellValue().replace("${date}", Utils.getDateTime()));
 
-            priceStructure.export(excelDoc.getSheetAt(index++));
+            priceStructure.export(excelDoc.getSheetAt(index));
+
+            excelDoc.setPrintArea(
+                    index,
+                    0,
+                    excelDoc.getSheetAt(index).getRow(0).getLastCellNum() - 1,
+                    0,
+                    excelDoc.getSheetAt(index).getLastRowNum() - 1
+            );
+
+            index++;
         }
     }
 
