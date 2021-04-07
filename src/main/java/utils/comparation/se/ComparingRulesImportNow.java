@@ -3,12 +3,14 @@ package utils.comparation.se;
 import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
 import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
 import utils.Utils;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ui_windows.product.data.DataItem.*;
 
@@ -73,7 +75,10 @@ public class ComparingRulesImportNow extends ProductComparingRulesTemplate imple
         } else {//changed
             String impCodes = "";
             consoleComment.append(result.getItem().getArticle()).append(" (").append(result.getItem().getMaterial()).append(")");
-            for (Field field : result.getChangedFields()) {
+            List<Field> fields = result.getChangedFields().stream()
+                    .map(param -> param.getDataItem().getField())
+                    .collect(Collectors.toList());
+            for (Field field : fields) {
                 try {
                     field.setAccessible(true);
                     String infoPart = String.format(" %s: %s -> %s,", field.getName(),
@@ -94,8 +99,11 @@ public class ComparingRulesImportNow extends ProductComparingRulesTemplate imple
     }
 
     @Override
-    public boolean addNewItem(Product item, List<Field> fields) {
-        if (!fields.contains(DATA_ORDER_NUMBER.getField()) || !fields.contains(DATA_ARTICLE.getField())) {
+    public boolean addNewItem(Product item, List<ImportColumnParameter> fields) {
+        boolean isMaterialMiss = fields.stream().noneMatch(param -> param.getDataItem() == DATA_ORDER_NUMBER);
+        boolean isArticleMiss = fields.stream().noneMatch(param -> param.getDataItem() == DATA_ARTICLE);
+
+        if (isMaterialMiss || isArticleMiss) {
             logger.info("item '{}' wasn't added, it haven't main fields", item.toString());
             return false;
         }

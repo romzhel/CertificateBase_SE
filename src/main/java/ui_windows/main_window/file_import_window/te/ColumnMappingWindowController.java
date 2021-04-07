@@ -2,9 +2,10 @@ package ui_windows.main_window.file_import_window.te;
 
 import core.ThreadManager;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import ui.Dialogs;
 import ui_windows.product.data.DataItem;
@@ -19,20 +20,18 @@ import static ui_windows.product.data.DataItem.DATA_EMPTY;
 import static ui_windows.product.data.DataItem.DATA_ORDER_NUMBER;
 
 public class ColumnMappingWindowController {
+    private static final Logger logger = LogManager.getLogger(ColumnMappingWindowController.class);
+
     @FXML
-    TableView<ImportColumnParameter> tvFields;
+    private TableView<ImportColumnParameter> tvFields;
     @FXML
-    ComboBox<String> cbSheetNames;
-    @FXML
-    CheckBox cbxDelPrevStat;
-    @FXML
-    CheckBox cbxResetCost;
+    private ComboBox<String> cbSheetNames;
     private Map<String, List<ImportColumnParameter>> inputParameters;
     private Map<String, List<ImportColumnParameter>> outputParameters;
 
     public void init(Map<String, List<ImportColumnParameter>> parameters) {
         this.inputParameters = parameters;
-        new ColumnMappingTable(tvFields, parameters);
+        new ColumnMappingTable(tvFields);
 
         cbSheetNames.getItems().addAll(parameters.keySet());
         cbSheetNames.valueProperty().addListener((observable, oldValue, newValue) -> {

@@ -1,6 +1,7 @@
 package utils.comparation.se;
 
-import java.lang.reflect.Field;
+import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
+
 import java.util.List;
 
 public interface ComparingRules<T> {
@@ -11,7 +12,7 @@ public interface ComparingRules<T> {
 
     void addHistoryComment(ObjectsComparatorResultSe<T> result);
 
-    boolean addNewItem(T item, List<Field> fields);
+    boolean addNewItem(T item, List<ImportColumnParameter> fields);
 
     Param<T> applyCustomRule(Param<T> params);
 }

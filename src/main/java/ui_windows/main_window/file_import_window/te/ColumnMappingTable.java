@@ -1,6 +1,8 @@
 package ui_windows.main_window.file_import_window.te;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -13,17 +15,12 @@ import org.apache.logging.log4j.Logger;
 import ui_windows.product.data.DataItem;
 import ui_windows.product.data.DataSets;
 
-import java.util.List;
-import java.util.Map;
-
-import static ui_windows.main_window.file_import_window.te.FilesImportParametersEnum.FOR_IMPORT;
-import static ui_windows.main_window.file_import_window.te.FilesImportParametersEnum.FOR_LOGGING;
+import static ui_windows.main_window.file_import_window.te.FilesImportParametersEnum.BLOCK_PROPERTY;
 
 public class ColumnMappingTable {
     private static final Logger logger = LogManager.getLogger(ColumnMappingTable.class);
 
-    public ColumnMappingTable(TableView<ImportColumnParameter> tableView,
-                              Map<String, List<ImportColumnParameter>> parameters) {
+    public ColumnMappingTable(TableView<ImportColumnParameter> tableView) {
         TableColumn<ImportColumnParameter, String> titleNameCol = new TableColumn<>("Столбец");
         titleNameCol.setCellValueFactory(new PropertyValueFactory<>("columnTitle"));
         titleNameCol.setPrefWidth(300);
@@ -44,8 +41,6 @@ public class ColumnMappingTable {
             ObjectProperty<DataItem> dataItemProperty = new SimpleObjectProperty<>(param.getValue().getDataItem());
             dataItemProperty.addListener((observable, oldValue, newValue) -> {
                 param.getValue().setDataItem(newValue);
-                param.getValue().getOptions().get(FOR_IMPORT).set(newValue != DataItem.DATA_EMPTY);
-                param.getValue().getOptions().get(FOR_LOGGING).set(newValue != DataItem.DATA_EMPTY);
                 logger.debug("column import param => {}", param.getValue());
             });
             return dataItemProperty;
@@ -53,7 +48,7 @@ public class ColumnMappingTable {
         productFieldCol.setPrefWidth(300);
         productFieldCol.setEditable(true);
 
-        TableColumn<ImportColumnParameter, Boolean> importCol = new TableColumn<>("Импорт");
+        /*TableColumn<ImportColumnParameter, Boolean> importCol = new TableColumn<>("Импорт");
         importCol.setCellFactory(CheckBoxTableCell.forTableColumn(importCol));
         importCol.setCellValueFactory(param -> {
             param.getValue().getOptions().get(FOR_IMPORT).addListener((observable, oldValue, newValue) -> {
@@ -75,9 +70,26 @@ public class ColumnMappingTable {
                 logger.debug("column import param => {}", param.getValue());
             });
             return param.getValue().getOptions().get(FOR_LOGGING);
+        });*/
+
+        TableColumn<ImportColumnParameter, Boolean> blockCol = new TableColumn<>("Блокировка");
+        blockCol.setCellFactory(CheckBoxTableCell.forTableColumn(blockCol));
+        blockCol.setCellValueFactory(param -> {
+            boolean propertyValue = param.getValue().getOptions().getOrDefault(BLOCK_PROPERTY, false);
+            BooleanProperty property = new SimpleBooleanProperty(propertyValue);
+            property.addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    param.getValue().getOptions().put(BLOCK_PROPERTY, true);
+                } else {
+                    param.getValue().getOptions().remove(BLOCK_PROPERTY);
+                }
+
+                logger.debug("column import param => {}", param.getValue());
+            });
+            return property;
         });
 
-        tableView.getColumns().addAll(titleNameCol, productFieldCol, importCol, historyCol);
+        tableView.getColumns().addAll(titleNameCol, productFieldCol, blockCol);
         tableView.setEditable(true);
     }
 }

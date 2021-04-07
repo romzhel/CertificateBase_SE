@@ -1,35 +1,28 @@
 package utils.comparation.se;
 
-import java.lang.reflect.Field;
+import lombok.Getter;
+import lombok.ToString;
+import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@ToString
 public class ComparingParameters<T> {
     public static final boolean WITH_GONE = true;
     public static final boolean WITHOUT_GONE = false;
-    private List<Field> fields;
+    private List<ImportColumnParameter> columnParameters;
     private ComparingRules<T> comparingRules;
     private boolean checkGoneItems;
 
     public ComparingParameters() {
-        fields = new ArrayList<>();
+        columnParameters = new ArrayList<>();
     }
 
-    public ComparingParameters(List<Field> fields, ComparingRules<T> comparingRules, boolean checkGoneItems) {
-        this.fields = fields;
+    public ComparingParameters(List<ImportColumnParameter> columnParameters, ComparingRules<T> comparingRules, boolean checkGoneItems) {
+        this.columnParameters = columnParameters;
         this.comparingRules = comparingRules;
         this.checkGoneItems = checkGoneItems;
-    }
-
-    public List<Field> getFields() {
-        return fields;
-    }
-
-    public ComparingRules<T> getComparingRules() {
-        return comparingRules;
-    }
-
-    public boolean isCheckGoneItems() {
-        return checkGoneItems;
     }
 }

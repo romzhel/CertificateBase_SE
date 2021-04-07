@@ -1,15 +1,10 @@
 package ui_windows.main_window.file_import_window.te;
 
-import javafx.beans.property.SimpleBooleanProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static ui_windows.main_window.file_import_window.te.FilesImportParametersEnum.FOR_IMPORT;
-import static ui_windows.main_window.file_import_window.te.FilesImportParametersEnum.FOR_LOGGING;
-import static ui_windows.product.data.DataItem.DATA_EMPTY;
 
 public class FileImportUtils {
     private static final Logger logger = LogManager.getLogger(FileImportUtils.class);
@@ -34,8 +29,6 @@ public class FileImportUtils {
                     param.setColumnTitle(title);
                     param.setDataItem(mappingService.getMappingForColumnTitle(title));
                     param.setColumnIndex(titles.indexOf(title));
-                    param.getOptions().put(FOR_IMPORT, new SimpleBooleanProperty(param.getDataItem() != DATA_EMPTY));
-                    param.getOptions().put(FOR_LOGGING, new SimpleBooleanProperty(param.getDataItem() != DATA_EMPTY));
 
                     return param;
                 })

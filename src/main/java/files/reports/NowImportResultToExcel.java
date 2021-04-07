@@ -9,6 +9,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 import ui.Dialogs;
 import ui_windows.main_window.MainWindow;
+import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
 import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
 import utils.Utils;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import static ui_windows.product.data.DataItem.*;
@@ -35,7 +37,7 @@ public class NowImportResultToExcel {
         workbook = new XSSFWorkbook();
     }
 
-    public File export(ProductsComparisonResult result, File targetFile) {
+    public File export(ProductsComparisonResult result, File targetFile) {//TODO в отчёте отображается только одно изменение
 //        Platform.runLater(() -> {
         File reportFile = targetFile != null ? targetFile : new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
                 "Сохранение результатов импорта", Dialogs.EXCEL_FILES, "ImportReport_" +
@@ -56,7 +58,11 @@ public class NowImportResultToExcel {
                 fillTitles();
 
                 fillValues(result.getNewItemsResult());
-                fillValues(result.getChangedItemsResult());
+
+                List<ObjectsComparatorResultSe<Product>> sortedList = new ArrayList<>(result.getChangedItemsResult());
+                sortedList.sort((o1, o2) -> o1.getItem().getMaterial().compareTo(o2.getItem().getMaterial()));
+                fillValues(sortedList);
+
                 sheet.createFreezePane(colIndex, 1);
                 sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, colIndex));
 
@@ -81,7 +87,8 @@ public class NowImportResultToExcel {
                 logger.trace("Excel file forming finished");
 
             } catch (Exception e) {
-                Dialogs.showMessageTS("Ошибка сохранения отчёта", e.getMessage());
+                logger.error("Ошибка сохранения отчёта", e);
+                throw new RuntimeException(e);
             } finally {
                 try {
                     workbook.close();
@@ -114,7 +121,7 @@ public class NowImportResultToExcel {
 
         for (ObjectsComparatorResultSe<Product> resultItem : resultItems) {
             row = sheet.createRow(rowNum++);
-            colIndex = 0;
+//            colIndex = 0;
 
             if (resultItem.getItem() == null && resultItem.getItem_after() != null) {//new
                 fillItemDetails(resultItem.getItem_after(), row);
@@ -123,13 +130,18 @@ public class NowImportResultToExcel {
                 fillItemDetails(resultItem.getItem(), row);
                 fillCell(row.createCell(colIndex++), "gone");
             } else {//change
-                fillItemDetails(resultItem.getItem(), row);
-                fillChangeDetails(resultItem, row);
+                rowNum--;
+                for (ImportColumnParameter param : resultItem.getChangedFields()) {
+                    row = sheet.createRow(rowNum++);
+                    fillItemDetails(resultItem.getItem(), row);
+                    fillChangeDetails(resultItem, param.getDataItem().getField(), row);
+                }
             }
         }
     }
 
     private void fillItemDetails(Product item, XSSFRow row) {
+        colIndex = 0;
         DataItem values[] = new DataItem[]{DATA_FAMILY_NAME, DATA_RESPONSIBLE, DATA_ORDER_NUMBER, DATA_ARTICLE, DATA_IS_IN_PRICE,
                 DATA_IN_WHICH_PRICE_LIST, DATA_DCHAIN_WITH_COMMENT};
         ExcelCellStyleFactory.init(workbook);
@@ -138,20 +150,18 @@ public class NowImportResultToExcel {
         }
     }
 
-    private void fillChangeDetails(ObjectsComparatorResultSe<Product> resultItem, XSSFRow row) {
-        for (Field field : resultItem.getChangedFields()) {
-            field.setAccessible(true);
-            colIndex = 7;
+    private void fillChangeDetails(ObjectsComparatorResultSe<Product> resultItem, Field field, XSSFRow row) {
+        field.setAccessible(true);
+        colIndex = 7;
 
-            try {
-                fillCell(row.createCell(colIndex++), "changed");
-                fillCell(row.createCell(colIndex++), DataItem.getDataItemByField(field).getDisplayingName());
-                fillCell(row.createCell(colIndex++), field.get(resultItem.getItem_before()));
-                fillCell(row.createCell(colIndex++), "->");
-                fillCell(row.createCell(colIndex++), field.get(resultItem.getItem_after()));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+        try {
+            fillCell(row.createCell(colIndex++), "changed");
+            fillCell(row.createCell(colIndex++), DataItem.getDataItemByField(field).getDisplayingName());
+            fillCell(row.createCell(colIndex++), field.get(resultItem.getItem_before()));
+            fillCell(row.createCell(colIndex++), "->");
+            fillCell(row.createCell(colIndex++), field.get(resultItem.getItem_after()));
+        } catch (IllegalAccessException e) {
+            logger.error(e.getMessage(), e);
         }
     }
 

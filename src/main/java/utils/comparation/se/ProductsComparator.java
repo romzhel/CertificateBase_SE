@@ -5,6 +5,7 @@ import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
+import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.product_lgbk.ProductLgbks;
 import ui_windows.product.Product;
@@ -15,11 +16,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static ui_windows.product.data.DataItem.DATA_HIERARCHY;
+import static ui_windows.product.data.DataItem.DATA_LGBK;
+
 public class ProductsComparator implements Comparator<Product> {
     public static final Logger logger = LogManager.getLogger(ProductsComparator.class);
     private ComparingParameters<Product> comparingParameters;
     private ProductsComparisonResult comparisonResult;
-    private ChangesFixer<Product> changesFixer;
+    private ChangesFixer changesFixer;
     private Callback<Param<Product>, Param<Product>> customComparingRule;
 
     public ProductsComparator() {
@@ -31,6 +35,7 @@ public class ProductsComparator implements Comparator<Product> {
     }
 
     public ComparisonResult<Product> compare(Collection<Product> items1, Collection<Product> items2, ComparingParameters<Product> parameters) {
+        logger.debug("Start comparing with parameters {}", parameters);
         long t0 = System.currentTimeMillis();
         ObjectsComparatorSe<Product> objectsComparator = new ObjectsComparatorSe<>();
         comparingParameters = parameters;
@@ -39,7 +44,7 @@ public class ProductsComparator implements Comparator<Product> {
 //        Map<String, Product> goneItems = parameters.isCheckGoneItems() ? collectionToMap(items1, parameters) : new HashMap<>();
         Map<String, Product> changedItems = collectionToMap(items2, parameters);
         Map<String, Product> nonChangedItems = new HashMap<>();
-        logger.trace("подготовка к сравнению завершена, прошло времени {} мс", System.currentTimeMillis() - t0);
+        logger.trace("Подготовка к сравнению завершена, прошло времени {} мс", System.currentTimeMillis() - t0);
 
         Product item2;
         String material;
@@ -62,8 +67,8 @@ public class ProductsComparator implements Comparator<Product> {
         logger.trace("сравнение завершено, прошло времени {} мс", System.currentTimeMillis() - t0);
 
         for (Product item : changedItems.values()) {
-            if (parameters.getComparingRules().addNewItem(item, parameters.getFields())) {
-                comparisonResult.addNewItemResult(new ObjectsComparatorResultSe<>(null, item, parameters.getFields()));
+            if (parameters.getComparingRules().addNewItem(item, parameters.getColumnParameters())) {
+                comparisonResult.addNewItemResult(new ObjectsComparatorResultSe<>(null, item, parameters.getColumnParameters()));
             }
         }
 
@@ -82,12 +87,16 @@ public class ProductsComparator implements Comparator<Product> {
         });
         Pattern pattern = Pattern.compile("(\\d)?([A-Z0-9]{3})(.*)?");
         Matcher matcher;
-        changesFixer = new ChangesFixer<>();
+        changesFixer = new ChangesFixer();
         Set<String> lgbkNames = new TreeSet<>(String::compareToIgnoreCase);
         for (ObjectsComparatorResultSe<Product> result : comparisonResult.getChangedItemsResult()) {
             if (changesFixer.fixChanges(result)) {
                 comparingParameters.getComparingRules().addHistoryComment(result);
-                if (result.getChangedFields().contains(DataItem.DATA_LGBK.getField()) || result.getChangedFields().contains(DataItem.DATA_HIERARCHY.getField())) {
+                Set<DataItem> changedData = result.getChangedFields().stream()
+                        .map(ImportColumnParameter::getDataItem)
+                        .collect(Collectors.toSet());
+
+                if (changedData.contains(DATA_LGBK) || changedData.contains(DATA_HIERARCHY)) {
                     ProductLgbk plOld = ProductLgbks.getInstance().getLgbkByProduct(result.getItem_before());
                     ProductLgbk plNew = ProductLgbks.getInstance().getLgbkByProduct(result.getItem_after());
                     if (plNew == null && plOld != null) {
@@ -103,7 +112,7 @@ public class ProductsComparator implements Comparator<Product> {
                             lgbkNames.add(plNew.getLgbk());
 //                            logger.debug("new ProductLgbk {} from {}", plNew, plOld);
                         } catch (Exception e) {
-                            logger.error("ошибка преобразования LGBK {}", plNew.toString());
+                            logger.error("Ошибка преобразования LGBK '{}' - {}", plNew.toString(), e.getMessage());
                         }
                     }
                 }

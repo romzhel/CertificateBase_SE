@@ -35,8 +35,8 @@ public class Product implements Cloneable {
     private String material;
     private String productForPrint;
     private String article;
-    private String hierarchy;
-    private String lgbk;
+    private String hierarchy = "";
+    private String lgbk = "";
     private String endofservice;
     private String dangerous;
     private String country;
@@ -64,7 +64,7 @@ public class Product implements Cloneable {
     private Integer minOrder = 0;
     private Integer packetSize = 0;
     private Integer leadTime = 0;
-    private Double weight;
+    private Double weight = 0.0;
     private Double localPrice = 0.0;
 
     private final Set<DataItem> protectedData = new HashSet<>();
@@ -95,39 +95,6 @@ public class Product implements Cloneable {
         comments = pewc.taComments.getText();
         replacement = pewc.tfReplacement.getText();
     }
-
-    /*public Product(RowData rowData, Mapper mapper) {
-        String cellValue;
-        id = 0;
-        material = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_ORDER_NUMBER)).replaceAll("\\,", ".");
-        productForPrint = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_ORDER_NUMBER_PRINT)).replaceAll("\\,", ".");
-        article = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_ARTICLE)).replaceAll("\\,", ".");
-        hierarchy = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_HIERARCHY));
-        lgbk = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_LGBK));
-
-        cellValue = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_SERVICE_END)).replaceAll("\\,", ".");
-        endofservice = cellValue.matches("00.00.0000") ? "" : cellValue;
-        dangerous = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_LOGISTIC_NOTES));
-        country = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_COUNTRY));
-        dchain = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_DCHAIN));
-
-        price = false;
-        descriptionru = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_DESCRIPTION_RU));
-        descriptionen = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_DESCRIPTION_EN));
-
-        normsList = new NormsList(new ArrayList<>());
-
-        minOrder = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_MIN_ORDER)));
-        packetSize = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_PACKSIZE)).replaceAll("\\.", ""));
-        leadTime = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_LEAD_TIME_EU)));
-        weight = getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_WEIGHT)));
-        localPrice = getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_LOCAL_PRICE)));
-        try {
-            warranty = Integer.valueOf(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_WARRANTY)));
-        } catch (Exception e) {
-            warranty = 0;
-        }
-    }*/
 
     public Product(ResultSet rs) throws SQLException {
         id = rs.getInt("id");
@@ -168,21 +135,6 @@ public class Product implements Cloneable {
         weight = rs.getDouble("weight");
         localPrice = rs.getDouble("local_price");
     }
-
-    /*private double getDoubleFromString(String text) {
-        if (text == null || text.isEmpty() || text.equals("По запросу")) return 0.0;
-
-        boolean textHasDevider = text.matches("\\d+\\.+\\d+[.,]+\\d+");
-        if (textHasDevider) text = text.replaceFirst("\\.", "");
-
-        try {
-            text = text.replaceAll("\\,", ".");
-            return PriceUtils.getFromString(text);
-        } catch (Exception e) {
-            System.out.println(article + ", bad double: " + text);
-            return 0.0;
-        }
-    }*/
 
     public void displayInEditorWindow(ProductEditorWindowController pewc) {
         pewc.tfMaterial.setText(material);

@@ -89,12 +89,18 @@ public class MainTable implements Module {
 
             if (cols[i] == "family") {
                 col.setCellValueFactory(param -> {
-                    Product pr = param.getValue();
-                    ProductFamily pf = pr.getProductFamily();
-                    if (pf != null) {
-                        return new SimpleStringProperty(pf.getName());
-                    } else {
-                        return new SimpleStringProperty(pr.getLgbk().concat(" (").concat(pr.getHierarchy()).concat(")"));
+                    Product pr = null;
+                    try {
+                        pr = param.getValue();
+                        ProductFamily pf = pr.getProductFamily();
+                        if (pf != null) {
+                            return new SimpleStringProperty(pf.getName());
+                        } else {
+                            return new SimpleStringProperty(pr.getLgbk().concat(" (").concat(pr.getHierarchy()).concat(")"));
+                        }
+                    } catch (Exception e) {
+                        logger.error("Error col 'Family' displaying for '{}' - {}", pr, e.getMessage());
+                        return new SimpleStringProperty("???");
                     }
                 });
 
