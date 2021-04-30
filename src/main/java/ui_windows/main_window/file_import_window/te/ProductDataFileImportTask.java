@@ -1,30 +1,21 @@
 package ui_windows.main_window.file_import_window.te;
 
-import core.ThreadManager;
-import database.ProductsDB;
 import exceptions.DataNotSelectedException;
 import exceptions.OperationCancelledByUserException;
-import files.reports.NowImportResultToExcel;
-import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ui.Dialogs;
-import ui_windows.main_window.DataSelectorMenu;
-import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.file_import_window.te.importer.ExcelFileImporter;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
-import utils.Utils;
-import utils.comparation.se.*;
+import utils.comparation.se.ProductsComparator;
 
-import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import static ui_windows.main_window.file_import_window.te.FilesImportParametersEnum.*;
-import static ui_windows.product.data.DataItem.DATA_EMPTY;
-import static utils.comparation.se.ComparingParameters.WITHOUT_GONE;
+import static ui_windows.main_window.file_import_window.te.FilesImportParametersEnum.APPLY_CHANGES;
+import static ui_windows.main_window.file_import_window.te.FilesImportParametersEnum.RESET_STATISTIC;
 
 public class ProductDataFileImportTask implements Runnable {
     private static final Logger logger = LogManager.getLogger(ProductDataFileImportTask.class);
@@ -127,7 +118,7 @@ public class ProductDataFileImportTask implements Runnable {
                 if (changedItems.size() > 0)
                     new ProductsDB().updateData(new ArrayList<>(changedItems));//save changed items to db
 
-            /*Statement vacuumStatement = null;
+            *//*Statement vacuumStatement = null;
                 try {
                     vacuumStatement = DataBase.getInstance().getDbConnection().createStatement();
                     logger.debug("db file vacuum started");
@@ -135,10 +126,10 @@ public class ProductDataFileImportTask implements Runnable {
                     logger.debug("db file vacuum finished");
                 } catch (SQLException e) {
                     logger.warn("sql request vacuum error: {}", e.getMessage());
-                }*/
+                }*//*
 
                 logger.info("DB updating is finished");
             }
-        }
+        }*/
     }
 }

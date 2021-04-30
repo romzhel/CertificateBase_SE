@@ -17,7 +17,7 @@ public class ExcelFileImporter extends AbstractFileImporter {
     @Override
     public List<ImportedProduct> getProducts(List<File> files, boolean manualMode) throws RuntimeException {
         ExcelFileRecordToProductMapper mapper = new ExcelFileRecordToProductMapper();
-        workbook = null;
+        Workbook workbook = null;
         Cell cell;
 
         conflictItemsPreprocessor.clearCash();
@@ -72,6 +72,7 @@ public class ExcelFileImporter extends AbstractFileImporter {
         try {
             workbook.close();
         } catch (Exception e) {
+
         }
     }
 }
