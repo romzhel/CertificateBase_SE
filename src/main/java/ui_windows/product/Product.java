@@ -28,46 +28,46 @@ import java.util.Set;
 
 @NoArgsConstructor
 public class Product implements Cloneable {
-    private static final Logger logger = LogManager.getLogger(Product.class);
+    protected static final Logger logger = LogManager.getLogger(Product.class);
     public static final String NO_DATA = "нет данных";
 
-    private int id;
-    private String material;
-    private String productForPrint;
-    private String article;
-    private String hierarchy = "";
-    private String lgbk = "";
-    private String endofservice;
-    private String dangerous;
-    private String country;
-    private String dchain;
-    private String descriptionru = "";
-    private String descriptionen = "";
-    private Boolean price = false;
-    private Boolean blocked = false;
-    private Boolean priceHidden = false;
-    private Integer warranty = 0;
+    protected int id;
+    protected String material;
+    protected String productForPrint;
+    protected String article;
+    protected String hierarchy = "";
+    protected String lgbk = "";
+    protected String endofservice;
+    protected String dangerous;
+    protected String country;
+    protected String dchain;
+    protected String descriptionru = "";
+    protected String descriptionen = "";
+    protected Boolean price = false;
+    protected Boolean blocked = false;
+    protected Boolean priceHidden = false;
+    protected Integer warranty = 0;
 
-    private String changecodes = "";
-    private String lastImportcodes = "";
+    protected String changecodes = "";
+    protected String lastImportcodes = "";
 
-    private Integer family_id = -1;
-    private Integer type_id = 0;
-    private String history = "";
-    private String lastChangeDate = "";
+    protected Integer family_id = -1;
+    protected Integer type_id = 0;
+    protected String history = "";
+    protected String lastChangeDate = "";
     //    private last
-    private String fileName = "";
-    private String comments = "";
-    private String replacement = "";
-    private NormsList normsList;
-    private Integer normsMode = NormsList.ADD_TO_GLOBAL;
-    private Integer minOrder = 0;
-    private Integer packetSize = 0;
-    private Integer leadTime = 0;
-    private Double weight = 0.0;
-    private Double localPrice = 0.0;
+    protected String fileName = "";
+    protected String comments = "";
+    protected String replacement = "";
+    protected NormsList normsList;
+    protected Integer normsMode = NormsList.ADD_TO_GLOBAL;
+    protected Integer minOrder = 0;
+    protected Integer packetSize = 0;
+    protected Integer leadTime = 0;
+    protected Double weight = 0.0;
+    protected Double localPrice = 0.0;
 
-    private final Set<DataItem> protectedData = new HashSet<>();
+    protected final Set<DataItem> protectedData = new HashSet<>();
 
     public Product(ProductEditorWindowController pewc) {
         id = 0;

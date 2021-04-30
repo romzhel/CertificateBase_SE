@@ -3,21 +3,19 @@ package ui_windows.main_window.file_import_window.te;
 import javafx.stage.Modality;
 import ui_windows.OrdinalWindow;
 import ui_windows.main_window.MainWindow;
-
-import java.util.List;
-import java.util.Map;
+import ui_windows.main_window.file_import_window.te.importer.ImportDataSheet;
 
 public class ColumnMappingWindow extends OrdinalWindow<ColumnMappingWindowController> {
 
-    public ColumnMappingWindow(String fileName, Map<String, List<ImportColumnParameter>> importParameters) {
+    public ColumnMappingWindow(ImportDataSheet importDataSheet) {
         super(MainWindow.getMainStage(), Modality.APPLICATION_MODAL, null, "/fxml/columnMappingWindow.fxml",
-                fileName);
+                "Сопоставление столбцов");
 
-        controller.init(importParameters);
+        controller.init(importDataSheet);
     }
 
-    public Map<String, List<ImportColumnParameter>> getParameters() throws Exception {
+    public ImportDataSheet getResult() throws Exception {
         stage.showAndWait();
-        return controller.getParameters();
+        return controller.getResult();
     }
 }

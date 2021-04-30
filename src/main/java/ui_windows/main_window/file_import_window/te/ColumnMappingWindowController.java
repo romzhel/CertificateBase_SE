@@ -3,16 +3,17 @@ package ui_windows.main_window.file_import_window.te;
 import core.ThreadManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import ui.Dialogs;
+import ui_windows.main_window.file_import_window.te.importer.ImportDataSheet;
 import ui_windows.product.data.DataItem;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,28 +26,50 @@ public class ColumnMappingWindowController {
     @FXML
     private TableView<ImportColumnParameter> tvFields;
     @FXML
-    private ComboBox<String> cbSheetNames;
-    private Map<String, List<ImportColumnParameter>> inputParameters;
-    private Map<String, List<ImportColumnParameter>> outputParameters;
+    private ComboBox<ImportDataSheet> cbSheetNames;
+    @FXML
+    private Label lblSource;
+    private ImportDataSheet inputSheet;
+    private ImportDataSheet result;
 
-    public void init(Map<String, List<ImportColumnParameter>> parameters) {
-        this.inputParameters = parameters;
+    public void init(ImportDataSheet inputData) {
+        this.inputSheet = inputData;
         new ColumnMappingTable(tvFields);
+        lblSource.setText(inputData.getFileName().concat("/").concat(inputData.getSheetName()));
+        tvFields.getItems().addAll(inputData.getColumnParams());
 
-        cbSheetNames.getItems().addAll(parameters.keySet());
+        /*cbSheetNames.getItems().addAll(inputData);
+        cbSheetNames.setCellFactory(new Callback<ListView<ImportDataSheet>, ListCell<ImportDataSheet>>() {
+            @Override
+            public ListCell<ImportDataSheet> call(ListView<ImportDataSheet> param) {
+                return new ListCell<ImportDataSheet>(){
+                    @Override
+                    protected void updateItem(ImportDataSheet item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (item == null) {
+                            setGraphic(null);
+                            setText(null);
+                        } else {
+                            setGraphic(null);
+                            setText(item.getFileName().concat("/").concat(item.getSheetName()));
+                        }
+                    }
+                };
+            }
+        });
         cbSheetNames.valueProperty().addListener((observable, oldValue, newValue) -> {
             tvFields.getItems().clear();
-            String selectedSheetName = cbSheetNames.getSelectionModel().getSelectedItem();
-            tvFields.getItems().addAll(parameters.get(selectedSheetName));
+            tvFields.getItems().addAll(newValue.getColumnParams());
         });
         if (cbSheetNames.getItems().size() > 0) {
             cbSheetNames.getSelectionModel().select(0);
-        }
+        }*/
     }
 
     public void apply() {
         if (isSelectionCorrect()) {
-            outputParameters = inputParameters;
+            result = inputSheet;
             tvFields.getScene().getWindow().hide();
 //        fileImport.getSelectionListener().selectionEvent(tvFields.getItems());
         }
@@ -87,7 +110,7 @@ public class ColumnMappingWindowController {
         return true;
     }
 
-    public Map<String, List<ImportColumnParameter>> getParameters() {
-        return outputParameters;
+    public ImportDataSheet getResult() {
+        return result;
     }
 }
