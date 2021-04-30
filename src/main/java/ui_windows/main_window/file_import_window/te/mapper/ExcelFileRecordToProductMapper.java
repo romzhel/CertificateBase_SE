@@ -7,14 +7,14 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
+import ui_windows.main_window.file_import_window.te.importer.ImportDataSheet;
+import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.options_window.product_lgbk.NormsList;
-import ui_windows.product.Product;
 import utils.PriceUtils;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import static ui_windows.product.data.DataItem.DATA_EMPTY;
 
@@ -22,13 +22,14 @@ public class ExcelFileRecordToProductMapper implements FileRecordToProductMapper
     private static final Logger logger = LogManager.getLogger(ExcelFileRecordToProductMapper.class);
 
     @Override
-    public Product getProductFromFileRecord(Row record, List<ImportColumnParameter> params) throws RuntimeException {
-        Product product = new Product();
+    public ImportedProduct getProductFromFileRecord(Row record, ImportDataSheet importDataSheet) throws RuntimeException {
+        ImportedProduct product = new ImportedProduct();
         product.setId(0);
         product.setPrice(false);
         product.setNormsList(new NormsList(new ArrayList<>()));
+        product.setImportDataSheet(importDataSheet);
 
-        for (ImportColumnParameter param : params) {
+        for (ImportColumnParameter param : importDataSheet.getColumnParams()) {
             if (param.getDataItem() == DATA_EMPTY) {
                 continue;
             }

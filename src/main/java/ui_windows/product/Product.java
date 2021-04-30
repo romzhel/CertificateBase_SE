@@ -28,47 +28,47 @@ import java.util.Set;
 
 @NoArgsConstructor
 public class Product implements Cloneable {
-    private static final Logger logger = LogManager.getLogger(Product.class);
+    protected static final Logger logger = LogManager.getLogger(Product.class);
     public static final String NO_DATA = "нет данных";
 
-    private int id;
-    private String material;
-    private String productForPrint;
-    private String article;
-    private String hierarchy = "";
-    private String lgbk = "";
-    private String endofservice;
-    private String dangerous;
-    private String country;
-    private String dchain;
-    private String descriptionru = "";
-    private String descriptionen = "";
-    private Boolean price = false;
-    private Boolean blocked = false;
-    private Boolean priceHidden = false;
-    private Integer warranty = 0;
+    protected int id;
+    protected String material;
+    protected String productForPrint;
+    protected String article;
+    protected String hierarchy = "";
+    protected String lgbk = "";
+    protected String endofservice;
+    protected String dangerous;
+    protected String country;
+    protected String dchain;
+    protected String descriptionru = "";
+    protected String descriptionen = "";
+    protected Boolean price = false;
+    protected Boolean blocked = false;
+    protected Boolean priceHidden = false;
+    protected Integer warranty = 0;
 
-    private String changecodes = "";
-    private String lastImportcodes = "";
+    protected String changecodes = "";
+    protected String lastImportcodes = "";
 
-    private Integer family_id = -1;
-    private Integer type_id = 0;
-    private String history = "";
-    private String lastChangeDate = "";
+    protected Integer family_id = -1;
+    protected Integer type_id = 0;
+    protected String history = "";
+    protected String lastChangeDate = "";
     //    private last
-    private String fileName = "";
-    private String comments = "";
-    private String commentsPrice = "";
-    private String replacement = "";
-    private NormsList normsList;
-    private Integer normsMode = NormsList.ADD_TO_GLOBAL;
-    private Integer minOrder = 0;
-    private Integer packetSize = 0;
-    private Integer leadTime = 0;
-    private Double weight = 0.0;
-    private Double localPrice = 0.0;
+    protected String fileName = "";
+    protected String comments = "";
+    protected String commentsPrice = "";
+    protected String replacement = "";
+    protected NormsList normsList;
+    protected Integer normsMode = NormsList.ADD_TO_GLOBAL;
+    protected Integer minOrder = 0;
+    protected Integer packetSize = 0;
+    protected Integer leadTime = 0;
+    protected Double weight = 0.0;
+    protected Double localPrice = 0.0;
 
-    private final Set<DataItem> protectedData = new HashSet<>();
+    protected final Set<DataItem> protectedData = new HashSet<>();
 
     public Product(ProductEditorWindowController pewc) {
         id = 0;
@@ -97,41 +97,6 @@ public class Product implements Cloneable {
         replacement = pewc.tfReplacement.getText();
     }
 
-    /*public Product(RowData rowData, Mapper mapper) {
-        String cellValue;
-        id = 0;
-        material = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_ORDER_NUMBER)).replaceAll("\\,", ".");
-        productForPrint = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_ORDER_NUMBER_PRINT)).replaceAll("\\,", ".");
-        article = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_ARTICLE)).replaceAll("\\,", ".");
-        hierarchy = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_HIERARCHY));
-        lgbk = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_LGBK));
-
-        cellValue = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_SERVICE_END)).replaceAll("\\,", ".");
-        endofservice = cellValue.matches("00.00.0000") ? "" : cellValue;
-        dangerous = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_LOGISTIC_NOTES));
-        country = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_COUNTRY));
-        dchain = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_DCHAIN));
-
-        price = false;
-        descriptionru = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_DESCRIPTION_RU));
-        descriptionen = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_DESCRIPTION_EN));
-
-        normsList = new NormsList(new ArrayList<>());
-
-        minOrder = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_MIN_ORDER)));
-        packetSize = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_PACKSIZE)).replaceAll("\\.", ""));
-        leadTime = (int) getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_LEAD_TIME_EU)));
-        weight = getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_WEIGHT)));
-        localPrice = getDoubleFromString(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_LOCAL_PRICE)));
-        try {
-            warranty = Integer.valueOf(rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_WARRANTY)));
-        } catch (Exception e) {
-            warranty = 0;
-        }
-    }
-        commentsPrice = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_COMMENT_PRICE));
-    }*/
-
     public Product(ResultSet rs) throws SQLException {
         id = rs.getInt("id");
         material = rs.getString("material");
@@ -156,6 +121,7 @@ public class Product implements Cloneable {
         lastChangeDate = rs.getString("last_change_date");
         fileName = rs.getString("file_name");
         comments = rs.getString("comments");
+        commentsPrice = rs.getString("comments_price") == null ? "" : rs.getString("comments_price");
         replacement = rs.getString("replacement");
 
         type_id = rs.getInt("type_id");

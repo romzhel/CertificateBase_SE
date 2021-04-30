@@ -12,9 +12,9 @@ import ui.Dialogs;
 import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.file_import_window.te.importer.ExcelFileImporter;
+import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
-import ui_windows.product.data.DataItem;
 import utils.Utils;
 import utils.comparation.se.*;
 
@@ -50,7 +50,7 @@ public class ProductDataFileImportTask implements Runnable {
 
         Set<Product> changedItems = new HashSet<>();
         ExcelFileImporter importer = new ExcelFileImporter();
-        FileImportUtils importUtils = FileImportUtils.getInstance();
+        ExcelFileImportUtils importUtils = ExcelFileImportUtils.getInstance();
         ProductsComparator comparator = new ProductsComparator();
 
         if (applyChanges) {
@@ -61,33 +61,12 @@ public class ProductDataFileImportTask implements Runnable {
             }
         }
 
-        for (File file : filesImportParameters.getFiles()) {
-            importer.openFile(file);
-            final Map<String, List<ImportColumnParameter>> importParams = importer.getSheetSet().entrySet().stream()
-                    .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            entry -> importUtils.getImportColumnParams(entry.getValue())));
+        List<ImportedProduct> importedItems = importer.getProducts(filesImportParameters.getFiles(), true);
 
-            logger.debug("initial import params: {}", importParams);
-            ThreadManager.executeFxTaskSafe(() -> new ColumnMappingWindow(file.getName(), importParams).getParameters());
-            Map<String, List<ImportColumnParameter>> confirmedParams = importParams.entrySet().stream()
-                    .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            (entry) -> entry.getValue().stream()
-                                    .filter(param -> param.getDataItem() != DATA_EMPTY)
-                                    .collect(Collectors.toList())));
-            logger.debug("confirmed import params: {}", confirmedParams);
-
-            confirmedParams.forEach((sheetName, columnParams) -> {
-                logger.debug("import data from file '{}' sheet '{}'", file, sheetName);
-                Set<Product> productsFromFile = importer.getProducts(sheetName, columnParams);
-                ComparingParameters<Product> comparingParameters = new ComparingParameters<>(columnParams,
-                        new ComparingRulesImportNow(), WITHOUT_GONE);
-                comparator.compare(Products.getInstance().getItems(), productsFromFile, comparingParameters);
-            });
-
-            importer.closeFile();
-        }
+        System.out.println();
+        /*ComparingParameters<Product> comparingParameters = new ComparingParameters<>(columnParams,
+                new ComparingRulesImportNow(), WITHOUT_GONE);
+        comparator.compare(Products.getInstance().getItems(), productsFromFile, comparingParameters);
 
         if (applyChanges) {
             comparator.fixChanges();

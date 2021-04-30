@@ -5,13 +5,17 @@ import database.ProductsDB;
 import javafx.scene.control.TableView;
 import ui_windows.ExecutionIndicator;
 import utils.Utils;
+import utils.comparation.products.ProductNameResolver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Products implements Initializable {
     private static Products instance;
     private List<Product> products;
+    private Map<String, Product> productMap;
     private TableView<Product> tableView;
 
     private Products() {
@@ -29,7 +33,11 @@ public class Products implements Initializable {
         return products;
     }
 
-    public void setItems(ArrayList<Product> list) {
+    public Product getProductByResolvedMaterial(String resolvedMaterial) {
+        return productMap.get(resolvedMaterial);
+    }
+
+    public void setItems(List<Product> list) {
         products.clear();
         products.addAll(list);
     }
@@ -52,6 +60,11 @@ public class Products implements Initializable {
     @Override
     public void init() throws Exception {
         products = new ProductsDB().getData();
+        productMap = products.stream()
+                .collect(Collectors.toMap(
+                        product -> ProductNameResolver.resolve(product.getMaterial()),
+                        product -> product
+                ));
     }
 
     public TableView<Product> getTableView() {
