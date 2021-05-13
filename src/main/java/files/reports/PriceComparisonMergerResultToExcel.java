@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import static files.ExcelCellStyleFactory.CELL_ALIGN_LEFT_BOLD;
+import static files.ExcelCellStyleFactory.CELL_ALIGN_HLEFT_BOLD;
 import static ui_windows.product.data.DataItem.*;
 
 public class PriceComparisonMergerResultToExcel {
@@ -113,6 +113,8 @@ public class PriceComparisonMergerResultToExcel {
                 }
             }
 
+            sheet.createFreezePane(0, 2);
+
             try {
                 FileOutputStream fos = new FileOutputStream(reportFile);
                 workbook.write(fos);
@@ -132,6 +134,7 @@ public class PriceComparisonMergerResultToExcel {
 //                }).start();
         }
 //        });
+
         return reportFile;
     }
 
@@ -143,19 +146,19 @@ public class PriceComparisonMergerResultToExcel {
             int colFrom = values.length + sheetsNames.indexOf(sheetName) * sheetTitles.length;
             int colTo = values.length + (sheetsNames.indexOf(sheetName) + 1) * sheetTitles.length - 1;
 
-            fillCell(row0.createCell(colFrom), sheetName, CELL_ALIGN_LEFT_BOLD);
+            fillCell(row0.createCell(colFrom), sheetName, CELL_ALIGN_HLEFT_BOLD);
             sheet.addMergedRegion(new CellRangeAddress(row0.getRowNum(), row0.getRowNum(), colFrom, colTo));
 
             colIndex = colFrom;
             for (String title : sheetTitles) {
-                fillCell(row1.createCell(colIndex++), title, CELL_ALIGN_LEFT_BOLD);
+                fillCell(row1.createCell(colIndex++), title, CELL_ALIGN_HLEFT_BOLD);
                 sheet.autoSizeColumn(colIndex - 1);
             }
         }
 
         colIndex = 0;
         for (DataItem di : values) {
-            fillCell(row1.createCell(colIndex++), di.getDisplayingName(), CELL_ALIGN_LEFT_BOLD);
+            fillCell(row1.createCell(colIndex++), di.getDisplayingName(), CELL_ALIGN_HLEFT_BOLD);
             sheet.autoSizeColumn(colIndex - 1);
         }
     }
@@ -207,7 +210,7 @@ public class PriceComparisonMergerResultToExcel {
     }
 
     private void fillCell(XSSFCell cell, Object object) {
-        fillCell(cell, object, ExcelCellStyleFactory.CELL_ALIGN_LEFT);
+        fillCell(cell, object, ExcelCellStyleFactory.CELL_ALIGN_HLEFT);
     }
 
     private void fillCell(XSSFCell cell, Object object, CellStyle style) {

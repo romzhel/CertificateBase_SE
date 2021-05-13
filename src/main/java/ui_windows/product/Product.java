@@ -53,6 +53,7 @@ public class Product implements Cloneable {
     //    private last
     private String fileName = "";
     private String comments = "";
+    private String commentsPrice = "";
     private String replacement = "";
     private NormsList normsList;
     private Integer normsMode = NormsList.ADD_TO_GLOBAL;
@@ -89,6 +90,7 @@ public class Product implements Cloneable {
 //        history = pewc.lHistory.toString();///!!!!!! check
         lastChangeDate = "";
         comments = pewc.taComments.getText();
+        commentsPrice = pewc.taCommentsPrice.getText();
         replacement = pewc.tfReplacement.getText();
     }
 
@@ -123,6 +125,7 @@ public class Product implements Cloneable {
         } catch (Exception e) {
             warranty = 0;
         }
+        commentsPrice = rowData.get(mapper.getFieldIndexByDataItem(DataItem.DATA_COMMENT_PRICE));
     }
 
     public Product(ResultSet rs) throws SQLException {
@@ -149,6 +152,7 @@ public class Product implements Cloneable {
         lastChangeDate = rs.getString("last_change_date");
         fileName = rs.getString("file_name");
         comments = rs.getString("comments");
+        commentsPrice = rs.getString("comments_price") == null ? "" : rs.getString("comments_price");
         replacement = rs.getString("replacement");
 
         type_id = rs.getInt("type_id");
@@ -240,6 +244,7 @@ public class Product implements Cloneable {
         }
 
         pewc.taComments.setText(comments);
+        pewc.taCommentsPrice.setText(commentsPrice);
         pewc.taComments.setEditable(comments != null);
         pewc.tfReplacement.setText(replacement);
         pewc.tfReplacement.setEditable(replacement != null);
@@ -446,6 +451,14 @@ public class Product implements Cloneable {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public String getCommentsPrice() {
+        return commentsPrice;
+    }
+
+    public void setCommentsPrice(String commentsPrice) {
+        this.commentsPrice = commentsPrice;
     }
 
     public String getReplacement() {

@@ -11,7 +11,7 @@ import ui_windows.product.Product;
 
 import java.util.TreeSet;
 
-import static files.ExcelCellStyleFactory.CELL_ALIGN_LEFT_BOLD;
+import static files.ExcelCellStyleFactory.CELL_ALIGN_HLEFT_BOLD;
 
 public class LgbkGroup {
     private PriceListSheet priceListSheet;
@@ -60,7 +60,7 @@ public class LgbkGroup {
         int firstRowForGroup = rowIndex;
         row = sheet.createRow(rowIndex++);
         cell = row.createCell(0, CellType.STRING);
-        cell.setCellStyle(CELL_ALIGN_LEFT_BOLD);
+        cell.setCellStyle(CELL_ALIGN_HLEFT_BOLD);
 
         ProductLgbk pl = ProductLgbks.getInstance().getGroupLgbkByName(name);
 

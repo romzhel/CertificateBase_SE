@@ -61,14 +61,16 @@ public class Mapper {
                 {"leadtime", DATA_LEAD_TIME_EU},
 //                {"ВрД", DATA_LEAD_TIME_EU},
                 {"вес", DATA_WEIGHT},
-                {"weight", DATA_WEIGHT}
+                {"weight", DATA_WEIGHT},
+                {"Комментарий", DATA_COMMENT_PRICE},
+                {"Гарант. срок, лет", DATA_WARRANTY}
         }).collect(Collectors.toMap(data -> (String) data[0], data -> (DataItem) data[1]));
     }
 
     public DataItem getDataItemByTitle(String title) {
         if (title == null || title.trim().isEmpty()) return DATA_EMPTY;
         for (String key : nameToDataItemMapping.keySet()) {
-            if (title.toLowerCase().startsWith(key.toLowerCase())) {
+            if (title.toLowerCase().equals(key.toLowerCase()) || title.toLowerCase().startsWith(key.toLowerCase())) {
                 return nameToDataItemMapping.getOrDefault(key, DATA_EMPTY);
             }
         }

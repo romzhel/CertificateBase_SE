@@ -43,12 +43,6 @@ public class ProductsComparator implements Comparator<Product> {
         Product item2;
         String material;
         for (Product item1 : items1) {
-
-            if (item1.getMaterial().equals("410355768")) {
-                System.out.println();
-            }
-
-
             material = parameters.getComparingRules().treatMaterial(item1.getMaterial());
             item2 = changedItems.get(material);
 

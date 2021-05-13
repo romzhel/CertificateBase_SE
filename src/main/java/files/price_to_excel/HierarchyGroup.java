@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
-import static files.ExcelCellStyleFactory.CELL_ALIGN_LEFT;
+import static files.ExcelCellStyleFactory.CELL_ALIGN_HLEFT;
 import static ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet.LANG_RU;
 
 public class HierarchyGroup {
@@ -79,7 +79,7 @@ public class HierarchyGroup {
             if (!printText.isEmpty()) {
                 row = sheet.createRow(rowIndex++);
                 cell = row.createCell(0, CellType.STRING);
-                cell.setCellStyle(CELL_ALIGN_LEFT);
+                cell.setCellStyle(CELL_ALIGN_HLEFT);
                 cell.setCellValue(printText);
             }
         } else {

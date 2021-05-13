@@ -104,7 +104,7 @@ public class NowImportResultToExcel {
         for (String title : titles) {
             cell = row.createCell(colIndex++);
             fillCell(cell, title);
-            cell.setCellStyle(ExcelCellStyleFactory.CELL_ALIGN_LEFT_BOLD);
+            cell.setCellStyle(ExcelCellStyleFactory.CELL_ALIGN_HLEFT_BOLD);
             sheet.autoSizeColumn(colIndex - 1);
         }
     }

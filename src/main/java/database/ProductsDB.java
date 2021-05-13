@@ -20,15 +20,15 @@ public class ProductsDB extends DbRequest {
                             "country, dchain, description_ru, description_en, price, not_used, archive, history, " +
                             "last_change_date, file_name, comments, replacement, type_id, change_codes, product_print," +
                             "last_import_codes, norms_list, norms_mode, min_order, packet_size, lead_time, weight, " +
-                            "local_price, warranty) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                            "local_price, warranty, comments_price) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = connection.prepareStatement("UPDATE products " +
                     "SET article = ?, hierarchy = ?, lgbk = ?, family = ?, end_of_service = ?, dangerous = ?, country = ?, " +
                     "dchain = ?, description_ru = ?, description_en = ?, price = ?, not_used = ?, archive = ?, history = ?," +
                     "last_change_date = ?, file_name = ?, comments = ?, replacement = ?, type_id = ?, change_codes = ?, " +
                     "product_print = ?, last_import_codes = ?, norms_list = ?, norms_mode = ?, min_order = ?, packet_size = ?, " +
-                    "lead_time = ?, weight = ?, local_price = ?, warranty = ? WHERE material = ?");
+                    "lead_time = ?, weight = ?, local_price = ?, warranty = ?, comments_price = ?  WHERE material = ?");
             deleteData = connection.prepareStatement("DELETE FROM products " +
                     "WHERE id = ?");
         } catch (SQLException e) {
@@ -164,6 +164,7 @@ public class ProductsDB extends DbRequest {
         prepStat.setDouble(++count, alpr.get(j).getWeight());
         prepStat.setDouble(++count, alpr.get(j).getLocalPrice());
         prepStat.setInt(++count, alpr.get(j).getWarranty());
+        prepStat.setString(++count, alpr.get(j).getCommentsPrice().isEmpty() ? null : alpr.get(j).getCommentsPrice());
         return count;
     }
 

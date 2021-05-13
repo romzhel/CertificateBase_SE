@@ -17,6 +17,10 @@ public class ReportToExcel extends ReportToExcelTemplate {
 
 
     public File export(List<DataItem> columns, List<Product> items, File reportFile) {
+        if (items == null) {
+            return null;
+        }
+
         ExecutionIndicator.getInstance().start();
         this.reportFile = reportFile;
         workbook = new XSSFWorkbook();

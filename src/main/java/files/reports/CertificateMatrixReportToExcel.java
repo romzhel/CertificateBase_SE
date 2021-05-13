@@ -49,7 +49,7 @@ public class CertificateMatrixReportToExcel {
         row = sheet.createRow(0);
         for (int column = 0; column < titles.length; column++) {
             cell = row.createCell(column, CellType.STRING);
-            cell.setCellStyle(ExcelCellStyleFactory.CELL_STYLE_CENTER_BOLD);
+            cell.setCellStyle(ExcelCellStyleFactory.CELL_STYLE_HCENTER_BOLD);
             cell.setCellValue(titles[column]);
             sheet.setColumnWidth(column, width[column]);
         }
@@ -59,7 +59,7 @@ public class CertificateMatrixReportToExcel {
         for (CertificatesReportResult crr : productCertificatesReport) {
 //            logger.trace("добавление сведений по {}", crr.getProduct());
             row = sheet.createRow(++rowNum);
-            fillProductData(row, new HSSFCellStyle[]{CELL_STYLE_CENTER, CELL_STYLE_LEFT}, ++itemIndex, crr);
+            fillProductData(row, new HSSFCellStyle[]{CELL_STYLE_HCENTER, CELL_STYLE_HLEFT}, ++itemIndex, crr);
 
             int rowOffset = 0;
             int col;
@@ -75,7 +75,7 @@ public class CertificateMatrixReportToExcel {
                     displayedNorms.put(normAndCertFiles.getKey(), col);
                     HSSFRow titleRow = sheet.getRow(0);
                     cell = titleRow.createCell(col, CellType.STRING);
-                    cell.setCellStyle(ExcelCellStyleFactory.CELL_STYLE_CENTER_BOLD);
+                    cell.setCellStyle(ExcelCellStyleFactory.CELL_STYLE_HCENTER_BOLD);
                     cell.setCellValue("регламент " + normAndCertFiles.getKey());
                 }
 
@@ -88,7 +88,7 @@ public class CertificateMatrixReportToExcel {
                         row = sheet.getRow(rowNum + fileRowOffset);
                         row = row == null ? sheet.createRow(rowNum + fileRowOffset) : row;
                         rowOffset = Math.max(rowOffset, fileRowOffset);
-                        fillProductData(row, new HSSFCellStyle[]{CELL_STYLE_CENTER_GRAY, CELL_STYLE_LEFT_GRAY}, itemIndex, crr);
+                        fillProductData(row, new HSSFCellStyle[]{CELL_STYLE_HCENTER_GRAY, CELL_STYLE_HLEFT_GRAY}, itemIndex, crr);
                     }
 
                     cell = row.createCell(col, CellType.STRING);

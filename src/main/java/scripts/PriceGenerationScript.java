@@ -76,7 +76,6 @@ public class PriceGenerationScript {
                             SHD_CUSTOM_DATA.getData(), opf.get())).get();
                     DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION.activate();
 
-
                     logger.trace("out of price report generated");
 
                     PricesComparator pricesComparator = new PricesComparator();

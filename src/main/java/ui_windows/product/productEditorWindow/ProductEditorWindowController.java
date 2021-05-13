@@ -70,6 +70,8 @@ public class ProductEditorWindowController implements Initializable {
     @FXML
     public TextArea taComments;
     @FXML
+    public TextArea taCommentsPrice;
+    @FXML
     public AnchorPane apRoot;
     @FXML
     public TextArea taDescription;

@@ -66,7 +66,7 @@ public class FilterParameters_SE {
         hierarchies = new HashSet<>();
         customProperties = new HashSet<>(Arrays.asList(DATA_EMPTY, DATA_COUNTRY, DATA_DCHAIN, DATA_RESPONSIBLE,
                 /*DATA_CERTIFICATE,*/ DATA_IN_WHICH_PRICE_LIST, DATA_TYPE_DESCRIPTION, DATA_DESCRIPTION_RU, DATA_DESCRIPTION_EN,
-                DATA_IS_BLOCKED, DATA_IS_PRICE_HIDDEN));
+                DATA_IS_BLOCKED, DATA_IS_PRICE_HIDDEN, DATA_COMMENT_PRICE));
     }
 
     public FilterParameters_SE setItems(ItemsSelection selection) {

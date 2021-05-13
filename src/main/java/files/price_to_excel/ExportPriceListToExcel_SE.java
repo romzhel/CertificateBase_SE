@@ -44,14 +44,16 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
             if (priceList.getProblemItems().size() > 0) {
                 Platform.runLater(() -> InitModule.setAndDisplayCustomItems(priceList.getProblemItems()));
 
-                if (!askProblemItems || Dialogs.confirmTS("Формирование прайс-листа", "Найдены заказные" +
+                if (askProblemItems && !Dialogs.confirmTS("Формирование прайс-листа", "Найдены заказные" +
                         " позиции, статус проверки сертификатов которых не позволяет добавить их в прайс-лист (" +
                         priceList.getProblemItems().size() + "). Они будут отображены в наборе данных Запросы.\n\n" +
                         "Продолжить формирование прайс-листа без данных позиций?")) {
-                    fillDoc();
-                    saveToFile();
+                    return;
                 }
             }
+
+            fillDoc();
+            saveToFile();
         } else {
             System.out.printf("pricelist %s wasn't generated !!! can't be exported to Excel", priceList.getName());
         }
