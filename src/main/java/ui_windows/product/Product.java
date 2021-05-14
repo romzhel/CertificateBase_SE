@@ -28,9 +28,9 @@ import java.util.Set;
 
 @NoArgsConstructor
 public class Product implements Cloneable {
-    protected static final Logger logger = LogManager.getLogger(Product.class);
     public static final String NO_DATA = "нет данных";
-
+    protected static final Logger logger = LogManager.getLogger(Product.class);
+    protected final Set<DataItem> protectedData = new HashSet<>();
     protected int id;
     protected String material;
     protected String productForPrint;
@@ -47,10 +47,8 @@ public class Product implements Cloneable {
     protected Boolean blocked = false;
     protected Boolean priceHidden = false;
     protected Integer warranty = 0;
-
     protected String changecodes = "";
     protected String lastImportcodes = "";
-
     protected Integer family_id = -1;
     protected Integer type_id = 0;
     protected String history = "";
@@ -67,8 +65,6 @@ public class Product implements Cloneable {
     protected Integer leadTime = 0;
     protected Double weight = 0.0;
     protected Double localPrice = 0.0;
-
-    protected final Set<DataItem> protectedData = new HashSet<>();
 
     public Product(ProductEditorWindowController pewc) {
         id = 0;
@@ -95,6 +91,7 @@ public class Product implements Cloneable {
         lastChangeDate = "";
         comments = pewc.taComments.getText();
         replacement = pewc.tfReplacement.getText();
+        commentsPrice = pewc.taCommentsPrice.getText();
     }
 
     public Product(ResultSet rs) throws SQLException {
@@ -121,6 +118,7 @@ public class Product implements Cloneable {
         lastChangeDate = rs.getString("last_change_date");
         fileName = rs.getString("file_name");
         comments = rs.getString("comments");
+        commentsPrice = rs.getString("comments_price") == null ? "" : rs.getString("comments_price");
         replacement = rs.getString("replacement");
 
         type_id = rs.getInt("type_id");
@@ -197,8 +195,8 @@ public class Product implements Cloneable {
         }
 
         pewc.taComments.setText(comments);
-        pewc.taCommentsPrice.setText(commentsPrice);
         pewc.taComments.setEditable(comments != null);
+        pewc.taCommentsPrice.setText(commentsPrice);
         pewc.tfReplacement.setText(replacement);
         pewc.tfReplacement.setEditable(replacement != null);
         if (type_id != null) pewc.cbType.setValue(ProductTypes.getInstance().getTypeById(type_id));

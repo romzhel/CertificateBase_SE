@@ -67,7 +67,9 @@ public class FileColumnMappingService {
                 {"leadtime", DATA_LEAD_TIME_EU},
 //                {"ВрД", DATA_LEAD_TIME_EU},
                 {"вес", DATA_WEIGHT},
-                {"weight", DATA_WEIGHT}
+                {"weight", DATA_WEIGHT},
+                {"Комментарий", DATA_COMMENT_PRICE},
+                {"Гарант. срок, лет", DATA_WARRANTY}
         }).collect(Collectors.toMap(data -> ((String) data[0]).toLowerCase(), data -> (DataItem) data[1]));
     }
 

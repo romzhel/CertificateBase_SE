@@ -7,6 +7,7 @@ import ui_windows.product.data.DataItem;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static ui_windows.product.data.DataItem.DATA_EMPTY;
 
@@ -39,7 +40,8 @@ public class ImportColumnParameter {
                 "columnTitle='" + columnTitle + '\'' +
                 ", dataItem=" + dataItem +
                 ", columnIndex=" + columnIndex +
-                ", options=" + options.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().get())) +
+                ", options=" + options.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)) +
                 '}';
 
+    }
 }
