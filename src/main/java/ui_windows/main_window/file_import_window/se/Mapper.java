@@ -59,7 +59,7 @@ public class Mapper {
                 {"Мин зак", DATA_MIN_ORDER},
                 {"packsize", DATA_PACKSIZE},
                 {"leadtime", DATA_LEAD_TIME_EU},
-//                {"ВрД", DATA_LEAD_TIME_EU},
+                {"ВрД", DATA_LEAD_TIME_EU},
                 {"вес", DATA_WEIGHT},
                 {"weight", DATA_WEIGHT},
                 {"Комментарий", DATA_COMMENT_PRICE},
