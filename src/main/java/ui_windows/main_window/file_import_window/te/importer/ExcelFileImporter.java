@@ -5,7 +5,7 @@ import org.apache.poi.ss.usermodel.*;
 import ui_windows.main_window.file_import_window.te.ColumnMappingWindow;
 import ui_windows.main_window.file_import_window.te.ExcelFileImportUtils;
 import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
-import ui_windows.main_window.file_import_window.te.mapper.ExcelFileRecordToProductMapper;
+import ui_windows.main_window.file_import_window.te.mapper.ExcelFileRecordToImportedProductv2Mapper;
 import ui_windows.product.data.DataItem;
 
 import java.io.File;
@@ -16,7 +16,8 @@ public class ExcelFileImporter extends AbstractFileImporter {
 
     @Override
     public List<ImportedProduct> getProducts(List<File> files, boolean manualMode) throws RuntimeException {
-        ExcelFileRecordToProductMapper mapper = new ExcelFileRecordToProductMapper();
+//        ExcelFileRecordToProductMapper mapper = new ExcelFileRecordToProductMapper();
+        ExcelFileRecordToImportedProductv2Mapper mapper = new ExcelFileRecordToImportedProductv2Mapper();
         Workbook workbook = null;
         Cell cell;
 
@@ -54,7 +55,8 @@ public class ExcelFileImporter extends AbstractFileImporter {
 
                     for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
                         if ((row = sheet.getRow(rowIndex)) != null) {
-                            ImportedProduct importedItem = mapper.getProductFromFileRecord(row, importDataSheet);
+//                            ImportedProduct importedItem = mapper.getProductFromFileRecord(row, importDataSheet);
+                            ImportedProduct_v2 importedItem = mapper.getProductFromFileRecord(row, importDataSheet);
                             conflictItemsPreprocessor.process(importedItem);
                         }
                     }

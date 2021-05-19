@@ -3,6 +3,7 @@ package ui_windows.main_window.file_import_window.te;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ui_windows.main_window.file_import_window.te.importer.ImportDataSheet;
 import ui_windows.product.data.DataItem;
 
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public class ImportColumnParameter {
     private DataItem dataItem = DATA_EMPTY;
     private int columnIndex = -1;
     private Map<FilesImportParametersEnum, Boolean> options = new HashMap<>();
+    private ImportDataSheet importDataSheet;
 
     public ImportColumnParameter(String columnTitle) {
         this.columnTitle = columnTitle;

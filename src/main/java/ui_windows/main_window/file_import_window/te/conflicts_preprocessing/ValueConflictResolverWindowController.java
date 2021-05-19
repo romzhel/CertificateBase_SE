@@ -53,6 +53,7 @@ public class ValueConflictResolverWindowController {
             for (TreeItem<Object> propertyItem : productItem.getChildren()) {
                 int selectedCount = (int) propertyItem.getChildren().stream()
                         .map(treeItem -> ((ConflictItemValue) treeItem.getValue()).isSelected())
+                        .filter(isSelected -> isSelected)
                         .count();
                 if (selectedCount != 1) {
                     return false;
