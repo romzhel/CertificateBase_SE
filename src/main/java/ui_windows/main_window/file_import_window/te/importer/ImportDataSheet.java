@@ -12,4 +12,9 @@ public class ImportDataSheet {
     private String sheetName;
     private List<ImportColumnParameter> columnParams;
     private Map<String, Boolean> sheetParams;
+
+    @Override
+    public String toString() {
+        return fileName + '\\' + sheetName;
+    }
 }

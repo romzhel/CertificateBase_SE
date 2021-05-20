@@ -29,7 +29,7 @@ public class ExcelFileImportUtils {
 
         final List<ImportColumnParameter> params = new ArrayList<>();
         for (int cellIndex = 0; cellIndex <= row.getLastCellNum(); cellIndex++) {
-            if ((cell = row.getCell(cellIndex)) == null) {
+            if ((cell = row.getCell(cellIndex)) == null || cell.getStringCellValue().trim().isEmpty()) {
                 continue;
             }
 

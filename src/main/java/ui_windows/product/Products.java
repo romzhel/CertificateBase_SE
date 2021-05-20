@@ -37,6 +37,11 @@ public class Products implements Initializable {
         return productMap.get(resolvedMaterial);
     }
 
+    public Product getProductByMaterial(String material) {
+        String resolvedMaterial = ProductNameResolver.resolve(material);
+        return productMap.get(resolvedMaterial);
+    }
+
     public void setItems(List<Product> list) {
         products.clear();
         products.addAll(list);

@@ -5,7 +5,7 @@ import org.apache.poi.ss.usermodel.*;
 import ui_windows.main_window.file_import_window.te.ColumnMappingWindow;
 import ui_windows.main_window.file_import_window.te.ExcelFileImportUtils;
 import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
-import ui_windows.main_window.file_import_window.te.mapper.ExcelFileRecordToImportedProductv2Mapper;
+import ui_windows.main_window.file_import_window.te.mapper.ExcelFileRecordToImportedProductMapper;
 import ui_windows.product.data.DataItem;
 
 import java.io.File;
@@ -17,7 +17,7 @@ public class ExcelFileImporter extends AbstractFileImporter {
     @Override
     public List<ImportedProduct> getProducts(List<File> files, boolean manualMode) throws RuntimeException {
 //        ExcelFileRecordToProductMapper mapper = new ExcelFileRecordToProductMapper();
-        ExcelFileRecordToImportedProductv2Mapper mapper = new ExcelFileRecordToImportedProductv2Mapper();
+        ExcelFileRecordToImportedProductMapper mapper = new ExcelFileRecordToImportedProductMapper();
         Workbook workbook = null;
         Cell cell;
 
@@ -51,13 +51,16 @@ public class ExcelFileImporter extends AbstractFileImporter {
                             .collect(Collectors.toList());
                     logger.debug("column mapping params for mapping {}", actualParams);
                     importDataSheet.setColumnParams(actualParams);
-                    logger.debug("import sheet data {}", importDataSheet);
+                    logger.debug("import sheet data '{}'", importDataSheet);
 
                     for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
                         if ((row = sheet.getRow(rowIndex)) != null) {
-//                            ImportedProduct importedItem = mapper.getProductFromFileRecord(row, importDataSheet);
-                            ImportedProduct_v2 importedItem = mapper.getProductFromFileRecord(row, importDataSheet);
-                            conflictItemsPreprocessor.process(importedItem);
+                            ImportedProduct importedItem = mapper.getProductFromFileRecord(row, importDataSheet);
+                            if (importedItem.getProperties().get(DataItem.DATA_ORDER_NUMBER) != null) {
+                                conflictItemsPreprocessor.process(importedItem);
+                            } else {
+                                logger.debug("item '{}' was not added", importedItem);
+                            }
                         }
                     }
                 }

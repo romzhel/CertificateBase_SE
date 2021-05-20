@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.*?>
@@ -8,11 +7,11 @@
             fx:controller="ui_windows.main_window.file_import_window.te.conflicts_preprocessing.ValueConflictResolverWindowController">
     <children>
         <TreeView fx:id="tvConflictItems" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0"
-                  AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0"
-                  AnchorPane.topAnchor="14.0"/>
-        <Button fx:id="btnOk" layoutX="166.0" layoutY="561.0" mnemonicParsing="false" prefHeight="25.0"
+                  stylesheets="@../css/treeView.css" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="14.0"
+                  AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0"/>
+        <Button fx:id="btnOk" layoutX="166.0" layoutY="568.0" mnemonicParsing="false" prefHeight="25.0"
                 prefWidth="150.0" text="OK"/>
-        <Button fx:id="btnCancel" layoutX="482.0" layoutY="561.0" mnemonicParsing="false" prefHeight="25.0"
+        <Button fx:id="btnCancel" layoutX="482.0" layoutY="568.0" mnemonicParsing="false" prefHeight="25.0"
                 prefWidth="150.0" text="Отмена"/>
     </children>
 </AnchorPane>

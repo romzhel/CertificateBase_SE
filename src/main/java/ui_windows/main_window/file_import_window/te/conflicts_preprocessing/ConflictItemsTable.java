@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
 import ui_windows.product.data.DataItem;
-import utils.comparation.products.ProductNameResolver;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,54 +31,26 @@ public class ConflictItemsTable {
         List<TreeItem<Object>> items = conflictItems.stream()
                 .map(item -> {
                     logger.debug("preparing treeItem for {}", item);
-                    Product realProduct = Products.getInstance().getProductByResolvedMaterial(
-                            ProductNameResolver.resolve(item.getCalculatedItem().getMaterial()));
-                    TreeItem<Object> itemInfo = new TreeItem<>(realProduct);
+                    TreeItem<Object> itemInfo = new TreeItem<>(item);
 
-                    List<TreeItem<Object>> properties = item.getConflictValues().entrySet().stream()
+                    List<TreeItem<Object>> properties = item.getConflictPropertyMap().entrySet().stream()
                             .peek(entry -> logger.debug("entry: {}", entry))
                             .map(entry -> {
                                 TreeItem<Object> itemProperty = new TreeItem<>(entry.getKey());
                                 itemProperty.getChildren().addAll(entry.getValue().stream()
-                                        .map(value -> {
-                                            value.setSource(item.getCalculatedItem().getImportDataSheet());
-                                            return new TreeItem<Object>(value);
-                                        })
+                                        .map(value -> new TreeItem<Object>(value))
                                         .collect(Collectors.toList()));
                                 return itemProperty;
                             })
                             .peek(itemProperty -> logger.debug("treeItem: {}", itemProperty))
                             .collect(Collectors.toList());
 
-                    logger.debug("add props {} to product {}", properties, realProduct);
+                    logger.debug("add props {} to product {}", properties, item.getId());
                     itemInfo.getChildren().addAll(properties);
 
                     return itemInfo;
                 })
                 .collect(Collectors.toList());
-
-        logger.debug("add conflict products {}", items);
-        root.getChildren().addAll(items);
-
-        tvConflictItems.setRoot(root);
-
-        /*for (ConflictItem conflictItem : conflictItems) {
-            ItemInfo itemInfo = new ItemInfo(conflictItem);
-
-            for (Map.Entry<DataItem, List<ConflictItemValue>> dataItemEntry : conflictItem.getConflictValues().entrySet()) {
-                ItemProperty itemProperty = new ItemProperty(conflictItem);
-
-                for (ConflictItemValue value : dataItemEntry.getValue()) {
-                    ItemValue itemValue = new ItemValue(conflictItem);
-                    itemProperty.getChildren().add(itemValue);
-                }
-
-                itemInfo.getChildren().add(itemProperty);
-            }
-
-
-            root.getChildren().add(itemInfo);
-        }*/
 
         tvConflictItems.setCellFactory(new Callback<TreeView<Object>, TreeCell<Object>>() {
             @Override
@@ -89,31 +60,33 @@ public class ConflictItemsTable {
                     protected void updateItem(Object item, boolean empty) {
                         super.updateItem(item, empty);
 
-                        if (isEmpty()) {
+                        if (item == null || isEmpty()) {
                             setGraphic(null);
                             setText(null);
                         } else {
-                            if (item instanceof Product) {
-                                setText(item.toString());
+                            if (item instanceof ConflictItem) {
+                                setText(Products.getInstance().getProductByMaterial(((ConflictItem) item).getId()).toString());
                                 setGraphic(null);
                             } else if (item instanceof DataItem) {
                                 setText(((DataItem) item).getDisplayingName());
                                 setGraphic(null);
-                            } else if (item instanceof ConflictItemValue) {
-                                Product product = (Product) getTreeItem().getParent().getParent().getValue();
+                            } else if (item instanceof ConflictProperty) {
+                                String id = ((ConflictItem) getTreeItem().getParent().getParent().getValue()).getId();
+                                Product product = Products.getInstance().getProductByMaterial(id);
                                 DataItem dataItem = (DataItem) getTreeItem().getParent().getValue();
 
-                                ConflictItemValue value = (ConflictItemValue) item;
+                                ConflictProperty value = (ConflictProperty) item;
                                 HBox cellBox = new HBox(10);
-                                Label label = new Label(String.format("%s => %s (%s/%s)", dataItem.getValue(product),
-                                        value.getValue().toString(), value.getSource().getFileName(), value.getSource().getSheetName()));
+                                Label label = new Label(String.format("%s => %s (%s)", dataItem.getValue(product),
+                                        value.getProperty().getValue().toString(),
+                                        value.getProperty().getSource().toString()));
                                 CheckBox checkBox = new CheckBox();
                                 checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
                                     logger.info("{} => {}", value, newValue);
                                     value.setSelected(newValue);
                                 });
 
-                                cellBox.getChildren().addAll(label, checkBox);
+                                cellBox.getChildren().addAll(checkBox, label);
                                 setText(null);
                                 setGraphic(cellBox);
                             } else {
@@ -124,5 +97,23 @@ public class ConflictItemsTable {
                 };
             }
         });
+
+        logger.debug("add conflict products {}", items);
+        root.getChildren().addAll(items);
+
+        tvConflictItems.setRoot(root);
+
+        for (TreeItem<?> prop : root.getChildren()) {
+            expandTreeView(prop);
+        }
+    }
+
+    private void expandTreeView(TreeItem<?> item) {
+        if (item != null && !item.isLeaf()) {
+            item.setExpanded(true);
+            for (TreeItem<?> child : item.getChildren()) {
+                expandTreeView(child);
+            }
+        }
     }
 }

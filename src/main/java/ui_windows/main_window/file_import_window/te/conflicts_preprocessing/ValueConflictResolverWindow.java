@@ -13,7 +13,7 @@ public class ValueConflictResolverWindow extends OrdinalWindow<ValueConflictReso
                 Modality.APPLICATION_MODAL,
                 null,
                 "/fxml/valueConflictResolverWindow.fxml",
-                "Выбор файлов для импорта"
+                "Разрешение конфликтов значений"
         );
 
         controller.init(conflictItems);

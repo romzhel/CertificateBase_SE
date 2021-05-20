@@ -1,0 +1,111 @@
+.tree-view-row-cell {
+    -fx-background-color: -fx-table-cell-border-color, -fx-control-inner-background;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+    -fx-text-fill: -fx-text-inner-color;
+}
+
+.tree-view-row-cell:selected {
+    -fx-background-color: -fx-focus-color, -fx-cell-focus-inner-border, -fx-focus-color;
+    -fx-background-insets: 0, 1, 2;
+}
+
+.tree-view-row-cell:odd {
+    -fx-background-color: -fx-table-cell-border-color, derive(-fx-control-inner-background, -5%);
+    -fx-background-insets: 0, 0 0 1 0;
+}
+
+.tree-view-row-cell:selected:odd {
+    -fx-background-color: -fx-focus-color, -fx-cell-focus-inner-border, -fx-focus-color;
+    -fx-background-insets: 0, 1, 2;
+}
+
+.standard-cell .check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-radius: 3px;
+    -fx-padding: 2px
+}
+
+.standard-cell .check-box:selected .mark {
+    -fx-background-color: black;
+}
+
+.standard-cell .check-box:selected .box {
+    -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-radius: 3px;
+    -fx-padding: 2px
+}
+
+.root-cell .check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: blue;
+    -fx-border-radius: 3px;
+    -fx-padding: 2px
+}
+
+.root-cell .check-box:selected .mark {
+    -fx-background-color: blue;
+}
+
+.root-cell .check-box:selected .box {
+    -fx-background-color: white;
+    -fx-border-color: blue;
+    -fx-border-radius: 3px;
+    -fx-padding: 2px
+}
+
+.root-two-color-cell .check-box .box {
+    -fx-background-color: yellow;
+    -fx-border-color: blue;
+    -fx-border-radius: 3px;
+    -fx-padding: 2px
+}
+
+.root-two-color-cell .check-box:selected .mark {
+    -fx-background-color: blue;
+}
+
+.root-two-color-cell .check-box:selected .box {
+    -fx-background-color: yellow;
+    -fx-border-color: blue;
+    -fx-border-radius: 3px;
+    -fx-padding: 2px
+}
+
+.one-color-cell .check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: red;
+    -fx-border-radius: 3px;
+    -fx-padding: 2px
+}
+
+.one-color-cell .check-box:selected .mark {
+    -fx-background-color: red;
+}
+
+.one-color-cell .check-box:selected .box {
+    -fx-background-color: white;
+    -fx-border-color: red;
+    -fx-border-radius: 3px;
+    -fx-padding: 2px
+}
+
+.two-color-cell .check-box .box {
+    -fx-background-color: yellow;
+    -fx-border-color: red;
+    -fx-border-radius: 3px;
+    -fx-padding: 2px
+}
+
+.two-color-cell .check-box:selected .mark {
+    -fx-background-color: red;
+}
+
+.two-color-cell .check-box:selected .box {
+    -fx-background-color: yellow;
+    -fx-border-color: red;
+    -fx-border-radius: 3px;
+    -fx-padding: 2px
+}

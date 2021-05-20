@@ -8,7 +8,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
 import ui_windows.main_window.file_import_window.te.importer.ImportDataSheet;
-import ui_windows.main_window.file_import_window.te.importer.ImportedProduct_v2;
+import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProperty;
 import ui_windows.product.data.DataItem;
 import utils.PriceUtils;
@@ -20,23 +20,24 @@ import java.util.stream.Collectors;
 
 import static ui_windows.product.data.DataItem.DATA_EMPTY;
 
-public class ExcelFileRecordToImportedProductv2Mapper {
-    private static final Logger logger = LogManager.getLogger(ExcelFileRecordToImportedProductv2Mapper.class);
+public class ExcelFileRecordToImportedProductMapper {
+    private static final Logger logger = LogManager.getLogger(ExcelFileRecordToImportedProductMapper.class);
 
-    public ImportedProduct_v2 getProductFromFileRecord(Row record, ImportDataSheet importDataSheet) throws RuntimeException {
+    public ImportedProduct getProductFromFileRecord(Row record, ImportDataSheet importDataSheet) throws RuntimeException {
         Map<DataItem, ImportedProperty> propertyMap = importDataSheet.getColumnParams().stream()
                 .filter(param -> param.getDataItem() != DATA_EMPTY)
                 .map(param -> {
                     ImportedProperty property = new ImportedProperty();
                     property.setDataItem(param.getDataItem());
-                    property.setSource(param.getImportDataSheet());
+                    property.setSource(importDataSheet);
                     property.setValue(getValue(record, param));
                     return property;
                 })
+                .filter(property -> property.getValue() != null && !property.getValue().toString().isEmpty())
                 .collect(Collectors.toMap(ImportedProperty::getDataItem,
                         (property) -> property));
 
-        return new ImportedProduct_v2(propertyMap);
+        return new ImportedProduct(propertyMap);
     }
 
     private Object getValue(Row record, ImportColumnParameter param) throws RuntimeException {
