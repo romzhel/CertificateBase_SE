@@ -3,15 +3,18 @@ package ui_windows.product;
 import core.Initializable;
 import database.ProductsDB;
 import javafx.scene.control.TableView;
+import lombok.extern.log4j.Log4j2;
 import ui_windows.ExecutionIndicator;
 import utils.Utils;
 import utils.comparation.products.ProductNameResolver;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Log4j2
 public class Products implements Initializable {
     private static Products instance;
     private List<Product> products;
@@ -65,6 +68,10 @@ public class Products implements Initializable {
     @Override
     public void init() throws Exception {
         products = new ProductsDB().getData();
+        initMap();
+    }
+
+    public void initMap() {
         productMap = products.stream()
                 .collect(Collectors.toMap(
                         product -> ProductNameResolver.resolve(product.getMaterial()),
@@ -145,10 +152,10 @@ public class Products implements Initializable {
         return doubles;
     }
 
-    public ArrayList<Product> resetLastImportCodes() {
-        System.out.println("clearing last import results...");
+    public List<Product> resetLastImportCodes() {
+        log.info("clearing last import results...");
 
-        ArrayList<Product> changedItems = new ArrayList<>();
+        List<Product> changedItems = new LinkedList<>();
 
         for (Product product : products) {
             if (!product.getLastImportcodes().isEmpty() || !product.getChangecodes().isEmpty()) {

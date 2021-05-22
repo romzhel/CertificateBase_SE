@@ -65,7 +65,9 @@ public class ConflictItemsTable {
                             setText(null);
                         } else {
                             if (item instanceof ConflictItem) {
-                                setText(Products.getInstance().getProductByMaterial(((ConflictItem) item).getId()).toString());
+                                ConflictItem conflictItem = (ConflictItem) item;
+                                Product product = Products.getInstance().getProductByMaterial(conflictItem.getId());
+                                setText(product != null ? product.toString() : conflictItem.getId());
                                 setGraphic(null);
                             } else if (item instanceof DataItem) {
                                 setText(((DataItem) item).getDisplayingName());
@@ -77,8 +79,9 @@ public class ConflictItemsTable {
 
                                 ConflictProperty value = (ConflictProperty) item;
                                 HBox cellBox = new HBox(10);
-                                Label label = new Label(String.format("%s => %s (%s)", dataItem.getValue(product),
-                                        value.getProperty().getValue().toString(),
+                                Label label = new Label(String.format("%s => %s (%s)",
+                                        product != null ? dataItem.getValue(product) : "*",
+                                        value.getProperty().getNewValue().toString(),
                                         value.getProperty().getSource().toString()));
                                 CheckBox checkBox = new CheckBox();
                                 checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {

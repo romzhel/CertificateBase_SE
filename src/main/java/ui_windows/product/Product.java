@@ -1,6 +1,5 @@
 package ui_windows.product;
 
-import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui_windows.options_window.families_editor.ProductFamilies;
@@ -26,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@NoArgsConstructor
 public class Product implements Cloneable {
     public static final String NO_DATA = "нет данных";
     private static final Logger logger = LogManager.getLogger(Product.class);
@@ -65,6 +63,10 @@ public class Product implements Cloneable {
     private Integer leadTime = 0;
     private Double weight = 0.0;
     private Double localPrice = 0.0;
+
+    public Product() {
+        normsList = new NormsList();
+    }
 
     public Product(ProductEditorWindowController pewc) {
         id = 0;

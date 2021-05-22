@@ -25,4 +25,8 @@ public class ComparingParameters<T> {
         this.comparingRules = comparingRules;
         this.checkGoneItems = checkGoneItems;
     }
+
+    public ComparingParameters(ComparingRules<T> comparingRules) {
+        this.comparingRules = comparingRules;
+    }
 }

@@ -71,7 +71,7 @@ public class Certificate {
     }
 
     public String getMonthToExpiration(){
-        Date certDate = Utils.getDate(getExpirationDate());
+        Date certDate = Utils.getDateYYYYMMDD(getExpirationDate());
         Date now = new Date();
         long diff = certDate.getTime() - now.getTime();
 

@@ -1,6 +1,5 @@
 package ui_windows.main_window.file_import_window.se;
 
-import files.reports.NowImportResultToExcel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import utils.comparation.se.ProductsComparator;
@@ -96,6 +95,7 @@ public class ImportNowFile {
     }
 
     public File getReportFile(File targetFile) {
-        return new NowImportResultToExcel().export(result, targetFile);
+//        return new NowImportResultToExcel().export(result, targetFile);
+        return null;
     }
 }

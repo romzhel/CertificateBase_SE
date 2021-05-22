@@ -170,7 +170,7 @@ public class CertificatesChecker {
 
     private String getStatusString(Product product, Certificate cert) {
         String status = "";
-        if ((new Date()).after(Utils.getDate(cert.getExpirationDate()))) {//expired
+        if ((new Date()).after(Utils.getDateYYYYMMDD(cert.getExpirationDate()))) {//expired
             status = NOT_OK + EXPIRED + cert.getExpirationDate();
         }
 

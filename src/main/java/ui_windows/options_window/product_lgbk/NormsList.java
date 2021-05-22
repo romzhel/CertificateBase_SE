@@ -4,11 +4,17 @@ import ui_windows.options_window.requirements_types_editor.RequirementType;
 import ui_windows.options_window.requirements_types_editor.RequirementTypes;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class NormsList {
     public static final int ADD_TO_GLOBAL = 0;
     public static final int INSTEAD_GLOBAL = 1;
-    private ArrayList<Integer> norms;
+    private List<Integer> norms;
+
+    public NormsList() {
+        norms = new LinkedList<>();
+    }
 
     public NormsList(ArrayList<Integer> norms) {
         this.norms = norms;
@@ -31,12 +37,12 @@ public class NormsList {
         }
     }
 
-    public ArrayList<Integer> getIntegerItems() {
+    public List<Integer> getIntegerItems() {
         return norms;
     }
 
-    public ArrayList<String> getNorms() {
-        ArrayList<String> stringItems = new ArrayList<>();
+    public List<String> getNorms() {
+        List<String> stringItems = new ArrayList<>();
         for (int value : norms) {
             stringItems.add(String.valueOf(value));
         }

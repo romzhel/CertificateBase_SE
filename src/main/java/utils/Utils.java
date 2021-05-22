@@ -246,11 +246,15 @@ public class Utils {
         return new SimpleDateFormat("yyyy.MM.dd_HH-mm-ss").format(new Date());
     }
 
-    public static String getDate(Date date) {
+    public static String getDateYYYYMMDD(Date date) {
         return new SimpleDateFormat("yyyy.MM.dd").format(date);
     }
 
-    public static Date getDate(String date) {
+    public static String getDateDDMMYYYY(Date date) {
+        return new SimpleDateFormat("dd.MM.yyyy").format(date);
+    }
+
+    public static Date getDateYYYYMMDD(String date) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         Date result = null;
 

@@ -72,7 +72,7 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
         }
 
         String targetFileName = priceList.getFileName().isEmpty() ? "PriceList" : priceList.getFileName();
-        targetFileName = targetFileName.concat("_").concat(Utils.getDate(new Date()));
+        targetFileName = targetFileName.concat("_").concat(Utils.getDateYYYYMMDD(new Date()));
 
         try {
             resultFile = Folders.getInstance().getTempFolder().resolve(targetFileName + ".xlsx").toFile();

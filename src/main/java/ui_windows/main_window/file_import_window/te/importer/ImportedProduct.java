@@ -13,7 +13,7 @@ public class ImportedProduct {
 
     public ImportedProduct(Map<DataItem, ImportedProperty> properties) {
         this.properties = properties;
-        id = properties.get(DataItem.DATA_ORDER_NUMBER).getValue().toString();
+        id = properties.get(DataItem.DATA_ORDER_NUMBER).getNewValue().toString();
     }
 
     @Override

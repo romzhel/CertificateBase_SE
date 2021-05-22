@@ -30,10 +30,10 @@ public class ExcelFileRecordToImportedProductMapper {
                     ImportedProperty property = new ImportedProperty();
                     property.setDataItem(param.getDataItem());
                     property.setSource(importDataSheet);
-                    property.setValue(getValue(record, param));
+                    property.setNewValue(getValue(record, param));
                     return property;
                 })
-                .filter(property -> property.getValue() != null && !property.getValue().toString().isEmpty())
+                .filter(property -> property.getNewValue() != null && !property.getNewValue().toString().isEmpty())
                 .collect(Collectors.toMap(ImportedProperty::getDataItem,
                         (property) -> property));
 

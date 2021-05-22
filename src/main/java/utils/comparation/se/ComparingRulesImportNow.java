@@ -4,9 +4,11 @@ import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
+import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
 import utils.Utils;
+import utils.comparation.te.ChangedProperty;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -59,6 +61,31 @@ public class ComparingRulesImportNow extends ProductComparingRulesTemplate imple
             logger.error("skip checking params {}", params, e);
         }
         return false;
+    }
+
+    @Override
+    public boolean isCanBeSkipped_v2(ChangedProperty changedProperty) {
+        if (changedProperty.getDataItem() == DATA_ORDER_NUMBER) return true;
+
+        if (changedProperty.getDataItem() == DATA_ARTICLE) {
+            String value1s = changedProperty.getOldValue().toString().replaceAll("\\s", "");
+            String value2s = changedProperty.getNewValue().toString().replaceAll("\\s", "");
+            if (value1s.equals(value2s)) return true;
+        }
+
+        if (changedProperty.getNewValue() == null) {
+            return true;
+        }
+
+        String value2 = changedProperty.getNewValue().toString().trim();
+
+        boolean isNotDataTypeProperty = changedProperty.getDataItem() != DATA_TYPE;
+        boolean stringValueEmpty = value2.isEmpty();
+        boolean intValueZero = value2.equals("0");
+
+        return isNotDataTypeProperty && (stringValueEmpty || intValueZero);
+                /*System.out.println(String.format("skipped %s: %s -> %s", params.getField().getName(),
+                        params.getField().get(params.getObject1()), params.getField().get(params.getObject2())));*/
     }
 
     @Override
@@ -116,5 +143,13 @@ public class ComparingRulesImportNow extends ProductComparingRulesTemplate imple
         }
 
         return true;
+    }
+
+    @Override
+    public boolean addNewItem_v2(ImportedProduct item) {
+        boolean isMaterialEx = item.getProperties().values().stream().anyMatch(param -> param.getDataItem() == DATA_ORDER_NUMBER);
+        boolean isArticleEx = item.getProperties().values().stream().anyMatch(param -> param.getDataItem() == DATA_ARTICLE);
+
+        return isMaterialEx && isArticleEx;
     }
 }
