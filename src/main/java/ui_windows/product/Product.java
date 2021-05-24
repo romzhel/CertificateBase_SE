@@ -15,6 +15,7 @@ import ui_windows.product.productEditorWindow.ProductEditorWindowController;
 import utils.Countries;
 import utils.PriceUtils;
 import utils.comparation.se.Cloneable;
+import utils.property_change_protect.ChangeProtectService;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -28,7 +29,7 @@ import java.util.Set;
 public class Product implements Cloneable {
     public static final String NO_DATA = "нет данных";
     private static final Logger logger = LogManager.getLogger(Product.class);
-    private final Set<DataItem> protectedData = new HashSet<>();
+    private Set<DataItem> protectedData = new HashSet<>();
     private int id;
     private String material;
     private String productForPrint;
@@ -135,6 +136,9 @@ public class Product implements Cloneable {
         leadTime = rs.getInt("lead_time");
         weight = rs.getDouble("weight");
         localPrice = rs.getDouble("local_price");
+
+        ChangeProtectService protectService = new ChangeProtectService();
+        protectedData = protectService.mapStringToSet(rs.getString("protected_fields"));
     }
 
     public void displayInEditorWindow(ProductEditorWindowController pewc) {

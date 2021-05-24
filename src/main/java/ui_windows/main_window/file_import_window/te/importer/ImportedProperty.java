@@ -3,8 +3,10 @@ package ui_windows.main_window.file_import_window.te.importer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ui_windows.main_window.file_import_window.te.FilesImportParametersEnum;
 import ui_windows.product.data.DataItem;
 
+import java.util.Map;
 import java.util.Objects;
 
 @Data
@@ -14,6 +16,7 @@ public class ImportedProperty {
     protected Object newValue;
     protected DataItem dataItem;
     protected ImportDataSheet source;
+    protected Map<FilesImportParametersEnum, Boolean> params;
 
     @Override
     public boolean equals(Object o) {

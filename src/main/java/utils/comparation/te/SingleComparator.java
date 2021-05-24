@@ -15,6 +15,11 @@ public class SingleComparator {
         result.setId(importedItem.getId());
 
         for (ImportedProperty property : importedItem.getProperties().values()) {
+            if (existItem.getProtectedData().contains(property.getDataItem())) {
+                logger.info("property {} {} will not changed due protect", existItem.toString(), property.getDataItem());
+                continue;
+            }
+
             Object existValue = property.getDataItem().getValue(existItem);
             Object newValue = property.getNewValue();
 

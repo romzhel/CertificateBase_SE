@@ -2,6 +2,7 @@ package database;
 
 import ui_windows.ExecutionIndicator;
 import ui_windows.product.Product;
+import utils.property_change_protect.ChangeProtectService;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,21 +15,21 @@ public class ProductsDB extends DbRequest {
 
     public ProductsDB() {
         super();
-        try {
+        try {//todo добавить поле protected_fields
             addData = connection.prepareStatement("INSERT INTO " +
                             "products (material, article, hierarchy, lgbk, family, end_of_service, dangerous, " +
                             "country, dchain, description_ru, description_en, price, not_used, archive, history, " +
                             "last_change_date, file_name, comments, replacement, type_id, change_codes, product_print," +
                             "last_import_codes, norms_list, norms_mode, min_order, packet_size, lead_time, weight, " +
-                            "local_price, warranty, comments_price) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                            "local_price, warranty, comments_price, protected_fields) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = connection.prepareStatement("UPDATE products " +
                     "SET article = ?, hierarchy = ?, lgbk = ?, family = ?, end_of_service = ?, dangerous = ?, country = ?, " +
                     "dchain = ?, description_ru = ?, description_en = ?, price = ?, not_used = ?, archive = ?, history = ?," +
                     "last_change_date = ?, file_name = ?, comments = ?, replacement = ?, type_id = ?, change_codes = ?, " +
                     "product_print = ?, last_import_codes = ?, norms_list = ?, norms_mode = ?, min_order = ?, packet_size = ?, " +
-                    "lead_time = ?, weight = ?, local_price = ?, warranty = ?, comments_price = ?  WHERE material = ?");
+                    "lead_time = ?, weight = ?, local_price = ?, warranty = ?, comments_price = ?,protected_fields = ? WHERE material = ?");
             deleteData = connection.prepareStatement("DELETE FROM products " +
                     "WHERE id = ?");
         } catch (SQLException e) {
@@ -165,6 +166,10 @@ public class ProductsDB extends DbRequest {
         prepStat.setDouble(++count, alpr.get(j).getLocalPrice());
         prepStat.setInt(++count, alpr.get(j).getWarranty());
         prepStat.setString(++count, alpr.get(j).getCommentsPrice().isEmpty() ? null : alpr.get(j).getCommentsPrice());
+
+        ChangeProtectService protectService = new ChangeProtectService();
+        prepStat.setString(++count, protectService.mapSetToString(alpr.get(j).getProtectedData()));
+
         return count;
     }
 

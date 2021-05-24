@@ -6,6 +6,8 @@ import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.product.Product;
 import utils.comparation.products.ProductNameResolver;
 import utils.comparation.se.ComparingRules;
+import utils.property_change_protect.ChangeProtectService;
+import utils.property_change_protect.ProductProtectChange;
 
 import java.util.Collection;
 import java.util.Map;
@@ -19,6 +21,7 @@ public class TotalComparator {
         logger.debug("Start comparing with rules {}", rules);
         long t0 = System.currentTimeMillis();
         SingleComparator comparator = new SingleComparator();
+        ChangeProtectService protectService = new ChangeProtectService();
         comparisonResult = new TotalComparisonResult();
 
         Map<String, Product> leftItems = collectionToMap(items1, rules);
@@ -38,6 +41,11 @@ public class TotalComparator {
                 }
             } else if (rules.addNewItem_v2(importedItem)) {
                 comparisonResult.getNewItemList().add(importedItem);
+            }
+
+            ProductProtectChange productProtectChange = protectService.checkProtectChangesAndGetResult(importedItem);
+            if (productProtectChange.getPropertyProtectChangeList().size() > 0) {
+                comparisonResult.getProtectChangeItemList().add(productProtectChange);
             }
         }
 

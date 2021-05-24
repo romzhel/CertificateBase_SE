@@ -163,6 +163,7 @@ public class ProductEditorWindowController implements Initializable {
         initFamilySelector();
 
         minOrderBox = new ProtectedBox(tfMinOrder, DATA_MIN_ORDER);
+        minOrderBox.setItem(multiEditor.getSingleEditedItem());
         packetSizeBox = new ProtectedBox(tfPacketSize, DATA_PACKSIZE);
         leadTimeBox = new ProtectedBox(tfLeadTime, DATA_LEAD_TIME_EU);
         weightBox = new ProtectedBox(tfWeight, DATA_WEIGHT);

@@ -75,18 +75,26 @@ public class ProductDataFileImportTask implements Runnable {
         }
 
         Platform.runLater(() -> Dialogs.showMessage("Результаты импорта",
-                String.format("Новых позиций: %d\nИзменённых позиций: %d\nАктуальных позиций: %d\nНенайденных позиций: %d" +
-                                (treatItemWithNoCost ? "\nПозиций без цены: %d" : "%s"),
+                String.format("Новых позиций: %d\n" +
+                                "Изменённых позиций: %d\n" +
+                                "Актуальных позиций: %d\n" +
+                                "Ненайденных позиций: %d\n" +
+                                "Позиций с защитой полей: %d\n" +
+                                (treatItemWithNoCost ? "\n" + "Позиций без цены: %d" : "%s"),
                         comparisonResult.getNewItemList().size(),
                         comparisonResult.getChangedItemList().size(),
                         comparisonResult.getNonChangedItemList().size(),
                         comparisonResult.getGoneItemList().size(),
-                        treatItemWithNoCost ? comparisonResult.getNoCostItemList().size() : "")));
+                        comparisonResult.getProtectChangeItemList().size(),
+                        treatItemWithNoCost ? comparisonResult.getNoCostItemList().size() : ""))
+        );
 
         if (applyChanges) {
             List<Product> newItemsForDB = new LinkedList<>(changesFixer.fixNewProducts(comparisonResult.getNewItemList()));
             changedItemsForDB.addAll(changesFixer.fixChangedProducts(comparisonResult.getChangedItemList()));
             changedItemsForDB.addAll(changesFixer.fixChangedProducts(comparisonResult.getNoCostItemList()));
+
+            changedItemsForDB.addAll(changesFixer.fixPropertyProtectChanges(comparisonResult.getProtectChangeItemList()));
 
             DataSelectorMenu.MENU_DATA_LAST_IMPORT_RESULT.activate();
 

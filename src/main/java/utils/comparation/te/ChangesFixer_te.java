@@ -12,6 +12,8 @@ import ui_windows.product.Product;
 import ui_windows.product.Products;
 import ui_windows.product.data.DataItem;
 import utils.Utils;
+import utils.property_change_protect.ProductProtectChange;
+import utils.property_change_protect.PropertyProtectChange;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 
 import static ui_windows.product.data.DataItem.DATA_HIERARCHY;
 import static ui_windows.product.data.DataItem.DATA_LGBK;
+import static utils.property_change_protect.PropertyProtectChange.APPLY_PROTECT;
 
 public class ChangesFixer_te {
     private static final Logger logger = LogManager.getLogger(ChangesFixer_te.class);
@@ -41,6 +44,7 @@ public class ChangesFixer_te {
             newProduct.setHistory(history);
             newProduct.setLastImportcodes("new");
             newProduct.setLastChangeDate(Utils.getDateTime());
+
             Products.getInstance().getItems().add(newProduct);
             result.add(newProduct);
         }
@@ -125,5 +129,25 @@ public class ChangesFixer_te {
         }
 
         return result;
+    }
+
+    public List<Product> fixPropertyProtectChanges(List<ProductProtectChange> protectChangeItemList) throws RuntimeException {
+        List<Product> protectedProductChangesList = new LinkedList<>();
+
+        for (ProductProtectChange protectProduct : protectChangeItemList) {
+            Product product = Products.getInstance().getProductByMaterial(protectProduct.getId());
+
+            for (PropertyProtectChange change : protectProduct.getPropertyProtectChangeList()) {
+                if (change.getNewState() == APPLY_PROTECT) {
+                    product.getProtectedData().add(change.getDataItem());
+                } else {
+                    product.getProtectedData().remove(change.getDataItem());
+                }
+            }
+
+            protectedProductChangesList.add(product);
+        }
+
+        return protectedProductChangesList;
     }
 }

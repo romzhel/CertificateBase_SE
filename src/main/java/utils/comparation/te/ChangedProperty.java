@@ -12,6 +12,6 @@ public class ChangedProperty extends ImportedProperty {
     private Object oldValue;
 
     public ChangedProperty(ImportedProperty ip) {
-        super(ip.getNewValue(), ip.getDataItem(), ip.getSource());
+        super(ip.getNewValue(), ip.getDataItem(), ip.getSource(), ip.getParams());
     }
 }

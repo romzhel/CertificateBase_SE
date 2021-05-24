@@ -62,13 +62,14 @@ public class ProtectedBox extends Region {
     public void setItem(Product item) {
         this.item = item;
         textBox.setText(dataItem.getValue(item).toString());
+        showProtectStatus(item.getProtectedData().contains(dataItem));//todo
     }
 
     public boolean getProtectStatus() {
         return hideButton.isSelected();
     }
 
-    public void setProtectStatus(Boolean status) {
+    public void showProtectStatus(Boolean status) {//todo
         if (status == null) {
             hideButton.getStyleClass().removeAll();
             hideButton.getStyleClass().add("combined");

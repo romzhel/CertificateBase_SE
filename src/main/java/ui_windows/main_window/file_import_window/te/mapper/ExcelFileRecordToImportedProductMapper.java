@@ -31,6 +31,7 @@ public class ExcelFileRecordToImportedProductMapper {
                     property.setDataItem(param.getDataItem());
                     property.setSource(importDataSheet);
                     property.setNewValue(getValue(record, param));
+                    property.setParams(param.getOptions());
                     return property;
                 })
                 .filter(property -> property.getNewValue() != null && !property.getNewValue().toString().isEmpty())

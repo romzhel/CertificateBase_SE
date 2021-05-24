@@ -9,13 +9,14 @@ import java.lang.reflect.Field;
 public class ChangedItemToProductMerger {
 
 
-    public Product mergeToProduct(Product product, ChangedItem changedItem) {
+    public Product mergeToProduct(Product product, ChangedItem changedItem) throws RuntimeException {
         for (ChangedProperty property : changedItem.getChangedPropertyList()) {
             Field field = property.getDataItem().getField();
             field.setAccessible(true);
 
             try {
                 field.set(product, property.getNewValue());
+
             } catch (IllegalAccessException e) {
                 log.error("reflection error with product id={} field={}", product.getMaterial(), property);
             }
