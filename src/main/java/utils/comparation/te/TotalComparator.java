@@ -39,6 +39,10 @@ public class TotalComparator {
                 } else {
                     comparisonResult.getNonChangedItemList().add(existItem);
                 }
+
+                if (changedItem.getProtectedField().size() > 0) {
+                    comparisonResult.getNonChangedProtectedItemList().add(changedItem);
+                }
             } else if (rules.addNewItem_v2(importedItem)) {
                 comparisonResult.getNewItemList().add(importedItem);
             }

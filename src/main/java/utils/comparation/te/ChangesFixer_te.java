@@ -26,7 +26,7 @@ import static utils.property_change_protect.PropertyProtectChange.APPLY_PROTECT;
 
 public class ChangesFixer_te {
     private static final Logger logger = LogManager.getLogger(ChangesFixer_te.class);
-    private ProductHistoryBuilder historyBuilder = new ProductHistoryBuilder();
+    private ProductHistoryBuilder historyBuilder;
     private Pattern pattern;
 
     public ChangesFixer_te() {

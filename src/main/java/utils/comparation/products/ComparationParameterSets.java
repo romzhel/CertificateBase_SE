@@ -18,7 +18,13 @@ public class ComparationParameterSets {
                 new MultiEditorItem(DATA_COMMENT_PRICE, true),
                 new MultiEditorItem(DATA_IS_IN_PRICE, true),
                 new MultiEditorItem(DATA_IS_BLOCKED, true),
-                new MultiEditorItem(DATA_IS_PRICE_HIDDEN, true)
+                new MultiEditorItem(DATA_IS_PRICE_HIDDEN, true),
+
+                new MultiEditorItem(DATA_MIN_ORDER, false),
+                new MultiEditorItem(DATA_PACKSIZE, false),
+                new MultiEditorItem(DATA_LEAD_TIME_EU, false),
+                new MultiEditorItem(DATA_WEIGHT, false)
+
         };
         return parameters;
     }
@@ -41,7 +47,12 @@ public class ComparationParameterSets {
                 new MultiEditorItem(DATA_HIERARCHY, false),
                 new MultiEditorItem(DATA_DCHAIN, false),
                 new MultiEditorItem(DATA_SERVICE_END, false),
-                new MultiEditorItem(DATA_COUNTRY, false)
+                new MultiEditorItem(DATA_COUNTRY, false),
+
+                new MultiEditorItem(DATA_MIN_ORDER, false),
+                new MultiEditorItem(DATA_PACKSIZE, false),
+                new MultiEditorItem(DATA_LEAD_TIME_EU, false),
+                new MultiEditorItem(DATA_WEIGHT, false)
         };
         return parameters;
     }

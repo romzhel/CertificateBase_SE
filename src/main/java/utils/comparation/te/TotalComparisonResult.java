@@ -16,4 +16,5 @@ public class TotalComparisonResult {
     private List<Product> goneItemList = new LinkedList<>();
     private List<ChangedItem> noCostItemList = new LinkedList<>();
     private List<ProductProtectChange> protectChangeItemList = new LinkedList<>();
+    private List<ChangedItem> nonChangedProtectedItemList = new LinkedList<>();
 }

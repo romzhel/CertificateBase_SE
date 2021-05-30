@@ -25,6 +25,7 @@ import ui_windows.product.MultiEditor;
 import ui_windows.product.Product;
 import ui_windows.product.certificatesChecker.CertificateVerificationItem;
 import ui_windows.product.certificatesChecker.CheckParameters;
+import ui_windows.product.data.DataItem;
 import ui_windows.product.productEditorWindow.configNormsWindow.ConfigNormsWindow;
 import utils.Utils;
 
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 
 import static core.SharedData.SHD_SELECTED_PRODUCTS;
 import static ui_windows.product.data.DataItem.*;
+import static utils.comparation.te.PropertyProtectEnum.COMBINED;
 
 @Getter
 public class ProductEditorWindowController implements Initializable {
@@ -110,6 +112,8 @@ public class ProductEditorWindowController implements Initializable {
     @FXML
     public TextField tfLocalPrice;
     @FXML
+    public TextField tfWarranty;
+    @FXML
     TableView<CertificateVerificationItem> tvCertVerification;
     @FXML
     Button btnApply;
@@ -117,13 +121,12 @@ public class ProductEditorWindowController implements Initializable {
     CheckBox cbxOrderable;
     @FXML
     ContextMenu cmCertActions;
-    @FXML
-    public TextField tfWarranty;
     private MultiEditor multiEditor;
     private CertificateVerificationTable certificateVerificationTable;
     private ComboBoxEqTypeSelector comboBoxEqTypeSelector;
     private PriceBox priceBox;
     private ProtectedBox minOrderBox, packetSizeBox, leadTimeBox, weightBox, descriptionBox, descriptionEnBox;
+    private ProtectedBox[] boxes = {minOrderBox, packetSizeBox, leadTimeBox, weightBox, descriptionBox, descriptionEnBox};
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -162,13 +165,13 @@ public class ProductEditorWindowController implements Initializable {
 
         initFamilySelector();
 
-        minOrderBox = new ProtectedBox(tfMinOrder, DATA_MIN_ORDER);
-        minOrderBox.setItem(multiEditor.getSingleEditedItem());
-        packetSizeBox = new ProtectedBox(tfPacketSize, DATA_PACKSIZE);
-        leadTimeBox = new ProtectedBox(tfLeadTime, DATA_LEAD_TIME_EU);
-        weightBox = new ProtectedBox(tfWeight, DATA_WEIGHT);
-        descriptionBox = new ProtectedBox(taDescription, DATA_DESCRIPTION_RU);
-        descriptionEnBox = new ProtectedBox(taDescriptionEn, DATA_DESCRIPTION_EN);
+        TextInputControl[] controls = {tfMinOrder, tfPacketSize, tfLeadTime, tfWeight, taDescription, taDescriptionEn};
+        DataItem[] dataItems = {DATA_MIN_ORDER, DATA_PACKSIZE, DATA_LEAD_TIME_EU, DATA_WEIGHT, DATA_DESCRIPTION_RU, DATA_DESCRIPTION_EN};
+
+        for (int i = 0; i < boxes.length; i++) {
+            boxes[i] = new ProtectedBox(controls[i], dataItems[i]);
+            boxes[i].showProtectStatus(multiEditor.getPropertyProtectMap());
+        }
     }
 
     private void initFamilySelector() {
@@ -181,6 +184,12 @@ public class ProductEditorWindowController implements Initializable {
     }
 
     public void apply() {
+        for (ProtectedBox box : boxes) {
+            if (multiEditor.getPropertyProtectMap().get(box.getDataItem()) != COMBINED) {
+                multiEditor.getPropertyProtectMap().put(box.getDataItem(), box.getProtectStatus());
+            }
+        }
+
         if (multiEditor.checkAndSaveChanges()) {
             if (new ProductsDB().updateData(multiEditor.getEditedItems())) {
                 Filter_SE.getInstance().apply();

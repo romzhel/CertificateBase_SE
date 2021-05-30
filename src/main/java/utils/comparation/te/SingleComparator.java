@@ -15,11 +15,6 @@ public class SingleComparator {
         result.setId(importedItem.getId());
 
         for (ImportedProperty property : importedItem.getProperties().values()) {
-            if (existItem.getProtectedData().contains(property.getDataItem())) {
-                logger.info("property {} {} will not changed due protect", existItem.toString(), property.getDataItem());
-                continue;
-            }
-
             Object existValue = property.getDataItem().getValue(existItem);
             Object newValue = property.getNewValue();
 
@@ -29,6 +24,12 @@ public class SingleComparator {
 
             ChangedProperty changedProperty = new ChangedProperty(property);
             changedProperty.setOldValue(existValue);
+
+            if (existItem.getProtectedData().contains(property.getDataItem())) {
+                result.getProtectedField().add(changedProperty);
+                logger.info("property {} {} will not changed due protect", existItem.toString(), property.getDataItem());
+                continue;
+            }
 
             if (!rules.isCanBeSkipped_v2(changedProperty)) {
                 result.getChangedPropertyList().add(changedProperty);

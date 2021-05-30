@@ -11,6 +11,7 @@ import java.util.List;
 public class ChangedItem {
     private String id;
     private List<ChangedProperty> changedPropertyList = new LinkedList<>();
+    private List<ChangedProperty> protectedField = new LinkedList<>();
 
     public ChangedItem(String id) {
         this.id = id;

@@ -5,7 +5,7 @@ import org.apache.logging.log4j.util.Strings;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProperty;
 import ui_windows.product.data.DataItem;
-import utils.comparation.te.PropertyService;
+import utils.comparation.te.PropertyProtectService;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,11 +18,11 @@ import static utils.property_change_protect.PropertyProtectChange.APPLY_PROTECT;
 public class ChangeProtectService {
 
     public ProductProtectChange checkProtectChangesAndGetResult(ImportedProduct importedItem) {
-        PropertyService propertyService = new PropertyService();
+        PropertyProtectService propertyProtectService = new PropertyProtectService();
         ProductProtectChange productProtectChange = new ProductProtectChange();
 
         for (ImportedProperty property : importedItem.getProperties().values()) {
-            boolean isPropertySetToProtect = propertyService.isPropertyNeedToBlocked(property);
+            boolean isPropertySetToProtect = propertyProtectService.isPropertyNeedToProtect(property);
             if (isPropertySetToProtect) {
                 PropertyProtectChange propertyProtectChange = new PropertyProtectChange();
                 propertyProtectChange.setDataItem(property.getDataItem());

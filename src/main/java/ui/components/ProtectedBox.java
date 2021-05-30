@@ -7,19 +7,22 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
+import utils.comparation.te.PropertyProtectEnum;
 
+import java.util.Map;
+
+import static utils.comparation.te.PropertyProtectEnum.*;
+
+@Log4j2
 public class ProtectedBox extends Region {
     private final TextInputControl textBox;
-    private final ToggleButton hideButton;
+    private final ToggleButton protectButton;
     private final BooleanProperty buttonChangeProperty;
     private Product item;
     private final DataItem dataItem;
-
-    private static final Logger logger = LogManager.getLogger(ProtectedBox.class);
 
     public ProtectedBox(TextInputControl target, DataItem dataItem) {
         super();
@@ -29,7 +32,7 @@ public class ProtectedBox extends Region {
 
         Pane par = (Pane) target.getParent();
         par.getChildren().add(this);
-        setId("priceBox");
+        setId("protectedBox");
 
         setMinHeight(target.getHeight());
         setPrefSize(25, target.getPrefHeight());
@@ -41,53 +44,62 @@ public class ProtectedBox extends Region {
             par.getStylesheets().add(this.getClass().getResource("/css/ui_components.css").toExternalForm());
             getStyleClass().add("protected-box");
         } catch (Exception e) {
-            logger.error("Ошибка стилизации {}", e.getMessage());
+            log.error("Ошибка стилизации {}", e.getMessage());
         }
 
         buttonChangeProperty = new SimpleBooleanProperty(false);
 
-        hideButton = new ToggleButton();
-        hideButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        protectButton = new ToggleButton();
+        protectButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
             buttonChangeProperty.set(newValue);
         });
 
-        getChildren().add(hideButton);
+        getChildren().add(protectButton);
     }
 
     @Override
     protected void layoutChildren() {
-        hideButton.resizeRelocate(0, 5, 12, 15);
+        protectButton.resizeRelocate(0, 5, 12, 15);
     }
 
-    public void setItem(Product item) {
+    /*public void setItem(Product item) {
         this.item = item;
         textBox.setText(dataItem.getValue(item).toString());
-        showProtectStatus(item.getProtectedData().contains(dataItem));//todo
+        showProtectStatus(item.getProtectedData().contains(dataItem));
+    }*/
+
+    public PropertyProtectEnum getProtectStatus() {
+        return protectButton.isSelected() ? PROTECTED : NON_PROTECTED;
     }
 
-    public boolean getProtectStatus() {
-        return hideButton.isSelected();
+    public void showProtectStatus(Map<DataItem, PropertyProtectEnum> map) {
+        showProtectStatus(map.getOrDefault(dataItem, NON_PROTECTED));
     }
 
-    public void showProtectStatus(Boolean status) {//todo
-        if (status == null) {
-            hideButton.getStyleClass().removeAll();
-            hideButton.getStyleClass().add("combined");
+    public void showProtectStatus(PropertyProtectEnum en) {
+        if (en == COMBINED) {
+            protectButton.getStyleClass().removeAll();
+            protectButton.getStyleClass().add("combined");
+            protectButton.setDisable(true);
         } else {
-            hideButton.setSelected(status);
+            protectButton.setSelected(en == PROTECTED);
             getStyleClass().add("protected-box");
         }
     }
 
     public void disableButton(boolean dis) {
-        hideButton.setDisable(dis);
+        protectButton.setDisable(dis);
     }
 
     public void hideButton(boolean hide) {
-        hideButton.setVisible(hide);
+        protectButton.setVisible(hide);
     }
 
     public BooleanProperty getButtonChangeProperty() {
         return buttonChangeProperty;
+    }
+
+    public DataItem getDataItem() {
+        return dataItem;
     }
 }

@@ -2,7 +2,6 @@ package ui_windows.main_window.file_import_window.te;
 
 import core.ThreadManager;
 import database.ProductsDB;
-import exceptions.DataNotSelectedException;
 import exceptions.OperationCancelledByUserException;
 import files.reports.NowImportResultToExcel;
 import javafx.application.Platform;
@@ -30,7 +29,7 @@ import static ui_windows.main_window.file_import_window.te.FilesImportParameters
 
 public class ProductDataFileImportTask implements Runnable {
     private static final Logger logger = LogManager.getLogger(ProductDataFileImportTask.class);
-    private FilesImportParameters filesImportParameters;
+    private final FilesImportParameters filesImportParameters;
 
     public ProductDataFileImportTask(FilesImportParameters filesImportParameters) {
         this.filesImportParameters = filesImportParameters;
@@ -40,12 +39,8 @@ public class ProductDataFileImportTask implements Runnable {
     public void run() throws RuntimeException {
         logger.info("Выполнение импорта c параметрами {}", filesImportParameters);
 
-        if (filesImportParameters == null) {
+        if (filesImportParameters == null || filesImportParameters.getFiles().size() == 0) {
             throw new OperationCancelledByUserException();
-        }
-
-        if (filesImportParameters.getFiles().size() == 0) {
-            throw new DataNotSelectedException();
         }
 
         boolean applyChanges = filesImportParameters.getParams().getOrDefault(APPLY_CHANGES, false);
@@ -80,12 +75,14 @@ public class ProductDataFileImportTask implements Runnable {
                                 "Актуальных позиций: %d\n" +
                                 "Ненайденных позиций: %d\n" +
                                 "Позиций с защитой полей: %d\n" +
+                                "Позиций с неизменёнными полями из-за защиты: %d\n" +
                                 (treatItemWithNoCost ? "\n" + "Позиций без цены: %d" : "%s"),
                         comparisonResult.getNewItemList().size(),
                         comparisonResult.getChangedItemList().size(),
                         comparisonResult.getNonChangedItemList().size(),
                         comparisonResult.getGoneItemList().size(),
                         comparisonResult.getProtectChangeItemList().size(),
+                        comparisonResult.getNonChangedProtectedItemList().size(),
                         treatItemWithNoCost ? comparisonResult.getNoCostItemList().size() : ""))
         );
 

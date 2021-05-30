@@ -15,7 +15,7 @@ public class ProductsDB extends DbRequest {
 
     public ProductsDB() {
         super();
-        try {//todo добавить поле protected_fields
+        try {
             addData = connection.prepareStatement("INSERT INTO " +
                             "products (material, article, hierarchy, lgbk, family, end_of_service, dangerous, " +
                             "country, dchain, description_ru, description_en, price, not_used, archive, history, " +

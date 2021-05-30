@@ -1,8 +1,11 @@
 package ui_windows.product;
 
 import ui_windows.product.data.DataItem;
+import utils.comparation.te.PropertyProtectEnum;
 
 import java.util.List;
+
+import static utils.comparation.te.PropertyProtectEnum.*;
 
 public class MultiEditorItem {
     public static final boolean CAN_BE_SAVED = true;
@@ -59,9 +62,10 @@ public class MultiEditorItem {
         return false;
     }*/
 
-    public boolean compare(List<Product> items) {
+    public PropertyProtectEnum compare(List<Product> items) {
         Object tempValue = null;
         boolean compRes = true;
+        int propertyProtectCount = 0;
         for (Product product : items) {
             Object value = dataItem.getValue(product);
             if (tempValue == null) {
@@ -69,11 +73,16 @@ public class MultiEditorItem {
             } else {
                 compRes &= tempValue.equals(value);
             }
+
+            if (product.getProtectedData().contains(dataItem)) {
+                propertyProtectCount++;
+            }
         }
 
         commonValue = compRes ? dataItem.getValue(items.get(0)) : null;
 
-        return compRes;
+        return propertyProtectCount == items.size() ? PROTECTED :
+                propertyProtectCount == 0 ? NON_PROTECTED : COMBINED;
     }
 
     public Object getCommonValue() {
@@ -82,5 +91,15 @@ public class MultiEditorItem {
 
     public Object getNewValue() {
         return newValue;
+    }
+
+    @Override
+    public String toString() {
+        return "MultiEditorItem{" +
+                "dataItem=" + dataItem +
+                ", canBeSaved=" + canBeSaved +
+                ", commonValue=" + commonValue +
+                ", newValue=" + newValue +
+                '}';
     }
 }
