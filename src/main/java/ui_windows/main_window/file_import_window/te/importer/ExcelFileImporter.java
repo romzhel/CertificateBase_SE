@@ -1,6 +1,7 @@
 package ui_windows.main_window.file_import_window.te.importer;
 
 import core.ThreadManager;
+import lombok.extern.log4j.Log4j2;
 import org.apache.poi.ss.usermodel.*;
 import ui_windows.main_window.file_import_window.te.ColumnMappingWindow;
 import ui_windows.main_window.file_import_window.te.ExcelFileImportUtils;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Log4j2
 public class ExcelFileImporter extends AbstractFileImporter {
 
     @Override
@@ -24,18 +26,18 @@ public class ExcelFileImporter extends AbstractFileImporter {
         conflictItemsPreprocessor.clearCash();
 
         for (File file : files) {
-            logger.info("opening file '{}'", file);
+            log.info("opening file '{}'", file);
             try {
                 workbook = WorkbookFactory.create(file);
 
                 for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
                     Sheet sheet = workbook.getSheetAt(sheetIndex);
-                    logger.info("treat sheet '{}'", sheet.getSheetName());
+                    log.info("treat sheet '{}'", sheet.getSheetName());
 
                     Row row = sheet.getRow(0);
 
                     final List<ImportColumnParameter> params = ExcelFileImportUtils.getInstance().getImportColumnParameters(row);
-                    logger.debug("column mapping params {}", params);
+                    log.debug("column mapping params {}", params);
 
                     final ImportDataSheet importDataSheet = new ImportDataSheet();
                     importDataSheet.setFileName(file.getName());
@@ -49,17 +51,17 @@ public class ExcelFileImporter extends AbstractFileImporter {
                     List<ImportColumnParameter> actualParams = params.stream()
                             .filter(par -> par.getDataItem() != DataItem.DATA_EMPTY)
                             .collect(Collectors.toList());
-                    logger.debug("column mapping params for mapping {}", actualParams);
+                    log.debug("column mapping params for mapping {}", actualParams);
                     importDataSheet.setColumnParams(actualParams);
-                    logger.debug("import sheet data '{}'", importDataSheet);
+                    log.debug("import sheet data '{}'", importDataSheet);
 
                     for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
                         if ((row = sheet.getRow(rowIndex)) != null) {
                             ImportedProduct importedItem = mapper.getProductFromFileRecord(row, importDataSheet);
-                            if (importedItem.getProperties().get(DataItem.DATA_ORDER_NUMBER) != null) {
+                            if (importedItem != null) {
                                 conflictItemsPreprocessor.process(importedItem);
                             } else {
-                                logger.debug("item '{}' was not added", importedItem);
+                                log.debug("item '{}' was not added", importedItem);
                             }
                         }
                     }

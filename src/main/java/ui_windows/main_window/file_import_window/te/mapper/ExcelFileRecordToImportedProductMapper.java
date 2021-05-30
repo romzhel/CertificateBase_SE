@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static ui_windows.product.data.DataItem.DATA_EMPTY;
+import static ui_windows.product.data.DataItem.DATA_ORDER_NUMBER;
 
 public class ExcelFileRecordToImportedProductMapper {
     private static final Logger logger = LogManager.getLogger(ExcelFileRecordToImportedProductMapper.class);
@@ -38,7 +39,7 @@ public class ExcelFileRecordToImportedProductMapper {
                 .collect(Collectors.toMap(ImportedProperty::getDataItem,
                         (property) -> property));
 
-        return new ImportedProduct(propertyMap);
+        return propertyMap.get(DATA_ORDER_NUMBER) != null ? new ImportedProduct(propertyMap) : null;
     }
 
     private Object getValue(Row record, ImportColumnParameter param) throws RuntimeException {

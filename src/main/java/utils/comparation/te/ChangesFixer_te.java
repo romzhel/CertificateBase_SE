@@ -79,7 +79,7 @@ public class ChangesFixer_te {
                 String oldLgbk = existProduct.getLgbk();
                 String oldHierarchy = existProduct.getHierarchy();
                 String newLgbk = propertyMap.get(DATA_LGBK) == null ? oldLgbk : propertyMap.get(DATA_LGBK).getNewValue().toString();
-                String newHierarchy = propertyMap.get(DATA_HIERARCHY) == null ? oldHierarchy : propertyMap.get(DATA_HIERARCHY).toString();
+                String newHierarchy = propertyMap.get(DATA_HIERARCHY) == null ? oldHierarchy : propertyMap.get(DATA_HIERARCHY).getNewValue().toString();
 
                 ProductLgbk plOld = ProductLgbks.getInstance().getLgbkByLgbk(new ProductLgbk(oldLgbk, oldHierarchy));
                 ProductLgbk plNew = ProductLgbks.getInstance().getLgbkByLgbk(new ProductLgbk(newLgbk, newHierarchy));
