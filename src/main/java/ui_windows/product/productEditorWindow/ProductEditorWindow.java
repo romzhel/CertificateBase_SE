@@ -17,6 +17,7 @@ import ui_windows.product.Product;
 import ui_windows.product.Products;
 import utils.Utils;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static ui_windows.options_window.profile_editor.SimpleRight.*;
@@ -49,6 +50,7 @@ public class ProductEditorWindow extends OrdinalWindow<ProductEditorWindowContro
         applyProfileSimple(Users.getInstance().getCurrentUser().getProfile().getProducts());
         controller.cbxBlocked.setDisable(sr != FULL);
         controller.getPriceBox().setButtonDisabled(sr != FULL);
+        Arrays.stream(controller.getBoxes()).forEach(box -> box.setDisable(sr != FULL));
     }
 
     @Override

@@ -115,14 +115,19 @@ public class MainWindowController implements Initializable {
     public void comparePriceLists() {
         List<File> priceListFiles = new SelectPricesForComparisonWindow().getPriceListFiles();
         if (priceListFiles.get(0) != null) {
-            new Thread(() -> {
-                logger.info("Starting price-list comparing {} vs {}", priceListFiles.get(0), priceListFiles.get(1));
-                ExecutionIndicator.getInstance().start();
-                PricesComparator pricesComparator = new PricesComparator();
-                pricesComparator.compare(priceListFiles);
-                Utils.openFile(pricesComparator.exportToExcel(null));
-                ExecutionIndicator.getInstance().stop();
-            }).start();
+            ThreadManager.startNewThread("Price-lists comparator Thread",
+                    () -> {
+                        logger.info("Starting price-list comparing {} vs {}", priceListFiles.get(0), priceListFiles.get(1));
+                        ExecutionIndicator.getInstance().start();
+                        PricesComparator pricesComparator = new PricesComparator();
+                        pricesComparator.compare(priceListFiles);
+                        Utils.openFile(pricesComparator.exportToExcel(null));
+                        ExecutionIndicator.getInstance().stop();
+                    }, throwable -> {
+                        logger.error(throwable);
+                        throw new RuntimeException(throwable);
+                    }
+            );
         }
     }
 
