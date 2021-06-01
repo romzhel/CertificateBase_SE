@@ -3,6 +3,7 @@ package ui_windows.main_window;
 import core.ThreadManager;
 import exceptions.DataNotSelectedException;
 import exceptions.OperationCancelledByUserException;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -25,9 +26,8 @@ import ui_windows.options_window.user_editor.Users;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
 import ui_windows.request.RequestWindow;
-import utils.Utils;
-import utils.comparation.prices.PricesComparator;
 import utils.comparation.prices.SelectPricesForComparisonWindow;
+import utils.comparation.te.PricesComparisonTask;
 import utils.requests_handlers.ArticlesRequestHandler;
 import utils.requests_handlers.ProductsRequestHandler;
 
@@ -115,18 +115,18 @@ public class MainWindowController implements Initializable {
     public void comparePriceLists() {
         List<File> priceListFiles = new SelectPricesForComparisonWindow().getPriceListFiles();
         if (priceListFiles.get(0) != null) {
-            ThreadManager.startNewThread("Price-lists comparator Thread",
+            ThreadManager.startNewThread("PrLst comp Thread",
                     () -> {
                         logger.info("Starting price-list comparing {} vs {}", priceListFiles.get(0), priceListFiles.get(1));
                         ExecutionIndicator.getInstance().start();
-                        PricesComparator pricesComparator = new PricesComparator();
-                        pricesComparator.compare(priceListFiles);
-                        Utils.openFile(pricesComparator.exportToExcel(null));
-                        ExecutionIndicator.getInstance().stop();
+
+                        PricesComparisonTask pricesComparisonTask = new PricesComparisonTask();
+                        pricesComparisonTask.comparePriceFilesAndGenerateReport(priceListFiles.get(0), priceListFiles.get(1), new File(""));
                     }, throwable -> {
                         logger.error(throwable);
+                        Platform.runLater(() -> Dialogs.showMessage("Ошибка сравнения прайс-листов", throwable.getMessage()));
                         throw new RuntimeException(throwable);
-                    }
+                    }, () -> ExecutionIndicator.getInstance().stop()
             );
         }
     }

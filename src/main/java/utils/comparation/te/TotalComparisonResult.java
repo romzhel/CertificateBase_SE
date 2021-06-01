@@ -10,10 +10,10 @@ import java.util.List;
 
 @Getter
 public class TotalComparisonResult {
-    private List<ImportedProduct> newItemList = new LinkedList<>();
-    private List<ChangedItem> changedItemList = new LinkedList<>();
+    protected List<ImportedProduct> newItemList = new LinkedList<>();
+    protected List<ChangedItem> changedItemList = new LinkedList<>();
     private List<Product> nonChangedItemList = new LinkedList<>();
-    private List<Product> goneItemList = new LinkedList<>();
+    protected List<Product> goneItemList = new LinkedList<>();
     private List<ChangedItem> noCostItemList = new LinkedList<>();
     private List<ProductProtectChange> protectChangeItemList = new LinkedList<>();
     private List<ChangedItem> nonChangedProtectedItemList = new LinkedList<>();

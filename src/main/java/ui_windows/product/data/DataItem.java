@@ -209,7 +209,8 @@ public enum DataItem {
             return product.getLeadTime();
         }
     },
-    DATA_LEAD_TIME_RU(11, "Время доставки (Россия)", null) {
+    DATA_LEAD_TIME_RU(11, "Время доставки (Россия)", "leadTime") {//todo возможна ошибка
+
         public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(product.getLeadTimeRu());

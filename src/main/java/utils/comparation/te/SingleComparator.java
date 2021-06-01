@@ -7,6 +7,9 @@ import ui_windows.main_window.file_import_window.te.importer.ImportedProperty;
 import ui_windows.product.Product;
 import utils.comparation.se.ComparingRules;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class SingleComparator {
     private static final Logger logger = LogManager.getLogger(SingleComparator.class);
 
@@ -38,4 +41,39 @@ public class SingleComparator {
 
         return result;
     }
+
+    public ChangedItem compare(ImportedProduct item1, ImportedProduct item2) throws RuntimeException {
+        ChangedItem result = new ChangedItem();
+        result.setId(item1.getId());
+
+        Set<ImportedProperty> properties2set = new HashSet<>(item2.getProperties().values());
+
+        for (ImportedProperty property1 : item1.getProperties().values()) {
+            ImportedProperty property2 = item2.getProperties().get(property1.getDataItem());
+            properties2set.remove(property2);
+
+            Object value1 = property1.getNewValue();
+            Object value2 = property2 != null ? property2.getNewValue() : null;//todo
+
+            if (value1.equals(value2)) {
+                continue;
+            }
+
+            addChangedProperty(result, property2, value1);
+        }
+
+        for (ImportedProperty newProperty : properties2set) {
+            addChangedProperty(result, newProperty, null);
+        }
+
+        return result;
+    }
+
+    private void addChangedProperty(ChangedItem result, ImportedProperty property2, Object value1) {
+        ChangedProperty changedProperty = new ChangedProperty(property2);
+        changedProperty.setOldValue(value1);
+        result.getChangedPropertyList().add(changedProperty);
+    }
+
+
 }

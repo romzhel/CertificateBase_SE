@@ -28,7 +28,7 @@ public class FileColumnMappingService {
         return instance;
     }
 
-    public void init() {
+    private void init() {
         titleNameToDataItemMapping = Stream.of(new Object[][]{
                 {"material", DATA_ORDER_NUMBER},
                 {"заказной номер", DATA_ORDER_NUMBER},
@@ -65,7 +65,7 @@ public class FileColumnMappingService {
                 {"Мин зак", DATA_MIN_ORDER},
                 {"packsize", DATA_PACKSIZE},
                 {"leadtime", DATA_LEAD_TIME_EU},
-//                {"ВрД", DATA_LEAD_TIME_EU},
+                {"врд", DATA_LEAD_TIME_RU},//todo может всплыть ошибка
                 {"вес", DATA_WEIGHT},
                 {"weight", DATA_WEIGHT},
                 {"Комментарий", DATA_COMMENT_PRICE},
@@ -73,46 +73,15 @@ public class FileColumnMappingService {
         }).collect(Collectors.toMap(data -> ((String) data[0]).toLowerCase(), data -> (DataItem) data[1]));
     }
 
-    /*public Map<String, DataItem> getMappingByColumnTitles(List<String> columnTitles) throws RuntimeException {
-        logger.debug("input data - column titles: {}", columnTitles);
-
-        Set<String> duplicatedTitles = columnTitles.stream()
-                .filter(title -> Collections.frequency(columnTitles, title) > 1)
-                .collect(Collectors.toSet());
-        if (duplicatedTitles.size() > 0) {
-            throw new RuntimeException("Обнаружены повторяющиеся заголовки:\n\n" + Strings.join(duplicatedTitles, '\n'));
-        }
-
-        return columnTitles.stream()
-                .filter(title -> !title.isEmpty())
-                .collect(Collectors.toMap(title -> title, title -> {
-                    if (titleNameToDataItemMapping.containsKey(title)) {
-                        return titleNameToDataItemMapping.get(title);
-                    }
-
-                    Set<DataItem> calcDataItems = titleNameToDataItemMapping.entrySet().stream()
-                            .filter(entry -> title.startsWith(entry.getKey()))
-                            .map(Map.Entry::getValue)
-                            .collect(Collectors.toSet());
-
-                    if (calcDataItems.isEmpty()) {
-                        return DATA_EMPTY;
-                    } else if (calcDataItems.size() == 1) {
-                        return calcDataItems.iterator().next();
-                    } else {
-                        logger.info("Найдено сопоставление столбца '{}' в несколько свойств: {}", title, Strings.join(calcDataItems, ','));
-                        return DATA_EMPTY;
-                    }
-                }));
-    }*/
-
     public DataItem getMappingForColumnTitle(String title) {
-        if (titleNameToDataItemMapping.containsKey(title)) {
-            return titleNameToDataItemMapping.get(title);
+        String lTitle = title.toLowerCase();
+
+        if (titleNameToDataItemMapping.containsKey(lTitle)) {
+            return titleNameToDataItemMapping.get(lTitle);
         }
 
         Set<DataItem> calcDataItems = titleNameToDataItemMapping.entrySet().stream()
-                .filter(entry -> title.startsWith(entry.getKey()))
+                .filter(entry -> lTitle.startsWith(entry.getKey()))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toSet());
 
