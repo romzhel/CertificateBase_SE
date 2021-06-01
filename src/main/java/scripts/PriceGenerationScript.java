@@ -14,7 +14,7 @@ import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.price_lists_editor.PriceLists;
 import ui_windows.product.data.DataItem;
 import utils.Utils;
-import utils.comparation.prices.PricesComparator;
+import utils.comparation.te.PricesComparisonTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,27 +78,19 @@ public class PriceGenerationScript {
 
                     logger.trace("out of price report generated");
 
-                    PricesComparator pricesComparator = new PricesComparator();
-                    if (priceList == pricesComparator.getCOMPARED_PRICE_LIST()) {
+                    PricesComparisonTask pricesComparatorTask = new PricesComparisonTask();
 
-                        File previousPriceList = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
-                                "Выберите прайс для сравнения", Dialogs.EXCEL_FILES,
-                                priceList.getDestination().getPath()).get(0);
+                    File previousPriceList = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
+                            "Выберите прайс для сравнения", Dialogs.EXCEL_FILES,
+                            priceList.getDestination().getPath()).get(0);
 
-                        if (previousPriceList != null) {
-                            pricesComparator.compare(previousPriceList, priceListFile);
-                            String fileName = String.format("%s\\price_comparison_report_%s vs %s",
-                                    Folders.getInstance().getTempFolder(), priceListFile.getName(), previousPriceList.getName());
-                            priceComparisonFile = new File(fileName.replaceAll(".xlsx", "").concat(".xlsx"));
-                            pricesComparator.exportToExcel(priceComparisonFile);
+                    String fileName = String.format("%s\\price_comparison_report_%s vs %s",
+                            Folders.getInstance().getTempFolder(), priceListFile.getName(), previousPriceList.getName());
+                    priceComparisonFile = new File(fileName.replaceAll(".xlsx", "").concat(".xlsx"));
 
-                            logger.trace("price lists have been compared");
-                        } else {
-                            logger.trace("price list for comparing wasn't select");
-                        }
-                    } else {
-                        logger.trace("try to compare different price lists - ignored");
-                    }
+                    pricesComparatorTask.comparePriceFilesAndGenerateReport(previousPriceList, priceListFile, priceComparisonFile);
+
+                    logger.trace("price lists have been compared");//
                 }
 
                 executorService.shutdown();

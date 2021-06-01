@@ -36,10 +36,12 @@ public class ExcelFileRecordToImportedProductMapper {
                     return property;
                 })
                 .filter(property -> property.getNewValue() != null && !property.getNewValue().toString().isEmpty())
-                .collect(Collectors.toMap(ImportedProperty::getDataItem,
-                        (property) -> property));
+                .collect(Collectors.toMap(
+                        ImportedProperty::getDataItem,
+                        (property) -> property)
+                );
 
-        return propertyMap.get(DATA_ORDER_NUMBER) != null ? new ImportedProduct(propertyMap) : null;
+        return propertyMap.get(DATA_ORDER_NUMBER) != null && propertyMap.values().size() > 1 ? new ImportedProduct(propertyMap) : null;
     }
 
     private Object getValue(Row record, ImportColumnParameter param) throws RuntimeException {

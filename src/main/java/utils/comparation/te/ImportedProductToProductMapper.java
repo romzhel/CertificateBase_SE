@@ -6,6 +6,9 @@ import ui_windows.main_window.file_import_window.te.importer.ImportedProperty;
 import ui_windows.product.Product;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class ImportedProductToProductMapper {
@@ -25,5 +28,11 @@ public class ImportedProductToProductMapper {
         }
 
         return result;
+    }
+
+    public List<Product> mapToProductList(Collection<ImportedProduct> importedProducts) {
+        return importedProducts.stream()
+                .map(this::mapToProduct)
+                .collect(Collectors.toList());
     }
 }

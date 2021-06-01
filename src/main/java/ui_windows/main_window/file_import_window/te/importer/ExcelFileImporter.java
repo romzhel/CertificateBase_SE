@@ -30,11 +30,17 @@ public class ExcelFileImporter extends AbstractFileImporter {
             try {
                 workbook = WorkbookFactory.create(file);
 
+                Sheet sheet;
+                Row row;
                 for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
-                    Sheet sheet = workbook.getSheetAt(sheetIndex);
+                    sheet = workbook.getSheetAt(sheetIndex);
                     log.info("treat sheet '{}'", sheet.getSheetName());
 
-                    Row row = sheet.getRow(0);
+                    ExcelFileDataRecognizer dataRecognizer = new ExcelFileDataRecognizer();
+                    int titlesRowIndex = dataRecognizer.getTitleRowIndex(sheet);
+                    log.info("title row index {}", titlesRowIndex);
+
+                    row = sheet.getRow(titlesRowIndex);
 
                     final List<ImportColumnParameter> params = ExcelFileImportUtils.getInstance().getImportColumnParameters(row);
                     log.debug("column mapping params {}", params);
@@ -55,14 +61,14 @@ public class ExcelFileImporter extends AbstractFileImporter {
                     importDataSheet.setColumnParams(actualParams);
                     log.debug("import sheet data '{}'", importDataSheet);
 
-                    for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+                    for (int rowIndex = titlesRowIndex + 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
                         if ((row = sheet.getRow(rowIndex)) != null) {
                             ImportedProduct importedItem = mapper.getProductFromFileRecord(row, importDataSheet);
                             if (importedItem != null) {
                                 conflictItemsPreprocessor.process(importedItem);
-                            } else {
+                            } /*else {
                                 log.debug("item '{}' was not added", importedItem);
-                            }
+                            }*/
                         }
                     }
                 }
