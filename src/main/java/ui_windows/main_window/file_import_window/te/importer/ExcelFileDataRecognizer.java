@@ -40,4 +40,22 @@ public class ExcelFileDataRecognizer {
 
         return false;
     }
+
+    public boolean isRowContainsTitles(SaxRowData rowData) {
+        FileColumnMappingService mappingService = FileColumnMappingService.getInstance();
+
+        for (int colIndex = 0; colIndex <= rowData.getSize(); colIndex++) {
+            String cellValue = rowData.getCellValue(colIndex);
+
+            if (cellValue == null) {
+                continue;
+            }
+
+            if (mappingService.getMappingForColumnTitle(cellValue) == DataItem.DATA_ORDER_NUMBER) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

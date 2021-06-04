@@ -26,6 +26,7 @@ import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.filter_window_se.FilterParameters_SE;
 import ui_windows.options_window.profile_editor.Profile;
 import ui_windows.options_window.user_editor.Users;
+import utils.BytesToReadableFormatConverter;
 import utils.Utils;
 import utils.files.ResourceSynchronizer;
 
@@ -86,6 +87,17 @@ public class MainWindow extends Application {
         try {
             logger.info("App starting, user = {}, app version = {}, db = {}", System.getProperty("user.name"),
                     App.getProperties().getVersion(), App.getProperties().getDbFileName());
+
+            long freeMem = Runtime.getRuntime().freeMemory();
+            long totalMem = Runtime.getRuntime().totalMemory();
+            long maxMem = Runtime.getRuntime().maxMemory();
+            int availableProcessors = Runtime.getRuntime().availableProcessors();
+
+            BytesToReadableFormatConverter converter = new BytesToReadableFormatConverter();
+            logger.info("System memory: free {}, total {}, max {}",
+                    converter.convert(freeMem), converter.convert(totalMem), converter.convert(maxMem));
+
+            logger.info("System available processors count: {}", availableProcessors);
 
             new InitModule().init(this);
         } catch (SQLException sqle) {

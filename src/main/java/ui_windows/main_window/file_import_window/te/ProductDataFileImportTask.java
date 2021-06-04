@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
 import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
-import ui_windows.main_window.file_import_window.te.importer.ExcelFileImporter;
+import ui_windows.main_window.file_import_window.te.importer.ExcelFileImporter_v2;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
@@ -46,7 +46,7 @@ public class ProductDataFileImportTask implements Runnable {
         boolean applyChanges = filesImportParameters.getParams().getOrDefault(APPLY_CHANGES, false);
 
         Set<Product> changedItemsForDB = new HashSet<>();
-        ExcelFileImporter importer = new ExcelFileImporter();
+        ExcelFileImporter_v2 importer = new ExcelFileImporter_v2();
         TotalComparator comparator = new TotalComparator();
         ChangesFixer_te changesFixer = new ChangesFixer_te();
         TotalComparisonResultService costResetter = new TotalComparisonResultService();

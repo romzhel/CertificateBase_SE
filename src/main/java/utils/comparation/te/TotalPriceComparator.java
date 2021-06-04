@@ -1,6 +1,5 @@
 package utils.comparation.te;
 
-import com.sun.istack.internal.NotNull;
 import lombok.extern.log4j.Log4j2;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.product.data.DataItem;
@@ -51,7 +50,7 @@ public class TotalPriceComparator {
         return result;
     }
 
-    private String getSource(@NotNull ImportedProduct item) {
+    private String getSource(ImportedProduct item) {
         return item.getProperties().get(DataItem.DATA_ORDER_NUMBER).getSource().getSheetName();
     }
 

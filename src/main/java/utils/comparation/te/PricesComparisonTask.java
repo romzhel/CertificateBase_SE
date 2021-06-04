@@ -15,7 +15,7 @@ public class PricesComparisonTask {
     public void comparePriceFilesAndGenerateReport(File prevPriceFile, File newPriceFile, File reportFile) throws RuntimeException {
         if (prevPriceFile == null || !prevPriceFile.exists() || newPriceFile == null || !newPriceFile.exists() || reportFile == null) {
             log.warn("One of needed files is absent {}, {}, {}", prevPriceFile, newPriceFile, reportFile);
-            throw new RuntimeException("Impossible compare non-existing price files!!!");
+            throw new RuntimeException("Not all needed files for price comparison and report were provided!!!");
         }
 
         ExcelFileImporter fileImporter = new ExcelFileImporter();
