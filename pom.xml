@@ -6,15 +6,16 @@
 
     <groupId>groupId</groupId>
     <artifactId>CertificateBase</artifactId>
-    <version>1.5.8-candidate-${suffix.test}</version>
+    <version>1.5.8.2-candidate-${suffix.test}</version>
 
     <properties>
         <db.version>3.21.0.1</db.version>
         <!--        <db.version>3.31.1</db.version>-->
-        <poi.version>3.17</poi.version>
+        <!--        <poi.version>3.17</poi.version>-->
+        <poi.version>5.0.0</poi.version>
         <!--        <poi.version>4.1.2</poi.version>-->
-        <app.date>30.05.2021</app.date>
-<!--                                <suffix.test>test</suffix.test>-->
+        <app.date>02.06.2021</app.date>
+        <!--                                <suffix.test>test</suffix.test>-->
         <suffix.test></suffix.test>
     </properties>
 
@@ -84,9 +85,11 @@
                         sqlite-jdbc,
                         commons-codec,
                         commons-collections4,
+                        commons-compress,
                         poi,
                         poi-ooxml,
                         poi-ooxml-schemas,
+                        poi-ooxml-lite,
                         xmlbeans,
                         log4j-core,
                         log4j-api

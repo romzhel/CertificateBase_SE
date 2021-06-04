@@ -58,7 +58,7 @@ public class ExcelFileRecordToImportedProductMapper {
                 return null;
             }
 
-            if (cell.getCellTypeEnum() == CellType.NUMERIC) {
+            if (cell.getCellType() == CellType.NUMERIC) {
                 if (DateUtil.isCellDateFormatted(cell))
                     valueS = new SimpleDateFormat("dd.MM.yyyy").format(cell.getDateCellValue());
                 else {

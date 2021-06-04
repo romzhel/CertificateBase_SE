@@ -16,7 +16,7 @@ public class RowData {
             Cell cell = row.getCell(col);
             if (cell == null) continue;
 
-            switch (cell.getCellTypeEnum()) {
+            switch (cell.getCellType()) {
                 case STRING:
                     data[col] = cell.getStringCellValue().trim();
                     break;
@@ -24,8 +24,8 @@ public class RowData {
                     if (DateUtil.isCellDateFormatted(cell))
                         data[col] = new SimpleDateFormat("dd.MM.yyyy").format(cell.getDateCellValue());
                     else {
-                        if (cell.toString().matches("^\\d+[\\,\\.]{1}[0]+$") || cell.toString().matches("^\\d\\.\\d+E\\d$")){
-                            data[col] = Long.toString((long)cell.getNumericCellValue());
+                        if (cell.toString().matches("^\\d+[\\,\\.]{1}[0]+$") || cell.toString().matches("^\\d\\.\\d+E\\d$")) {
+                            data[col] = Long.toString((long) cell.getNumericCellValue());
                         } else if (cell.toString().matches("^\\d+[\\,\\.]{1}\\d+$")) {//double value
                             data[col] = Double.toString(cell.getNumericCellValue());
                         }
