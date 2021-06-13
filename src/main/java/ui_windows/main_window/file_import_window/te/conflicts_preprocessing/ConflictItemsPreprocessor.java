@@ -22,18 +22,18 @@ public class ConflictItemsPreprocessor {
         if (conflictItems.containsKey(resolvedMaterial)) {
             ConflictItem mergedItem = conflictItemService.merge(importedItem, conflictItems.get(resolvedMaterial));
             conflictItems.put(resolvedMaterial, mergedItem);
-            logger.debug("item '{}' was merged to '{}'", importedItem, mergedItem);
+            logger.debug("item '{}' was merged to '{}'", importedItem.getId(), mergedItem.getId());
         } else if (processedItems.containsKey(resolvedMaterial)) {
             ImportedProduct existingItem = processedItems.get(resolvedMaterial);
             ImportedProduct mergedImportedItem = importedItemService.merge(existingItem, importedItem);
             if (mergedImportedItem != null) {
                 processedItems.put(resolvedMaterial, mergedImportedItem);
-                logger.debug("item '{}' was merged to '{}'", importedItem, mergedImportedItem);
+                logger.debug("item '{}' was merged to '{}'", importedItem.getId(), mergedImportedItem.getId());
             } else {
                 processedItems.remove(resolvedMaterial);
                 ConflictItem conflictItem = conflictItemService.merge(existingItem, importedItem);
                 conflictItems.put(resolvedMaterial, conflictItem);
-                logger.debug("item '{}' was merged to '{}'", importedItem, conflictItem);
+                logger.debug("item '{}' was merged to '{}'", importedItem.getId(), conflictItem.getId());
             }
         } else {
             processedItems.put(resolvedMaterial, importedItem);
