@@ -84,11 +84,8 @@ public class PriceGenerationScript {
                             "Выберите прайс для сравнения", Dialogs.EXCEL_FILES_ALL,
                             priceList.getDestination().getPath()).get(0);
 
-                    String fileName = String.format("%s\\price_comparison_report_%s vs %s",
-                            Folders.getInstance().getTempFolder(), priceListFile.getName(), previousPriceList.getName());
-                    priceComparisonFile = new File(fileName.replaceAll(".xlsx", "").concat(".xlsx"));
-
-                    pricesComparatorTask.comparePriceFilesAndGenerateReport(previousPriceList, priceListFile, priceComparisonFile);
+                    pricesComparatorTask.comparePriceFilesAndGenerateReport(previousPriceList, priceListFile,
+                            Folders.getInstance().getTempFolder());
 
                     logger.trace("price lists have been compared");//
                 }

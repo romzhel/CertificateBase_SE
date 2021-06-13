@@ -123,6 +123,17 @@ public class Dialogs {
         return files != null ? files : Collections.emptyList();
     }
 
+    public File selectSavePath(String title, Path path) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(title);
+        fileChooser.getExtensionFilters().add(EXCEL_FILES_XLSX);
+        fileChooser.setSelectedExtensionFilter(EXCEL_FILES_XLSX);
+        fileChooser.setInitialDirectory(path.getParent() == null ? null : path.getParent().toFile());
+        fileChooser.setInitialFileName(path.getFileName().toString());
+
+        return fileChooser.showSaveDialog(null);
+    }
+
     public File selectFolder(Stage stage, String title) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle(title);

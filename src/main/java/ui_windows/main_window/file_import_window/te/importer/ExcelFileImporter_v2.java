@@ -1,6 +1,7 @@
 package ui_windows.main_window.file_import_window.te.importer;
 
 import core.ThreadManager;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import ui_windows.main_window.file_import_window.te.ColumnMappingWindow;
 import ui_windows.main_window.file_import_window.te.ExcelFileImportUtils;
@@ -11,6 +12,7 @@ import utils.BytesToReadableFormatConverter;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,12 @@ public class ExcelFileImporter_v2 extends AbstractFileImporter {
     private ImportDataSheet currentSheet;
     private ExcelFileSaxRowDataToImportedProductMapper saxRowDataMapper = new ExcelFileSaxRowDataToImportedProductMapper();
     private boolean manualMode;
+    @Getter
+    private List<String> sheetNames = new LinkedList<>();
+
+    public ExcelFileImporter_v2() {
+        super();
+    }
 
     @Override
     public List<ImportedProduct> getProducts(List<File> files, boolean manualMode) throws RuntimeException {
@@ -40,13 +48,16 @@ public class ExcelFileImporter_v2 extends AbstractFileImporter {
 
             return conflictItemsPreprocessor.processConflictsAndGetItems();
         } catch (Exception e) {
-            log.error("Excel file import error: {} {}", e.getClass().getSimpleName(), e.getMessage());
+            log.error("Excel file import error: {} {}", e.getClass().getSimpleName(), e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
 
     private void processNextSheetData(ImportDataSheet sheet) throws RuntimeException {
         log.debug("next sheet name {} / {}", sheet.getFileName(), sheet.getSheetName());
+        if (!sheetNames.contains(sheet.getSheetName())) {
+            sheetNames.add(sheet.getSheetName());
+        }
         currentSheet = sheet;
         isTitlesFound = false;
     }
@@ -54,7 +65,9 @@ public class ExcelFileImporter_v2 extends AbstractFileImporter {
     private void processSaxData(SaxRowData saxRowData) throws RuntimeException {
         if (isTitlesFound) {
             ImportedProduct importedItem = saxRowDataMapper.getProductFromFileRecord(saxRowData, currentSheet);
-            conflictItemsPreprocessor.process(importedItem);
+            if (importedItem != null) {
+                conflictItemsPreprocessor.process(importedItem);
+            }
         } else {
             if (dataRecognizer.isRowContainsTitles(saxRowData)) {
                 params = ExcelFileImportUtils.getInstance().getImportColumnParams(Arrays.asList(saxRowData.getData()));
@@ -83,7 +96,7 @@ public class ExcelFileImporter_v2 extends AbstractFileImporter {
         int availableProcessors = Runtime.getRuntime().availableProcessors();
 
         BytesToReadableFormatConverter converter = new BytesToReadableFormatConverter();
-        logger.debug("{}, system memory: free {}, total {}, max {}", comment,
+        log.debug("{}, system memory: free {}, total {}, max {}", comment,
                 converter.convert(freeMem), converter.convert(totalMem), converter.convert(maxMem));
     }
 }

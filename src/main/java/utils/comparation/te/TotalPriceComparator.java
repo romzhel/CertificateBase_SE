@@ -42,8 +42,7 @@ public class TotalPriceComparator {
             }
         }
 
-        ImportedProductToProductMapper mapper = new ImportedProductToProductMapper();
-        result.goneItemList.addAll(mapper.mapToProductList(leftItems.values()));
+        result.getGoneItemList().addAll(leftItems.values());
 
         log.trace("сравнение завершено, прошло времени {} мс", System.currentTimeMillis() - t0);
 
