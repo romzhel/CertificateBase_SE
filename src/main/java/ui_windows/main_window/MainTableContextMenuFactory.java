@@ -63,7 +63,7 @@ public class MainTableContextMenuFactory {
             ArrayList<DataItem> columns = new SelectorExportWindow(MainWindow.getMainStage()).getColumns();
             new Thread(() -> {
                 List<File> files = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(), "Выбор места сохранения",
-                        Dialogs.EXCEL_FILES, Utils.getDateTimeForFileName().concat("_report.xlsx"));
+                        Dialogs.EXCEL_FILES_ALL, Utils.getDateTimeForFileName().concat("_report.xlsx"));
                 if (files != null && files.get(0) != null) {
 //                    logger.info("Exporting to Excel");
                     Utils.openFile(new ReportToExcel().export(columns, SHD_SELECTED_PRODUCTS.getData(), files.get(0)));

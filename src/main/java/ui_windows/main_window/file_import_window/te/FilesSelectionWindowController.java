@@ -68,7 +68,7 @@ public class FilesSelectionWindowController implements Initializable {
 
         btnAdd.setOnAction(event -> {
             List<File> addedFiles = new Dialogs().selectFiles((Stage) btnAdd.getScene().getWindow(),
-                    "Добавление файлов для импорта", Dialogs.EXCEL_FILES);
+                    "Добавление файлов для импорта", Dialogs.EXCEL_FILES_ALL);
             lvFiles.getItems().addAll(addedFiles);
         });
 

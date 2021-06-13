@@ -124,7 +124,7 @@ public class ProductDataFileImportTask implements Runnable {
                             new Dialogs().selectAnyFile(
                                     MainWindow.getMainStage(),
                                     "Сохранение отчёта импорта",
-                                    Dialogs.EXCEL_FILES,
+                                    Dialogs.EXCEL_FILES_ALL,
                                     Utils.getDateTimeForFileName().concat("_import_report.xlsx")).get(0)
                     ));
 

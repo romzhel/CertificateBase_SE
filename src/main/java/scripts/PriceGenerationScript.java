@@ -81,7 +81,7 @@ public class PriceGenerationScript {
                     PricesComparisonTask pricesComparatorTask = new PricesComparisonTask();
 
                     File previousPriceList = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
-                            "Выберите прайс для сравнения", Dialogs.EXCEL_FILES,
+                            "Выберите прайс для сравнения", Dialogs.EXCEL_FILES_ALL,
                             priceList.getDestination().getPath()).get(0);
 
                     String fileName = String.format("%s\\price_comparison_report_%s vs %s",
@@ -113,7 +113,7 @@ public class PriceGenerationScript {
             resultFile = new File(priceList.getDestination().getPath() + "\\" + tempFile.getName());
         } else {
             resultFile = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(), "Выбор места сохранения",
-                    Dialogs.EXCEL_FILES, tempFile.getName()).get(0);
+                    Dialogs.EXCEL_FILES_ALL, tempFile.getName()).get(0);
         }
 
         if (resultFile == null) {

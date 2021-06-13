@@ -41,7 +41,7 @@ public class NowImportResultToExcel {
     public File export(TotalComparisonResult result, File targetFile) {//TODO в отчёте отображается только одно изменение
 //        Platform.runLater(() -> {
         File reportFile = targetFile != null ? targetFile : new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
-                "Сохранение результатов импорта", Dialogs.EXCEL_FILES, "ImportReport_" +
+                "Сохранение результатов импорта", Dialogs.EXCEL_FILES_ALL, "ImportReport_" +
                         Utils.getDateTime().replaceAll("\\:", "-") + ".xlsx").get(0);
 
         if ((reportFile != null)) {

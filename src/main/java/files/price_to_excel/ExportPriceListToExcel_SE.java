@@ -63,7 +63,7 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
         File templateFile = priceList.getTemplate();
         if (templateFile == null || !templateFile.exists()) {
             File dialogFile = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(), "Выбор файла шаблона",
-                    Dialogs.EXCEL_FILES, null).get(0);
+                    Dialogs.EXCEL_FILES_ALL, null).get(0);
             if (dialogFile == null || !dialogFile.exists()) {
                 Dialogs.showMessageTS("Формирование прайс листа", "Не найден файл шаблона.");
                 throw new RuntimeException("Не найден файл шаблона прайс-листа");

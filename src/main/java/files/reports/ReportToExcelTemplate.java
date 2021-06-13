@@ -30,7 +30,7 @@ public abstract class ReportToExcelTemplate implements Callable<File> {
 
         reportFile = null;
         reportFile = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(), "Выбор места сохранения",
-                Dialogs.EXCEL_FILES, "report_" + Utils.getDateTime().replaceAll(":", "-")
+                Dialogs.EXCEL_FILES_ALL, "report_" + Utils.getDateTime().replaceAll(":", "-")
                         + fileExtension).get(0);
 
         if (reportFile == null) {

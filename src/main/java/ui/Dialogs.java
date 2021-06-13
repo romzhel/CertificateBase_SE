@@ -11,6 +11,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -18,7 +19,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Dialogs {
-    public static final FileChooser.ExtensionFilter EXCEL_FILES = new FileChooser.ExtensionFilter("Файлы Excel", "*.xls*");
+    public static final FileChooser.ExtensionFilter EXCEL_FILES_ALL = new FileChooser.ExtensionFilter("Файлы Excel", "*.xls*");
+    public static final FileChooser.ExtensionFilter EXCEL_FILES_XLSX = new FileChooser.ExtensionFilter("Файлы Excel", "*.xls*");
     public static final FileChooser.ExtensionFilter ALL_FILES = new FileChooser.ExtensionFilter("Все файлы", "*.*");
     public static final FileChooser.ExtensionFilter DATABASE_FILES = new FileChooser.ExtensionFilter("База данных", "certificateDB.db");
 

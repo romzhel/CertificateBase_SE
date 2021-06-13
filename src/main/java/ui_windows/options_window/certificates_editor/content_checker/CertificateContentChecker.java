@@ -108,7 +108,7 @@ public class CertificateContentChecker {
 
     private void saveToFile() {
         File file;
-        if ((file = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Сохранение отчёта", Dialogs.EXCEL_FILES,
+        if ((file = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Сохранение отчёта", Dialogs.EXCEL_FILES_ALL,
                 "Certificates_Countries_Report.xlsx").get(0)) != null) {
             OutputStream fos = null;
             try {

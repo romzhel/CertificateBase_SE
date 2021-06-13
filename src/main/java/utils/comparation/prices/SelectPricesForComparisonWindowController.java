@@ -48,7 +48,7 @@ public class SelectPricesForComparisonWindowController implements Initializable 
 
         btnSelectPrice1.setOnAction(event -> {
             file1 = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор файла первого прайса",
-                    Dialogs.EXCEL_FILES, null).get(0);
+                    Dialogs.EXCEL_FILES_ALL, null).get(0);
             if (file1 != null && file1.exists()) {
                 tfPriceName1.setText(file1.getName());
             } else {
@@ -58,7 +58,7 @@ public class SelectPricesForComparisonWindowController implements Initializable 
 
         btnSelectPrice2.setOnAction(event -> {
             file2 = new Dialogs().selectAnyFile(MainWindow.getMainStage(), "Выбор файла второго прайса",
-                    Dialogs.EXCEL_FILES, null).get(0);
+                    Dialogs.EXCEL_FILES_ALL, null).get(0);
             if (file2 != null && file2.exists()) {
                 tfPriceName2.setText(file2.getName());
             } else {

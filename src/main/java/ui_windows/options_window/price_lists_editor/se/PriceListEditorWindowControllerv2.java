@@ -31,7 +31,7 @@ public class PriceListEditorWindowControllerv2 {
 
     public void setTemplateFile() {
         File selectedFile = new Dialogs().selectAnyFile(PriceListEditorWindow.getStage(), "Выбор файла шаблона прайс-листа",
-                Dialogs.EXCEL_FILES, Folders.getInstance().getTemplatesFolder().toString()).get(0);
+                Dialogs.EXCEL_FILES_ALL, Folders.getInstance().getTemplatesFolder().toString()).get(0);
         if (selectedFile != null && selectedFile.exists()) {
             tempPriceList.setTemplate(selectedFile);
             tfTemplateName.setText(selectedFile.getName());
