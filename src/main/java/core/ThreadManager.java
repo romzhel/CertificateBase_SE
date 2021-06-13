@@ -24,7 +24,6 @@ public class ThreadManager {
             }
         });
         thread.start();
-        Arrays.stream(finalActions).forEach(Runnable::run);
     }
 
     public static void executeFxTaskSafe(Runnable task) throws RuntimeException {

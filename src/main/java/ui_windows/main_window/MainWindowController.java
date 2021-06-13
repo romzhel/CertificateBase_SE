@@ -121,7 +121,8 @@ public class MainWindowController implements Initializable {
                         ExecutionIndicator.getInstance().start();
 
                         PricesComparisonTask pricesComparisonTask = new PricesComparisonTask();
-                        pricesComparisonTask.comparePriceFilesAndGenerateReport(priceListFiles.get(0), priceListFiles.get(1), new File(""));
+                        pricesComparisonTask.comparePriceFilesAndGenerateReport(priceListFiles.get(0), priceListFiles.get(1), null);
+                        ExecutionIndicator.getInstance().stop();
                     }, throwable -> {
                         logger.error(throwable);
                         Platform.runLater(() -> Dialogs.showMessage("Ошибка сравнения прайс-листов", throwable.getMessage()));
