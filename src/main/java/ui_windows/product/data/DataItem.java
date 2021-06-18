@@ -1,7 +1,7 @@
 package ui_windows.product.data;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
@@ -28,7 +28,8 @@ import static ui_windows.options_window.price_lists_editor.se.PriceListContentTa
 
 public enum DataItem {
     DATA_EMPTY(0, "", null) {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue("");
         }
@@ -38,7 +39,8 @@ public enum DataItem {
         }
     },
     DATA_ORDER_NUMBER(1, "Заказной номер", "material") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getMaterial());
             cell.setCellStyle(CELL_ALIGN_HLEFT_VCENTER);
@@ -49,7 +51,8 @@ public enum DataItem {
         }
     },
     DATA_ORDER_NUMBER_PRINT(2, "Заказной номер для печати", "productForPrint") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getProductForPrint());
             cell.setCellStyle(CELL_ALIGN_HLEFT_VCENTER);
@@ -60,7 +63,8 @@ public enum DataItem {
         }
     },
     DATA_ARTICLE(3, "Артикул", "article") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getArticle());
             cell.setCellStyle(CELL_ALIGN_HLEFT_VCENTER);
@@ -71,7 +75,8 @@ public enum DataItem {
         }
     },
     DATA_DESCRIPTION_RU(4, "Описание (RU)", "descriptionru") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getDescriptionru());
             cell.setCellStyle(CELL_ALIGN_HLEFT_WRAP);
@@ -82,7 +87,8 @@ public enum DataItem {
         }
     },
     DATA_DESCRIPTION_EN(5, "Описание (EN)", "descriptionen") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getDescriptionen());
             cell.setCellStyle(CELL_ALIGN_HLEFT_WRAP);
@@ -93,7 +99,8 @@ public enum DataItem {
         }
     },
     DATA_DESCRIPTION(6, "Описание", null) {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getDescriptionRuEn());
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -104,7 +111,8 @@ public enum DataItem {
         }
     },
     DATA_LOCAL_PRICE(7, "Локальный прайс (Без скидок)", "localPrice") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(product.getLocalPrice());
             cell.setCellStyle(CELL_CURRENCY_FORMAT_VCENTER);
@@ -115,7 +123,8 @@ public enum DataItem {
         }
     },
     DATA_LOCAL_PRICE_LIST(8, "Локальный прайс (В прайс-листе)", null) {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             double cost = getCost(product, options);
 
             if (!product.isPriceHidden() && cost > 0) {
@@ -189,7 +198,8 @@ public enum DataItem {
             return result;
         }
 
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(getPriceSheetName(product));
         }
@@ -199,7 +209,8 @@ public enum DataItem {
         }
     },
     DATA_LEAD_TIME_EU(10, "Время доставки (Европа)", "leadTime") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(product.getLeadTime());
             cell.setCellStyle(CELL_ALIGN_HCENTER_HCENTER);
@@ -211,7 +222,8 @@ public enum DataItem {
     },
     DATA_LEAD_TIME_RU(11, "Время доставки (Россия)", "leadTime") {//todo возможна ошибка
 
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(product.getLeadTimeRu());
             cell.setCellStyle(CELL_ALIGN_HCENTER_HCENTER);
@@ -222,7 +234,8 @@ public enum DataItem {
         }
     },
     DATA_MIN_ORDER(12, "Минимальный заказ", "minOrder") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(product.getMinOrder());
             cell.setCellStyle(CELL_ALIGN_HCENTER_HCENTER);
@@ -233,7 +246,8 @@ public enum DataItem {
         }
     },
     DATA_LGBK(13, "LGBK", "lgbk") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getLgbk());
             cell.setCellStyle(CELL_ALIGN_HCENTER_HCENTER);
@@ -244,7 +258,8 @@ public enum DataItem {
         }
     },
     DATA_HIERARCHY(14, "Иерархия", "hierarchy") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getHierarchy());
             cell.setCellStyle(CELL_ALIGN_HCENTER);
@@ -255,7 +270,8 @@ public enum DataItem {
         }
     },
     DATA_WEIGHT(15, "Вес", "weight") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(product.getWeight());
             cell.setCellStyle(CELL_ALIGN_HRIGHT_VCENTER);
@@ -266,7 +282,8 @@ public enum DataItem {
         }
     },
     DATA_COUNTRY(16, "Страна производства", "country") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getCountry());
             cell.setCellStyle(CELL_ALIGN_HCENTER);
@@ -277,7 +294,8 @@ public enum DataItem {
         }
     },
     DATA_COUNTRY_WITH_COMMENTS(17, "Страна производства c расшифровкой", null) {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(Countries.getCombinedName(product.getCountry()));
             cell.setCellStyle(CELL_ALIGN_HCENTER);
@@ -288,7 +306,8 @@ public enum DataItem {
         }
     },
     DATA_LOGISTIC_NOTES(18, "Ограничения транспортировки", "dangerous") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getDangerous());
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -299,7 +318,8 @@ public enum DataItem {
         }
     },
     DATA_SERVICE_END(19, "Окончание сервисного периода", "endofservice") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getEndofservice());
             cell.setCellStyle(CELL_ALIGN_HCENTER);
@@ -310,7 +330,8 @@ public enum DataItem {
         }
     },
     DATA_DCHAIN(20, "Код доступности", "dchain") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getDchain());
             cell.setCellStyle(CELL_ALIGN_HCENTER);
@@ -329,7 +350,8 @@ public enum DataItem {
             return "";
         }
 
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(getDchainComment(product));
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -340,7 +362,8 @@ public enum DataItem {
         }
     },
     DATA_DCHAIN_WITH_COMMENT(22, "Код доступности c расшифровкой", null) {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(OrdersAccessibility.getInstance().getCombineOrderAccessibility(product.getDchain()));
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -351,7 +374,8 @@ public enum DataItem {
         }
     },
     DATA_PACKSIZE(23, "Размер упаковки", "packetSize") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(product.getPacketSize());
             cell.setCellStyle(CELL_ALIGN_HCENTER);
@@ -362,7 +386,8 @@ public enum DataItem {
         }
     },
     DATA_FAMILY_ID(24, "Направление (код)", "family_id") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(product.getFamily_id());
             cell.setCellStyle(CELL_ALIGN_HCENTER);
@@ -379,7 +404,8 @@ public enum DataItem {
             return "Не известно";
         }
 
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(getFamilyName(product));
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -396,7 +422,8 @@ public enum DataItem {
             return "Не известно";
         }
 
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(getFamilyResponsible(product));
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -407,7 +434,8 @@ public enum DataItem {
         }
     },
     DATA_IS_IN_PRICE(27, "Назначена в прайс", "price") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.isPrice() ? "В прайсе" : "Не в прайсе");
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -418,7 +446,8 @@ public enum DataItem {
         }
     },
     DATA_COMMENT(28, "Комментарий", "comments") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getComments());
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -429,7 +458,8 @@ public enum DataItem {
         }
     },
     DATA_REPLACEMENT(29, "Замена", "replacement") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getReplacement());
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -440,7 +470,8 @@ public enum DataItem {
         }
     },
     DATA_TYPE(30, "Тип", "type_id") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getType_id());
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -451,7 +482,8 @@ public enum DataItem {
         }
     },
     DATA_TYPE_DESCRIPTION(31, "Тип (Описание)", null) {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(ProductTypes.getInstance().getTypeById(product.getType_id()));
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -462,7 +494,8 @@ public enum DataItem {
         }
     },
     DATA_CERTIFICATE(32, "Наличие сертификатов", null) {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(new CertificatesChecker(product, CheckParameters.getDefault()).getCheckStatusResult().getText());
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -473,7 +506,8 @@ public enum DataItem {
         }
     },
     DATA_NORMS_MODE(33, "Добавление/замещение норм", "normsMode") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getNormsMode() == NormsList.ADD_TO_GLOBAL ? "Добавление" : "Замещение");
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -485,7 +519,8 @@ public enum DataItem {
 
     },
     DATA_NORMS_LIST(34, "Список норм для продукта", "normsList") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getNormsList().getNormNamesLine());
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -501,7 +536,8 @@ public enum DataItem {
             return normsList.getNormNamesLine();
         }
 
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(getGlobalNormsDescriptions(product));
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -512,7 +548,8 @@ public enum DataItem {
         }
     },
     DATA_MANUAL_FILE(36, "Файл описания", "fileName") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getFileName());
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -523,7 +560,8 @@ public enum DataItem {
         }
     },
     DATA_NORMS_ID(37, "Список норм для продукта (коды)", null) {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getNormsList().getStringLine());
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -534,7 +572,8 @@ public enum DataItem {
         }
     },
     DATA_GLOBAL_MORMS_ID(38, "Список глобальных норм для продукта (коды)", null) {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(new NormsList(product.getGlobalNorms()).getStringLine());
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -545,7 +584,8 @@ public enum DataItem {
         }
     },
     DATA_ORDER_NUMBER_PRINT_NOT_EMPTY(39, "Заказной номер SSN для печати (или заказной номер)", null) {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getProductForPrint() == null || product.getProductForPrint().isEmpty() ?
                     product.getMaterial() : product.getProductForPrint());
@@ -558,7 +598,8 @@ public enum DataItem {
         }
     },
     DATA_LGBK_PRICE(40, "LGBK для прайса", "lgbk") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(PriceLGBK.getpriceLgbk(product));
             cell.setCellStyle(CELL_ALIGN_HCENTER_HCENTER);
@@ -569,7 +610,8 @@ public enum DataItem {
         }
     },
     DATA_IS_BLOCKED(41, "Блокировка", "blocked") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.isBlocked() ? "Заблокирована" : "Не заблокирована");
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -580,7 +622,8 @@ public enum DataItem {
         }
     },
     DATA_IS_PRICE_HIDDEN(42, "Сокрытие стоимости в прайсе", "priceHidden") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.isPriceHidden() ? "Скрыта" : "Отображена");
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -591,7 +634,8 @@ public enum DataItem {
         }
     },
     DATA_ARTICLE_GAMMA(43, "Артикул (SSN для GAMMA)", "article") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(getValue(product).toString());
             cell.setCellStyle(CELL_ALIGN_HLEFT);
@@ -605,7 +649,8 @@ public enum DataItem {
         }
     },
     DATA_WARRANTY(44, "Гарантия, лет", "warranty") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.NUMERIC);
             cell.setCellValue((int) getValue(product));
             cell.setCellStyle(CELL_ALIGN_HCENTER_HCENTER);
@@ -616,7 +661,8 @@ public enum DataItem {
         }
     },
     DATA_DESCRIPTION_WRAP(45, "Описание (с переносом текста)", null) {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getDescriptionRuEn());
             cell.setCellStyle(CELL_ALIGN_HLEFT_VCENTER_WRAP);
@@ -627,7 +673,7 @@ public enum DataItem {
         }
     },
     DATA_COMMENT_PRICE(46, "Комментарий для прайса", "commentsPrice") {
-        public void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options) {
+        public void fillExcelCell(Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
             cell.setCellValue(product.getCommentsPrice());
             cell.setCellStyle(CELL_ALIGN_HLEFT_VCENTER_WRAP);
@@ -687,7 +733,7 @@ public enum DataItem {
         return field;
     }
 
-    public abstract void fillExcelCell(XSSFCell cell, Product product, Map<String, Object> options);
+    public abstract void fillExcelCell(Cell cell, Product product, Map<String, Object> options);
 
     public abstract Object getValue(Product product);
 

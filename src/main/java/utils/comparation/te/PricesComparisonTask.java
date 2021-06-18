@@ -35,8 +35,7 @@ public class PricesComparisonTask {
         priceComparisonResult.getSheetNames().addAll(fileImporter.getSheetNames());
 
         Map<ReportParameterEnum, Object> params = new HashMap<>();
-        String fileName = String.format("%s_%s_vs_%s.xlsx",
-                "Prices_comparison_report",
+        String fileName = String.format("prices_comparison_report_%s_vs_%s.xlsx",
                 newPriceFile.getName().replaceAll(".xlsx", ""),
                 prevPriceFile.getName().replaceAll(".xlsx", ""));
         reportFolder = reportFolder == null ? Paths.get(fileName) : reportFolder.resolve(fileName);

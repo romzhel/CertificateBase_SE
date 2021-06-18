@@ -2,6 +2,7 @@ package scripts;
 
 import files.Folders;
 import files.price_to_excel.ExportPriceListToExcel_SE;
+import files.reports.ReportParameterEnum;
 import files.reports.ReportToExcel;
 import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
@@ -19,13 +20,16 @@ import utils.comparation.te.PricesComparisonTask;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static core.SharedData.SHD_CUSTOM_DATA;
+import static files.reports.ReportParameterEnum.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static ui_windows.product.data.DataItem.*;
 
@@ -64,16 +68,20 @@ public class PriceGenerationScript {
                 }
 
                 if (priceListFile != null) {
-                    outOfPriceFile = Folders.getInstance().getTempFolder().resolve(
-                            "out_of_price_report_" + Utils.getDateTimeForFileName() + ".xlsx").toFile();
+                    Path path = Folders.getInstance().getTempFolder().resolve(Utils.getDateTimeForFileName() +
+                            "_out_of_price_report.xlsx");
 
                     DataItem[] columns = new DataItem[]{DATA_FAMILY_NAME, DATA_RESPONSIBLE, DATA_ORDER_NUMBER,
                             DATA_ARTICLE, DATA_DESCRIPTION, DATA_COUNTRY_WITH_COMMENTS, DATA_DCHAIN_WITH_COMMENT,
                             DATA_CERTIFICATE};
 
-                    AtomicReference<File> opf = new AtomicReference<>(outOfPriceFile);
-                    outOfPriceFile = executorService.submit(() -> new ReportToExcel().export(Arrays.asList(columns),
-                            SHD_CUSTOM_DATA.getData(), opf.get())).get();
+                    Map<ReportParameterEnum, Object> reportParams = new HashMap<>();
+                    reportParams.put(REPORT_PATH, path);
+                    reportParams.put(REPORT_COLUMNS, Arrays.asList(columns));
+                    reportParams.put(REPORT_ITEMS, SHD_CUSTOM_DATA.getData());
+
+                    new ReportToExcel(reportParams).export();
+
                     DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION.activate();
 
                     logger.trace("out of price report generated");
@@ -99,8 +107,9 @@ public class PriceGenerationScript {
 //                outlookEmailSender.send();
             } catch (Exception e) {
                 logger.error("ошибка генерации прайс-листа {}", e.getMessage(), e);
+            } finally {
+                ExecutionIndicator.getInstance().stop();
             }
-            ExecutionIndicator.getInstance().stop();
         }).start();
     }
 

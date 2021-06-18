@@ -1,8 +1,10 @@
 package ui_windows.main_window;
 
 import core.InitModule;
+import core.ThreadManager;
 import core.reports.CertificatesReportScript;
 import files.SelectorExportWindow;
+import files.reports.ReportParameterEnum;
 import files.reports.ReportToExcel;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -10,16 +12,20 @@ import javafx.scene.control.SeparatorMenuItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
+import ui_windows.ExecutionIndicator;
 import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
 import utils.Utils;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static core.SharedData.SHD_DATA_SET;
 import static core.SharedData.SHD_SELECTED_PRODUCTS;
+import static files.reports.ReportParameterEnum.*;
 
 public class MainTableContextMenuFactory {
     private static final String SPACE = "     ";
@@ -60,15 +66,27 @@ public class MainTableContextMenuFactory {
             CertificatesReportScript.create().startReport(mainTable);
         });
         MENU_EXPORT.setOnAction(event -> {
-            ArrayList<DataItem> columns = new SelectorExportWindow(MainWindow.getMainStage()).getColumns();
-            new Thread(() -> {
-                List<File> files = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(), "Выбор места сохранения",
-                        Dialogs.EXCEL_FILES_ALL, Utils.getDateTimeForFileName().concat("_report.xlsx"));
-                if (files != null && files.get(0) != null) {
-//                    logger.info("Exporting to Excel");
-                    Utils.openFile(new ReportToExcel().export(columns, SHD_SELECTED_PRODUCTS.getData(), files.get(0)));
-                }
-            }).start();
+            List<DataItem> columns = new SelectorExportWindow(MainWindow.getMainStage()).getColumns();
+
+            Map<ReportParameterEnum, Object> reportParams = new HashMap<>();
+            reportParams.put(REPORT_PATH, Paths.get(Utils.getDateTimeForFileName().concat("_report.xlsx")));
+            reportParams.put(REPORT_COLUMNS, columns);
+            reportParams.put(REPORT_ITEMS, SHD_SELECTED_PRODUCTS.getData());
+
+            ThreadManager.startNewThread("Report Thread",
+                    () -> {
+                        ExecutionIndicator.getInstance().start();
+                        Utils.openFile(new ReportToExcel(reportParams).export());
+                        ExecutionIndicator.getInstance().stop();
+                    },
+                    exception -> {
+                        logger.error("{}: {}", exception.getClass(), exception.getMessage(), exception);
+                        Dialogs.showMessage("Ошибка выполнения отчёта", exception.getClass() + ": " +
+                                exception.getMessage());
+                        return null;
+                    },
+                    () -> ExecutionIndicator.getInstance().stop()
+            );
         });
     }
 

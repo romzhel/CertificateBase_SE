@@ -3,9 +3,7 @@ package utils.comparation.te;
 import files.reports.ReportParameterEnum;
 import files.reports.ReportToExcelTemplate_v2;
 import lombok.extern.log4j.Log4j2;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -29,8 +27,6 @@ public class TotalPriceComparisonResultToExcelExporter extends ReportToExcelTemp
     private final CellStyle[] sheetTitlesStyles = {styles.CELL_ALIGN_HLEFT_BOLD, styles.CELL_ALIGN_HLEFT_BOLD_BROWN, styles.CELL_ALIGN_HLEFT_BOLD};
     private final CellStyle[] itemDataStyles = {styles.CELL_ALIGN_HLEFT, styles.CELL_ALIGN_HLEFT_BROWN, styles.CELL_ALIGN_HLEFT};
     private TotalPriceComparisonResult comparisonResult;
-    private int rowNum;
-    private int colIndex;
 
     public TotalPriceComparisonResultToExcelExporter(Map<ReportParameterEnum, Object> params) {
         super(params);
@@ -157,27 +153,6 @@ public class TotalPriceComparisonResultToExcelExporter extends ReportToExcelTemp
 //        sheet.trackColumnForAutoSizing(colIndex - 1);
 //        sheet.autoSizeColumn(colIndex - 1);
         sheet.setColumnWidth(colIndex - 1, colWidths[colIndex - 1]);
-    }
-
-    private void fillCell(Cell cell, Object value, CellStyle style) {
-        if (value == null) {
-            return;
-        }
-
-        cell.setCellStyle(style);
-        if (value instanceof Integer) {
-            cell.setCellType(CellType.NUMERIC);
-            cell.setCellValue((int) value);
-        } else if (value instanceof Double) {
-            cell.setCellType(CellType.NUMERIC);
-            cell.setCellValue((double) value);
-        } else if (value instanceof Long) {
-            cell.setCellType(CellType.NUMERIC);
-            cell.setCellValue((long) value);
-        } else {
-            cell.setCellType(CellType.STRING);
-            cell.setCellValue(value.toString());
-        }
     }
 }
 

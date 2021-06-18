@@ -4,6 +4,9 @@ import core.ThreadManager;
 import exceptions.OperationCancelledByUserException;
 import files.ExcelCellStyleFactory_v2;
 import lombok.extern.log4j.Log4j2;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import ui.Dialogs;
 
@@ -18,10 +21,12 @@ public abstract class ReportToExcelTemplate_v2 {
     protected SXSSFWorkbook workbook;
     protected ExcelCellStyleFactory_v2 styles;
     protected File reportFile;
+    protected int rowNum;
+    protected int colIndex;
 
     public ReportToExcelTemplate_v2(Map<ReportParameterEnum, Object> params) {
         this.params = params;
-        workbook = new SXSSFWorkbook(5);
+        workbook = new SXSSFWorkbook(100);
         workbook.setCompressTempFiles(true);
         styles = new ExcelCellStyleFactory_v2(workbook);
     }
@@ -54,6 +59,27 @@ public abstract class ReportToExcelTemplate_v2 {
             log.error("error of excel file creating {}", e.getMessage());
             Dialogs.showMessage("Ошибка создания файла отчета", e.getMessage());
             throw new RuntimeException(e);
+        }
+    }
+
+    protected void fillCell(Cell cell, Object value, CellStyle style) {
+        if (value == null) {
+            return;
+        }
+
+        cell.setCellStyle(style);
+        if (value instanceof Integer) {
+            cell.setCellType(CellType.NUMERIC);
+            cell.setCellValue((int) value);
+        } else if (value instanceof Double) {
+            cell.setCellType(CellType.NUMERIC);
+            cell.setCellValue((double) value);
+        } else if (value instanceof Long) {
+            cell.setCellType(CellType.NUMERIC);
+            cell.setCellValue((long) value);
+        } else {
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(value.toString());
         }
     }
 }
