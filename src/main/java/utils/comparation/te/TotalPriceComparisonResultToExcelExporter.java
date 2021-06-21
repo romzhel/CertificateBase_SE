@@ -84,12 +84,14 @@ public class TotalPriceComparisonResultToExcelExporter extends ReportToExcelTemp
                 fillProductData(changedItem, row, cellStyle);
 
                 String direction = initialSheetIndex <= currentSheetIndex ? "->" : "<-";
+                CellStyle directionStyle = initialSheetIndex < currentSheetIndex ? styles.CELL_ALIGN_HCENTER_BROWN : styles.CELL_ALIGN_HCENTER;
+                String changeComment = initialSheetIndex != currentSheetIndex ? "перемещена" : "изменена";
 
-                fillCell(row.createCell(colIndex++ + initialSheetIndex * 5), "изменена", cellStyle);
-                fillCell(row.createCell(colIndex++ + initialSheetIndex * 5), property.getDataItem().getDisplayingName(), cellStyle);
-                fillCell(row.createCell(colIndex++ + initialSheetIndex * 5), property.getOldValue(), cellStyle);
-                fillCell(row.createCell(colIndex + initialSheetIndex * 5), direction, styles.CELL_ALIGN_HCENTER);
-                fillCell(row.createCell(colIndex++ + currentSheetIndex * 5), direction, styles.CELL_ALIGN_HCENTER);
+                fillCell(row.createCell(colIndex++ + initialSheetIndex * 5), changeComment, cellStyle);
+                fillCell(row.createCell(colIndex++ + currentSheetIndex * 5), property.getDataItem().getDisplayingName(), cellStyle);
+                fillCell(row.createCell(colIndex++ + currentSheetIndex * 5), property.getOldValue(), cellStyle);
+                fillCell(row.createCell(colIndex + initialSheetIndex * 5), direction, directionStyle);
+                fillCell(row.createCell(colIndex++ + currentSheetIndex * 5), direction, directionStyle);
                 fillCell(row.createCell(colIndex++ + currentSheetIndex * 5), property.getNewValue(), cellStyle);
             }
         }

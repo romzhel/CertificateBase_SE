@@ -7,6 +7,8 @@ import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProperty;
 import utils.Utils;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +27,7 @@ public class ProductHistoryBuilder {
         List<String> changesDescriptionList = changedItem.getChangedPropertyList().stream()
                 .map(changedProperty -> getChangeInfo(changedProperty, mainSource))
                 .collect(Collectors.toList());
-        return getDateTime() + "," + Strings.join(changesDescriptionList, ',') + ", " + mainSource.getFileName();
+        return getDateTime() + "," + Strings.join(changesDescriptionList, ',') + ", [" + getSourceFileName(mainSource) + "]";
     }
 
     private String getDateTime() {
@@ -37,8 +39,14 @@ public class ProductHistoryBuilder {
                 changedProperty.getDataItem().getField().getName(),
                 changedProperty.getOldValue().toString(),
                 changedProperty.getNewValue().toString(),
-                changedProperty.getSource().equals(mainSource) ? "" : " (" + changedProperty.getSource().getFileName() + ")"
+                changedProperty.getSource().equals(mainSource) ? "" : ", (" + getSourceFileName(changedProperty.getSource()) + ")"
         );
+    }
+
+    private String getSourceFileName(ImportDataSheet source) {
+        Path sourcePath = Paths.get(source.getFileName());
+
+        return sourcePath.getFileName().toString();
     }
 
     private ImportDataSheet getMainSource(Collection<? extends ImportedProperty> propertyList) throws RuntimeException {

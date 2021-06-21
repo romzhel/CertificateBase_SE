@@ -3,6 +3,7 @@ package files.reports;
 import core.ThreadManager;
 import exceptions.OperationCancelledByUserException;
 import files.ExcelCellStyleFactory_v2;
+import javafx.application.Platform;
 import lombok.extern.log4j.Log4j2;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -57,7 +58,7 @@ public abstract class ReportToExcelTemplate_v2 {
             log.info("Created file: {}", reportFile.getAbsolutePath());
         } catch (Exception e) {
             log.error("error of excel file creating {}", e.getMessage());
-            Dialogs.showMessage("Ошибка создания файла отчета", e.getMessage());
+            Platform.runLater(() -> Dialogs.showMessage("Ошибка создания файла отчета", e.getMessage()));
             throw new RuntimeException(e);
         }
     }

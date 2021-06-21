@@ -19,6 +19,7 @@ public class ExcelCellStyleFactory_v2 {
     public final CellStyle CELL_CURRENCY_FORMAT_VCENTER;
     public final CellStyle CELL_ALIGN_HLEFT_BOLD_BROWN;
     public final CellStyle CELL_ALIGN_HLEFT_BROWN;
+    public final CellStyle CELL_ALIGN_HCENTER_BROWN;
 
     public ExcelCellStyleFactory_v2(SXSSFWorkbook workbook) {
         Font boldFont = getFont(workbook, true, -1);
@@ -57,6 +58,10 @@ public class ExcelCellStyleFactory_v2 {
 
         CELL_ALIGN_HCENTER = workbook.createCellStyle();
         CELL_ALIGN_HCENTER.setAlignment(HorizontalAlignment.CENTER);
+
+        CELL_ALIGN_HCENTER_BROWN = workbook.createCellStyle();
+        CELL_ALIGN_HCENTER_BROWN.setAlignment(HorizontalAlignment.CENTER);
+        CELL_ALIGN_HCENTER_BROWN.setFont(brownFont);
 
         CELL_ALIGN_HCENTER_HCENTER = workbook.createCellStyle();
         CELL_ALIGN_HCENTER_HCENTER.setAlignment(HorizontalAlignment.CENTER);

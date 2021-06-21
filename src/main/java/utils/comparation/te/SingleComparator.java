@@ -50,16 +50,26 @@ public class SingleComparator {
 
         for (ImportedProperty property1 : item1.getProperties().values()) {
             ImportedProperty property2 = item2.getProperties().get(property1.getDataItem());
+
+            if (property2 == null) {
+                continue;
+            }
+
             properties2set.remove(property2);
 
             Object value1 = property1.getNewValue();
-            Object value2 = property2 != null ? property2.getNewValue() : null;//todo
+            Object value2 = property2.getNewValue();
 
             if (value1.equals(value2)) {
                 continue;
             }
 
-            addChangedProperty(result, property2, value1);
+            try {
+                addChangedProperty(result, property2, value1);
+            } catch (Exception e) {
+                logger.error("error of ChangedProperty creation from ImportedProperty {} for {}, item1={}, item2={}",
+                        property2, result.getId(), item1, item2);
+            }
         }
 
         for (ImportedProperty newProperty : properties2set) {
@@ -69,11 +79,9 @@ public class SingleComparator {
         return result;
     }
 
-    private void addChangedProperty(ChangedItem result, ImportedProperty property2, Object value1) {
+    private void addChangedProperty(ChangedItem result, ImportedProperty property2, Object value1) throws RuntimeException {
         ChangedProperty changedProperty = new ChangedProperty(property2);
         changedProperty.setOldValue(value1);
         result.getChangedPropertyList().add(changedProperty);
     }
-
-
 }
