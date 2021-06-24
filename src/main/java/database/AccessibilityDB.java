@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AccessibilityDB extends DbRequest {
 
@@ -14,12 +15,12 @@ public class AccessibilityDB extends DbRequest {
         try {
             addData = connection.prepareStatement("INSERT INTO " +
                             "order_accessibility (status_code, ses_code, description_en, description_ru, f1, f2, " +
-                            "status, orderable) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+                            "status, orderable, alt_status_code) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = connection.prepareStatement("UPDATE order_accessibility " +
                     "SET status_code = ?, ses_code = ?, description_en = ?, description_ru = ?, f1 = ?, f2 = ?, " +
-                    "status = ?, orderable = ? WHERE id = ?");
+                    "status = ?, orderable = ?, alt_status_code = ?  WHERE id = ?");
             deleteData = connection.prepareStatement("DELETE FROM order_accessibility " +
                     "WHERE id = ?");
         } catch (SQLException e) {
@@ -28,8 +29,8 @@ public class AccessibilityDB extends DbRequest {
         }
     }
 
-    public ArrayList getData() {
-        ArrayList<OrderAccessibility> ordersAccessibility = new ArrayList<>();
+    public List<OrderAccessibility> getData() {
+        List<OrderAccessibility> ordersAccessibility = new ArrayList<>();
         try {
             ResultSet rs = connection.prepareStatement("SELECT * FROM order_accessibility").executeQuery();
 
@@ -56,6 +57,7 @@ public class AccessibilityDB extends DbRequest {
             addData.setString(6, oa.getF2());
             addData.setString(7, oa.getStatus());
             addData.setBoolean(8, oa.isOrderable());
+            addData.setString(9, oa.getAlternativeStatusCode());
 
             if (addData.executeUpdate() > 0) {//successful
                 ResultSet rs = addData.getGeneratedKeys();
@@ -87,7 +89,8 @@ public class AccessibilityDB extends DbRequest {
             updateData.setString(6, oa.getF2());
             updateData.setString(7, oa.getStatus());
             updateData.setBoolean(8, oa.isOrderable());
-            updateData.setInt(9, oa.getId());
+            updateData.setString(9, oa.getAlternativeStatusCode());
+            updateData.setInt(10, oa.getId());
 
             if (updateData.executeUpdate() > 0) {//successful
                 return true;

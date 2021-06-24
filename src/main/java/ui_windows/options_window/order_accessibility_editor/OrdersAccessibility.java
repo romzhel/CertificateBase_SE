@@ -2,16 +2,23 @@ package ui_windows.options_window.order_accessibility_editor;
 
 import core.Initializable;
 import database.AccessibilityDB;
+import lombok.Data;
+import lombok.extern.log4j.Log4j2;
+import ui_windows.product.Product;
 
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@Data
+@Log4j2
 public class OrdersAccessibility implements Initializable {
     private static OrdersAccessibility instance;
-    private ArrayList<OrderAccessibility> ordersAccessibility;
+    private final OrderAccessibility EMPTY = new OrderAccessibility("", "", "Unknown", "Неизвестно");
+    private Map<String, OrderAccessibility> ordersAccessibilityMap;
+    private Map<String, OrderAccessibility> alternativeOrdersAccessibilityMap;
     private OrdersAccessibilityTable table;
 
     private OrdersAccessibility() {
-        ordersAccessibility = new ArrayList<>();
     }
 
     public static OrdersAccessibility getInstance() {
@@ -23,12 +30,23 @@ public class OrdersAccessibility implements Initializable {
 
     @Override
     public void init() {
-        ordersAccessibility = new AccessibilityDB().getData();
+        List<OrderAccessibility> items = new AccessibilityDB().getData();
+        ordersAccessibilityMap = items.stream()
+                .filter(oa -> !oa.getStatusCode().trim().isEmpty())
+                .collect(Collectors.toMap(
+                        OrderAccessibility::getStatusCode,
+                        (oa) -> oa));
+
+        alternativeOrdersAccessibilityMap = items.stream()
+                .filter(oa -> oa.getStatusCode().trim().isEmpty())
+                .collect(Collectors.toMap(
+                        OrderAccessibility::getAlternativeStatusCode,
+                        (oa) -> oa));
     }
 
     public void addItem(OrderAccessibility oa) {
         if (new AccessibilityDB().putData(oa)) {
-            ordersAccessibility.add(oa);
+            ordersAccessibilityMap.put(oa.getStatusCode(), oa);
             table.getTableView().getItems().add(oa);
         }
     }
@@ -39,37 +57,31 @@ public class OrdersAccessibility implements Initializable {
 
     public void removeItem(OrderAccessibility oa) {
         if (new AccessibilityDB().deleteData(oa)) {
-            ordersAccessibility.remove(oa);
+            ordersAccessibilityMap.remove(oa.getStatusCode());
             table.getTableView().getItems().remove(oa);
         }
     }
 
     public OrderAccessibility getOrderAccessibilityByStatusCode(String statusCode) {
-        for (OrderAccessibility oa : ordersAccessibility) {
-            if (oa.getStatusCode().equals(statusCode)) return oa;
+        OrderAccessibility result = ordersAccessibilityMap.getOrDefault(statusCode, alternativeOrdersAccessibilityMap.get(statusCode));
+        return result != null ? result : EMPTY;
+    }
+
+    public OrderAccessibility getOrderAccessibility(Product product) {
+        String dchain = product.getDchain();
+        if (dchain != null && !dchain.trim().isEmpty()) {
+            return ordersAccessibilityMap.get(dchain);
         }
-        return null;
-    }
 
-    public String getCombineOrderAccessibility(String dchain) {
-        String result = "(" + dchain + ")";
-        for (OrderAccessibility oa : ordersAccessibility) {
-            if (oa.getStatusCode().equals(dchain)) {
-                return result.concat(" ").concat(oa.getDescription());
-            }
+        Set<String> spPositions = new HashSet<>(Arrays.asList("LVBAC", "LVBIN", "LVBVI"));
+        Set<String> setsPositions = new HashSet<>(Arrays.asList("RU5:SETS"));
+
+        if (spPositions.contains(product.getLgbk())) {
+            return alternativeOrdersAccessibilityMap.get("sp");
+        } else if (setsPositions.contains(product.getLgbk())) {
+            return alternativeOrdersAccessibilityMap.get("sets");
+        } else {
+            return EMPTY;
         }
-        return result;
-    }
-
-    public OrdersAccessibilityTable getTable() {
-        return table;
-    }
-
-    public void setTable(OrdersAccessibilityTable table) {
-        this.table = table;
-    }
-
-    public ArrayList<OrderAccessibility> getItems() {
-        return ordersAccessibility;
     }
 }

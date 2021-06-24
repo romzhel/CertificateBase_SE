@@ -71,20 +71,17 @@ public class SelectorExportWindowController implements Initializable {
 
             return result;
         });
-        columnsSelector.setConvertFromText(new Callback<String, ArrayList<DataItem>>() {
-            @Override
-            public ArrayList<DataItem> call(String param) {
-                ArrayList<DataItem> result = new ArrayList<>();
-                for (String columnName : param.split("\\,")) {
-                    for (DataItem die : columns) {
-                        if (die.getDisplayingName().equals(columnName)) {
-                            result.add(die);
-                            break;
-                        }
+        columnsSelector.setConvertFromText(param -> {
+            ArrayList<DataItem> result = new ArrayList<>();
+            for (String columnName : param.split("\\,")) {
+                for (DataItem die : columns) {
+                    if (die.getDisplayingName().equals(columnName)) {
+                        result.add(die);
+                        break;
                     }
                 }
-                return result;
             }
+            return result;
         });
         columnsSelector.setSelectedItems(columns);
     }

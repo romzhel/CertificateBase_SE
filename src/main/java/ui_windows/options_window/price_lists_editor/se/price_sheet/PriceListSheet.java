@@ -7,6 +7,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
 import javafx.util.Callback;
+import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTable;
@@ -23,10 +25,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_FAMILY;
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_LGBK;
 
+@Data
+@Log4j2
 public class PriceListSheet extends Tab {
     public static final int LANG_RU = 0;
     public static final int LANG_EN = 1;
@@ -157,7 +162,7 @@ public class PriceListSheet extends Tab {
     }
 
     private void initColumnsSelector() {
-        ArrayList<DataItem> columns = new ArrayList<>();
+        List<DataItem> columns = new ArrayList<>();
         columns.addAll(Arrays.asList(DataSets.getDataItemsForPriceList()));
 
         columnsSelector = new TwinListViews<>(controller.pPriceColumns, columns);
@@ -208,7 +213,7 @@ public class PriceListSheet extends Tab {
     }
 
     private void initDchainSelector() {
-        dchainSelector = new TwinListViews<>(controller.pPriceDchain, OrdersAccessibility.getInstance().getItems());
+        dchainSelector = new TwinListViews<>(controller.pPriceDchain, OrdersAccessibility.getInstance().getOrdersAccessibilityMap().values());
         dchainSelector.setListViewsCellFactory(new Callback<ListView<OrderAccessibility>, ListCell<OrderAccessibility>>() {
             @Override
             public ListCell<OrderAccessibility> call(ListView<OrderAccessibility> param) {
@@ -218,7 +223,7 @@ public class PriceListSheet extends Tab {
                         super.updateItem(item, empty);
 
                         if (item != null && !empty) {
-                            String description = item.getDescriptionRu().isEmpty() ? item.getDescriptionEn() : item.getDescriptionRu();
+                            String description = item.getDescription();
                             setText("[" + item.getStatusCode() + "] " + description);
                         } else {
                             setText(null);
@@ -231,7 +236,7 @@ public class PriceListSheet extends Tab {
         dchainSelector.setListViewsAllComparator(dchainComparator);
         dchainSelector.setListViewsSelectedComparator(dchainComparator);
         dchainSelector.setConvertFromText(param -> {
-            ArrayList<OrderAccessibility> result = new ArrayList<>();
+            List<OrderAccessibility> result = new ArrayList<>();
             if (param != null && !param.isEmpty()) {
                 for (String item : param.split("\\,")) {
                     result.add(OrdersAccessibility.getInstance().getOrderAccessibilityByStatusCode(item));
@@ -258,16 +263,19 @@ public class PriceListSheet extends Tab {
                             boolean isLgbkMatch = treeItem.getValue().isPrice() || treeItem.getParent().getValue().isPrice();
                             boolean isDchainMatch = false;
 
-                            for (OrderAccessibility oa : dchainSelector.getSelectedItems()) {
-                                boolean dchainMatches = product.getDchain().equals(oa.getStatusCode());
-                                boolean dchainMatchesSP = product.getDchain().trim().isEmpty() &&
-                                        oa.getStatusCode().trim().isEmpty() && product.isSpProduct();
-                                boolean dchainMatchesSets = product.getDchain().trim().isEmpty() &&
-                                        oa.getStatusCode().trim().isEmpty() && product.getLgbk().startsWith("RU5");
+                            boolean dchainMatchesSP = product.getDchain().trim().isEmpty() && product.isSpProduct();
+                            boolean dchainMatchesSets = product.getDchain().trim().isEmpty() && product.getLgbk().startsWith("RU5");
 
-                                if (dchainMatches || dchainMatchesSP || dchainMatchesSets) {
-                                    isDchainMatch = true;
-                                    break;
+                            if (dchainMatchesSP || dchainMatchesSets) {
+                                isDchainMatch = true;
+                            } else {
+                                for (OrderAccessibility oa : dchainSelector.getSelectedItems()) {
+                                    boolean dchainMatches = product.getDchain().equals(oa.getStatusCode());
+
+                                    if (dchainMatches) {
+                                        isDchainMatch = true;
+                                        break;
+                                    }
                                 }
                             }
 
@@ -295,111 +303,10 @@ public class PriceListSheet extends Tab {
         checkCert = controller.cbxCheckCert.isSelected();
     }
 
-    public int getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(int language) {
-        this.language = language;
-    }
-
-    public String getSheetName() {
-        return sheetName;
-    }
-
-    public void setSheetName(String sheetName) {
-        this.sheetName = sheetName;
-    }
-
-    public int getInitialRow() {
-        return initialRow;
-    }
-
-    public void setInitialRow(int initialRow) {
-        this.initialRow = initialRow;
-    }
-
-    public int getContentMode() {
-        return contentMode;
-    }
-
-    public void setContentMode(int contentMode) {
-        this.contentMode = contentMode;
-    }
-
-    public int getLeadTimeCorrection() {
-        return leadTimeCorrection;
-    }
-
-    public void setLeadTimeCorrection(int leadTimeCorrection) {
-        this.leadTimeCorrection = leadTimeCorrection;
-    }
-
-    public boolean isGroupNameDisplaying() {
-        return groupNameDisplaying;
-    }
-
-    public void setGroupNameDisplaying(boolean groupNameDisplaying) {
-        this.groupNameDisplaying = groupNameDisplaying;
-    }
-
-    public PriceListSheetController getController() {
-        return controller;
-    }
-
-    public void setController(PriceListSheetController controller) {
-        this.controller = controller;
-    }
-
-    public TwinListViews<DataItem> getColumnsSelector() {
-        return columnsSelector;
-    }
-
-    public void setColumnsSelector(TwinListViews<DataItem> columnsSelector) {
-        this.columnsSelector = columnsSelector;
-    }
-
-    public int getSheetId() {
-        return sheetId;
-    }
-
-    public void setSheetId(int sheetId) {
-        this.sheetId = sheetId;
-    }
-
-    public int getPriceListId() {
-        return priceListId;
-    }
-
-    public void setPriceListId(int priceListId) {
-        this.priceListId = priceListId;
-    }
-
-    public TwinListViews<OrderAccessibility> getDchainSelector() {
-        return dchainSelector;
-    }
-
-    public PriceListContentTable getContentTable() {
-        return contentTable;
-    }
-
-    public int getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(int discount) {
-        this.discount = discount;
-    }
-
-    public Comparator<Product> getSortOrder() {
-        return sortOrder;
-    }
-
-    public boolean isCheckCert() {
-        return checkCert;
-    }
-
-    public void setCheckCert(boolean checkCert) {
-        this.checkCert = checkCert;
+    @Override
+    public String toString() {
+        return "PriceListSheet{" +
+                ", sheetName='" + sheetName + '\'' +
+                '}';
     }
 }

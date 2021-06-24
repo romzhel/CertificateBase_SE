@@ -10,10 +10,12 @@ import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 
 public class TwinListViews<T> {
-    private ArrayList<T> allItems;
+    private Collection<T> allItems;
     private final static double BUTTON_HEIGHT = 25;
     private final static double BUTTON_WIDTH = 36;
     private final static double BUTTON_WIDTH_2 = 46;
@@ -27,9 +29,9 @@ public class TwinListViews<T> {
     private Button btnMoveAll;
     private Button btnRemoveAll;
     private Callback<ObservableList<T>, String> convertToText;
-    private Callback<String, ArrayList<T>> convertFromText;
+    private Callback<String, List<T>> convertFromText;
 
-    public TwinListViews (Pane pane, ArrayList<T> allItems) {
+    public TwinListViews(Pane pane, Collection<T> allItems) {
         this.allItems = allItems;
 
         double globalWidth = pane.getPrefWidth();
@@ -148,7 +150,7 @@ public class TwinListViews<T> {
         sort();
     }
 
-    public ArrayList<T> getSelectedItems() {
+    public List<T> getSelectedItems() {
         return new ArrayList<T>(lvSelected.getItems());
     }
 
@@ -160,7 +162,7 @@ public class TwinListViews<T> {
         setSelectedItems(convertFromText.call(text));
     }
 
-    public void setSelectedItems(ArrayList<T> selectedItems) {
+    public void setSelectedItems(List<T> selectedItems) {
         lvSelected.getItems().clear();
         lvSelected.getItems().addAll(selectedItems);
         lvAll.getItems().removeAll(selectedItems);
@@ -171,7 +173,7 @@ public class TwinListViews<T> {
         this.convertToText = convertToText;
     }
 
-    public void setConvertFromText(Callback<String, ArrayList<T>> convertFromText) {
+    public void setConvertFromText(Callback<String, List<T>> convertFromText) {
         this.convertFromText = convertFromText;
     }
 }

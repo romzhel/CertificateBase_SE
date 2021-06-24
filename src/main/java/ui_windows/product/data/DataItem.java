@@ -343,7 +343,7 @@ public enum DataItem {
     },
     DATA_DCHAIN_COMMENT(21, "Код доступности - расшифровка", null) {
         private String getDchainComment(Product product) {
-            OrderAccessibility oa = OrdersAccessibility.getInstance().getOrderAccessibilityByStatusCode(product.getDchain());
+            OrderAccessibility oa = OrdersAccessibility.getInstance().getOrderAccessibility(product);
             if (oa != null) {
                 return oa.getDescription();
             }
@@ -365,12 +365,12 @@ public enum DataItem {
         public void fillExcelCell(
                 Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
-            cell.setCellValue(OrdersAccessibility.getInstance().getCombineOrderAccessibility(product.getDchain()));
+            cell.setCellValue(OrdersAccessibility.getInstance().getOrderAccessibility(product).toString());
             cell.setCellStyle(CELL_ALIGN_HLEFT);
         }
 
         public Object getValue(Product product) {
-            return OrdersAccessibility.getInstance().getCombineOrderAccessibility(product.getDchain());
+            return OrdersAccessibility.getInstance().getOrderAccessibility(product).toString();
         }
     },
     DATA_PACKSIZE(23, "Размер упаковки", "packetSize") {

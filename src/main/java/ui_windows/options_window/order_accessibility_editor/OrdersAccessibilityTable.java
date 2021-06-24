@@ -36,7 +36,7 @@ public class OrdersAccessibilityTable {
                 tableView.getColumns().add(colS);
             }
         }
-        tableView.getItems().addAll(OrdersAccessibility.getInstance().getItems());
+        tableView.getItems().addAll(OrdersAccessibility.getInstance().getOrdersAccessibilityMap().values());
     }
 
     public TableView<OrderAccessibility> getTableView() {

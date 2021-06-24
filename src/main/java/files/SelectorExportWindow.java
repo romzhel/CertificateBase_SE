@@ -5,10 +5,10 @@ import javafx.stage.Stage;
 import ui_windows.OrdinalWindow;
 import ui_windows.product.data.DataItem;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class SelectorExportWindow extends OrdinalWindow<SelectorExportWindowController> {
-    private ArrayList<DataItem> columns;
+    private List<DataItem> columns;
 
     public SelectorExportWindow(Stage parentStage) {
         super(parentStage, Modality.APPLICATION_MODAL, null, "/fxml/selectorExportWindow.fxml",
@@ -19,7 +19,7 @@ public class SelectorExportWindow extends OrdinalWindow<SelectorExportWindowCont
         columns = controller.getColumnsSelector().getSelectedItems();
     }
 
-    public ArrayList<DataItem> getColumns() {
+    public List<DataItem> getColumns() {
         return columns;
     }
 }

@@ -109,6 +109,9 @@ public class Product implements Cloneable {
         dangerous = rs.getString("dangerous");
         country = rs.getString("country");
         dchain = rs.getString("dchain");
+        if (dchain == null) {
+            dchain = "-";
+        }
 
         descriptionru = nullToEmpty(rs.getString("description_ru"));
         descriptionen = nullToEmpty(rs.getString("description_en"));
@@ -163,7 +166,7 @@ public class Product implements Cloneable {
         pewc.getPriceBox().setButtonStatus(priceHidden);
 
         if (dchain != null)
-            pewc.tfAccessibility.setText(OrdersAccessibility.getInstance().getCombineOrderAccessibility(dchain));
+            pewc.tfAccessibility.setText(OrdersAccessibility.getInstance().getOrderAccessibility(this).toString());
         if (price != null) {
             pewc.cbxPrice.setSelected(price);
         } else {

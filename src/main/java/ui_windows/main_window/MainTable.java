@@ -106,7 +106,7 @@ public class MainTable implements Module {
 
             } else if (cols[i] == "dchain") {
                 col.setCellValueFactory(param -> new SimpleStringProperty(OrdersAccessibility.getInstance()
-                        .getCombineOrderAccessibility(param.getValue().getDchain())));
+                        .getOrderAccessibility(param.getValue()).toString()));
                 col.setCellFactory(new Callback<TableColumn<Product, String>, TableCell<Product, String>>() {
                     @Override
                     public TableCell<Product, String> call(TableColumn<Product, String> param) {

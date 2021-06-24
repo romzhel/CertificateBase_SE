@@ -1,14 +1,17 @@
 package ui_windows.options_window.order_accessibility_editor;
 
 import javafx.scene.layout.AnchorPane;
+import lombok.Data;
 import utils.Utils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Data
 public class OrderAccessibility {
     private int id;
     private String statusCode;
+    private String alternativeStatusCode;
     private String sesCode;
     private String descriptionEn;
     private String descriptionRu;
@@ -17,7 +20,11 @@ public class OrderAccessibility {
     private String status;
     private boolean orderable;
 
-    public OrderAccessibility() {
+    public OrderAccessibility(String statusCode, String alternativeStatusCode, String descriptionEn, String descriptionRu) {
+        this.statusCode = statusCode;
+        this.alternativeStatusCode = alternativeStatusCode;
+        this.descriptionEn = descriptionEn;
+        this.descriptionRu = descriptionRu;
     }
 
     public OrderAccessibility(ResultSet rs) {
@@ -31,6 +38,7 @@ public class OrderAccessibility {
             f2 = rs.getString("f2");
             status = rs.getString("status");
             orderable = rs.getBoolean("orderable");
+            alternativeStatusCode = rs.getString("alt_status_code");
         } catch (SQLException e) {
             System.out.println("exception orderAccessible constructor");
         }
@@ -51,86 +59,14 @@ public class OrderAccessibility {
     }
 
     public void showInEditorWindow(AnchorPane root) {
-        Utils.setControlValue(root, "tfStatusCode", getStatusCode());
-        Utils.setControlValue(root, "tfSesCode", getSesCode());
-        Utils.setControlValue(root, "tfDescriptionEn", getDescriptionEn());
-        Utils.setControlValue(root, "tfDescriptionRu", getDescriptionRu());
-        Utils.setControlValue(root, "tf1", getF1());
-        Utils.setControlValue(root, "tf2", getF2());
-        Utils.setControlValue(root, "tfStatus", getStatus());
-        Utils.setControlValue(root, "cbxOrderable", isOrderable());
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    public String getSesCode() {
-        return sesCode;
-    }
-
-    public void setSesCode(String sesCode) {
-        this.sesCode = sesCode;
-    }
-
-    public String getDescriptionEn() {
-        return descriptionEn;
-    }
-
-    public void setDescriptionEn(String descriptionEn) {
-        this.descriptionEn = descriptionEn;
-    }
-
-    public String getDescriptionRu() {
-        return descriptionRu;
-    }
-
-    public void setDescriptionRu(String descriptionRu) {
-        this.descriptionRu = descriptionRu;
-    }
-
-    public String getF1() {
-        return f1;
-    }
-
-    public void setF1(String f1) {
-        this.f1 = f1;
-    }
-
-    public String getF2() {
-        return f2;
-    }
-
-    public void setF2(String f2) {
-        this.f2 = f2;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public boolean isOrderable() {
-        return orderable;
-    }
-
-    public void setOrderable(boolean orderable) {
-        this.orderable = orderable;
+        Utils.setControlValue(root, "tfStatusCode", statusCode);
+        Utils.setControlValue(root, "tfSesCode", sesCode);
+        Utils.setControlValue(root, "tfDescriptionEn", descriptionEn);
+        Utils.setControlValue(root, "tfDescriptionRu", descriptionRu);
+        Utils.setControlValue(root, "tf1", f1);
+        Utils.setControlValue(root, "tf2", f2);
+        Utils.setControlValue(root, "tfStatus", status);
+        Utils.setControlValue(root, "cbxOrderable", orderable);
     }
 
     public String getDescription() {
@@ -140,5 +76,10 @@ public class OrderAccessibility {
             return descriptionEn;
         }
         return "";
+    }
+
+    @Override
+    public String toString() {
+        return String.format("(%s) %s", statusCode, getDescription());
     }
 }
