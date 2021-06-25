@@ -27,7 +27,7 @@ public abstract class ReportToExcelTemplate_v2 {
 
     public ReportToExcelTemplate_v2(Map<ReportParameterEnum, Object> params) {
         this.params = params;
-        workbook = new SXSSFWorkbook(100);
+        workbook = new SXSSFWorkbook(1000);
         workbook.setCompressTempFiles(true);
         styles = new ExcelCellStyleFactory_v2(workbook);
     }

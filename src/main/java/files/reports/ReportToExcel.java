@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static files.reports.ReportParameterEnum.*;
 
@@ -28,7 +29,7 @@ public class ReportToExcel extends ReportToExcelTemplate_v2 {
     protected void getAndCheckParams() throws RuntimeException {
         super.getAndCheckParams();
 
-        confirmAndCheckReportFile(REPORT_PATH, "Сохранение отчета по непопавшим в прайс позициям");
+        confirmAndCheckReportFile(REPORT_PATH, "Сохранение файла");
 
         productItems = (List<Product>) params.get(REPORT_ITEMS);
         dataItems = (List<DataItem>) params.get(REPORT_COLUMNS);
@@ -66,14 +67,14 @@ public class ReportToExcel extends ReportToExcelTemplate_v2 {
             long t0 = System.nanoTime();
             row = sheet.createRow(rowNum++);
             long t1 = System.nanoTime();
-            times.merge("row creating", t1 - t0, Long::sum);
+            times.merge("row creating", TimeUnit.NANOSECONDS.toMillis(t1 - t0), Long::sum);
 
             colIndex = 0;
             for (DataItem die : dataItems) {
                 t0 = System.nanoTime();
                 fillCell(row.createCell(colIndex++), die.getValue(product), styles.CELL_ALIGN_HLEFT);
                 t1 = System.nanoTime();
-                times.merge(die, t1 - t0, Long::sum);
+                times.merge(die, TimeUnit.NANOSECONDS.toMillis(t1 - t0), Long::sum);
             }
 
 
@@ -94,10 +95,13 @@ public class ReportToExcel extends ReportToExcelTemplate_v2 {
         long t0 = System.nanoTime();
         saveToFile();
         long t1 = System.nanoTime();
-        times.put("save to file", t1 - t0);
+        times.put("save to file", TimeUnit.NANOSECONDS.toMillis(t1 - t0));
 
-        log.info(times);
-        log.info("total time = {}", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - t));
+        log.info("spent time, ms: {}", times.entrySet().stream()
+                .filter(entry -> entry.getValue() > 0)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+        );
+        log.info("total time = {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - t));
 
         return reportFile;
     }
