@@ -164,6 +164,11 @@ public class ExcelFileSaxImporter {
         }
 
         @Override
+        public void endDocument() throws SAXException {
+            saxRowDataParser.finalizeSheet();
+        }
+
+        @Override
         public void characters(char[] ch, int start, int length) throws SAXException { // NOSONAR
             lastContents += new String(ch, start, length);
         }

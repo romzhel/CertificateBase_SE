@@ -24,14 +24,22 @@ public class SaxRowDataParser {
         }
 
         if (lastAdr != null && isNextRow(adr)) {
-            SaxRowData saxRowData = new SaxRowData(buffer);
-            saxRowData.setRowIndex(parseRowIndex(lastAdr));
-            rowDataConsumer.accept(saxRowData);
-
-            buffer.clear();
+            sendSaxRowData();
         }
 
         lastAdr = adr;
+    }
+
+    public void finalizeSheet() {
+        sendSaxRowData();
+    }
+
+    private void sendSaxRowData() {
+        SaxRowData saxRowData = new SaxRowData(buffer);
+        saxRowData.setRowIndex(parseRowIndex(lastAdr));
+        rowDataConsumer.accept(saxRowData);
+
+        buffer.clear();
     }
 
     private int parseRowIndex(String adr) {
