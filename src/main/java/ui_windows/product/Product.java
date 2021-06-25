@@ -108,10 +108,7 @@ public class Product implements Cloneable {
         endofservice = rs.getString("end_of_service");
         dangerous = rs.getString("dangerous");
         country = rs.getString("country");
-        dchain = rs.getString("dchain");
-        if (dchain == null) {
-            dchain = "-";
-        }
+        dchain = nullToEmpty(rs.getString("dchain"));
 
         descriptionru = nullToEmpty(rs.getString("description_ru"));
         descriptionen = nullToEmpty(rs.getString("description_en"));
