@@ -26,7 +26,7 @@ public class SingleComparator {
             }
 
             ChangedProperty changedProperty = new ChangedProperty(property);
-            changedProperty.setOldValue(existValue);
+            changedProperty.setOldValue(existValue != null ? existValue : "");
 
             if (existItem.getProtectedData().contains(property.getDataItem())) {
                 result.getProtectedField().add(changedProperty);
