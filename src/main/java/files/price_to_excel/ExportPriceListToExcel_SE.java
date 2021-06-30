@@ -4,6 +4,7 @@ import core.InitModule;
 import files.ExcelCellStyleFactory;
 import files.Folders;
 import javafx.application.Platform;
+import lombok.extern.log4j.Log4j2;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import ui.Dialogs;
@@ -22,6 +23,7 @@ import java.util.concurrent.Callable;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+@Log4j2
 public class ExportPriceListToExcel_SE implements Callable<File> {
     private PriceList priceList;
     private XSSFWorkbook excelDoc;
@@ -32,12 +34,11 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
     }
 
     public ExportPriceListToExcel_SE(PriceList priceList, boolean askProblemItems) {
+        this.priceList = priceList;
         export(priceList, askProblemItems);
     }
 
     public void export(PriceList priceList, boolean askProblemItems) {
-        this.priceList = priceList;
-
         if (loadTemplate() && priceList.getPriceStructures() != null) {
             ExecutionIndicator.getInstance().start();
 
@@ -101,6 +102,7 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
         String sheetName;
         for (PriceStructure priceStructure : priceList.getPriceStructures()) {
             sheetName = priceList.getSheets().get(index).getSheetName();
+//            log.debug("filling Excel price sheet {}", sheetName);
 
             if (sheetName != null && !sheetName.isEmpty() && !sheetName.equals(excelDoc.getSheetName(index))) {
                 excelDoc.setSheetName(index, sheetName);

@@ -306,7 +306,7 @@ public class PriceListSheet extends Tab {
     @Override
     public String toString() {
         return "PriceListSheet{" +
-                ", sheetName='" + sheetName + '\'' +
+                "sheetName='" + sheetName + '\'' +
                 '}';
     }
 }

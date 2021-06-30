@@ -17,7 +17,6 @@ import utils.comparation.se.ComparingRulesPricesComparison;
 import utils.comparation.se.ProductsComparator;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_FAMILY;
@@ -54,8 +53,8 @@ public class PricesComparator {
 
         oldPriceFi = new FileImport();
 
-        ArrayList<Product> oldPriceItems;
-        ArrayList<Product> newPriceItems;
+        List<Product> oldPriceItems;
+        List<Product> newPriceItems;
 
         merger = new ComparisonResultMerger<>((o1, o2) -> {
             String prod1 = o1.getMaterial().replaceAll("(\\-)*(\\:)*(VBPZ)*(BPZ)*", "");

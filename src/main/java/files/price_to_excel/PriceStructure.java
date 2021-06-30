@@ -1,5 +1,6 @@
 package files.price_to_excel;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
@@ -10,23 +11,19 @@ import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckStatusResult;
 import utils.PriceLGBK;
 
-import java.util.ArrayList;
-import java.util.TreeSet;
-import java.util.Vector;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_FAMILY;
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_LGBK;
 import static ui_windows.product.certificatesChecker.CheckStatusResult.STATUS_NOT_OK;
 import static ui_windows.product.certificatesChecker.CheckStatusResult.STATUS_OK;
 
+@Log4j2
 public class PriceStructure {
     private PriceListSheet priceListSheet;
-    private TreeSet<LgbkGroup> lgbkGroups;
+    private Set<LgbkGroup> lgbkGroups;
     private Vector<Product> problemItems;
-    private ArrayList<Product> correctItems;
+    private List<Product> correctItems;
 
     public PriceStructure(PriceListSheet priceListSheet) {
         this.priceListSheet = priceListSheet;
@@ -39,29 +36,32 @@ public class PriceStructure {
         lgbkGroups = new TreeSet<>((o1, o2) -> o1.getName().compareTo(o2.getName()));
 
         int contentMode = priceListSheet.getContentMode();
-        if (contentMode == CONTENT_MODE_FAMILY) priceListSheet.getContentTable().switchContentMode(CONTENT_MODE_LGBK);
-
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-        for (Product product : Products.getInstance().getItems()) {
-            executorService.execute(() -> {
-                if (product.isPrice() && !product.isBlocked() && priceListSheet.isInPrice(product)) {
-                    CheckStatusResult checkingResult = new CertificatesChecker(product).getCheckStatusResult();
-                    if (priceListSheet.isCheckCert() && checkingResult.equals(STATUS_OK) ||
-                            !priceListSheet.isCheckCert() && !checkingResult.equals(STATUS_NOT_OK)) {
-                        addProduct(product);
-                    } else {
-                        problemItems.add(product);
-                    }
-                }
-            });
+        if (contentMode == CONTENT_MODE_FAMILY) {
+            priceListSheet.getContentTable().switchContentMode(CONTENT_MODE_LGBK);
         }
 
-        executorService.shutdown();
+//        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        for (Product product : Products.getInstance().getItems()) {
+//            executorService.execute(() -> {
+            if (product.isPrice() && !product.isBlocked() && priceListSheet.isInPrice(product)) {
+                CheckStatusResult checkingResult = new CertificatesChecker(product).getCheckStatusResult();
+                if (priceListSheet.isCheckCert() && checkingResult.equals(STATUS_OK) ||
+                        !priceListSheet.isCheckCert() && !checkingResult.equals(STATUS_NOT_OK)) {
+                    addProduct(product);
+                } else {
+                    problemItems.add(product);
+                }
+            }
+        }
+//            });
+//    }
+
+       /* executorService.shutdown();
         try {
             executorService.awaitTermination(30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
 
 //        if (contentMode == CONTENT_MODE_FAMILY) priceListSheet.getContentTable().switchContentMode(CONTENT_MODE_FAMILY);
     }
@@ -89,7 +89,7 @@ public class PriceStructure {
         return result;
     }
 
-    public TreeSet<LgbkGroup> getLgbkGroups() {
+    public Set<LgbkGroup> getLgbkGroups() {
         return lgbkGroups;
     }
 
@@ -115,7 +115,7 @@ public class PriceStructure {
         return problemItems;
     }
 
-    public ArrayList<Product> getCorrectProducts() {
+    public List<Product> getCorrectProducts() {
         return correctItems;
     }
 }

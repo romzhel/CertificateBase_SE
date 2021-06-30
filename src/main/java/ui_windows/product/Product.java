@@ -1,7 +1,7 @@
 package ui_windows.product;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.util.Strings;
 import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
@@ -21,14 +21,11 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+@Log4j2
 public class Product implements Cloneable {
     public static final String NO_DATA = "нет данных";
-    private static final Logger logger = LogManager.getLogger(Product.class);
     private Set<DataItem> protectedData = new HashSet<>();
     private int id;
     private String material;
@@ -232,6 +229,9 @@ public class Product implements Cloneable {
         else return false;
     }
 
+    /**
+     * Корректная сортировка для второго разряда заказных номеров, например, S54507-C5-A1 и S54507-C22-A1
+     */
     public String getTextForComparing() {
         String[] parts = getMaterial().split("\\-");
 
@@ -239,9 +239,9 @@ public class Product implements Cloneable {
 
         int num = Math.max(4 - parts[1].length(), 0);
         String addedText = "00".substring(0, num);
-        String middlePart = parts[1].substring(0, 1).concat(addedText).concat(parts[1].substring(1));
+        parts[1] = parts[1].substring(0, 1).concat(addedText).concat(parts[1].substring(1));
 
-        return (parts[0] + middlePart + parts[2]);
+        return Strings.join(Arrays.asList(parts), '-');
     }
 
     @Override
@@ -262,7 +262,7 @@ public class Product implements Cloneable {
                 field.set(cloneItem, field.get(this));
             }
         } catch (IllegalAccessException e) {
-            logger.error("Product '{}' clone error {}", this, e.getMessage(), e);
+            log.error("Product '{}' clone error {}", this, e.getMessage(), e);
         }
 
         return cloneItem;
