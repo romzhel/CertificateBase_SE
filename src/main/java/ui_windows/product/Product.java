@@ -1,7 +1,6 @@
 package ui_windows.product;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.util.Strings;
 import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
@@ -21,7 +20,10 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Log4j2
 public class Product implements Cloneable {
@@ -227,21 +229,6 @@ public class Product implements Cloneable {
         OrderAccessibility oa = OrdersAccessibility.getInstance().getOrderAccessibilityByStatusCode(getDchain());
         if (oa != null) return oa.isOrderable();
         else return false;
-    }
-
-    /**
-     * Корректная сортировка для второго разряда заказных номеров, например, S54507-C5-A1 и S54507-C22-A1
-     */
-    public String getTextForComparing() {
-        String[] parts = getMaterial().split("\\-");
-
-        if (parts.length < 3) return getMaterial();
-
-        int num = Math.max(4 - parts[1].length(), 0);
-        String addedText = "00".substring(0, num);
-        parts[1] = parts[1].substring(0, 1).concat(addedText).concat(parts[1].substring(1));
-
-        return Strings.join(Arrays.asList(parts), '-');
     }
 
     @Override

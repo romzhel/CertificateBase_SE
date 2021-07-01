@@ -11,6 +11,7 @@ import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.options_window.product_lgbk.ProductLgbks;
 import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
+import utils.comparation.products.ProductNameResolver;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -21,8 +22,9 @@ import static files.ExcelCellStyleFactory.CELL_ALIGN_HLEFT;
 import static ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet.LANG_RU;
 
 public class HierarchyGroup {
-    public static final Comparator<Product> SORT_MATERIAL = (o1, o2) -> o1.getTextForComparing().compareTo(o2.getTextForComparing());
-    public static final Comparator<Product> SORT_ARTICLE = (o1, o2) -> o1.getArticle().compareTo(o2.getArticle());
+    public static final Comparator<Product> SORT_MATERIAL = Comparator.comparing(o ->
+            ProductNameResolver.prepareMaterialForComparing(o.getMaterial()));
+    public static final Comparator<Product> SORT_ARTICLE = Comparator.comparing(Product::getArticle);
 
     private PriceListSheet priceListSheet;
     private String name;
