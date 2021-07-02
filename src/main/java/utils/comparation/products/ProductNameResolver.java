@@ -1,6 +1,7 @@
 package utils.comparation.products;
 
 import org.apache.logging.log4j.util.Strings;
+import ui_windows.product.Product;
 
 import java.util.Arrays;
 
@@ -25,5 +26,19 @@ public class ProductNameResolver {
         parts[1] = parts[1].substring(0, 1).concat(addedText).concat(parts[1].substring(1));
 
         return Strings.join(Arrays.asList(parts), '-');
+    }
+
+    /**
+     * Получение названия продукта в виде Артикул + Заказной Номер
+     */
+    public static String getNameForComparingByArticle(Product product) {
+        return product.getArticle().concat(prepareMaterialForComparing(product.getMaterial()));
+    }
+
+    /**
+     * Получение названия продукта в виде Заказной Номер + Артикул
+     */
+    public static String getNameForComparingByMaterial(Product product) {
+        return prepareMaterialForComparing(product.getMaterial()).concat(product.getArticle());
     }
 }

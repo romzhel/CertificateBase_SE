@@ -24,7 +24,7 @@ import static ui_windows.options_window.price_lists_editor.se.price_sheet.PriceL
 public class HierarchyGroup {
     public static final Comparator<Product> SORT_MATERIAL = Comparator.comparing(o ->
             ProductNameResolver.prepareMaterialForComparing(o.getMaterial()));
-    public static final Comparator<Product> SORT_ARTICLE = Comparator.comparing(Product::getArticle);
+    public static final Comparator<Product> SORT_ARTICLE = Comparator.comparing(ProductNameResolver::getNameForComparingByArticle);
 
     private PriceListSheet priceListSheet;
     private String name;
