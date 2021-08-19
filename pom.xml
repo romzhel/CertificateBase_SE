@@ -86,13 +86,15 @@
                         commons-codec,
                         commons-collections4,
                         commons-compress,
+                        commons-math3,
                         poi,
                         poi-ooxml,
                         poi-ooxml-schemas,
                         poi-ooxml-lite,
                         xmlbeans,
                         log4j-core,
-                        log4j-api
+                        log4j-api,
+                        SparseBitSet
                     </includeArtifactIds>
                     <overWriteReleases>false</overWriteReleases>
                     <overWriteSnapshots>false</overWriteSnapshots>
