@@ -2,13 +2,16 @@ package ui_windows.options_window.certificates_editor;
 
 import core.Initializable;
 import database.CertificatesDB;
+import lombok.extern.log4j.Log4j2;
 import ui.Dialogs;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContent;
 import utils.Utils;
 
 import java.util.ArrayList;
+import java.util.List;
 
+@Log4j2
 public class Certificates implements Initializable {
     private static Certificates instance;
     //    private CertificatesChecker certificatesChecker;
@@ -43,20 +46,21 @@ public class Certificates implements Initializable {
 
     public boolean hasDoubles(Certificate certificate) {
         for (Certificate cert : certificates) {
-            if (cert.getId() != certificate.getId())
-                if (cert.getName().equals(certificate.getName())) {
-                    Dialogs.showMessage("Повторяющееся значения", "Cертификат с таким именем уже существует");
-                    return true;
-                }
+            if (cert.getName().equals(certificate.getName()) && cert.getId() != certificate.getId()) {
+                log.warn("certificate saving with existing name '{}'", certificate.getName());
+                Dialogs.showMessage("Повторяющееся значения", "Сертификат с таким именем уже существует");
+                return true;
+            }
         }
         return false;
     }
 
-    public ArrayList<Certificate> getItems() {
+    public List<Certificate> getItems() {
         return certificates;
     }
 
     public void addItem(Certificate certificate) {
+        log.trace("add cert to certificates: {}", certificate);
         certificates.add(certificate);
     }
 

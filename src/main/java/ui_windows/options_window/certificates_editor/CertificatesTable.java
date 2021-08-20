@@ -9,7 +9,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class CertificatesTable {
     private static CertificatesTable instance;
     private TableView<Certificate> tableView;
@@ -75,8 +77,6 @@ public class CertificatesTable {
         });
 
         tableView.getColumns().set(3, tcfn);
-
-        tableView.getItems().addAll(Certificates.getInstance().getCertificates());
     }
 
     public TableView<Certificate> getTableView() {
@@ -84,6 +84,7 @@ public class CertificatesTable {
     }
 
     public void addItem(Certificate certificate) {
+        log.trace("add cert to cert table: {}", certificate);
         tableView.getItems().add(certificate);
         tableView.refresh();
     }

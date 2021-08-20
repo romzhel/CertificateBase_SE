@@ -8,6 +8,7 @@ import ui_windows.product.ProductTypes;
 import ui_windows.product.Products;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CertificatesContent implements Initializable {
     public static final Logger logger = LogManager.getLogger(CertificatesContent.class);
@@ -50,18 +51,25 @@ public class CertificatesContent implements Initializable {
         return content;
     }
 
-    public ArrayList<CertificateContent> getContentByCertID(int certID) {
-        ArrayList<CertificateContent> certContent = new ArrayList<>();
-
-        for (CertificateContent cc : content) {
-            if (cc.getCertId() == certID) certContent.add(cc);
-        }
-
-        return certContent;
+    public List<CertificateContent> getContentByCertID(int certID) {
+        return content.stream()
+                .filter(cc -> cc.getCertId() == certID)
+                .collect(Collectors.toList());
     }
 
-    public void addItem(CertificateContent newContent) {
-        content.add(newContent);
+    public CertificateContent addItem(CertificateContent newContent) {
+        final CertificateContent fNewContent = newContent;
+        Optional<CertificateContent> optionalContent = content.stream()
+                .filter(cc -> cc.equals(fNewContent))
+                .findFirst();
+
+        if (optionalContent.isPresent()) {
+            newContent = optionalContent.get();
+        } else {
+            content.add(newContent);
+        }
+
+        return newContent;
     }
 
     public boolean isProductTypeUsed(String type) {
@@ -71,7 +79,7 @@ public class CertificatesContent implements Initializable {
         return false;
     }
 
-    public void delete(ArrayList<CertificateContent> listToDelete) {
+    public void delete(List<CertificateContent> listToDelete) {
         if (listToDelete == null) return;
 
         for (CertificateContent cc : listToDelete) {

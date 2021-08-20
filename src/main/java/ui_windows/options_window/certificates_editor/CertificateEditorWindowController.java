@@ -7,6 +7,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import lombok.Setter;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContentActions;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificatesContentTable;
@@ -14,6 +16,7 @@ import utils.AutoCompleteComboBoxListener;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.BiConsumer;
 
 public class CertificateEditorWindowController implements Initializable {
 
@@ -35,50 +38,48 @@ public class CertificateEditorWindowController implements Initializable {
     @FXML
     CheckBox cbxNotUsed;
 
+    @Setter
+    private CertificateEditorWindowActions editorWindowActions;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         CertificatesContentTable.getInstance().init(tvContent);
 
-        lvNorms.setOnKeyReleased(event -> {
+        BiConsumer<KeyEvent, ListView<String>> eventHandler = (event, stringListView) -> {
             if (event.getCode() == KeyCode.DELETE) {
-                int index = lvNorms.getSelectionModel().getSelectedIndex();
-                if (index >= 0 && index < lvNorms.getItems().size()) {
-                    lvNorms.getItems().remove(index);
+                int index = stringListView.getSelectionModel().getSelectedIndex();
+                if (index >= 0 && index < stringListView.getItems().size()) {
+                    stringListView.getItems().remove(index);
                 }
             }
-        });
+        };
 
-        lvCountries.setOnKeyReleased(event -> {
-            if (event.getCode() == KeyCode.DELETE) {
-                int index = lvCountries.getSelectionModel().getSelectedIndex();
-                if (index >= 0 && index < lvCountries.getItems().size()) {
-                    lvCountries.getItems().remove(index);
-                }
-            }
-        });
+        lvNorms.setOnKeyReleased(event -> eventHandler.accept(event, lvNorms));
+        lvCountries.setOnKeyReleased(event -> eventHandler.accept(event, lvCountries));
 
         new AutoCompleteComboBoxListener<>(cbCountrySelect, true);
         new AutoCompleteComboBoxListener<>(cbNormSelect, false);
     }
 
     public void selectFolder() {
-        CertificateEditorWindowActions.selectFile();
+        editorWindowActions.selectFile();
     }
 
     public void apply() {
-        CertificateEditorWindowActions.apply();
+        editorWindowActions.apply();
     }
 
     public void cancel() {
-        CertificateEditorWindowActions.close();
+        editorWindowActions.cancel();
     }
 
     public void addCountry() {
-        CertificateEditorWindowActions.addCountry();
+        editorWindowActions.addCountry();
     }
 
     public void addItem() {
-        CertificateContentActions.addItem(CertificatesContentTable.getInstance());
+        CertificateContent cc = CertificateContentActions.addItem(CertificatesContentTable.getInstance());
+        cc.setWasChanged(true);
     }
 
     public void editItem() {
@@ -95,7 +96,7 @@ public class CertificateEditorWindowController implements Initializable {
     }
 
     public void addNorm() {
-        CertificateEditorWindowActions.addNorm();
+        editorWindowActions.addNorm();
     }
 
     public void normsKey() {

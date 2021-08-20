@@ -1,11 +1,16 @@
 package ui_windows.options_window.certificates_editor.certificate_content_editor;
 
+import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 import ui_windows.product.ProductType;
 import ui_windows.product.ProductTypes;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
+@Data
+@Log4j2
 public class CertificateContent {
     private int id;
     private int certId;
@@ -29,47 +34,20 @@ public class CertificateContent {
             ProductType temp = ProductTypes.getInstance().getById(rs.getInt("product_type_id"));
             productType = temp == null ? new ProductType(0, "", "") : temp;
         } catch (SQLException e) {
-            System.out.println("exception Certificate Content constructor from DB: " + e.getMessage());
+            log.error("exception Certificate Content constructor from DB: {}", e.getMessage(), e);
         }
     }
 
-    public int getId() {
-        return id;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CertificateContent that = (CertificateContent) o;
+        return certId == that.certId && Objects.equals(equipmentName, that.equipmentName) && Objects.equals(productType, that.productType);
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getCertId() {
-        return certId;
-    }
-
-    public void setCertId(int certId) {
-        this.certId = certId;
-    }
-
-    public boolean wasChanged() {
-        return wasChanged;
-    }
-
-    public void setWasChanged(boolean wasChanged) {
-        this.wasChanged = wasChanged;
-    }
-
-    public String getEquipmentName() {
-        return equipmentName;
-    }
-
-    public void setEquipmentName(String equipmentName) {
-        this.equipmentName = equipmentName;
-    }
-
-    public ProductType getProductType() {
-        return productType;
-    }
-
-    public void setProductType(ProductType productType) {
-        this.productType = productType;
+    @Override
+    public int hashCode() {
+        return Objects.hash(certId, equipmentName, productType);
     }
 }

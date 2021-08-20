@@ -1,8 +1,12 @@
 package ui_windows.product;
 
+import lombok.Data;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
+@Data
 public class ProductType {
     private int id;
     private String type;
@@ -15,45 +19,26 @@ public class ProductType {
         this.ten = ten;
     }
 
-    public ProductType(ResultSet rs){
+    public ProductType(ResultSet rs) {
         try {
             id = rs.getInt("id");
             type = rs.getString("product_type");
             ten = rs.getString("type_ten");
-        } catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("exception product type from DB constructor");
         }
     }
 
-    public int getId() {
-        return id;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductType that = (ProductType) o;
+        return type.equals(that.type) && ten.equals(that.ten);
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getTen() {
-        return ten;
-    }
-
-    public void setTen(String ten) {
-        this.ten = ten;
-    }
-
-    public boolean wasChanged() {
-        return wasChanged;
-    }
-
-    public void setWasChanged(boolean wasChanged) {
-        this.wasChanged = wasChanged;
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, ten);
     }
 }

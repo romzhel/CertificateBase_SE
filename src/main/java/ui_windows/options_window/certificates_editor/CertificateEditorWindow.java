@@ -11,22 +11,28 @@ import static ui_windows.Mode.*;
 import static ui_windows.options_window.profile_editor.SimpleRight.FULL;
 import static ui_windows.options_window.profile_editor.SimpleRight.OWN;
 
-public class CertificateEditorWindow extends OrdinalWindow {
+public class CertificateEditorWindow extends OrdinalWindow<CertificateEditorWindowController> {
 
-    public CertificateEditorWindow(Mode editorMode) {
+    public CertificateEditorWindow(Certificate certificate, Mode editorMode) {
         super(OptionsWindow.getStage(), Modality.APPLICATION_MODAL,
-                editorMode, "/fxml/certificateEditorWindow.fxml", "Cертификат");
+                editorMode, "/fxml/certificateEditorWindow.fxml", "Сертификат");
+
+        CertificateEditorWindowActions editorWindowActions = null;
 
         if (mode == ADD) {
 //            Utils.clearControls((AnchorPane)root);
-            CertificateEditorWindowActions.init();
+            editorWindowActions = new CertificateEditorWindowActions();
+            editorWindowActions.init();
         } else if (mode == EDIT) {//put data into fields
-            CertificateEditorWindowActions.displayData();
-        } else if (mode == DELETE){
+            editorWindowActions = new CertificateEditorWindowActions(certificate);
+            editorWindowActions.displayData();
+        } else if (mode == DELETE) {
 //            CertificateEditorWindowActions.deleteData();
         }
 
-        chekingOwnRights();
+        controller.setEditorWindowActions(editorWindowActions);
+
+        checkingOwnRights();
 
         stage.setResizable(true);
         stage.show();
@@ -34,7 +40,7 @@ public class CertificateEditorWindow extends OrdinalWindow {
         stage.setMinWidth(stage.getWidth());
     }
 
-    private void chekingOwnRights() {
+    private void checkingOwnRights() {
         boolean editorRightsFull = Users.getInstance().getCurrentUser().getProfile().getCertificates() != FULL;
         boolean editorRightsOwn = Users.getInstance().getCurrentUser().getProfile().getCertificates() != OWN;
         Utils.disableEditing(rootAnchorPane, editorRightsFull && editorRightsOwn);//disable buttons and menus (HIDE & DISPLAY)

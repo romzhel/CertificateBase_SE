@@ -4,12 +4,13 @@ import core.Initializable;
 import database.ProductTypesDB;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.TreeSet;
+import java.util.stream.Collectors;
 
+@Log4j2
 public class ProductTypes implements Initializable {
     public final static String NO_SELECTED = "не выбрано";
     private static ProductTypes instance;
@@ -64,23 +65,34 @@ public class ProductTypes implements Initializable {
         return 0;
     }
 
-    public void addItem(ProductType productType) {
-        if (new ProductTypesDB().putData(productType)) {
-            productTypes.add(productType);
+    public ProductType addItem(ProductType newProductType) {
+        log.trace("adding product type: {}", newProductType);
+
+        ProductType existingProductType = getByEqType(newProductType.getType());
+        log.trace("existing matching product type: {}", existingProductType);
+
+        if (newProductType.equals(existingProductType)) {
+            newProductType = existingProductType;
+        } else {
+            if (new ProductTypesDB().putData(newProductType)) {
+                productTypes.add(newProductType);
+            }
         }
+
+        return newProductType;
     }
 
-    public ArrayList<String> getPreparedTypes() {
-        ArrayList<String> types = new ArrayList<>();
+    public List<String> getPreparedTypes() {
+        List<String> types = new ArrayList<>();
         types.add(NO_SELECTED);
 
-        HashSet<String> singleList = new HashSet<>();
-        for (ProductType pt : productTypes) {
-            singleList.add(pt.getType());
-        }
+        List<String> singleTypeNameList = productTypes.stream()
+                .distinct()
+                .sorted((o1, o2) -> o1.getType().compareToIgnoreCase(o2.getType()))
+                .map(ProductType::getType)
+                .collect(Collectors.toList());
 
-        TreeSet<String> sortedList = new TreeSet<>(singleList);
-        types.addAll(sortedList);
+        types.addAll(singleTypeNameList);
 
         return types;
     }

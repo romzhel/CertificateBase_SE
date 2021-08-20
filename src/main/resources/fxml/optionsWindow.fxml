@@ -26,31 +26,44 @@
                                         </ContextMenu>
                                     </contextMenu>
                                 </TableView>
-                                <TableView fx:id="tvCertificates" layoutX="35.0" layoutY="264.0" prefHeight="450.0" prefWidth="1109.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="259.0">
+                                <TableView fx:id="tvCertificates" layoutX="35.0" layoutY="270.0" prefHeight="336.0"
+                                           prefWidth="1138.0" AnchorPane.bottomAnchor="15.0"
+                                           AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="27.0"
+                                           AnchorPane.topAnchor="270.0">
                                     <columns>
-                                        <TableColumn prefWidth="409.0" text="Название" />
-                                        <TableColumn prefWidth="111.0" text="Срок действия" />
-                                        <TableColumn minWidth="0.0" prefWidth="109.0" text="Осталось (мес.)" />
-                                        <TableColumn prefWidth="513.0" text="Имя файла" />
+                                        <TableColumn prefWidth="409.0" text="Название"/>
+                                        <TableColumn prefWidth="111.0" text="Срок действия"/>
+                                        <TableColumn minWidth="0.0" prefWidth="109.0" text="Осталось (мес.)"/>
+                                        <TableColumn prefWidth="513.0" text="Имя файла"/>
                                     </columns>
                                     <contextMenu>
                                         <ContextMenu fx:id="cmCertificates">
                                             <items>
-                                                <MenuItem fx:id="miAdd1" mnemonicParsing="false" onAction="#actionAddCertificate" text="     Добавить    " />
+                                                <MenuItem fx:id="miAdd1" mnemonicParsing="false"
+                                                          onAction="#actionAddCertificate" text="     Добавить    "/>
                                                 <MenuItem fx:id="miEdit1" mnemonicParsing="false" onAction="#actionEditCertificate" text="     Редактировать    " />
                                                 <SeparatorMenuItem mnemonicParsing="false" />
                                                 <MenuItem fx:id="miDelete1" mnemonicParsing="false" onAction="#actionDeleteCertificate" text="     Удалить     " />
-                                                <SeparatorMenuItem mnemonicParsing="false" />
-                                    <MenuItem fx:id="miCertCheckCountries" mnemonicParsing="false" onAction="#actionCertCheckCountries" text="     Проверка наличия стран    " />
-                                                <MenuItem fx:id="miCheckCertificates" mnemonicParsing="false" onAction="#actionCheckCertificates" text="     Поиск несоответствий     " />
-                                    <SeparatorMenuItem mnemonicParsing="false" />
-                                    <MenuItem fx:id="miOpenFile" mnemonicParsing="false" onAction="#actionOpenCertificateFile" text="     Открыть файл     " />
+                                                <SeparatorMenuItem mnemonicParsing="false"/>
+                                                <MenuItem fx:id="miCertCheckCountries" mnemonicParsing="false"
+                                                          onAction="#actionCertCheckCountries"
+                                                          text="     Проверка наличия стран    "/>
+                                                <MenuItem fx:id="miCheckCertificates" mnemonicParsing="false"
+                                                          onAction="#actionCheckCertificates"
+                                                          text="     Поиск несоответствий     "/>
+                                                <SeparatorMenuItem mnemonicParsing="false"/>
+                                                <MenuItem fx:id="miOpenFile" mnemonicParsing="false"
+                                                          onAction="#actionOpenCertificateFile"
+                                                          text="     Открыть файл     "/>
                                             </items>
                                         </ContextMenu>
                                     </contextMenu>
                                 </TableView>
-                                <Label layoutX="36.0" layoutY="14.0" text="Нормы/регламенты:" />
-                                <Label layoutX="36.0" layoutY="242.0" text="Сертификаты:" />
+                                <Label layoutX="36.0" layoutY="14.0" text="Нормы/регламенты:"/>
+                                <Label layoutX="36.0" layoutY="252.0" text="Сертификаты:"/>
+                                <CheckBox fx:id="hideNonCorrectCerts" layoutX="899.0" layoutY="251.0"
+                                          mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT"
+                                          text="Не показывать неиспользуемые сертификаты"/>
                             </children>
                         </AnchorPane>
                     </content>

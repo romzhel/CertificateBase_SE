@@ -9,10 +9,7 @@ import javafx.scene.input.MouseButton;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
-import ui_windows.options_window.certificates_editor.Certificate;
-import ui_windows.options_window.certificates_editor.CertificateEditorWindow;
-import ui_windows.options_window.certificates_editor.CertificateEditorWindowActions;
-import ui_windows.options_window.certificates_editor.CertificatesTable;
+import ui_windows.options_window.certificates_editor.*;
 import ui_windows.options_window.certificates_editor.content_checker.CertificateContentChecker;
 import ui_windows.options_window.families_editor.FamiliesEditorWindow;
 import ui_windows.options_window.families_editor.ProductFamilies;
@@ -42,7 +39,9 @@ import utils.Utils;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
@@ -64,6 +63,8 @@ public class OptionsWindowController implements Initializable {
     TableView<RequirementType> tvCertificateTypes;
     @FXML
     TableView<Certificate> tvCertificates;
+    @FXML
+    CheckBox hideNonCorrectCerts;
     @FXML
     TableView<ProductFamily> tvFamilies;
     @FXML
@@ -106,6 +107,16 @@ public class OptionsWindowController implements Initializable {
             }
         });
         logger.trace("Certificates table initialized");
+
+        hideNonCorrectCerts.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            tvCertificates.getItems().clear();
+            List<Certificate> certificateList = !newValue ? Certificates.getInstance().getItems() :
+                    Certificates.getInstance().getItems().stream()
+                            .filter(cert -> !cert.getName().startsWith(CertificateEditorWindowActions.DELETED_MARK))
+                            .collect(Collectors.toList());
+            tvCertificates.getItems().addAll(certificateList);
+        });
+        hideNonCorrectCerts.setSelected(true);
 
         //----------------------------product families------------------------------------------------------------------
         ProductFamilies.getInstance().setProductFamiliesTable(new ProductFamiliesTable(tvFamilies));  //fill families table
@@ -180,15 +191,21 @@ public class OptionsWindowController implements Initializable {
     }
 
     public void actionAddCertificate() {
-        new CertificateEditorWindow(ADD);
+        new CertificateEditorWindow(null, ADD);
     }
 
     public void actionEditCertificate() {
-        new CertificateEditorWindow(EDIT);
+        Certificate selectedCertificate = tvCertificates.getSelectionModel().getSelectedItem();
+        if (selectedCertificate != null) {
+            new CertificateEditorWindow(selectedCertificate, EDIT);
+        }
     }
 
     public void actionDeleteCertificate() {
-        CertificateEditorWindowActions.deleteData();
+        Certificate selectedCertificate = tvCertificates.getSelectionModel().getSelectedItem();
+        if (selectedCertificate != null && Dialogs.confirm("Удаление записи", "Действительно желаете удалить запись без возможности восстановления?")) {
+            new CertificateEditorWindowActions().delete(selectedCertificate);
+        }
     }
 
     public void actionOpenCertificateFile() {

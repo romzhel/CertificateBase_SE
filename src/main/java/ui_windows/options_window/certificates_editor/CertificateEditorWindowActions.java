@@ -6,6 +6,7 @@ import files.Folders;
 import javafx.application.Platform;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import lombok.extern.log4j.Log4j2;
 import ui.Dialogs;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContentActions;
@@ -20,78 +21,118 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static ui_windows.Mode.ADD;
 import static ui_windows.Mode.EDIT;
 import static ui_windows.options_window.profile_editor.SimpleRight.FULL;
 
+@Log4j2
 public class CertificateEditorWindowActions {
     public static final String DELETED_MARK = "%%%_";
+    private List<CertificateContent> backupOfContent;
+    private Certificate editedCertificate;
 
-    public static void apply() {
+    public CertificateEditorWindowActions() {
+        log.trace("constructor without params");
+    }
+
+    public CertificateEditorWindowActions(Certificate editedCertificate) {
+        this.editedCertificate = editedCertificate;
+        backupOfContent = editedCertificate.getContent().stream()
+                .map(cc -> new CertificateContent(cc.getId(), cc.getCertId(), cc.getProductType(), cc.getEquipmentName()))
+                .collect(Collectors.toList());
+        log.trace("constructor with params: cert {}", editedCertificate);
+        log.trace("constructor with params: calced backup content {}", backupOfContent);
+    }
+
+    public void apply() {
         AnchorPane root = CertificateEditorWindow.getRootAnchorPane();
         CertificateEditorWindowController controller = CertificateEditorWindow.getLoader().getController();
 
         if (CertificateEditorWindow.getMode() == ADD) {//adding new record
+            log.trace("apply new cert saving");
 
             if (Utils.hasEmptyControls(root, "cbCountrySelect", "cbNormSelect") || hasEmptyCellInTable()) {//empty fields
                 Dialogs.showMessage("Пустые поля", "Не все поля заполнены");
             } else {//save to DB
 
-                Certificate cert = new Certificate(CertificateEditorWindow.getStage());
-                cert.setUserId(Users.getInstance().getCurrentUser().getId());
+                editedCertificate = new Certificate(CertificateEditorWindow.getStage());
+                editedCertificate.setUserId(Users.getInstance().getCurrentUser().getId());
 
-                treatDeletedMark(controller, cert);
+                treatDeletedMark(controller, editedCertificate);
 
-                if (!Certificates.getInstance().hasDoubles(cert)) {//check duplicates
-                    if (new CertificatesDB().putData(cert)) {//write to DB, get cert id
+                log.trace("new cert: {}", editedCertificate);
 
-                        Certificates.getInstance().addItem(cert);//add cert to global list
-                        CertificatesTable.getInstance().addItem(cert);//display record in table
+                if (!Certificates.getInstance().hasDoubles(editedCertificate)) {//check duplicates
+                    if (new CertificatesDB().putData(editedCertificate)) {//write to DB, get cert id
 
-                        CertificateContentActions.saveContent(cert);
+                        Certificates.getInstance().addItem(editedCertificate);//add cert to global list
+                        CertificatesTable.getInstance().addItem(editedCertificate);//display record in table
 
-                        close();
+                        CertificateContentActions.saveContent(editedCertificate);
+
+                        closeCertificateEditorWindow();
                     }
                 }
             }
 
         } else if (CertificateEditorWindow.getMode() == EDIT) {//editing existing record
-            Certificate cert = getItem();
-            if (cert != null && !hasEmptyCellInTable()) {
+            if (editedCertificate != null && !hasEmptyCellInTable()) {
+                log.trace("saving changed cert: {}", editedCertificate);
 
-                getCertFromEditorWindow(cert);//get data from form
-                if (Users.getInstance().getCurrentUser().getProfile().getCertificates() != FULL)
-                    cert.setUserId(Users.getInstance().getCurrentUser().getId());
+                editedCertificate.getContent().clear();
 
-                treatDeletedMark(controller, cert);
+                getCertFromEditorWindow(editedCertificate);//get data from form
+                if (Users.getInstance().getCurrentUser().getProfile().getCertificates() != FULL) {
+                    editedCertificate.setUserId(Users.getInstance().getCurrentUser().getId());
+                }
 
-                if (!Certificates.getInstance().hasDoubles(cert)) {//check duplicates
-                    if (new CertificatesDB().updateData(cert)) {//write to DB
-                        CertificateContentActions.saveContent(cert);
+                treatDeletedMark(controller, editedCertificate);
+
+                log.trace("cert from UI: {}", editedCertificate);
+
+                if (!Certificates.getInstance().hasDoubles(editedCertificate)) {//check duplicates
+                    if (new CertificatesDB().updateData(editedCertificate)) {//write to DB
+                        CertificateContentActions.saveContent(editedCertificate);
 
                         Platform.runLater(() -> CertificatesTable.getInstance().getTableView().refresh());//refresh table
 
-                        close();
+                        closeCertificateEditorWindow();
                     }
 
                 }
             } else {
+                log.trace("empty fields during edited cert saving");
                 Dialogs.showMessage("Пустые поля", "Не все поля заполнены");
             }
         }
     }
 
-    public static void treatDeletedMark(CertificateEditorWindowController controller, Certificate cert) {
+    public void cancel() {
+        log.trace("cancel cert editing");
+        editedCertificate.setContent(backupOfContent);
+        log.trace("cert with backup content: {}", editedCertificate);
+        closeCertificateEditorWindow();
+    }
+
+    public void closeCertificateEditorWindow() {
+        CertificateEditorWindow.close();
+    }
+
+    public void treatDeletedMark(CertificateEditorWindowController controller, Certificate cert) {
         if (controller.cbxNotUsed.isSelected()) {
-            cert.setName(cert.getName().replaceAll("^" + DELETED_MARK, ""));
-            cert.setName(DELETED_MARK + cert.getName());
+            if (!cert.getName().startsWith(DELETED_MARK)) {
+                cert.setName(DELETED_MARK + cert.getName());
+            }
         } else {
             cert.setName(cert.getName().replaceAll("^" + DELETED_MARK, ""));
         }
     }
 
-    public static void getCertFromEditorWindow(Certificate cert) {
+    public void getCertFromEditorWindow(Certificate cert) {
+        log.trace("applying values to edited cert from UI");
         AnchorPane root = (AnchorPane) CertificateEditorWindow.getStage().getScene().getRoot();
 
         cert.setName(Utils.getControlValue(root, "tfCertName"));
@@ -103,60 +144,50 @@ public class CertificateEditorWindowActions {
         cert.setMaterialMatch(Utils.getControlValue(root, "ckbMaterialMatch") == "true");
     }
 
-    public static void close() {
-        CertificateEditorWindow.close();
+    public void displayData() {
+        CertificateEditorWindowController controller = CertificateEditorWindow.getLoader().getController();
+
+        init();
+        AnchorPane root = (AnchorPane) CertificateEditorWindow.getStage().getScene().getRoot();
+
+        controller.cbxNotUsed.setSelected(editedCertificate.getName().startsWith(DELETED_MARK));
+
+        Utils.setControlValue(root, "tfCertName", editedCertificate.getName().replaceAll("^" + DELETED_MARK, ""));
+        Utils.setControlValue(root, "dpDatePicker", editedCertificate.getExpirationDate());
+        Utils.setControlValueLVfromAL(root, "lvCountries", Countries.getCombinedNames(editedCertificate.getCountries()));
+        Utils.setControlValueLVfromAL(root, "lvNorms", RequirementTypes.getInstance().getRequirementsList(editedCertificate.getNorms()));
+        Utils.setControlValue(root, "tfFileName", editedCertificate.getFileName());
+
+        try {
+            Folders.getInstance().getCalcCertFile(editedCertificate.getFileName());
+            Utils.setColor(CertificateEditorWindow.getRootAnchorPane(), "tfFileName", Color.GREEN);
+        } catch (Exception e) {
+            Utils.setColor(CertificateEditorWindow.getRootAnchorPane(), "tfFileName", Color.RED);
+        }
+
+        Utils.setControlValue(root, "ckbNameMatch", editedCertificate.isFullNameMatch());
+        Utils.setControlValue(root, "ckbMaterialMatch", editedCertificate.isMaterialMatch());
+
+        CertificatesContentTable.getInstance().setContent(editedCertificate.getContent());
     }
 
-    public static void displayData() {
-        CertificateEditorWindowController controller = CertificateEditorWindow.getLoader().getController();
-        Certificate cert = getItem();
-        if (cert != null) {
-            init();
-            AnchorPane root = (AnchorPane) CertificateEditorWindow.getStage().getScene().getRoot();
-
-            controller.cbxNotUsed.setSelected(cert.getName().startsWith(DELETED_MARK));
-
-            Utils.setControlValue(root, "tfCertName", cert.getName().replaceAll("^" + DELETED_MARK, ""));
-            Utils.setControlValue(root, "dpDatePicker", cert.getExpirationDate());
-            Utils.setControlValueLVfromAL(root, "lvCountries", Countries.getCombinedNames(cert.getCountries()));
-            Utils.setControlValueLVfromAL(root, "lvNorms", RequirementTypes.getInstance().getRequirementsList(cert.getNorms()));
-            Utils.setControlValue(root, "tfFileName", cert.getFileName());
-
-            try {
-                Folders.getInstance().getCalcCertFile(cert.getFileName());
-                Utils.setColor(CertificateEditorWindow.getRootAnchorPane(), "tfFileName", Color.GREEN);
-            } catch (Exception e) {
-                Utils.setColor(CertificateEditorWindow.getRootAnchorPane(), "tfFileName", Color.RED);
-            }
-
-            Utils.setControlValue(root, "ckbNameMatch", cert.isFullNameMatch());
-            Utils.setControlValue(root, "ckbMaterialMatch", cert.isMaterialMatch());
-
-            CertificatesContentTable.getInstance().setContent(cert.getContent());
+    public void delete(Certificate cert) {
+        if (new CertificatesDB().deleteData(cert)) {//delete cert from DB
+            new CertificatesContentDB().deleteData(cert.getContent());//delete cert content from db
+            CertificatesContent.getInstance().delete(cert.getContent());//delete content from class
+            Certificates.getInstance().remove(cert);//delete cert from class
         }
     }
 
-    public static void deleteData() {
-        Certificate cert = getItem();
-        if (cert != null)
-            if (Dialogs.confirm("Удаление записи", "Действительно желаете удалить запись без возможности восстановления?")) {
-                if (new CertificatesDB().deleteData(cert)) {//delete cert from DB
-                    new CertificatesContentDB().deleteData(cert.getContent());//delete cert content from db
-                    CertificatesContent.getInstance().delete(cert.getContent());//delete content from class
-                    Certificates.getInstance().remove(cert);//delete cert from class
-                }
-            }
-    }
-
-    public static Certificate getItem() {
+    /*public Certificate getItem() {
         int index = CertificatesTable.getInstance().getTableView().getSelectionModel().getSelectedIndex();
 
         if (index > -1 && index < CertificatesTable.getInstance().getTableView().getItems().size()) {
             return CertificatesTable.getInstance().getTableView().getItems().get(index);
         } else return null;
-    }
+    }*/
 
-    public static void init() {
+    public void init() {
         AnchorPane root = (AnchorPane) CertificateEditorWindow.getStage().getScene().getRoot();
 
         Utils.setControlValue(root, "cbCountrySelect", Countries.getItems());//add countries
@@ -164,7 +195,7 @@ public class CertificateEditorWindowActions {
 //        Utils.setControlValue(root, "cbCountrySelect", Countries.getItems().get(0));//display first country
     }
 
-    public static void addCountry() {
+    public void addCountry() {
         AnchorPane root = (AnchorPane) CertificateEditorWindow.getStage().getScene().getRoot();
         String newCountry = Utils.getControlValue(root, "cbCountrySelect");
         if (newCountry.trim().length() > 0) {
@@ -172,7 +203,7 @@ public class CertificateEditorWindowActions {
         }
     }
 
-    public static void addNorm() {
+    public void addNorm() {
         AnchorPane root = (AnchorPane) CertificateEditorWindow.getStage().getScene().getRoot();
         String newNorm = Utils.getControlValue(root, "cbNormSelect");
         if (newNorm.trim().length() > 0) {
@@ -180,7 +211,7 @@ public class CertificateEditorWindowActions {
         }
     }
 
-    public static void selectFile() {
+    public void selectFile() {
         File certFile = Dialogs.selectFile(CertificateEditorWindow.getStage());
         if (certFile != null) {
             if (Files.exists(Folders.getInstance().getCertFolder().resolve(certFile.getName()))) {
@@ -202,7 +233,7 @@ public class CertificateEditorWindowActions {
         }
     }
 
-    public static boolean hasEmptyCellInTable() {
+    public boolean hasEmptyCellInTable() {
         for (CertificateContent cc : CertificatesContentTable.getInstance().getTableView().getItems()) {
             boolean eqTypeEmpty = cc.getProductType().getType() == null || cc.getProductType().getType().trim().isEmpty();
             boolean tnvedEmpty = cc.getProductType().getTen() == null || cc.getProductType().getTen().trim().isEmpty();
@@ -211,6 +242,4 @@ public class CertificateEditorWindowActions {
         }
         return false;
     }
-
-
 }

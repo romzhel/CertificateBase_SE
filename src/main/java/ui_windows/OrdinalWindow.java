@@ -61,6 +61,7 @@ public abstract class OrdinalWindow<T> {
     }
 
     public static void close() {
+        logger.trace("close window");
         stage.close();
     }
 

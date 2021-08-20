@@ -8,17 +8,19 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 public class CertificatesContentTable {
+    private static final String NAMES_COL = "Наименования";
     private static final String EQ_TYPE_COL = "Тип оборудования";
     private static final String TN_VED_COL = "ТН ВЭД";
-    private static final String NAMES_COL = "Наименования";
     private static CertificatesContentTable instance;
     private TableView<CertificateContent> tableView;
-    private TableColumn<CertificateContent, String> typeCol, tnvedCol, namesEnumCol;
+    private TableColumn<CertificateContent, String> namesEnumCol, typeCol, tnvedCol;
     private boolean isEditActive = false;
     private int editedItemIndex = -1;
     private List<CertificateContent> editedContent;
@@ -46,6 +48,13 @@ public class CertificatesContentTable {
         namesEnumCol.setCellValueFactory(new PropertyValueFactory<>("equipmentName"));
     }
 
+    /**
+     * Инициализация кликов мыши на таблице:<br>
+     * - одиночный клик вне редактируемого контента - сбрасывает режим редактирования<br>
+     * - двойной клик на контенте - активирует режим редактирования данного контента<br>
+     *
+     * @param tableView таблица с контентом
+     */
     public void initTableView(TableView<CertificateContent> tableView) {
         this.tableView = tableView;
         tableView.setPlaceholder(new Label("Нет данных для отображения"));
@@ -56,22 +65,34 @@ public class CertificatesContentTable {
                         editMode(typeCol, -1);
                         editMode(tnvedCol, -1);
                         editMode(namesEnumCol, -1);
+                        log.trace("edit mode is reset");
                     }
                 } else if (event.getClickCount() == 2) {
-                    setEditMode(tableView.getSelectionModel().getSelectedIndex());
+                    int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
+                    setEditMode(selectedIndex);
+                    log.trace("edit mode is set for {}", selectedIndex);
                 }
             }
         });
     }
 
+    /**
+     * Создание столбцов с добавлением их в таблицу контента
+     *
+     * @param title название столбца
+     * @param width ширина столбца
+     * @return TableColumn&lt;CertificateContent, String&gt;
+     */
     public TableColumn<CertificateContent, String> initColumn(String title, double width) {
         TableColumn<CertificateContent, String> column = new TableColumn<>(title);
         TableColumn fColumn = column;
-        column.widthProperty().addListener((observable, oldValue, newValue) -> {
+        column.widthProperty().addListener((observable, oldValue, newValue) -> {//todo непонятка
             if (isEditActive) {
                 setEditMode(tableView.getSelectionModel().getSelectedIndex());
+                log.trace("width property listener, set edit mode");
             } else {
                 editMode(fColumn, -1);
+                log.trace("width property listener, reset edit mode");
             }
         });
         column.setPrefWidth(width);
@@ -81,6 +102,10 @@ public class CertificatesContentTable {
         return column;
     }
 
+    /**
+     * @param tc
+     * @param selectedIndex
+     */
     public void editMode(TableColumn<CertificateContent, String> tc, int selectedIndex) {
         tc.setCellFactory(new Callback<TableColumn<CertificateContent, String>, TableCell<CertificateContent, String>>() {
             @Override
@@ -112,14 +137,15 @@ public class CertificatesContentTable {
                                             cc.getProductType().setWasChanged(true);
                                         } else if (tc.getText().equals(NAMES_COL)) {
                                             cc.setEquipmentName(newValue.replaceAll("\\n", ""));
-                                            cc.setWasChanged(true);
                                         }
+                                        cc.setWasChanged(true);
                                     }
                                 });
 
                                 text.setOnKeyReleased(event -> {
                                     if (event.getCode() == KeyCode.ENTER) {
-                                        editMode(tc, -1);
+//                                        editMode(tc, -1);
+                                        resetEditMode();
                                     }
                                 });
 
@@ -142,6 +168,11 @@ public class CertificatesContentTable {
         });
     }
 
+    /**
+     * Перевод в режим редактирования контента
+     *
+     * @param selectedIndex индекс контента
+     */
     public void setEditMode(int selectedIndex) {
         editMode(typeCol, selectedIndex);
         editMode(tnvedCol, selectedIndex);
@@ -149,29 +180,22 @@ public class CertificatesContentTable {
         editedItemIndex = selectedIndex;
     }
 
+    public void resetEditMode() {
+        setEditMode(-1);
+    }
+
     public TableView<CertificateContent> getTableView() {
         return tableView;
     }
 
-    public ArrayList<CertificateContent> getContent() {
-        ArrayList<CertificateContent> certContent = new ArrayList<>();
-
-        for (CertificateContent cc : tableView.getItems()) {
-            certContent.add(cc);
-        }
-
-        return certContent;
+    public List<CertificateContent> getContent() {
+        return new ArrayList<>(tableView.getItems());
     }
 
-    public void setContent(List<CertificateContent> content) {
-        tableView.getItems().clear();
-        if (content != null) {
-            List<CertificateContent> itemsForEditing = new ArrayList<>();
-            for (CertificateContent cc : content) {
-                itemsForEditing.add(new CertificateContent(cc.getId(), cc.getCertId(), cc.getProductType(), cc.getEquipmentName()));
-            }
-
-            tableView.getItems().addAll(itemsForEditing);
+    public void setContent(List<CertificateContent> contentList) {
+        if (contentList != null) {
+            tableView.getItems().clear();
+            tableView.getItems().addAll(contentList);
         }
     }
 
