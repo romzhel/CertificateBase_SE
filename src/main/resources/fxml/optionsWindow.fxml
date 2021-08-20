@@ -41,9 +41,12 @@
                                             <items>
                                                 <MenuItem fx:id="miAdd1" mnemonicParsing="false"
                                                           onAction="#actionAddCertificate" text="     Добавить    "/>
-                                                <MenuItem fx:id="miEdit1" mnemonicParsing="false" onAction="#actionEditCertificate" text="     Редактировать    " />
-                                                <SeparatorMenuItem mnemonicParsing="false" />
-                                                <MenuItem fx:id="miDelete1" mnemonicParsing="false" onAction="#actionDeleteCertificate" text="     Удалить     " />
+                                                <MenuItem fx:id="miEdit1" mnemonicParsing="false"
+                                                          onAction="#actionEditCertificate"
+                                                          text="     Редактировать    "/>
+                                                <SeparatorMenuItem mnemonicParsing="false"/>
+                                                <MenuItem fx:id="miDelete1" mnemonicParsing="false"
+                                                          onAction="#actionDeleteCertificate" text="     Удалить     "/>
                                                 <SeparatorMenuItem mnemonicParsing="false"/>
                                                 <MenuItem fx:id="miCertCheckCountries" mnemonicParsing="false"
                                                           onAction="#actionCertCheckCountries"
@@ -59,11 +62,12 @@
                                         </ContextMenu>
                                     </contextMenu>
                                 </TableView>
-                                <Label layoutX="36.0" layoutY="14.0" text="Нормы/регламенты:"/>
-                                <Label layoutX="36.0" layoutY="252.0" text="Сертификаты:"/>
-                                <CheckBox fx:id="hideNonCorrectCerts" layoutX="899.0" layoutY="251.0"
+                                <Label layoutX="36.0" layoutY="11.0" text="Нормы/регламенты:"/>
+                                <Label layoutX="36.0" layoutY="249.0" text="Сертификаты:"/>
+                                <CheckBox fx:id="hideNonCorrectCerts" layoutX="899.0" layoutY="248.0"
                                           mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT"
-                                          text="Не показывать неиспользуемые сертификаты"/>
+                                          text="Не показывать неиспользуемые сертификаты" textAlignment="RIGHT"
+                                          AnchorPane.rightAnchor="27.0"/>
                             </children>
                         </AnchorPane>
                     </content>
