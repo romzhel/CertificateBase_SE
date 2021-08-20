@@ -1,5 +1,6 @@
 package database;
 
+import lombok.extern.log4j.Log4j2;
 import ui_windows.options_window.certificates_editor.Certificate;
 
 import java.sql.ResultSet;
@@ -7,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+@Log4j2
 public class CertificatesDB extends DbRequest {
 
     public CertificatesDB() {
@@ -44,6 +46,7 @@ public class CertificatesDB extends DbRequest {
     }
 
     public boolean putData(Certificate cert) {
+        log.trace("put cert data to db: {}", cert);
         try {
             addData.setString(1, cert.getName());
             addData.setString(2, cert.getExpirationDate());
@@ -75,6 +78,7 @@ public class CertificatesDB extends DbRequest {
     }
 
     public boolean updateData(Certificate cert) {
+        log.trace("update cert data to db: {}", cert);
         try {
             updateData.setString(1, cert.getName());
             updateData.setString(2, cert.getExpirationDate());

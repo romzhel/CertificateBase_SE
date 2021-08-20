@@ -1,5 +1,6 @@
 package database;
 
+import lombok.extern.log4j.Log4j2;
 import ui_windows.options_window.certificates_editor.certificate_content_editor.CertificateContent;
 
 import java.sql.ResultSet;
@@ -7,7 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+@Log4j2
 public class CertificatesContentDB extends DbRequest {
 
     public CertificatesContentDB() {
@@ -26,8 +29,8 @@ public class CertificatesContentDB extends DbRequest {
         }
     }
 
-    public ArrayList<CertificateContent> getData() {
-        ArrayList<CertificateContent> content = new ArrayList<>();
+    public List<CertificateContent> getData() {
+        List<CertificateContent> content = new ArrayList<>();
         try {
             ResultSet rs = connection.prepareStatement("SELECT * FROM certificatesContent").executeQuery();
 
@@ -45,6 +48,7 @@ public class CertificatesContentDB extends DbRequest {
     }
 
     public boolean putData(Collection<CertificateContent> contents) {
+        log.trace("put cert content to DB: {}", contents);
         try {
             for (CertificateContent content : contents) {
                 addData.setInt(1, content.getCertId());
@@ -89,6 +93,7 @@ public class CertificatesContentDB extends DbRequest {
     }
 
     public boolean updateData(Collection<CertificateContent> contents) {
+        log.trace("update cert content to DB: {}", contents);
         try {
             for (CertificateContent content : contents) {
                 updateData.setInt(1, content.getProductType().getId());
@@ -115,7 +120,8 @@ public class CertificatesContentDB extends DbRequest {
         return true;
     }
 
-    public boolean deleteData(ArrayList<CertificateContent> content) {
+    public boolean deleteData(Collection<CertificateContent> content) {
+        log.trace("delete cert content to DB: {}", content);
         try {
             for (CertificateContent cc : content) {
                 deleteData.setInt(1, cc.getId());

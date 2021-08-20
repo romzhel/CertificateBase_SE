@@ -1,12 +1,15 @@
 package database;
 
+import lombok.extern.log4j.Log4j2;
 import ui_windows.product.ProductType;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
+@Log4j2
 public class ProductTypesDB extends DbRequest {
 
     public ProductTypesDB() {
@@ -25,7 +28,7 @@ public class ProductTypesDB extends DbRequest {
         }
     }
 
-    public ArrayList getData() {
+    public List getData() {
         ArrayList<ProductType> productTypes = new ArrayList<>();
         try {
             ResultSet rs = connection.prepareStatement("SELECT * FROM productTypes").executeQuery();
@@ -42,6 +45,7 @@ public class ProductTypesDB extends DbRequest {
     }
 
     public boolean putData(ProductType pt) {
+        log.trace("put product type to DB: {}", pt);
         try {
             addData.setString(1, pt.getType());
             addData.setString(2, pt.getTen());
@@ -66,6 +70,7 @@ public class ProductTypesDB extends DbRequest {
     }
 
     public boolean updateData(ProductType pt) {
+        log.trace("update product type to DB: {}", pt);
         try {
             updateData.setString(1, pt.getType());
             updateData.setString(2, pt.getTen());
@@ -86,6 +91,7 @@ public class ProductTypesDB extends DbRequest {
     }
 
     public boolean deleteData(ProductType pt) {
+        log.trace("delete product type to DB: {}", pt);
         try {
             deleteData.setInt(1, pt.getId());
             deleteData.addBatch();

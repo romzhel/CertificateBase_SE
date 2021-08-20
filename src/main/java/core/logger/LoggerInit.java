@@ -28,7 +28,7 @@ public class LoggerInit {
         fileAppender.addAttribute("fileName", "${basePath}/logs/certBase_" + Utils.getDateTimeForFileName() + ".log");
         fileAppender.addAttribute("append", "true");
         LayoutComponentBuilder fileLayout = builder.newLayout("PatternLayout");
-        fileLayout.addAttribute("pattern", "%d{yyyy-MM-dd HH:mm:ss.SSS} [%-15.-15t] %-5level %logger{36} - %msg%n");
+        fileLayout.addAttribute("pattern", "%d{yyyy-MM-dd HH:mm:ss.SSS} [%-15.-15t] %-5level %40.40c - %msg%n");
         fileAppender.add(fileLayout);
         builder.add(fileAppender);
 
@@ -37,7 +37,7 @@ public class LoggerInit {
                 .addAttribute("append", "true")
                 .addAttribute("createOnDemand", "true");
         LayoutComponentBuilder fileLayoutErrors = builder.newLayout("PatternLayout");
-        fileLayout.addAttribute("pattern", "%d{yyyy-MM-dd HH:mm:ss.SSS} [%-15.-15t] %-5level %logger{36} - %msg%n");
+        fileLayout.addAttribute("pattern", "%d{yyyy-MM-dd HH:mm:ss.SSS} [%-15.-15t] %-5level %40.40c - %msg%n");
         fileAppenderErrors.add(fileLayoutErrors);
         fileAppenderErrors.add(builder.newFilter("ThresholdFilter", Filter.Result.ACCEPT, Filter.Result.DENY)
                 .addAttribute("level", Level.ERROR));
@@ -47,7 +47,7 @@ public class LoggerInit {
         consoleAppender
                 .addAttribute("target", "SYSTEM_OUT");
         consoleAppender.add(builder.newLayout("PatternLayout")
-                .addAttribute("pattern", "%d{HH:mm:ss.SSS} [%-15.-15t] %-5level %logger{36} - %msg%n"));
+                .addAttribute("pattern", "%d{HH:mm:ss.SSS} [%-15.-15t] %-5level %40.40c - %msg%n"));
         consoleAppender.add(builder.newFilter("ThresholdFilter", Filter.Result.ACCEPT, Filter.Result.DENY)
                 .addAttribute("level", Level.TRACE));
         builder.add(consoleAppender);
