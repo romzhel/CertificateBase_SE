@@ -49,6 +49,7 @@ public class ProductEditorWindow extends OrdinalWindow<ProductEditorWindowContro
     public void applyProfile(SimpleRight sr, ProductEditorWindowController controller) {
         applyProfileSimple(Users.getInstance().getCurrentUser().getProfile().getProducts());
         controller.cbxBlocked.setDisable(sr != FULL);
+        controller.taCommentsPrice.setEditable(sr == FULL);
         controller.getPriceBox().setButtonDisabled(sr != FULL);
         Arrays.stream(controller.getBoxes()).forEach(box -> box.setDisable(sr != FULL));
     }
