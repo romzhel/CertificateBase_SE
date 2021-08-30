@@ -200,6 +200,8 @@ public class CertificateEditorWindowActions {
         String newCountry = Utils.getControlValue(root, "cbCountrySelect");
         if (newCountry.trim().length() > 0) {
             Utils.addControlValueLV(root, "lvCountries", newCountry);
+            CertificateEditorWindowController controller = CertificateEditorWindow.getLoader().getController();
+            controller.cbCountrySelect.getEditor().clear();
         }
     }
 
@@ -208,6 +210,8 @@ public class CertificateEditorWindowActions {
         String newNorm = Utils.getControlValue(root, "cbNormSelect");
         if (newNorm.trim().length() > 0) {
             Utils.addControlValueLV(root, "lvNorms", newNorm);
+            CertificateEditorWindowController controller = CertificateEditorWindow.getLoader().getController();
+            controller.cbNormSelect.getEditor().clear();
         }
     }
 

@@ -66,7 +66,9 @@ public class CertificateContentActions {
         }
 
         if (newContent.size() > 0) {
-            new CertificatesContentDB().putData(newContent);
+            if (new CertificatesContentDB().putData(newContent)) {
+                CertificatesContent.getInstance().addContent(newContent);
+            }
         }
 
         if (forDelete.size() > 0) {

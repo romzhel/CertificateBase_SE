@@ -74,7 +74,10 @@ public class CertificateEditorWindowController implements Initializable {
     }
 
     public void addCountry() {
-        editorWindowActions.addCountry();
+        lvCountries.getItems().add(cbCountrySelect.getValue());
+        cbCountrySelect.getEditor().clear();
+
+//        editorWindowActions.addCountry();
     }
 
     public void addItem() {
@@ -96,7 +99,10 @@ public class CertificateEditorWindowController implements Initializable {
     }
 
     public void addNorm() {
-        editorWindowActions.addNorm();
+        lvNorms.getItems().add(cbNormSelect.getValue());
+        cbNormSelect.getEditor().clear();
+
+//        editorWindowActions.addNorm();
     }
 
     public void normsKey() {
