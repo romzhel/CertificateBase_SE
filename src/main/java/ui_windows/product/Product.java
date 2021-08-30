@@ -161,27 +161,32 @@ public class Product implements Cloneable {
                 pr == 0.0 ? "Нет данных" : String.format("%,.2f", pr));
         pewc.getPriceBox().setButtonStatus(priceHidden);
 
-        if (dchain != null)
-            pewc.tfAccessibility.setText(OrdersAccessibility.getInstance().getOrderAccessibility(this).toString());
+        if (blocked != null) {
+            pewc.cbxBlocked.setSelected(blocked);
+            if (blocked) {
+                pewc.cbxBlocked.setStyle("-fx-text-fill: red; -fx-border-color: red; -fx-outer-border: red; mark-color: red; -fx-mark-color: red;");
+                pewc.cbxPrice.setDisable(true);
+
+                pewc.tfAccessibility.setText("Заблокировано");
+            } else {
+                pewc.cbxBlocked.setStyle("");
+                pewc.cbxPrice.setDisable(false);
+
+                if (dchain != null)
+                    pewc.tfAccessibility.setText(OrdersAccessibility.getInstance().getOrderAccessibility(this).toString());
+            }
+        } else {
+            pewc.cbxBlocked.setIndeterminate(true);
+            pewc.cbxBlocked.setDisable(true);
+        }
+
         if (price != null) {
             pewc.cbxPrice.setSelected(price);
         } else {
             pewc.cbxPrice.setIndeterminate(true);
             pewc.cbxPrice.setDisable(true);
         }
-        if (blocked != null) {
-            pewc.cbxBlocked.setSelected(blocked);
-            if (blocked) {
-                pewc.cbxBlocked.setStyle("-fx-text-fill: red; -fx-border-color: red; -fx-outer-border: red; mark-color: red; -fx-mark-color: red;");
-                pewc.cbxPrice.setDisable(true);
-            } else {
-                pewc.cbxBlocked.setStyle("");
-                pewc.cbxPrice.setDisable(false);
-            }
-        } else {
-            pewc.cbxBlocked.setIndeterminate(true);
-            pewc.cbxBlocked.setDisable(true);
-        }
+
         pewc.lHistory.getItems().clear();
         pewc.lHistory.getItems().addAll(history.split("\\|"));
         ProductLgbk pl = new ProductLgbk(this);

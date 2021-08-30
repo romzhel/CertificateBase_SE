@@ -127,9 +127,16 @@ public class MainTable implements Module {
 //                                        logger.debug("сертификат {} проверен за {} мс", product, System.currentTimeMillis() - t1);
 
                                         Platform.runLater(() -> {
-                                            getStyleClass().add(certificatesChecker.getCheckStatusResultStyle(getStyleClass()));
-                                            setTooltip(new Tooltip(certificatesChecker.getCheckStatusResult().getText()));
+                                            if (product.isBlocked()) {
+                                                setText("Заблокировано");
+                                                getStyleClass().clear();
+                                                getStyleClass().add("itemStrikethroughRed");
+                                                setTooltip(new Tooltip("Заблокировано"));
+                                            } else {
+                                                getStyleClass().add(certificatesChecker.getCheckStatusResultStyle(getStyleClass()));
+                                                setTooltip(new Tooltip(certificatesChecker.getCheckStatusResult().getText()));
 //                                            logger.debug("результат проверки {} отображен за {}", product, System.currentTimeMillis() - t1);
+                                            }
                                         });
                                     };
 
