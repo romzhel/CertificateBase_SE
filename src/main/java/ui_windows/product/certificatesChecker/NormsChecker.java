@@ -90,6 +90,10 @@ public class NormsChecker {
             normsForChecking.remove(11);//ЭМС СС заменяет ЭМС ДС
             faultNorms.remove(11);
         }
+        if (correctNorms.contains(13)) {
+            normsForChecking.remove(4);//043 заменяет ФЗ123
+            faultNorms.remove(4);
+        }
 
         if (normsForChecking.size() > 0) {
             for (int normIndex : normsForChecking) {
