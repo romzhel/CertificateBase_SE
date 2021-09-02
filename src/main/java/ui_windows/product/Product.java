@@ -216,7 +216,7 @@ public class Product implements Cloneable {
         if (leadTime != null) pewc.tfLeadTime.setText(leadTime == 0 ? NO_DATA : String.valueOf(getLeadTimeRu()));
         if (weight != null) pewc.tfWeight.setText(weight == 0 ? NO_DATA : String.valueOf(weight));
         if (localPrice != null)
-            pewc.tfLocalPrice.setText(localPrice == 0 ? NO_DATA : String.format("%,.2f", PriceUtils.roundCost(localPrice)));
+            pewc.tfLocalPrice.setText(localPrice == 0 ? NO_DATA : String.format("%,.2f", PriceUtils.roundCost(localPrice, 2)));
 
         List<String> items = ProductFamilies.getInstance().getFamiliesNames();//add all families and display value
         items.add(0, "");

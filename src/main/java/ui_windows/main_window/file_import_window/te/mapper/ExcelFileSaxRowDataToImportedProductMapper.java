@@ -64,8 +64,8 @@ public class ExcelFileSaxRowDataToImportedProductMapper {
 
             return result;
         } catch (Exception e) {
-            log.error("error set Product field '{}' with value '{} => {}'", field, value, result);
-            throw new RuntimeException(e);
+            log.error("error set Product field '{}' with value '{} => {}', {}", field, value, result, record);
+            return null;
         }
     }
 

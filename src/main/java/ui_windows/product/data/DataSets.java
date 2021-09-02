@@ -1,18 +1,21 @@
 package ui_windows.product.data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static ui_windows.product.data.DataItem.*;
 
 public class DataSets {
 
     public static DataItem[] getDataItemsForNowImport() {
-        ArrayList<DataItem> result = new ArrayList<>();
+        List<DataItem> result = new ArrayList<>();
         for (DataItem dataItem : DataItem.values()) {
             if (dataItem.getField() != null || dataItem == DataItem.DATA_EMPTY) {
                 result.add(dataItem);
             }
         }
+        result.sort((o1, o2) -> o1.getDisplayingName().compareToIgnoreCase(o2.getDisplayingName()));
+
         return result.toArray(new DataItem[]{});
     }
 

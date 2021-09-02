@@ -119,7 +119,7 @@ public enum DataItem {
         }
 
         public Object getValue(Product product) {
-            return PriceUtils.roundCost(product.getLocalPrice());
+            return PriceUtils.roundCost(product.getLocalPrice(), 2);
         }
     },
     DATA_LOCAL_PRICE_LIST(8, "Локальный прайс (В прайс-листе)", null) {
@@ -172,7 +172,7 @@ public enum DataItem {
                     return PriceUtils.addDiscount(product.getLocalPrice(), pls.getDiscount());
                 } else {
                     System.out.println("price list sheet " + pls.getSheetName() + ", discount = " + pls.getDiscount() + " %");
-                    return PriceUtils.roundCost(product.getLocalPrice());
+                    return PriceUtils.roundCost(product.getLocalPrice(), 2);
                 }
             }
 
@@ -681,6 +681,18 @@ public enum DataItem {
 
         public Object getValue(Product product) {
             return product.getCommentsPrice();
+        }
+    },
+    DATA_LOCAL_PRICE_EXT(47, "Локальный прайс (Без скидок), 5 знаков", "localPrice") {
+        public void fillExcelCell(
+                Cell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.NUMERIC);
+            cell.setCellValue(product.getLocalPrice());
+            cell.setCellStyle(CELL_CURRENCY_FORMAT_VCENTER);
+        }
+
+        public Object getValue(Product product) {
+            return PriceUtils.roundCost(product.getLocalPrice(), 5);
         }
     };
 

@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class PriceUtils {
-    public static double roundCost(double value) {
-        return BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
+    public static double roundCost(double value, int scale) {
+        return BigDecimal.valueOf(value).setScale(scale, RoundingMode.HALF_UP).doubleValue();
     }
 
     public static double addDiscount(double value, int discount) {
@@ -17,6 +17,6 @@ public class PriceUtils {
     }
 
     public static double getFromString(String textValue) throws Exception {
-        return new BigDecimal(textValue).setScale(4, RoundingMode.HALF_UP).doubleValue();
+        return new BigDecimal(textValue).setScale(5, RoundingMode.HALF_UP).doubleValue();
     }
 }
