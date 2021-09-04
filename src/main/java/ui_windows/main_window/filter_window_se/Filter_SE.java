@@ -66,7 +66,7 @@ public class Filter_SE implements Module, Initializable {
                     String.format(".*%s.*", parameters.getSearchText().replaceAll("\\*", ".*")),
                     Pattern.CASE_INSENSITIVE);
         } catch (PatternSyntaxException e) {
-            System.out.println(e.getMessage());
+            logger.warn("find text regex parse error {}", e.getMessage());
             pattern = Pattern.compile(
                     String.format(".*%s.*", parameters.getSearchText().replaceAll("[*()\\[\\]]", ".*")),
                     Pattern.CASE_INSENSITIVE);

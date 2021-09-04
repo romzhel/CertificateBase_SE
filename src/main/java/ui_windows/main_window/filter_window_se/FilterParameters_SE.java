@@ -9,6 +9,8 @@ import ui_windows.product.data.DataItem;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static ui_windows.main_window.filter_window_se.CustomValueMatcher.START_WITH;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.ALL_ITEMS;
@@ -45,10 +47,10 @@ public class FilterParameters_SE {
     private CustomValueMatcher customValueMatcher;
     private static SearchBox searchBox = new SearchBox();
     private IntegerProperty lastChange;
-    private HashSet<ProductFamily> families;
-    private HashSet<ProductLgbk> lgbks;
-    private HashSet<ProductLgbk> hierarchies;
-    private HashSet<DataItem> customProperties;
+    private Set<ProductFamily> families;
+    private Set<ProductLgbk> lgbks;
+    private Set<ProductLgbk> hierarchies;
+    private Set<DataItem> customProperties;
 
     public FilterParameters_SE() {
         filterItems = ALL_ITEMS;
@@ -62,8 +64,8 @@ public class FilterParameters_SE {
 //        lastChange.addListener((observable, oldValue, newValue) -> System.out.println("filter last change value = " + (int) newValue));
 
         families = new HashSet<>();
-        lgbks = new HashSet<>();
-        hierarchies = new HashSet<>();
+        lgbks = new TreeSet<>((o1, o2) -> o1.getLgbk().compareToIgnoreCase(o2.getLgbk()));
+        hierarchies = new TreeSet<>((o1, o2) -> o1.getHierarchy().compareToIgnoreCase(o2.getHierarchy()));
         customProperties = new HashSet<>(Arrays.asList(DATA_EMPTY, DATA_COUNTRY, DATA_DCHAIN, DATA_RESPONSIBLE,
                 /*DATA_CERTIFICATE,*/ DATA_IN_WHICH_PRICE_LIST, DATA_TYPE_DESCRIPTION, DATA_DESCRIPTION_RU, DATA_DESCRIPTION_EN,
                 DATA_IS_BLOCKED, DATA_IS_PRICE_HIDDEN, DATA_COMMENT_PRICE));
@@ -171,11 +173,11 @@ public class FilterParameters_SE {
         return searchBox;
     }
 
-    public HashSet<ProductFamily> getFamilies() {
+    public Set<ProductFamily> getFamilies() {
         return families;
     }
 
-    public HashSet<ProductLgbk> getLgbks() {
+    public Set<ProductLgbk> getLgbks() {
         return lgbks;
     }
 
@@ -183,11 +185,11 @@ public class FilterParameters_SE {
         return lastChange.get();
     }
 
-    public HashSet<ProductLgbk> getHierarchies() {
+    public Set<ProductLgbk> getHierarchies() {
         return hierarchies;
     }
 
-    public HashSet<DataItem> getCustomProperties() {
+    public Set<DataItem> getCustomProperties() {
         return customProperties;
     }
 
