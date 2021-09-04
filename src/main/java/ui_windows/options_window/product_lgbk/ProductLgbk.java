@@ -13,6 +13,7 @@ import utils.Utils;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ProductLgbk implements PriceListContentItem {
     public static final int ROOT_NODE = 0;
@@ -182,6 +183,19 @@ public class ProductLgbk implements PriceListContentItem {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProductLgbk)) return false;
+        ProductLgbk that = (ProductLgbk) o;
+        return Objects.equals(lgbk.getValue(), that.lgbk.getValue()) && Objects.equals(hierarchy.getValue(), that.hierarchy.getValue());
+    }
+
+    @Override
+    public int hashCode() {
+        return lgbk.getValue().concat("_").concat(hierarchy.getValue()).hashCode();
     }
 
     public int getId() {

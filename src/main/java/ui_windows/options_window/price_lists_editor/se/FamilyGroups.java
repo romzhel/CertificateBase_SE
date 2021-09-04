@@ -21,7 +21,7 @@ public class FamilyGroups extends TreeSet<ItemsGroup<ProductFamily, ProductLgbk>
 
         for (ProductFamily pf : ProductFamilies.getInstance().getItems()) {
 
-            for (ProductLgbk pl : ProductLgbks.getInstance().getItems()) {
+            for (ProductLgbk pl : ProductLgbks.getInstance().getProductLgbks()) {
                 if (pf.getId() == pl.getFamilyId()) {
                     ItemsGroup<ProductFamily, ProductLgbk> newFamilyGroup = new ItemsGroup<>(pf,
                             (o1, o2) -> o1.getLgbk().compareTo(o2.getLgbk()));

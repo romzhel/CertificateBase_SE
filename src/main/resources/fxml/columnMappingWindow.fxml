@@ -4,16 +4,17 @@
 <?import javafx.scene.layout.*?>
 <AnchorPane prefHeight="650.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="ui_windows.main_window.file_import_window.te.ColumnMappingWindowController">
-   <children>
-      <TableView fx:id="tvFields" layoutX="14.0" layoutY="51.0" prefHeight="549.0" prefWidth="790.0"
-                 AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
-                 AnchorPane.topAnchor="51.0"/>
-      <ComboBox fx:id="cbSheetNames" layoutX="447.0" layoutY="19.0" prefHeight="25.0" prefWidth="348.0"
-                visible="false"/>
-      <Label fx:id="lblSource" layoutX="14.0" layoutY="23.0" prefHeight="17.0" prefWidth="780.0" text="Лист"/>
-      <Button layoutX="166.0" layoutY="620.0" mnemonicParsing="false" onAction="#apply" prefHeight="25.0"
-              prefWidth="150.0" text="Импорт"/>
-      <Button layoutX="494.0" layoutY="620.0" mnemonicParsing="false" onAction="#cancel" prefHeight="25.0"
-              prefWidth="150.0" text="Отмена"/>
-   </children>
+    <children>
+        <TableView fx:id="tvFields" layoutX="14.0" layoutY="51.0" prefHeight="549.0" prefWidth="790.0"
+                   AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
+                   AnchorPane.topAnchor="51.0"/>
+        <ComboBox fx:id="cbSheetNames" layoutX="447.0" layoutY="19.0" prefHeight="25.0" prefWidth="348.0"
+                  visible="false"/>
+        <Label fx:id="lblSource" layoutX="14.0" layoutY="23.0" prefHeight="17.0" prefWidth="718.0" text="Лист"/>
+        <Button layoutX="166.0" layoutY="620.0" mnemonicParsing="false" onAction="#apply" prefHeight="25.0"
+                prefWidth="150.0" text="Импорт"/>
+        <Button layoutX="494.0" layoutY="620.0" mnemonicParsing="false" onAction="#cancel" prefHeight="25.0"
+                prefWidth="150.0" text="Отмена"/>
+        <Button fx:id="btnReset" layoutX="736.0" layoutY="19.0" mnemonicParsing="false" text="Сброс"/>
+    </children>
 </AnchorPane>

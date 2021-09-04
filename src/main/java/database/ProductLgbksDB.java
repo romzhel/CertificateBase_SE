@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class ProductLgbksDB extends DbRequest {
 
@@ -28,8 +29,8 @@ public class ProductLgbksDB extends DbRequest {
         }
     }
 
-    public ArrayList getData() {
-        ArrayList<ProductLgbk> productLgbks = new ArrayList<>();
+    public List<ProductLgbk> getData() {
+        List<ProductLgbk> productLgbks = new ArrayList<>();
         try {
             ResultSet rs = connection.prepareStatement("SELECT * FROM lgbk").executeQuery();
 

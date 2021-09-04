@@ -38,7 +38,7 @@ public class ProductLgbkGroups implements Initializable {
     @Override
     public void init() {
         lgbkGroups.clear();
-        if (ProductLgbks.getInstance().getItems().size() > 0) {
+        if (ProductLgbks.getInstance().getProductLgbks().size() > 0) {
             createFromLgbks(ProductLgbks.getInstance());
         } else {
             createFromProducts(Products.getInstance());
@@ -86,7 +86,7 @@ public class ProductLgbkGroups implements Initializable {
         lgbkGroups.clear();
 
         //1-ый проход - ROOT && GROUP nodes
-        for (ProductLgbk lgbk : productLgbks.getItems()) {
+        for (ProductLgbk lgbk : productLgbks.getProductLgbks()) {
             if (lgbk.getNodeType() == ProductLgbk.ROOT_NODE) {
                 rootNode = lgbk;
                 continue;
@@ -98,7 +98,7 @@ public class ProductLgbkGroups implements Initializable {
         }
 
         //2-ой проход ITEM nodes
-        for (ProductLgbk lgbk : productLgbks.getItems()) {
+        for (ProductLgbk lgbk : productLgbks.getProductLgbks()) {
             if (lgbk.getNodeType() == ProductLgbk.ITEM_NODE) {
                 Iterator<ItemsGroup<ProductLgbk, ProductLgbk>> iterator = lgbkGroups.iterator();
                 boolean wasFound = false;

@@ -2,6 +2,7 @@ package ui_windows.main_window.file_import_window.te;
 
 import core.ThreadManager;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
@@ -29,6 +30,9 @@ public class ColumnMappingWindowController {
     private ComboBox<ImportDataSheet> cbSheetNames;
     @FXML
     private Label lblSource;
+    @FXML
+    private Button btnReset;
+
     private ImportDataSheet inputSheet;
     private ImportDataSheet result;
 
@@ -37,6 +41,13 @@ public class ColumnMappingWindowController {
         new ColumnMappingTable(tvFields);
         lblSource.setText(inputData.getFileName().concat("/").concat(inputData.getSheetName()));
         tvFields.getItems().addAll(inputData.getColumnParams());
+
+        btnReset.setOnAction(event -> {
+            inputData.getColumnParams().stream()
+                    .filter(item -> item.getDataItem() != DATA_ORDER_NUMBER)
+                    .forEach(item -> item.setDataItem(DATA_EMPTY));
+            tvFields.refresh();
+        });
 
         /*cbSheetNames.getItems().addAll(inputData);
         cbSheetNames.setCellFactory(new Callback<ListView<ImportDataSheet>, ListCell<ImportDataSheet>>() {
