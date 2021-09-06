@@ -175,7 +175,6 @@ public class ProductLgbks implements Initializable {
     public void treatStructureChanges(Collection<ChangedItem> changedItemList) {
         ProductLgbkUtils utils = new ProductLgbkUtils();
         Map<ProductLgbk, Set<ProductLgbk>> newToOldgbkMap = utils.getOldToNewGbkMap(changedItemList);
-        utils.addMissedGroupItem(newToOldgbkMap);
 
         if (newToOldgbkMap.keySet().size() > 0) {
             List<ProductLgbk> sortedList = new ArrayList<>(newToOldgbkMap.keySet());
@@ -186,6 +185,7 @@ public class ProductLgbks implements Initializable {
             Platform.runLater(() -> Dialogs.showMessage("Новые LGBK/Hierarchy",
                     "Обнаружено новых кодов LGBK/Hierarchy: " + newToOldgbkMap.keySet().size()));
 
+            utils.addMissedGroupItem(newToOldgbkMap);
             utils.copyGbkSetting(newToOldgbkMap);
             ProductLgbks.getInstance().addItems(newToOldgbkMap.keySet());
 

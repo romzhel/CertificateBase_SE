@@ -1,5 +1,6 @@
 package ui_windows.options_window.product_lgbk;
 
+import javafx.scene.control.TreeItem;
 import lombok.extern.log4j.Log4j2;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProperty;
 import ui_windows.options_window.price_lists_editor.PriceList;
@@ -88,22 +89,51 @@ public class ProductLgbkUtils {
 
     public void copyPriceToNewItems(Map<ProductLgbk, Set<ProductLgbk>> newToOldgbkMap) {
         PriceLists priceListService = PriceLists.getInstance();
-        for (Map.Entry<ProductLgbk, Set<ProductLgbk>> entry : newToOldgbkMap.entrySet()) {
-            for (ProductLgbk lgbk : entry.getValue()) {
-                for (PriceList priceList : priceListService.getItems()) {
-                    for (PriceListSheet sheet : priceList.getSheets()) {
-                        if (sheet.isGbkStructureAddedToPrice(lgbk)) {
-                            Map<ProductLgbk, Boolean> map = sheet.getContentTable().getGbkInPriceMap();
-                            map.put(entry.getKey(), true);
-                            log.trace("GBK '{}' was added to price content", entry.getKey());
+
+        for (PriceList priceList : priceListService.getItems()) {
+            log.debug("processing price list '{}' for new GBK", priceList.getName());
+
+            for (PriceListSheet sheet : priceList.getSheets()) {
+                log.debug("processing sheet '{}' for new GBK", sheet.getSheetName());
+
+                List<Map.Entry<ProductLgbk, Set<ProductLgbk>>> sortedEntries = newToOldgbkMap.entrySet().stream()
+                        .sorted((o1, o2) -> Integer.compare(o1.getKey().getNodeType(), o2.getKey().getNodeType()))
+                        .collect(Collectors.toList());
+
+                for (Map.Entry<ProductLgbk, Set<ProductLgbk>> entry : sortedEntries) {
+                    Map<ProductLgbk, Boolean> map = sheet.getContentTable().getGbkInPriceMap();
+                    ProductLgbk groupGbk = ProductLgbks.getInstance().getGroupLgbkByName(entry.getKey().getLgbk());
+                    boolean groupGbkInPrice = sheet.getContentTable().getGbkInPriceMap().getOrDefault(groupGbk, false);
+                    boolean newGbkInPrice = entry.getValue().stream().allMatch(sheet::isGbkStructureAddedToPrice);
+
+                    if (groupGbkInPrice) {
+                        if (newGbkInPrice) {
+                            log.debug("GBK '{}' has parent price", entry.getKey());
+                            continue;
+                        } else {
+                            log.debug("reset price for group GBK {}", groupGbk);
+                            map.put(groupGbk, false);
+                            TreeItem<ProductLgbk> groupTreeGbk = ProductLgbkGroups.getInstance().getTreeItem(groupGbk);
+                            groupTreeGbk.getChildren().stream()
+                                    .map(TreeItem::getValue)
+                                    .peek(g -> log.debug("set price for children GDK {}", g))
+                                    .forEach(g -> map.put(g, true));
                         }
                     }
-                    PriceLists.getInstance().saveItem(priceList);
+
+                    map.put(entry.getKey(), newGbkInPrice);
+                    log.debug("GBK '{}' was added to price content with value {}", entry.getKey(), newGbkInPrice);
                 }
             }
+            PriceLists.getInstance().saveItem(priceList);
         }
 
         priceListService.refreshContent();
+    }
+
+    private void inverseIfNeeded(PriceListSheet sheet, ProductLgbk key, Set<ProductLgbk> set) {
+
+
     }
 
     public void copyGbkSetting(Map<ProductLgbk, Set<ProductLgbk>> newToOldgbkMap) {

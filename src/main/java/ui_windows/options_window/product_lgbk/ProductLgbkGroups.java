@@ -112,6 +112,8 @@ public class ProductLgbkGroups implements Initializable {
                 }
             }
         }
+
+        getFullTreeSet();
     }
 
     public void checkConsistency() {
