@@ -5,15 +5,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TreeItem;
 import javafx.util.Callback;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTable;
-import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
+import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
+import ui_windows.options_window.product_lgbk.ProductLgbks;
 import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
 import ui_windows.product.data.DataSets;
@@ -22,10 +23,7 @@ import utils.twin_list_views.TwinListViews;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_FAMILY;
 import static ui_windows.options_window.price_lists_editor.se.PriceListContentTable.CONTENT_MODE_LGBK;
@@ -73,15 +71,13 @@ public class PriceListSheet extends Tab {
             groupNameDisplaying = rs.getBoolean("group_names_displaying");
             columnsSelector.setSelectedItemsFromString(rs.getString("column_enums"));
 //            contentString = rs.getString("content_enums");
-            contentTable.importFromString(rs.getString("content_enums"));
+//            contentTable.importFromString(rs.getString("content_enums"));
 
-            contentTable.initContentMode(contentMode);
-            if (contentMode == CONTENT_MODE_LGBK) {
-                controller.rmiByLgbk.setSelected(true);
-            } else {
-                controller.rmiByFamily.setSelected(true);
-            }
-            contentTable.importFromString(rs.getString("content_enums"));
+            contentTable.initContentMode(CONTENT_MODE_LGBK);
+            controller.rmiByLgbk.setSelected(true);
+//            contentTable.importFromString(rs.getString("content_enums"));
+            contentTable.fillGbkPriceMapFromString(rs.getString("content_enums"));
+            contentTable.fillCompletePriceStructure();
 
             dchainSelector.setSelectedItemsFromString(rs.getString("dchain_enums"));
             discount = rs.getInt("discount");
@@ -113,7 +109,8 @@ public class PriceListSheet extends Tab {
         } else {
             controller.rmiByFamily.setSelected(true);
         }
-        contentTable.importFromString(anotherInstance.contentTable.exportToString());
+        contentTable.fillGbkPriceMapFromString(anotherInstance.contentTable.exportContentToString());
+        contentTable.fillCompletePriceStructure();
         discount = anotherInstance.discount;
         sortOrder = anotherInstance.sortOrder;
         checkCert = anotherInstance.checkCert;
@@ -254,42 +251,39 @@ public class PriceListSheet extends Tab {
     }
 
     public boolean isInPrice(Product product) {
-        for (TreeItem<PriceListContentTableItem> groupTreeItem : contentTable.getTreeTableView().getRoot().getChildren()) {
-            if (groupTreeItem.getValue().getContent() instanceof ProductLgbk) {
-                if (((ProductLgbk) groupTreeItem.getValue().getContent()).getLgbk().equals(product.getLgbk())) {
+        contentTable.switchContentMode(CONTENT_MODE_LGBK);
 
-                    for (TreeItem<PriceListContentTableItem> treeItem : groupTreeItem.getChildren()) {
-                        if (((ProductLgbk) treeItem.getValue().getContent()).compare(new ProductLgbk(product))) {
-                            boolean isLgbkMatch = treeItem.getValue().isPrice() || treeItem.getParent().getValue().isPrice();
-                            boolean isDchainMatch = false;
+        ProductLgbk productLgbk = null;
+        ProductLgbk parentLgbk = null;
+        try {
+            productLgbk = ProductLgbks.getInstance().getLgbkByProduct(product);
+            parentLgbk = ProductLgbks.getInstance().getGroupLgbkByName(productLgbk.getLgbk());
+            Map<ProductLgbk, Boolean> priceMap = contentTable.getGbkInPriceMap();
 
-                            boolean dchainMatchesSP = product.getDchain().trim().isEmpty() && product.isSpProduct();
-                            boolean dchainMatchesSets = product.getDchain().trim().isEmpty() && product.getLgbk().startsWith("RU5");
+            if (priceMap.getOrDefault(productLgbk, priceMap.getOrDefault(parentLgbk, false))) {
+                boolean dchainMatchesSP = product.getDchain().trim().isEmpty() && product.isSpProduct();
+                boolean dchainMatchesSets = product.getDchain().trim().isEmpty() && product.getLgbk().startsWith("RU5");
 
-                            if (dchainMatchesSP || dchainMatchesSets) {
-                                isDchainMatch = true;
-                            } else {
-                                for (OrderAccessibility oa : dchainSelector.getSelectedItems()) {
-                                    boolean dchainMatches = product.getDchain().equals(oa.getStatusCode());
-
-                                    if (dchainMatches) {
-                                        isDchainMatch = true;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (isLgbkMatch && isDchainMatch) {
-                                return true;
-                            }
-                        }
-                    }
-
+                if (dchainMatchesSP || dchainMatchesSets) {
+                    return true;
+                } else {
+                    return dchainSelector.getSelectedItems().stream()
+                            .anyMatch(oa -> product.getDchain().equals(oa.getStatusCode()));
                 }
             }
+        } catch (Exception e) {
+            log.error("in price looking error for {}, gbk/parent {}/{}", product, productLgbk, parentLgbk);
         }
 
         return false;
+    }
+
+    public boolean isGbkStructureAddedToPrice(ProductLgbk lgbk) {
+        LgbkAndParent lap = ProductLgbkGroups.getInstance().getLgbkAndParent(lgbk);
+        boolean isParentPrice = contentTable.getGbkInPriceMap().getOrDefault(lap.getLgbkParent(), false);
+        boolean isItemPrice = contentTable.getGbkInPriceMap().getOrDefault(lap.getLgbkItem(), false);
+
+        return isParentPrice || isItemPrice;
     }
 
     public void uploadFromUI() {
@@ -308,5 +302,9 @@ public class PriceListSheet extends Tab {
         return "PriceListSheet{" +
                 "sheetName='" + sheetName + '\'' +
                 '}';
+    }
+
+    public void refreshContent() {
+        contentTable.refresh();
     }
 }

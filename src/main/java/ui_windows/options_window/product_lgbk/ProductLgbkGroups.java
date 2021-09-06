@@ -11,10 +11,7 @@ import ui_windows.product.Product;
 import ui_windows.product.Products;
 import utils.ItemsGroup;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.*;
 
 public class ProductLgbkGroups implements Initializable {
     private static final Logger logger = LogManager.getLogger(ProductLgbkGroups.class);
@@ -244,8 +241,8 @@ public class ProductLgbkGroups implements Initializable {
         return null;
     }
 
-    public HashSet<Integer> getGlobalNormIds(ProductLgbk productLgbk) {
-        HashSet<Integer> globalNorms = new HashSet<>();
+    public Set<Integer> getGlobalNormIds(ProductLgbk productLgbk) {
+        Set<Integer> globalNorms = new HashSet<>();
 
         TreeItem<ProductLgbk> selectedTreeItem = getTreeItem(productLgbk);
         while (selectedTreeItem != null) {

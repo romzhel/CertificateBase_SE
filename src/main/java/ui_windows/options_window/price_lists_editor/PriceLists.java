@@ -7,7 +7,6 @@ import ui.Dialogs;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheets;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PriceLists implements Initializable {
@@ -94,6 +93,14 @@ public class PriceLists implements Initializable {
         return false;
     }
 
+    public void saveItem(PriceList priceList) {
+        if (new PriceListsDB().updateData(priceList)) {
+            for (PriceListSheet sheet : priceList.getSheets()) {
+                new PriceListSheetDB().updateData(sheet);
+            }
+        }
+    }
+
     public void deleteItem(PriceList priceList) {
         if (new PriceListsDB().deleteData(priceList)) {
             items.remove(priceList);
@@ -113,7 +120,13 @@ public class PriceLists implements Initializable {
         return items;
     }
 
-    public void setItems(ArrayList<PriceList> items) {
+    public void setItems(List<PriceList> items) {
         this.items = items;
+    }
+
+    public void refreshContent() {
+        items.forEach(price -> {
+            price.getSheets().forEach(PriceListSheet::refreshContent);
+        });
     }
 }

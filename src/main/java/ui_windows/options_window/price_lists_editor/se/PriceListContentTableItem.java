@@ -1,5 +1,8 @@
 package ui_windows.options_window.price_lists_editor.se;
 
+import lombok.Data;
+
+@Data
 public class PriceListContentTableItem {
     public static final int TYPE_UNKNOWN = -1;
     public static final int TYPE_FAMILY = 1;
@@ -16,23 +19,15 @@ public class PriceListContentTableItem {
         this.content = content;
     }
 
-    public PriceListContentItem getContent() {
-        return content;
-    }
-
-    public boolean isPrice() {
-        return price;
-    }
-
-    public void setPrice(boolean price) {
-        this.price = price;
-    }
-
-    public boolean isExcluded() {
-        return excluded;
-    }
-
-    public void setExcluded(boolean excluded) {
-        this.excluded = excluded;
+    @Override
+    public String toString() {
+        return "PriceListContentTableItem{" +
+                "itemType=" + itemType +
+                ", itemId=" + itemId +
+                ", content=" + content +
+                ", price=" + price +
+                ", excluded=" + excluded +
+//                ", order=" + order +
+                '}';
     }
 }

@@ -24,7 +24,7 @@ public class ProductLgbk implements PriceListContentItem {
     private StringProperty hierarchy;
     private StringProperty description_en = new SimpleStringProperty("");
     private StringProperty description_ru = new SimpleStringProperty("");
-    private NormsList normsList;
+    private NormsList normsList = new NormsList("");
     private int familyId = -1;
     private boolean isNotUsed;
     private int nodeType = -1;
@@ -36,7 +36,6 @@ public class ProductLgbk implements PriceListContentItem {
     public ProductLgbk(String lgbk, String hierarchy) {
         this.lgbk = new SimpleStringProperty(lgbk);
         this.hierarchy = new SimpleStringProperty(hierarchy);
-        normsList = new NormsList("");
         nodeType = ITEM_NODE;
     }
 
@@ -44,7 +43,6 @@ public class ProductLgbk implements PriceListContentItem {
         this.lgbk = new SimpleStringProperty(lgbk);
         this.hierarchy = new SimpleStringProperty(hierarchy);
         this.nodeType = nodeType;
-        normsList = new NormsList("");
     }
 
     public ProductLgbk(String lgbk, String hierarchy, String description_en, String description_ru, int familyId,
@@ -56,7 +54,6 @@ public class ProductLgbk implements PriceListContentItem {
         this.description_ru = new SimpleStringProperty(description_ru);
         this.familyId = familyId;
         this.isNotUsed = isNotUsed;
-        normsList = new NormsList("");
         nodeType = ITEM_NODE;
     }
 
