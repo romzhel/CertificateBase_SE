@@ -220,7 +220,7 @@ public class ProductLgbkGroups implements Initializable {
                 (lgbkAndParent.getLgbkItem() != null ? lgbkAndParent.getLgbkItem().getDescription() : "");
     }
 
-    public TreeItem<ProductLgbk> getTreeItem(ProductLgbk lookingForLgbk) {
+    public synchronized TreeItem<ProductLgbk> getTreeItem(ProductLgbk lookingForLgbk) {
         if (treeItemRoot == null || lookingForLgbk == null) return null;
         if (treeItemRoot.getValue().equals(lookingForLgbk)) return treeItemRoot;
 

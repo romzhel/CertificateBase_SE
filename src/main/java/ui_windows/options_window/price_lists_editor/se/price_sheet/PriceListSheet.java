@@ -264,12 +264,12 @@ public class PriceListSheet extends Tab {
                 boolean dchainMatchesSP = product.getDchain().trim().isEmpty() && product.isSpProduct();
                 boolean dchainMatchesSets = product.getDchain().trim().isEmpty() && product.getLgbk().startsWith("RU5");
 
-                if (dchainMatchesSP || dchainMatchesSets) {
-                    return true;
-                } else {
-                    return dchainSelector.getSelectedItems().stream()
-                            .anyMatch(oa -> product.getDchain().equals(oa.getStatusCode()));
-                }
+//                if (dchainMatchesSP || dchainMatchesSets) {
+//                    return true;
+//                } else {
+                return dchainSelector.getSelectedItems().stream()
+                        .anyMatch(oa -> product.getDchain().equals(oa.getStatusCode()));
+//                }
             }
         } catch (Exception e) {
             log.error("in price looking error for {}, gbk/parent {}/{}", product, productLgbk, parentLgbk);

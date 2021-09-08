@@ -17,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptySet;
 import static ui_windows.product.data.DataItem.DATA_HIERARCHY;
 import static ui_windows.product.data.DataItem.DATA_LGBK;
 
@@ -75,12 +76,35 @@ public class ProductLgbkUtils {
     }
 
     public void addMissedGroupItem(Map<ProductLgbk, Set<ProductLgbk>> newToOldgbkMap) {
-        List<ProductLgbk> newLgbkList = new ArrayList<>(newToOldgbkMap.keySet());
-        newLgbkList.stream()
-                .map(ProductLgbk::getLgbk)
-                .filter(lgbkName -> ProductLgbks.getInstance().getGroupLgbkByName(lgbkName) == null)
-                .forEach(lgbkName -> newToOldgbkMap.put(
-                        new ProductLgbk(lgbkName, "Все", ProductLgbk.GROUP_NODE), Collections.emptySet()));
+        Map<String, Set<ProductLgbk>> parentAnalyseMap = new HashMap<>();
+        Map<ProductLgbk, Set<ProductLgbk>> copyMap = new HashMap<>(newToOldgbkMap);
+        copyMap.entrySet().stream()
+                .filter(entry -> ProductLgbks.getInstance().getGroupLgbkByName(entry.getKey().getLgbk()) == null)
+                .forEach(entry -> {
+                    parentAnalyseMap.merge(entry.getKey().getLgbk(), entry.getValue(), (oldSet, newSet) -> {
+                        Set<ProductLgbk> result = new HashSet<>(oldSet);
+                        result.addAll(newSet);
+                        return result;
+                    });
+                });
+
+        parentAnalyseMap.forEach((key, value) -> {
+            ProductLgbk groupNode = new ProductLgbk(key, "Все", ProductLgbk.GROUP_NODE);
+            newToOldgbkMap.put(groupNode, emptySet());
+            log.debug("add new group node '{}' for changing GBK nodes", groupNode);
+
+            long oldParentTypeCount = value.stream()
+                    .map(gbk -> ProductLgbks.getInstance().getGroupLgbkByName(gbk.getLgbk()))
+                    .distinct()
+                    .count();
+
+            if (oldParentTypeCount == 1) {
+                groupNode.setDescription_en(value.iterator().next().getDescription_en());
+                groupNode.setDescription_ru(value.iterator().next().getDescription_ru());
+                log.debug("set descriptions to new group node '{}', en/ru: {}/{}", groupNode,
+                        groupNode.getDescription_en(), groupNode.getDescription_ru());
+            }
+        });
     }
 
     public String getDoubleName(ProductLgbk lgbk) {

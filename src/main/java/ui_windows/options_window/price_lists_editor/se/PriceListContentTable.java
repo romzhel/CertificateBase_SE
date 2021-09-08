@@ -105,7 +105,8 @@ public class PriceListContentTable {
                     }
                 } else if (currItem.getContent() instanceof ProductLgbk) {
                     currItem.setPrice(newValue);
-                    gbkInPriceMap.put((ProductLgbk) currItem.getContent(), true);
+                    gbkInPriceMap.put((ProductLgbk) currItem.getContent(), newValue);
+                    log.debug("set '{}' to price {}", currItem.getContent(), newValue);
                 }
 
                 treeTableView.refresh();
