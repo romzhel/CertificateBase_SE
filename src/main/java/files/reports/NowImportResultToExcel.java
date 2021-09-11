@@ -123,7 +123,7 @@ public class NowImportResultToExcel {
         for (ImportedProduct importedProduct : importedProductList) {
             row = sheet.createRow(rowNum++);
 
-            Product newProduct = Products.getInstance().getProductByMaterial(importedProduct.getId());
+            Product newProduct = Products.getInstance().getProductByVendorMaterialId(importedProduct.getId());
             fillItemDetails(newProduct, row);
             fillCell(row.createCell(colIndex++), "added");
         }
@@ -136,7 +136,7 @@ public class NowImportResultToExcel {
             for (ChangedProperty changedProperty : changedItem.getChangedPropertyList()) {
                 row = sheet.createRow(rowNum++);
 
-                Product changedProduct = Products.getInstance().getProductByMaterial(changedItem.getId());
+                Product changedProduct = Products.getInstance().getProductByVendorMaterialId(changedItem.getId());
                 fillItemDetails(changedProduct, row);
                 fillChangeDetails(changedProperty, row);
             }

@@ -28,7 +28,8 @@ public class TotalComparisonResultService {
                     changedProperty.setDataItem(DataItem.DATA_LOCAL_PRICE);
                     changedProperty.setSource(importDataSheet);
 
-                    ChangedItem changedItem = new ChangedItem(product.getMaterial());
+                    ChangedItem changedItem = new ChangedItem();
+                    changedItem.setId(Products.getInstance().getVendorMaterial(product));
                     changedItem.getChangedPropertyList().add(changedProperty);
 
                     return changedItem;
@@ -51,7 +52,7 @@ public class TotalComparisonResultService {
     private List<Product> mapToProductList(List<ChangedItem> list, ChangedItemToProductMerger merger) {
         return list.stream()
                 .map(changedItem -> {
-                    Product product = Products.getInstance().getProductByMaterial(changedItem.getId());
+                    Product product = Products.getInstance().getProductByVendorMaterialId(changedItem.getId());
                     return merger.mergeToProduct(product, changedItem);
                 })
                 .collect(Collectors.toList());

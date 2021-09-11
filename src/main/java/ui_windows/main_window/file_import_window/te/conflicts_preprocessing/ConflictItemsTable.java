@@ -66,7 +66,7 @@ public class ConflictItemsTable {
                         } else {
                             if (item instanceof ConflictItem) {
                                 ConflictItem conflictItem = (ConflictItem) item;
-                                Product product = Products.getInstance().getProductByMaterial(conflictItem.getId());
+                                Product product = Products.getInstance().getProductByVendorMaterialId(conflictItem.getId());
                                 setText(product != null ? product.toString() : conflictItem.getId());
                                 setGraphic(null);
                             } else if (item instanceof DataItem) {
@@ -74,7 +74,7 @@ public class ConflictItemsTable {
                                 setGraphic(null);
                             } else if (item instanceof ConflictProperty) {
                                 String id = ((ConflictItem) getTreeItem().getParent().getParent().getValue()).getId();
-                                Product product = Products.getInstance().getProductByMaterial(id);
+                                Product product = Products.getInstance().getProductByVendorMaterialId(id);
                                 DataItem dataItem = (DataItem) getTreeItem().getParent().getValue();
 
                                 ConflictProperty value = (ConflictProperty) item;

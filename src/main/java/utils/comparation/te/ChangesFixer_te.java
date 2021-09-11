@@ -36,10 +36,10 @@ public class ChangesFixer_te {
             newProduct.setLastImportcodes("new");
             newProduct.setLastChangeDate(Utils.getDateTime());
 
-            Products.getInstance().getItems().add(newProduct);
+//            Products.getInstance().getItems().add(newProduct);
             result.add(newProduct);
         }
-        Products.getInstance().initMap();
+        Products.getInstance().addToProductMap(result);
 
         return result;
     }
@@ -50,8 +50,9 @@ public class ChangesFixer_te {
         List<Product> result = new LinkedList<>();
 
         for (ChangedItem changedItem : changedItemList) {
-            Product existProduct = Products.getInstance().getProductByMaterial(changedItem.getId());
+            Product existProduct = Products.getInstance().getProductByVendorMaterialId(changedItem.getId());
             merger.mergeToProduct(existProduct, changedItem);
+
             String history = historyBuilder.createHistoryForChangedItem(changedItem);
             existProduct.setHistory(existProduct.getHistory().isEmpty() ? history :
                     existProduct.getHistory().concat("|").concat(history));
@@ -67,7 +68,7 @@ public class ChangesFixer_te {
         List<Product> protectedProductChangesList = new LinkedList<>();
 
         for (ProductProtectChange protectProduct : protectChangeItemList) {
-            Product product = Products.getInstance().getProductByMaterial(protectProduct.getId());
+            Product product = Products.getInstance().getProductByVendorMaterialId(protectProduct.getId());
 
             for (PropertyProtectChange change : protectProduct.getPropertyProtectChangeList()) {
                 if (change.getNewState() == APPLY_PROTECT) {

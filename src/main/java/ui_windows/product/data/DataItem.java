@@ -642,6 +642,17 @@ public enum DataItem {
         public Object getValue(Product product) {
             return product.getCommentsPrice();
         }
+    },
+    DATA_VENDOR(47, "Вендор", "vendor") {
+        public void fillExcelCell(Cell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(product.getVendor().name());
+            cell.setCellStyle(CELL_ALIGN_HLEFT_VCENTER_WRAP);
+        }
+
+        public Object getValue(Product product) {
+            return product.getVendor();
+        }
     };
 
     private int id;

@@ -30,7 +30,7 @@ public class ProductLgbkUtils {
         Matcher matcher;
 
         for (ChangedItem changedItem : changedItemList) {
-            Product existProduct = Products.getInstance().getProductByMaterial(changedItem.getId());
+            Product existProduct = Products.getInstance().getProductByVendorMaterialId(changedItem.getId());
 
             boolean noHierarchyChanges = changedItem.getChangedPropertyList().stream()
                     .map(ImportedProperty::getDataItem)

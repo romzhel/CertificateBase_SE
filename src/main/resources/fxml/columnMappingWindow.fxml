@@ -10,11 +10,14 @@
                    AnchorPane.topAnchor="51.0"/>
         <ComboBox fx:id="cbSheetNames" layoutX="447.0" layoutY="19.0" prefHeight="25.0" prefWidth="348.0"
                   visible="false"/>
-        <Label fx:id="lblSource" layoutX="14.0" layoutY="23.0" prefHeight="17.0" prefWidth="718.0" text="Лист"/>
+        <Label fx:id="lblSource" layoutX="14.0" layoutY="23.0" prefHeight="17.0" prefWidth="601.0" text="Лист"/>
         <Button layoutX="166.0" layoutY="620.0" mnemonicParsing="false" onAction="#apply" prefHeight="25.0"
                 prefWidth="150.0" text="Импорт"/>
         <Button layoutX="494.0" layoutY="620.0" mnemonicParsing="false" onAction="#cancel" prefHeight="25.0"
                 prefWidth="150.0" text="Отмена"/>
-        <Button fx:id="btnReset" layoutX="736.0" layoutY="19.0" mnemonicParsing="false" text="Сброс"/>
+        <Button fx:id="btnReset" layoutX="778.0" layoutY="19.0" mnemonicParsing="false" AnchorPane.rightAnchor="6.0"
+                AnchorPane.topAnchor="19.0"/>
+        <ComboBox fx:id="cbxVendor" layoutX="619.0" layoutY="19.0" prefWidth="150.0" AnchorPane.rightAnchor="31.0"
+                  AnchorPane.topAnchor="19.0"/>
     </children>
 </AnchorPane>

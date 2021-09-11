@@ -1,5 +1,6 @@
 package ui_windows.product;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
@@ -11,6 +12,7 @@ import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.product.data.DataItem;
 import ui_windows.product.productEditorWindow.ProductEditorWindowController;
+import ui_windows.product.vendors.VendorEnum;
 import utils.Countries;
 import utils.PriceUtils;
 import utils.comparation.se.Cloneable;
@@ -26,10 +28,12 @@ import java.util.List;
 import java.util.Set;
 
 @Log4j2
+@NoArgsConstructor
 public class Product implements Cloneable {
     public static final String NO_DATA = "нет данных";
     private Set<DataItem> protectedData = new HashSet<>();
     private int id;
+    private VendorEnum vendor = VendorEnum.SIEMENS;
     private String material;
     private String productForPrint;
     private String article;
@@ -56,17 +60,13 @@ public class Product implements Cloneable {
     private String comments = "";
     private String commentsPrice = "";
     private String replacement = "";
-    private NormsList normsList;
+    private NormsList normsList = new NormsList();
     private Integer normsMode = NormsList.ADD_TO_GLOBAL;
     private Integer minOrder = 0;
     private Integer packetSize = 0;
     private Integer leadTime = 0;
     private Double weight = 0.0;
     private Double localPrice = 0.0;
-
-    public Product() {
-        normsList = new NormsList();
-    }
 
     public Product(ProductEditorWindowController pewc) {
         id = 0;
@@ -580,5 +580,13 @@ public class Product implements Cloneable {
 
     public Set<DataItem> getProtectedData() {
         return protectedData;
+    }
+
+    public VendorEnum getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(VendorEnum vendor) {
+        this.vendor = vendor;
     }
 }

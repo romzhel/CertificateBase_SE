@@ -60,9 +60,10 @@ public class ProductDataFileImportTask implements Runnable {
             }
         }
 
+        List<Product> existItems = Products.getInstance().getItems();
         List<ImportedProduct> importedItems = importer.getProducts(filesImportParameters.getFiles(), true);
         ComparingRules<Product> comparingRules = new ComparingRulesImportNow();
-        TotalComparisonResult comparisonResult = comparator.compare(Products.getInstance().getItems(), importedItems, comparingRules);
+        TotalComparisonResult comparisonResult = comparator.compare(existItems, importedItems, comparingRules);
 
         boolean treatItemWithNoCost = filesImportParameters.getParams().getOrDefault(RESET_NON_FOUND_ITEMS_COST, false);
         if (treatItemWithNoCost) {

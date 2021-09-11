@@ -14,10 +14,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static ui_windows.product.data.DataItem.DATA_EMPTY;
-import static ui_windows.product.data.DataItem.DATA_ORDER_NUMBER;
 
 @Log4j2
 public class ExcelFileSaxRowDataToImportedProductMapper {
+    private final PropertiesToImportedProductMapper mapper = new PropertiesToImportedProductMapper();
 
     public ImportedProduct getProductFromFileRecord(SaxRowData record, ImportDataSheet importDataSheet) throws RuntimeException {
         Map<DataItem, ImportedProperty> propertyMap = importDataSheet.getColumnParams().stream()
@@ -36,7 +36,7 @@ public class ExcelFileSaxRowDataToImportedProductMapper {
                         (property) -> property)
                 );
 
-        return propertyMap.get(DATA_ORDER_NUMBER) != null && propertyMap.values().size() > 1 ? new ImportedProduct(propertyMap) : null;
+        return mapper.importedProductMapper(propertyMap);
     }
 
     private Object getValue(SaxRowData record, ImportColumnParameter param) throws RuntimeException {

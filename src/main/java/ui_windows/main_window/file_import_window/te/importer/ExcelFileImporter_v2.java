@@ -8,6 +8,7 @@ import ui_windows.main_window.file_import_window.te.ExcelFileImportUtils;
 import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
 import ui_windows.main_window.file_import_window.te.mapper.ExcelFileSaxRowDataToImportedProductMapper;
 import ui_windows.product.data.DataItem;
+import ui_windows.product.vendors.VendorEnum;
 import utils.BytesToReadableFormatConverter;
 
 import java.io.File;
@@ -72,6 +73,7 @@ public class ExcelFileImporter_v2 extends AbstractFileImporter {
             if (dataRecognizer.isRowContainsTitles(saxRowData)) {
                 params = ExcelFileImportUtils.getInstance().getImportColumnParams(Arrays.asList(saxRowData.getData()));
                 currentSheet.setColumnParams(params);
+                currentSheet.setVendor(VendorEnum.SIEMENS);
 
                 if (manualMode) {
                     ThreadManager.executeFxTaskSafe(() -> new ColumnMappingWindow(currentSheet).getResult());
