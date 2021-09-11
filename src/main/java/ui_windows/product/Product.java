@@ -16,12 +16,9 @@ import ui_windows.product.vendors.VendorEnum;
 import utils.Countries;
 import utils.PriceUtils;
 import utils.comparation.se.Cloneable;
-import utils.property_change_protect.ChangeProtectService;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -94,50 +91,6 @@ public class Product implements Cloneable {
         comments = pewc.taComments.getText();
         replacement = pewc.tfReplacement.getText();
         commentsPrice = pewc.taCommentsPrice.getText();
-    }
-
-    public Product(ResultSet rs) throws SQLException {
-        id = rs.getInt("id");
-        material = rs.getString("material");
-        productForPrint = rs.getString("product_print");
-        article = rs.getString("article");
-        hierarchy = rs.getString("hierarchy");
-        lgbk = rs.getString("lgbk");
-        family_id = rs.getInt("family");
-        endofservice = rs.getString("end_of_service");
-        dangerous = rs.getString("dangerous");
-        country = rs.getString("country");
-        dchain = nullToEmpty(rs.getString("dchain"));
-
-        descriptionru = nullToEmpty(rs.getString("description_ru"));
-        descriptionen = nullToEmpty(rs.getString("description_en"));
-        price = rs.getBoolean("price");
-        blocked = rs.getBoolean("not_used");
-        priceHidden = rs.getBoolean("archive");
-        warranty = rs.getInt("warranty");
-
-        history = rs.getString("history");
-        lastChangeDate = rs.getString("last_change_date");
-        fileName = rs.getString("file_name");
-        comments = rs.getString("comments");
-        commentsPrice = rs.getString("comments_price") == null ? "" : rs.getString("comments_price");
-        replacement = rs.getString("replacement");
-
-        type_id = rs.getInt("type_id");
-        changecodes = rs.getString("change_codes");
-        lastImportcodes = rs.getString("last_import_codes") == null ? "" : rs.getString("last_import_codes");
-
-        normsList = new NormsList(rs.getString("norms_list"));
-        normsMode = rs.getInt("norms_mode");
-
-        minOrder = rs.getInt("min_order");
-        packetSize = rs.getInt("packet_size");
-        leadTime = rs.getInt("lead_time");
-        weight = rs.getDouble("weight");
-        localPrice = rs.getDouble("local_price");
-
-        ChangeProtectService protectService = new ChangeProtectService();
-        protectedData = protectService.mapStringToSet(rs.getString("protected_fields"));
     }
 
     public void displayInEditorWindow(ProductEditorWindowController pewc) {
@@ -502,10 +455,6 @@ public class Product implements Cloneable {
         this.descriptionen = descriptionen;
     }
 
-    private String nullToEmpty(String text) {
-        return text == null ? "" : text;
-    }
-
     public NormsList getNormsList() {
         return normsList;
     }
@@ -588,5 +537,33 @@ public class Product implements Cloneable {
 
     public void setVendor(VendorEnum vendor) {
         this.vendor = vendor;
+    }
+
+    public Boolean getBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(Boolean blocked) {
+        this.blocked = blocked;
+    }
+
+    public void setMinOrder(Integer minOrder) {
+        this.minOrder = minOrder;
+    }
+
+    public void setPacketSize(Integer packetSize) {
+        this.packetSize = packetSize;
+    }
+
+    public void setLeadTime(Integer leadTime) {
+        this.leadTime = leadTime;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+
+    public void setProtectedData(Set<DataItem> protectedData) {
+        this.protectedData = protectedData;
     }
 }
