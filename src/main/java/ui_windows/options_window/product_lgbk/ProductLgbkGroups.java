@@ -243,7 +243,7 @@ public class ProductLgbkGroups implements Initializable {
         return null;
     }
 
-    public Set<Integer> getGlobalNormIds(ProductLgbk productLgbk) {
+    public synchronized Set<Integer> getGlobalNormIds(ProductLgbk productLgbk) {
         Set<Integer> globalNorms = new HashSet<>();
 
         TreeItem<ProductLgbk> selectedTreeItem = getTreeItem(productLgbk);

@@ -122,7 +122,7 @@ public class MainWindow extends Application {
             fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/mainWindow.fxml"));
             rootAnchorPane = fxmlLoader.load();
 
-            controller = (MainWindowController) fxmlLoader.getController();
+            controller = fxmlLoader.getController();
             Scene scene = new Scene(rootAnchorPane);
 
             scene.setOnKeyPressed(event -> {
