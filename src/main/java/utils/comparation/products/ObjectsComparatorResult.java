@@ -1,15 +1,19 @@
 package utils.comparation.products;
 
+import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.product.Product;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static ui_windows.options_window.families_editor.ProductFamilies.UNKNOWN;
 
 public class ObjectsComparatorResult {
     private boolean isNeedUpdateInDB;
     private String historyComment;
     private String logComment;
-    private ArrayList<String[]> reportLines;
+    private List<String[]> reportLines;
 
     public ObjectsComparatorResult() {
         isNeedUpdateInDB = false;
@@ -50,21 +54,21 @@ public class ObjectsComparatorResult {
 
     public void addToReport(Product product, String... line) {
         String[] resultLine = new String[line.length + 5];
-        ProductFamily pf = product.getProductFamily();
-        resultLine[0] = pf != null ? pf.getName() : "";
-        resultLine[1] = pf != null ? pf.getResponsible() : "";
+        ProductFamily pf = ProductFamilies.getInstance().getProductFamily(product);
+        resultLine[0] = pf != UNKNOWN ? pf.getName() : "";
+        resultLine[1] = pf != UNKNOWN ? pf.getResponsible() : "";
         resultLine[2] = product.getMaterial();
         resultLine[3] = product.getArticle();
-        resultLine[4] = product.isPrice() ? "В прайсе" : "Не в прайсе";
+        resultLine[4] = product.getPrice() ? "В прайсе" : "Не в прайсе";
 
         for (int i = 5; i < resultLine.length; i++) {
-            resultLine[i] = line[i-5];
+            resultLine[i] = line[i - 5];
         }
 
         reportLines.add(resultLine);
     }
 
-    public ArrayList<String[]> getReportLines() {
+    public List<String[]> getReportLines() {
         return reportLines;
     }
 }

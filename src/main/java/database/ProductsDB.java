@@ -30,8 +30,8 @@ public class ProductsDB extends DbRequest {
                     "dchain = ?, description_ru = ?, description_en = ?, price = ?, not_used = ?, archive = ?, history = ?," +
                     "last_change_date = ?, file_name = ?, comments = ?, replacement = ?, type_id = ?, change_codes = ?, " +
                     "product_print = ?, last_import_codes = ?, norms_list = ?, norms_mode = ?, min_order = ?, packet_size = ?, " +
-                    "lead_time = ?, weight = ?, local_price = ?, warranty = ?, comments_price = ?, protected_fields = ?," +
-                    "vendor = ? WHERE material = ?");
+                    "lead_time = ?, weight = ?, local_price = ?, warranty = ?, comments_price = ?, protected_fields = ? " +
+                    "WHERE material = ? AND vendor = ?");
             deleteData = connection.prepareStatement("DELETE FROM products " +
                     "WHERE id = ?");
         } catch (SQLException e) {
@@ -42,7 +42,7 @@ public class ProductsDB extends DbRequest {
 
     public List<Product> getData() throws Exception {
         List<Product> products = new ArrayList<>();
-//        try {
+
         ResultSet rs = connection.prepareStatement("SELECT * FROM products").executeQuery();
         DbToProductMapper mapper = new DbToProductMapper();
 
@@ -51,9 +51,7 @@ public class ProductsDB extends DbRequest {
         }
 
         rs.close();
-//        } catch (SQLException e) {
-//            logAndMessage("SQL exception products, ", e);
-//        }
+
         return products;
     }
 
@@ -68,6 +66,7 @@ public class ProductsDB extends DbRequest {
                     count = setData(alpr, count, j, updateData);
 
                     updateData.setString(++count, alpr.get(j).getMaterial());
+                    updateData.setInt(++count, alpr.get(j).getVendor().getId());
                     updateData.addBatch();
                 }
                 ExecutionIndicator.getInstance().setProgress((double) j / (double) alpr.size());
@@ -148,9 +147,9 @@ public class ProductsDB extends DbRequest {
         prepStat.setString(++count, alpr.get(j).getDchain());
         prepStat.setString(++count, alpr.get(j).getDescriptionru());
         prepStat.setString(++count, alpr.get(j).getDescriptionen());
-        prepStat.setBoolean(++count, alpr.get(j).isPrice());
-        prepStat.setBoolean(++count, alpr.get(j).isBlocked());
-        prepStat.setBoolean(++count, alpr.get(j).isPriceHidden());
+        prepStat.setBoolean(++count, alpr.get(j).getPrice());
+        prepStat.setBoolean(++count, alpr.get(j).getBlocked());
+        prepStat.setBoolean(++count, alpr.get(j).getPriceHidden());
         prepStat.setString(++count, alpr.get(j).getHistory());
         prepStat.setString(++count, alpr.get(j).getLastChangeDate());
         prepStat.setString(++count, alpr.get(j).getFileName());
@@ -169,8 +168,6 @@ public class ProductsDB extends DbRequest {
         prepStat.setDouble(++count, alpr.get(j).getLocalPrice());
         prepStat.setInt(++count, alpr.get(j).getWarranty());
         prepStat.setString(++count, alpr.get(j).getCommentsPrice().isEmpty() ? null : alpr.get(j).getCommentsPrice());
-        prepStat.setInt(++count, alpr.get(j).getVendor().getId());
-
         ChangeProtectService protectService = new ChangeProtectService();
         prepStat.setString(++count, protectService.mapSetToString(alpr.get(j).getProtectedData()));
 

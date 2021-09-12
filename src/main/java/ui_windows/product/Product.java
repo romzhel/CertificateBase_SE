@@ -1,12 +1,11 @@
 package ui_windows.product;
 
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
-import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
-import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.NormsList;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
@@ -19,11 +18,11 @@ import utils.comparation.se.Cloneable;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Data
 @Log4j2
 @NoArgsConstructor
 public class Product implements Cloneable {
@@ -72,8 +71,8 @@ public class Product implements Cloneable {
 
         lgbk = pewc.tfLgbk.getText();
         hierarchy = pewc.tfHierarchy.getText();
-        ProductFamily pf = getProductFamily();
-        int calcFamilyId = pf != null ? pf.getId() : -1;
+        ProductFamily pf = ProductFamilies.getInstance().getFamilyByLgbk(new ProductLgbk(lgbk, hierarchy));
+        int calcFamilyId = pf.getId();
         int uiFamilyId = ProductFamilies.getInstance().getFamilyIdByName(pewc.cbFamily.getValue());
         family_id = calcFamilyId == uiFamilyId ? 0 : uiFamilyId;
 
@@ -106,6 +105,7 @@ public class Product implements Cloneable {
         pewc.tfEndOfService.setText(endofservice);
         pewc.tfDangerous.setText(dangerous);
         pewc.tfCountry.setText(Countries.getCombinedName(country));
+        pewc.tfVendor.setText(vendor.name());
 
         String plt = DataItem.DATA_IN_WHICH_PRICE_LIST.getValue(this).toString();
         pewc.tfPriceListIncl.setText(plt);
@@ -121,6 +121,7 @@ public class Product implements Cloneable {
                 pewc.cbxPrice.setDisable(true);
 
                 pewc.tfAccessibility.setText("Заблокировано");
+                pewc.tfAccessibility.setStyle("-fx-text-fill: red;");
             } else {
                 pewc.cbxBlocked.setStyle("");
                 pewc.cbxPrice.setDisable(false);
@@ -166,7 +167,8 @@ public class Product implements Cloneable {
         pewc.cbType.setDisable(type_id == null);
         if (minOrder != null) pewc.tfMinOrder.setText(minOrder == 0 ? NO_DATA : String.valueOf(minOrder));
         if (packetSize != null) pewc.tfPacketSize.setText(packetSize == 0 ? NO_DATA : String.valueOf(packetSize));
-        if (leadTime != null) pewc.tfLeadTime.setText(leadTime == 0 ? NO_DATA : String.valueOf(getLeadTimeRu()));
+        if (leadTime != null)
+            pewc.tfLeadTime.setText(leadTime == 0 ? NO_DATA : String.valueOf(Products.getInstance().getLeadTimeRu(this)));
         if (weight != null) pewc.tfWeight.setText(weight == 0 ? NO_DATA : String.valueOf(weight));
         if (localPrice != null)
             pewc.tfLocalPrice.setText(localPrice == 0 ? NO_DATA : String.format("%,.2f", PriceUtils.roundCost(localPrice)));
@@ -174,19 +176,13 @@ public class Product implements Cloneable {
         List<String> items = ProductFamilies.getInstance().getFamiliesNames();//add all families and display value
         items.add(0, "");
         pewc.cbFamily.getItems().addAll(items);
-        ProductFamily productFamily = getProductFamily();
+        ProductFamily productFamily = ProductFamilies.getInstance().getProductFamily(this);
         if (productFamily != null) {
             pewc.cbFamily.setValue(productFamily.getName());
             pewc.tfPm.setText(productFamily.getResponsible());
         }
 
         pewc.tfWarranty.setText(DataItem.DATA_WARRANTY.getValue(this).toString());
-    }
-
-    public boolean isOrderableCalculated() {
-        OrderAccessibility oa = OrdersAccessibility.getInstance().getOrderAccessibilityByStatusCode(getDchain());
-        if (oa != null) return oa.isOrderable();
-        else return false;
     }
 
     @Override
@@ -211,359 +207,5 @@ public class Product implements Cloneable {
         }
 
         return cloneItem;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(String material) {
-        this.material = material;
-    }
-
-    public String getArticle() {
-        return article;
-    }
-
-    public void setArticle(String article) {
-        this.article = article;
-    }
-
-    public String getHierarchy() {
-        return hierarchy;
-    }
-
-    public void setHierarchy(String hierarchy) {
-        this.hierarchy = hierarchy;
-    }
-
-    public String getLgbk() {
-        return lgbk;
-    }
-
-    public void setLgbk(String lgbk) {
-        this.lgbk = lgbk;
-    }
-
-    public String getEndofservice() {
-        return endofservice;
-    }
-
-    public void setEndofservice(String endofservice) {
-        this.endofservice = endofservice;
-    }
-
-    public String getDangerous() {
-        return dangerous;
-    }
-
-    public void setDangerous(String dangerous) {
-        this.dangerous = dangerous;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getDchain() {
-        return dchain;
-    }
-
-    public void setDchain(String dchain) {
-        this.dchain = dchain;
-    }
-
-    public String getDescriptionru() {
-        return descriptionru;
-    }
-
-    public void setDescriptionru(String descriptionru) {
-        this.descriptionru = descriptionru;
-    }
-
-    public Boolean isPrice() {
-        return price == null
-                ? null
-                : blocked == null ? price : price && !blocked;
-    }
-
-    public void setPrice(boolean price) {
-        this.price = price;
-    }
-
-    public String getChangecodes() {
-        return changecodes;
-    }
-
-    public void setChangecodes(String changecodes) {
-        this.changecodes = changecodes;
-    }
-
-    public int getType_id() {
-        return type_id;
-    }
-
-    public void setType_id(int type_id) {
-        this.type_id = type_id;
-    }
-
-    public String getHistory() {
-        return history;
-    }
-
-    public void setHistory(String history) {
-        this.history = history;
-    }
-
-    public void addHistory(String comment) {
-        if (history.isEmpty()) {
-            history = comment;
-        } else {
-            history = history.concat("|").concat(comment);
-        }
-    }
-
-    public String getLastChangeDate() {
-        return lastChangeDate;
-    }
-
-    public void setLastChangeDate(String lastChangeDate) {
-        this.lastChangeDate = lastChangeDate;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public String getCommentsPrice() {
-        return commentsPrice;
-    }
-
-    public void setCommentsPrice(String commentsPrice) {
-        this.commentsPrice = commentsPrice;
-    }
-
-    public String getReplacement() {
-        return replacement;
-    }
-
-    public void setReplacement(String replacement) {
-        this.replacement = replacement;
-    }
-
-    public int getFamily_id() {
-        return family_id;
-    }
-
-    public void setFamily_id(int family_id) {
-        this.family_id = family_id;
-    }
-
-    public ProductFamily getProductFamilyDefValue(ProductFamily defaultValue) {
-        ProductFamily result = getProductFamily();
-        return result == null ? defaultValue : result;
-    }
-
-    public int getProductFamilyId() {
-        ProductFamily pf = getProductFamily();
-        return pf != null ? pf.getId() : -1;
-    }
-
-    public ProductFamily getProductFamily() {
-        if (family_id != null && family_id > 0) {
-            return ProductFamilies.getInstance().getFamilyById(family_id);
-        } else {
-            if (lgbk == null) return null;
-
-            LgbkAndParent lgbkAndParent = ProductLgbkGroups.getInstance().getLgbkAndParent(new ProductLgbk(this));
-            /*if (lgbkAndParent != null) return lgbkAndParent.getProductFamily();
-
-            if ((hierarchy == null || hierarchy.isEmpty()) && material != null) {
-                Product product = Products.getInstance().getItemByMaterialOrArticle(
-                        material.replaceAll("(VBPZ\\:)*(BPZ\\:)*", ""));
-
-                if (product != null) {
-                    hierarchy = product.hierarchy;
-                    lgbkAndParent = ProductLgbkGroups.getInstance().getLgbkAndParent(new ProductLgbk(this));
-                }
-
-//                System.out.println("product for material: " + material + " not found");
-            }*/
-
-            return lgbkAndParent != null ? lgbkAndParent.getProductFamily() : null;
-        }
-    }
-
-    public boolean isSpProduct() {
-        ProductFamily pf = getProductFamily();
-        return pf != null && pf.getId() == 24;
-    }
-
-    public String getProductForPrint() {
-        return productForPrint;
-    }
-
-    public void setProductForPrint(String productForPrint) {
-        this.productForPrint = productForPrint;
-    }
-
-    public String getLastImportcodes() {
-        return lastImportcodes;
-    }
-
-    public void setLastImportcodes(String lastImportcodes) {
-        this.lastImportcodes = lastImportcodes;
-    }
-
-    public void addLastImportCodes(String codes) {
-        if (lastImportcodes.isEmpty()) {
-            lastImportcodes = codes;
-        } else {
-            lastImportcodes = lastImportcodes.concat(",").concat(codes);
-        }
-    }
-
-    public String getDescriptionen() {
-        return descriptionen;
-    }
-
-    public void setDescriptionen(String descriptionen) {
-        this.descriptionen = descriptionen;
-    }
-
-    public NormsList getNormsList() {
-        return normsList;
-    }
-
-    public void setNormsList(NormsList normsList) {
-        this.normsList = normsList;
-    }
-
-    public int getNormsMode() {
-        return normsMode;
-    }
-
-    public void setNormsMode(int normsMode) {
-        this.normsMode = normsMode;
-    }
-
-    public int getMinOrder() {
-        return minOrder;
-    }
-
-    public int getPacketSize() {
-        return packetSize;
-    }
-
-    public int getLeadTime() {
-        return leadTime;
-    }
-
-    public Double getWeight() {
-        return weight;
-    }
-
-    public Double getLocalPrice() {
-        return localPrice;
-    }
-
-    public void setLocalPrice(Double localPrice) {
-        this.localPrice = localPrice;
-    }
-
-    public int getLeadTimeRu() {
-        return getLeadTime() + 14;
-    }
-
-    public String getDescriptionRuEn() {
-        return getDescriptionru().isEmpty() ? getDescriptionen() : getDescriptionru();
-    }
-
-    public ArrayList<Integer> getGlobalNorms() {
-        return new ArrayList<Integer>(ProductLgbkGroups.getInstance().getGlobalNormIds(new ProductLgbk(this)));
-    }
-
-    public Boolean isBlocked() {
-        return blocked;
-    }
-
-    public Boolean isPriceHidden() {
-        return priceHidden;
-    }
-
-    public void setPriceHidden(Boolean priceHidden) {
-        this.priceHidden = priceHidden;
-    }
-
-    public Integer getWarranty() {
-        return warranty;
-    }
-
-    public void setWarranty(Integer warranty) {
-        this.warranty = warranty;
-    }
-
-    public Set<DataItem> getProtectedData() {
-        return protectedData;
-    }
-
-    public VendorEnum getVendor() {
-        return vendor;
-    }
-
-    public void setVendor(VendorEnum vendor) {
-        this.vendor = vendor;
-    }
-
-    public Boolean getBlocked() {
-        return blocked;
-    }
-
-    public void setBlocked(Boolean blocked) {
-        this.blocked = blocked;
-    }
-
-    public void setMinOrder(Integer minOrder) {
-        this.minOrder = minOrder;
-    }
-
-    public void setPacketSize(Integer packetSize) {
-        this.packetSize = packetSize;
-    }
-
-    public void setLeadTime(Integer leadTime) {
-        this.leadTime = leadTime;
-    }
-
-    public void setWeight(Double weight) {
-        this.weight = weight;
-    }
-
-    public void setProtectedData(Set<DataItem> protectedData) {
-        this.protectedData = protectedData;
     }
 }

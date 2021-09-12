@@ -107,7 +107,6 @@ public class TotalPriceComparisonResultToExcelExporter extends ReportToExcelTemp
             int itemSheetIndex = comparisonResult.getSheetNames().indexOf(itemSheetName);
             fillProductData(product, row, itemDataStyles[itemSheetIndex]);
 
-
             colIndex = values.length + itemSheetIndex * sheetTitles.length;
 
             fillCell(row.createCell(colIndex), comment, itemDataStyles[itemSheetIndex]);
@@ -115,6 +114,11 @@ public class TotalPriceComparisonResultToExcelExporter extends ReportToExcelTemp
     }
 
     private void fillProductData(Product changedItem, Row row, CellStyle cellStyle) {
+        if (changedItem == null) {
+            log.warn("fill null product data");
+            return;
+        }
+
         colIndex = 0;
         for (DataItem dataItem : values) {
             fillCell(row.createCell(colIndex++), dataItem.getValue(changedItem), cellStyle);

@@ -121,6 +121,8 @@ public class ProductEditorWindowController implements Initializable {
     CheckBox cbxOrderable;
     @FXML
     ContextMenu cmCertActions;
+    @FXML
+    public TextField tfVendor;
     private MultiEditor multiEditor;
     private CertificateVerificationTable certificateVerificationTable;
     private ComboBoxEqTypeSelector comboBoxEqTypeSelector;

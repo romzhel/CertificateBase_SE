@@ -45,7 +45,7 @@ public class ProductLgbkGroups implements Initializable {
         getFullTreeSet();
     }
 
-    public ArrayList<ProductLgbk> createFromProducts(Products products) {
+    public List<ProductLgbk> createFromProducts(Products products) {
         rootNode = new ProductLgbk("Все позиции", "...", ProductLgbk.ROOT_NODE);
         ArrayList<ProductLgbk> newProductLgbks = new ArrayList<>();
 
@@ -117,7 +117,7 @@ public class ProductLgbkGroups implements Initializable {
     }
 
     public void checkConsistency() {
-        ArrayList<ProductLgbk> newLgbks = createFromProducts(Products.getInstance());
+        List<ProductLgbk> newLgbks = createFromProducts(Products.getInstance());
 
         String newNames = "";
         for (ProductLgbk plgbk : newLgbks) {
@@ -224,7 +224,7 @@ public class ProductLgbkGroups implements Initializable {
         if (treeItemRoot == null || lookingForLgbk == null) return null;
         if (treeItemRoot.getValue().equals(lookingForLgbk)) return treeItemRoot;
 
-        for (TreeItem<ProductLgbk> groupTreeItem : treeItemRoot.getChildren()) {
+        for (TreeItem<ProductLgbk> groupTreeItem : new ArrayList<>(treeItemRoot.getChildren())) {//todo concurrent execution
             if (groupTreeItem.getValue().getId() == lookingForLgbk.getId()) return groupTreeItem;
 
             if (groupTreeItem.getValue().getLgbk().equals(lookingForLgbk.getLgbk())) {

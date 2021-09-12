@@ -26,7 +26,9 @@ public class LgbkGroup {
 
     public void addProduct(Product product) {
         for (HierarchyGroup group : hierarchyGroups) {
-            if (product.isSpProduct() || product.getHierarchy().contains(group.getName())) {
+//            if (product.isSpProduct() || product.getHierarchy().contains(group.getName())) { todo перепроверить
+            if (product.getHierarchy().contains(group.getName()) ||
+                    product.getHierarchy().isEmpty() && group.getName().equals("no name")) {
                 group.addProduct(product);
                 return;
             }

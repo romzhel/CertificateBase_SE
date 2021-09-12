@@ -16,7 +16,7 @@ import static ui_windows.product.data.DataItem.DATA_VENDOR;
 public class PropertiesToImportedProductMapper {
 
     public ImportedProduct importedProductMapper(Map<DataItem, ImportedProperty> propertyMap) {
-        if (propertyMap.get(DATA_ORDER_NUMBER) == null || propertyMap.values().isEmpty()) {
+        if (propertyMap.get(DATA_ORDER_NUMBER) == null || propertyMap.values().size() < 2) {
             return null;
         }
 

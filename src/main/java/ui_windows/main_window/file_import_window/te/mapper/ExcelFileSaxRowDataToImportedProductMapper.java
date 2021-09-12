@@ -7,6 +7,7 @@ import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProperty;
 import ui_windows.main_window.file_import_window.te.importer.SaxRowData;
 import ui_windows.product.data.DataItem;
+import ui_windows.product.vendors.VendorEnum;
 import utils.PriceUtils;
 
 import java.lang.reflect.Field;
@@ -58,13 +59,17 @@ public class ExcelFileSaxRowDataToImportedProductMapper {
                 result = (int) getDoubleFromString(value);
             } else if (fieldType.equals("Double")) {
                 result = getDoubleFromString(value);
+            } else if (fieldType.equals("Boolean")) {
+                result = value.equalsIgnoreCase("true") || value.equals("1");
+            } else if (fieldType.equals("VendorEnum")) {
+                result = VendorEnum.recognizeVendor(value);
             } else {
                 throw new RuntimeException("unsupported field type for value " + value);
             }
 
             return result;
         } catch (Exception e) {
-            log.error("error set Product field '{}' with value '{} => {}', {}", field, value, result, record);
+            log.error("error set Product field '{}' with value '{} => {}', {}", field.getName(), value, result, record);
             return null;
         }
     }
