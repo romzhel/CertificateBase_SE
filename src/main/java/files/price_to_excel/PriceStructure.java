@@ -9,7 +9,6 @@ import ui_windows.product.Product;
 import ui_windows.product.Products;
 import ui_windows.product.certificatesChecker.CertificatesChecker;
 import ui_windows.product.certificatesChecker.CheckStatusResult;
-import utils.PriceLGBK;
 
 import java.util.*;
 
@@ -40,11 +39,10 @@ public class PriceStructure {
             priceListSheet.getContentTable().switchContentMode(CONTENT_MODE_LGBK);
         }
 
-//        ExecutorService executorService = Executors.newFixedThreadPool(2);
         for (Product product : Products.getInstance().getItems()) {
-//            executorService.execute(() -> {
-            if (product.isPrice() && !product.isBlocked() && priceListSheet.isInPrice(product)) {
+            if (product.getPrice() && !product.getBlocked() && priceListSheet.isInPrice(product)) {
                 CheckStatusResult checkingResult = new CertificatesChecker(product).getCheckStatusResult();
+
                 if (priceListSheet.isCheckCert() && checkingResult.equals(STATUS_OK) ||
                         !priceListSheet.isCheckCert() && !checkingResult.equals(STATUS_NOT_OK)) {
                     addProduct(product);
@@ -53,15 +51,6 @@ public class PriceStructure {
                 }
             }
         }
-//            });
-//    }
-
-       /* executorService.shutdown();
-        try {
-            executorService.awaitTermination(30, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
 
 //        if (contentMode == CONTENT_MODE_FAMILY) priceListSheet.getContentTable().switchContentMode(CONTENT_MODE_FAMILY);
     }
@@ -69,14 +58,14 @@ public class PriceStructure {
     public synchronized void addProduct(Product product) {
         correctItems.add(product);
         for (LgbkGroup group : lgbkGroups) {
-            String l = PriceLGBK.getpriceLgbk(product);
+            String l = product.getLgbk();
             String n = group.getName();
             if (l.equals(n)) {
                 group.addProduct(product);
                 return;
             }
         }
-        LgbkGroup newGroup = new LgbkGroup(PriceLGBK.getpriceLgbk(product), priceListSheet);
+        LgbkGroup newGroup = new LgbkGroup(product.getLgbk(), priceListSheet);
         newGroup.addProduct(product);
         lgbkGroups.add(newGroup);
     }

@@ -1,12 +1,14 @@
 package ui_windows.main_window.file_import_window.te.importer;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import ui_windows.product.data.DataItem;
 
 import java.util.Map;
 
 @Data
+@NoArgsConstructor
 public class ImportedProduct {
     private String id;
     private Map<DataItem, ImportedProperty> properties;

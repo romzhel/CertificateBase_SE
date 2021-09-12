@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import ui_windows.main_window.file_import_window.te.ImportColumnParameter;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.product.Product;
+import ui_windows.product.Products;
 import ui_windows.product.data.DataItem;
 import utils.Utils;
 import utils.comparation.te.ChangedProperty;
@@ -18,6 +19,7 @@ import static ui_windows.product.data.DataItem.*;
 
 public class ComparingRulesImportNow extends ProductComparingRulesTemplate implements ComparingRules<Product> {
     private static final Logger logger = LogManager.getLogger(ComparingRulesImportNow.class);
+    private final Products productService = Products.getInstance();
 
     public ComparingRulesImportNow() {
     }
@@ -94,9 +96,9 @@ public class ComparingRulesImportNow extends ProductComparingRulesTemplate imple
         StringBuilder consoleComment = new StringBuilder(comment);
 
         if (result.getItem() == null) {//new
-            result.getItem_after().addHistory(comment.concat("new (file)"));
+            productService.addHistory(result.getItem_after(), comment.concat("new (file)"));
             consoleComment.append("new (file)");
-            result.getItem_after().addLastImportCodes("new");
+            Products.getInstance().addLastImportCodes(result.getItem_after(), "new");
         } else if (result.getItem_after() == null) {//gone
 
         } else {//changed
@@ -118,8 +120,8 @@ public class ComparingRulesImportNow extends ProductComparingRulesTemplate imple
                 }
             }
 
-            result.getItem().addHistory(comment.concat(" file"));
-            result.getItem().addLastImportCodes(impCodes);
+            productService.addHistory(result.getItem(), comment.concat(" file"));
+            Products.getInstance().addLastImportCodes(result.getItem(), impCodes);
 
             logger.debug(consoleComment.append(" file").toString());
         }

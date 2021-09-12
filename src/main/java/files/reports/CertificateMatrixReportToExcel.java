@@ -9,6 +9,7 @@ import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import ui_windows.product.Products;
 import utils.Utils;
 
 import java.io.File;
@@ -137,7 +138,7 @@ public class CertificateMatrixReportToExcel {
 
         cell = row.createCell(locCol++, CellType.STRING);
         cell.setCellStyle(cellLeftStyle);
-        cell.setCellValue(crr.getProduct().getDescriptionRuEn());
+        cell.setCellValue(Products.getInstance().getDescriptionRuEn(crr.getProduct()));
 
         //избегаем отображения текста на соседней ячейке
         cell = row.createCell(locCol, CellType.STRING);

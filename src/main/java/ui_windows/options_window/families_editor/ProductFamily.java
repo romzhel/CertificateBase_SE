@@ -11,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ProductFamily implements PriceListContentItem {
-    public static ProductFamily UNKNOWN = new ProductFamily("Не известно");
     private int id;
     private StringProperty name;
     private StringProperty responsible;
@@ -23,6 +22,12 @@ public class ProductFamily implements PriceListContentItem {
 
     public ProductFamily(String name) {
         this.name = new SimpleStringProperty(name);
+    }
+
+    public ProductFamily(String name, int id, String responsible) {
+        this.id = id;
+        this.name = new SimpleStringProperty(name);
+        this.responsible = new SimpleStringProperty(responsible);
     }
 
     public ProductFamily(AnchorPane root) {
@@ -57,24 +62,24 @@ public class ProductFamily implements PriceListContentItem {
         return name.get();
     }
 
-    public StringProperty nameProperty() {
-        return name;
-    }
-
     public void setName(String name) {
         this.name.set(name);
+    }
+
+    public StringProperty nameProperty() {
+        return name;
     }
 
     public String getResponsible() {
         return responsible.get();
     }
 
-    public StringProperty responsibleProperty() {
-        return responsible;
-    }
-
     public void setResponsible(String responsible) {
         this.responsible.set(responsible);
+    }
+
+    public StringProperty responsibleProperty() {
+        return responsible;
     }
 
     @Override

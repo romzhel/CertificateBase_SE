@@ -5,14 +5,12 @@ import database.ProductsDB;
 import javafx.scene.control.TableView;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.product.vendors.VendorEnum;
-import utils.Utils;
 import utils.comparation.products.ProductNameResolver;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -59,14 +57,14 @@ public class Products implements Initializable {
     }
 
     public Product getItemByMaterialOrArticle(String name) {
-        String resolvedName = ProductNameResolver.resolve(Utils.toEN(name)).toUpperCase();
-
         for (VendorEnum vendor : VendorEnum.values()) {
-            if (productMap.containsKey(getVendorMaterial(vendor, name))) {
-                return productMap.get(resolvedName);
+            String id = getVendorMaterial(vendor, name);
+            if (productMap.containsKey(id)) {
+                return productMap.get(id);
             }
         }
 
+        String resolvedName = ProductNameResolver.resolve(name);
         return productMap.values().stream()
                 .filter(product -> ProductNameResolver.resolve(product.getArticle()).equals(resolvedName))
                 .findAny().orElse(null);
@@ -113,5 +111,42 @@ public class Products implements Initializable {
 
     public String getVendorMaterial(VendorEnum vendor, String material) {
         return String.format("%d%s", vendor.getId(), ProductNameResolver.resolve(material));
+    }
+
+    public Boolean isCheckedToPrice(Product product) {
+        Boolean isCheckedToPrice = product.getPrice();
+        Boolean isBlocked = product.getBlocked();
+
+        return isCheckedToPrice == null
+                ? null
+                : isBlocked == null ? isCheckedToPrice : isCheckedToPrice && !isBlocked;
+    }
+
+    public void addHistory(Product product, String newHistory) {
+        if (product.getHistory().isEmpty()) {
+            product.setHistory(newHistory);
+        } else {
+            product.setHistory(product.getHistory().concat("|").concat(newHistory));
+        }
+    }
+
+    public void addLastImportCodes(Product product, String codes) {
+        if (product.getLastImportcodes().isEmpty()) {
+            product.setLastImportcodes(codes);
+        } else {
+            product.setLastImportcodes(product.getLastImportcodes().concat(",").concat(codes));
+        }
+    }
+
+    public List<Integer> getGlobalNorms(Product product) {
+        return new ArrayList<Integer>(ProductLgbkGroups.getInstance().getGlobalNormIds(new ProductLgbk(product)));
+    }
+
+    public String getDescriptionRuEn(Product product) {
+        return product.getDescriptionru().isEmpty() ? product.getDescriptionen() : product.getDescriptionru();
+    }
+
+    public int getLeadTimeRu(Product product) {
+        return product.getLeadTime() + 14;
     }
 }

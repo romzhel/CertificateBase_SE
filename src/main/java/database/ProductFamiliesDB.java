@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProductFamiliesDB extends DbRequest {
 
@@ -24,8 +25,8 @@ public class ProductFamiliesDB extends DbRequest {
         }
     }
 
-    public ArrayList getData() {
-        ArrayList<ProductFamily> productFamilies = new ArrayList<>();
+    public List<ProductFamily> getData() {
+        List<ProductFamily> productFamilies = new ArrayList<>();
         try {
             ResultSet rs = connection.prepareStatement("SELECT * FROM productFamilies").executeQuery();
 

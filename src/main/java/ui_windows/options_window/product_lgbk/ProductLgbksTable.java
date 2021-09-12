@@ -10,11 +10,13 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.util.Callback;
+import lombok.extern.log4j.Log4j2;
 import ui_windows.options_window.families_editor.ProductFamilies;
 
 import static ui_windows.options_window.product_lgbk.ProductLgbk.GROUP_NODE;
 import static ui_windows.options_window.product_lgbk.ProductLgbk.ROOT_NODE;
 
+@Log4j2
 public class ProductLgbksTable {
     private TreeTableView<ProductLgbk> tableView;
 
@@ -75,7 +77,7 @@ public class ProductLgbksTable {
         });
         tableView.getColumns().add(colB);
 
-        /*TreeTableColumn<ProductLgbk, Boolean> colExcPrice = new TreeTableColumn<>("Искл. из прайса");
+        TreeTableColumn<ProductLgbk, Boolean> colExcPrice = new TreeTableColumn<>("Искл. из прайса");
         colExcPrice.setCellValueFactory(param -> new SimpleBooleanProperty(param.getValue().getValue().isNotUsed()));
 
         colExcPrice.setCellFactory(new Callback<TreeTableColumn<ProductLgbk, Boolean>, TreeTableCell<ProductLgbk, Boolean>>() {
@@ -110,7 +112,7 @@ public class ProductLgbksTable {
             }
         });
 
-        tableView.getColumns().add(colExcPrice);*/
+        tableView.getColumns().add(colExcPrice);
 
         tableView.setRoot(ProductLgbkGroups.getInstance().getFullTreeSet());
     }
