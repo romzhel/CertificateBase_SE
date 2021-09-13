@@ -75,11 +75,14 @@ public class ProductsDB extends DbRequest {
                 int[] result = updateData.executeBatch();
                 connection.commit();
 
+                int index = 0;
                 for (int res : result) {
                     if (res != 1) {
-                        logAndMessage("", new RuntimeException("Данные продукты не были обновлены в БД"));
+                        String message = "Product update error";
+                        logAndMessage(String.format("%s '%s',\nchanged records: %d", message, alpr.get(index), res), new RuntimeException(message));
                         return false;
                     }
+                    index++;
                 }
             }
         } catch (SQLException e) {

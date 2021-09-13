@@ -9,8 +9,7 @@ import ui_windows.product.vendors.VendorEnum;
 
 import java.util.Map;
 
-import static ui_windows.product.data.DataItem.DATA_ORDER_NUMBER;
-import static ui_windows.product.data.DataItem.DATA_VENDOR;
+import static ui_windows.product.data.DataItem.*;
 
 @Log4j2
 public class PropertiesToImportedProductMapper {
@@ -29,6 +28,8 @@ public class PropertiesToImportedProductMapper {
         if (propertyMap.containsKey(DATA_VENDOR)) {
             String fileImportedVendorRaw = propertyMap.get(DATA_VENDOR).getNewValue().toString();
             vendor = VendorEnum.recognizeVendor(fileImportedVendorRaw);
+        } else if (propertyMap.containsKey(DATA_LGBK) && propertyMap.get(DATA_LGBK).getNewValue().toString().startsWith("LVB")) {
+            vendor = VendorEnum.VANDERBILT;
         } else {
             vendor = propertyMap.get(DATA_ORDER_NUMBER).getSource().getVendor();
         }
