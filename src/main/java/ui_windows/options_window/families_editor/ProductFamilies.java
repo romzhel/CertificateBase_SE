@@ -155,7 +155,7 @@ public class ProductFamilies implements Initializable {
         return pf.getId() == 24;
     }
 
-    public boolean isSpProduct(String lgbk) {
+    public boolean isSpLgbkName(String lgbk) {
         return lgbk.startsWith("LVB");
     }
 }

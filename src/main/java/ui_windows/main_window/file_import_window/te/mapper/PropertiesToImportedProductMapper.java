@@ -3,6 +3,7 @@ package ui_windows.main_window.file_import_window.te.mapper;
 import lombok.extern.log4j.Log4j2;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProperty;
+import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.product.Products;
 import ui_windows.product.data.DataItem;
 import ui_windows.product.vendors.VendorEnum;
@@ -28,7 +29,8 @@ public class PropertiesToImportedProductMapper {
         if (propertyMap.containsKey(DATA_VENDOR)) {
             String fileImportedVendorRaw = propertyMap.get(DATA_VENDOR).getNewValue().toString();
             vendor = VendorEnum.recognizeVendor(fileImportedVendorRaw);
-        } else if (propertyMap.containsKey(DATA_LGBK) && propertyMap.get(DATA_LGBK).getNewValue().toString().startsWith("LVB")) {
+        } else if (propertyMap.containsKey(DATA_LGBK) &&
+                ProductFamilies.getInstance().isSpLgbkName(propertyMap.get(DATA_LGBK).getNewValue().toString())) {
             vendor = VendorEnum.VANDERBILT;
         } else {
             vendor = propertyMap.get(DATA_ORDER_NUMBER).getSource().getVendor();
