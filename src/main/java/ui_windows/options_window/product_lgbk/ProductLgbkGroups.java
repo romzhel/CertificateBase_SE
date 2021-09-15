@@ -4,6 +4,7 @@ import core.Initializable;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
@@ -13,12 +14,13 @@ import utils.ItemsGroup;
 
 import java.util.*;
 
+@Log4j2
 public class ProductLgbkGroups implements Initializable {
     private static final Logger logger = LogManager.getLogger(ProductLgbkGroups.class);
     private static ProductLgbkGroups instance;
     private ProductLgbk rootNode;
     private TreeItem<ProductLgbk> treeItemRoot;
-    private TreeSet<ItemsGroup<ProductLgbk, ProductLgbk>> lgbkGroups;
+    private Set<ItemsGroup<ProductLgbk, ProductLgbk>> lgbkGroups;
 
     private ProductLgbkGroups() {
         lgbkGroups = new TreeSet<>((o1, o2) ->
@@ -156,8 +158,8 @@ public class ProductLgbkGroups implements Initializable {
         return treeItemRoot;
     }
 
-    public ArrayList<ProductLgbk> getLgbks() {
-        ArrayList<ProductLgbk> result = new ArrayList<>();
+    public List<ProductLgbk> getLgbks() {
+        List<ProductLgbk> result = new ArrayList<>();
 
         result.add(rootNode);
 
@@ -196,9 +198,13 @@ public class ProductLgbkGroups implements Initializable {
                 String comp3 = tempLgbk.getHierarchy().replaceAll("\\.", "");
                 String comp4 = lookingForLgbk.getHierarchy();
 
-                if (comp4.contains(comp3) && !comp3.isEmpty() || comp3.isEmpty() && comp4.isEmpty()) {
-                    result.setLgbkItem(tempLgbk);
-                    break;
+                try {
+                    if (comp4.contains(comp3) && !comp3.isEmpty() || comp3.isEmpty() && comp4.isEmpty()) {
+                        result.setLgbkItem(tempLgbk);
+                        break;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }

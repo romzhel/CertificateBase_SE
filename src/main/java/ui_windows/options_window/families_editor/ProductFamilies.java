@@ -131,7 +131,7 @@ public class ProductFamilies implements Initializable {
     }
 
     public ProductFamily getFamilyByLgbk(ProductLgbk lgbk) {
-        if (lgbk == null || lgbk.getLgbk() == null && lgbk.getHierarchy() == null) {
+        if (lgbk == null || lgbk.getLgbk() == null || lgbk.getHierarchy() == null) {
             return UNKNOWN;
         }
 
