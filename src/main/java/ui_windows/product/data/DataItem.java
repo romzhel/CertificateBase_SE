@@ -640,6 +640,17 @@ public enum DataItem {
         public Object getValue(Product product) {
             return product.getVendor();
         }
+    },
+    DATA_HISTORY(48, "История изменений", "history") {
+        public void fillExcelCell(Cell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.STRING);
+            cell.setCellValue(product.getHistory());
+            cell.setCellStyle(CELL_ALIGN_HLEFT_VCENTER_WRAP);
+        }
+
+        public Object getValue(Product product) {
+            return product.getHistory();
+        }
     };
 
     private int id;
