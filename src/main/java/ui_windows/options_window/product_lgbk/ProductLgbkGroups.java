@@ -142,7 +142,7 @@ public class ProductLgbkGroups implements Initializable {
         }
     }
 
-    public TreeItem<ProductLgbk> getFullTreeSet() {
+    public synchronized TreeItem<ProductLgbk> getFullTreeSet() {
         treeItemRoot = new TreeItem<>(rootNode);
 
         for (ItemsGroup<ProductLgbk, ProductLgbk> lgbkGroup : lgbkGroups) {
