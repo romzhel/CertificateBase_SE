@@ -1,5 +1,6 @@
 package database;
 
+import database.mappers.DbToProductMapper;
 import ui_windows.ExecutionIndicator;
 import ui_windows.product.Product;
 import utils.property_change_protect.ChangeProtectService;
@@ -21,15 +22,16 @@ public class ProductsDB extends DbRequest {
                             "country, dchain, description_ru, description_en, price, not_used, archive, history, " +
                             "last_change_date, file_name, comments, replacement, type_id, change_codes, product_print," +
                             "last_import_codes, norms_list, norms_mode, min_order, packet_size, lead_time, weight, " +
-                            "local_price, warranty, comments_price, protected_fields) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                            "local_price, warranty, comments_price, protected_fields, vendor) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS);
             updateData = connection.prepareStatement("UPDATE products " +
                     "SET article = ?, hierarchy = ?, lgbk = ?, family = ?, end_of_service = ?, dangerous = ?, country = ?, " +
                     "dchain = ?, description_ru = ?, description_en = ?, price = ?, not_used = ?, archive = ?, history = ?," +
                     "last_change_date = ?, file_name = ?, comments = ?, replacement = ?, type_id = ?, change_codes = ?, " +
                     "product_print = ?, last_import_codes = ?, norms_list = ?, norms_mode = ?, min_order = ?, packet_size = ?, " +
-                    "lead_time = ?, weight = ?, local_price = ?, warranty = ?, comments_price = ?,protected_fields = ? WHERE material = ?");
+                    "lead_time = ?, weight = ?, local_price = ?, warranty = ?, comments_price = ?, protected_fields = ? " +
+                    "WHERE material = ? AND vendor = ?");
             deleteData = connection.prepareStatement("DELETE FROM products " +
                     "WHERE id = ?");
         } catch (SQLException e) {
@@ -39,18 +41,17 @@ public class ProductsDB extends DbRequest {
     }
 
     public List<Product> getData() throws Exception {
-        ArrayList<Product> products = new ArrayList<>();
-//        try {
+        List<Product> products = new ArrayList<>();
+
         ResultSet rs = connection.prepareStatement("SELECT * FROM products").executeQuery();
+        DbToProductMapper mapper = new DbToProductMapper();
 
         while (rs.next()) {
-            products.add(new Product(rs));
+            products.add(mapper.mapToProduct(rs));
         }
 
         rs.close();
-//        } catch (SQLException e) {
-//            logAndMessage("SQL exception products, ", e);
-//        }
+
         return products;
     }
 
@@ -65,6 +66,7 @@ public class ProductsDB extends DbRequest {
                     count = setData(alpr, count, j, updateData);
 
                     updateData.setString(++count, alpr.get(j).getMaterial());
+                    updateData.setInt(++count, alpr.get(j).getVendor().getId());
                     updateData.addBatch();
                 }
                 ExecutionIndicator.getInstance().setProgress((double) j / (double) alpr.size());
@@ -73,11 +75,15 @@ public class ProductsDB extends DbRequest {
                 int[] result = updateData.executeBatch();
                 connection.commit();
 
+                int index = 0;
                 for (int res : result) {
                     if (res != 1) {
-                        logAndMessage("", new RuntimeException("Данные продукты не были обновлены в БД"));
+                        String message = "Product update error";
+                        logAndMessage(String.format("%s '%s' vendor '%s',\nchanged records: %d",
+                                message, alpr.get(index), alpr.get(index).getVendor().toString(), res), new RuntimeException(message));
                         return false;
                     }
+                    index++;
                 }
             }
         } catch (SQLException e) {
@@ -145,9 +151,9 @@ public class ProductsDB extends DbRequest {
         prepStat.setString(++count, alpr.get(j).getDchain());
         prepStat.setString(++count, alpr.get(j).getDescriptionru());
         prepStat.setString(++count, alpr.get(j).getDescriptionen());
-        prepStat.setBoolean(++count, alpr.get(j).isPrice());
-        prepStat.setBoolean(++count, alpr.get(j).isBlocked());
-        prepStat.setBoolean(++count, alpr.get(j).isPriceHidden());
+        prepStat.setBoolean(++count, alpr.get(j).getPrice());
+        prepStat.setBoolean(++count, alpr.get(j).getBlocked());
+        prepStat.setBoolean(++count, alpr.get(j).getPriceHidden());
         prepStat.setString(++count, alpr.get(j).getHistory());
         prepStat.setString(++count, alpr.get(j).getLastChangeDate());
         prepStat.setString(++count, alpr.get(j).getFileName());
@@ -166,7 +172,6 @@ public class ProductsDB extends DbRequest {
         prepStat.setDouble(++count, alpr.get(j).getLocalPrice());
         prepStat.setInt(++count, alpr.get(j).getWarranty());
         prepStat.setString(++count, alpr.get(j).getCommentsPrice().isEmpty() ? null : alpr.get(j).getCommentsPrice());
-
         ChangeProtectService protectService = new ChangeProtectService();
         prepStat.setString(++count, protectService.mapSetToString(alpr.get(j).getProtectedData()));
 

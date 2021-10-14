@@ -14,6 +14,7 @@ import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
+import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
 import ui_windows.product.Product;
@@ -30,9 +31,9 @@ import static ui_windows.Mode.EDIT;
 import static ui_windows.main_window.DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION;
 
 public class MainTable implements Module {
-    private static TableView<Product> tvTable;
-//    private ExecutorService executorService;
+    //    private ExecutorService executorService;
     private static final Logger logger = LogManager.getLogger(MainTable.class);
+    private static TableView<Product> tvTable;
 
     public MainTable(TableView<Product> tvTable) {
         MainTable.tvTable = tvTable;
@@ -92,12 +93,10 @@ public class MainTable implements Module {
                     Product pr = null;
                     try {
                         pr = param.getValue();
-                        ProductFamily pf = pr.getProductFamily();
-                        if (pf != null) {
-                            return new SimpleStringProperty(pf.getName());
-                        } else {
-                            return new SimpleStringProperty(pr.getLgbk().concat(" (").concat(pr.getHierarchy()).concat(")"));
-                        }
+                        ProductFamily pf = ProductFamilies.getInstance().getProductFamily(pr);
+                        return pf != ProductFamilies.UNKNOWN ?
+                                new SimpleStringProperty(pf.getName()) :
+                                new SimpleStringProperty(pr.getLgbk().concat(" (").concat(pr.getHierarchy()).concat(")"));
                     } catch (Exception e) {
                         logger.error("Error col 'Family' displaying for '{}' - {}", pr, e.getMessage());
                         return new SimpleStringProperty("???");
@@ -127,7 +126,7 @@ public class MainTable implements Module {
 //                                        logger.debug("сертификат {} проверен за {} мс", product, System.currentTimeMillis() - t1);
 
                                         Platform.runLater(() -> {
-                                            if (product.isBlocked()) {
+                                            if (product.getBlocked()) {
                                                 setText("Заблокировано");
                                                 getStyleClass().clear();
                                                 getStyleClass().add("itemStrikethroughRed");
@@ -166,7 +165,7 @@ public class MainTable implements Module {
 
         TableColumn<Product, Boolean> boolCol = new TableColumn<>("Прайс");
         boolCol.setCellFactory(CheckBoxTableCell.forTableColumn(boolCol));
-        boolCol.setCellValueFactory(param -> new SimpleBooleanProperty(param.getValue().isPrice()));
+        boolCol.setCellValueFactory(param -> new SimpleBooleanProperty(param.getValue().getPrice()));
         boolCol.setPrefWidth(50);
         boolCol.setStyle("-fx-alignment: CENTER");
         tvTable.getColumns().add(boolCol);

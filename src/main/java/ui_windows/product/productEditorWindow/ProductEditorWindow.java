@@ -9,6 +9,7 @@ import javafx.stage.Modality;
 import ui_windows.Mode;
 import ui_windows.OrdinalWindow;
 import ui_windows.main_window.MainWindow;
+import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.profile_editor.SimpleRight;
 import ui_windows.options_window.user_editor.User;
@@ -59,7 +60,7 @@ public class ProductEditorWindow extends OrdinalWindow<ProductEditorWindowContro
         User user = Users.getInstance().getCurrentUser();
         Product prd = Products.getInstance().getSelectedItem();
 
-        ProductFamily pf = prd.getProductFamily();
+        ProductFamily pf = ProductFamilies.getInstance().getProductFamily(prd);
         boolean profileRights = sr == DISPLAY;
         boolean familyOfUser = sr == OWN && pf != null && (user.getProductFamilies().contains(pf.getName()));
         boolean adminRights = sr == FULL;

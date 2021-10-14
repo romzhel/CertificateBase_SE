@@ -1,8 +1,7 @@
 package ui_windows.options_window.product_lgbk;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.scene.layout.AnchorPane;
+import lombok.Data;
 import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentItem;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTableItem;
@@ -13,59 +12,58 @@ import utils.Utils;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Objects;
 
+@Data
 public class ProductLgbk implements PriceListContentItem {
     public static final int ROOT_NODE = 0;
     public static final int GROUP_NODE = 1;
     public static final int ITEM_NODE = 2;
     private int id;
-    private StringProperty lgbk;
-    private StringProperty hierarchy;
-    private StringProperty description_en = new SimpleStringProperty("");
-    private StringProperty description_ru = new SimpleStringProperty("");
-    private NormsList normsList;
+    private String lgbk;
+    private String hierarchy;
+    private String description_en = "";
+    private String description_ru = "";
+    private NormsList normsList = new NormsList("");
     private int familyId = -1;
     private boolean isNotUsed;
     private int nodeType = -1;
 
     public ProductLgbk(String lgbk) {
-        this.lgbk = new SimpleStringProperty(lgbk);
+        this.lgbk = lgbk;
     }
 
     public ProductLgbk(String lgbk, String hierarchy) {
-        this.lgbk = new SimpleStringProperty(lgbk);
-        this.hierarchy = new SimpleStringProperty(hierarchy);
-        normsList = new NormsList("");
+        this.lgbk = lgbk;
+        this.hierarchy = hierarchy;
         nodeType = ITEM_NODE;
     }
 
     public ProductLgbk(String lgbk, String hierarchy, int nodeType) {
-        this.lgbk = new SimpleStringProperty(lgbk);
-        this.hierarchy = new SimpleStringProperty(hierarchy);
+        this.lgbk = lgbk;
+        this.hierarchy = hierarchy;
         this.nodeType = nodeType;
-        normsList = new NormsList("");
     }
 
     public ProductLgbk(String lgbk, String hierarchy, String description_en, String description_ru, int familyId,
                        boolean isNotUsed) {
         id = 0;
-        this.lgbk = new SimpleStringProperty(lgbk);
-        this.hierarchy = new SimpleStringProperty(hierarchy);
-        this.description_en = new SimpleStringProperty(description_en);
-        this.description_ru = new SimpleStringProperty(description_ru);
+        this.lgbk = lgbk;
+        this.hierarchy = hierarchy;
+        this.description_en = description_en;
+        this.description_ru = description_ru;
         this.familyId = familyId;
         this.isNotUsed = isNotUsed;
-        normsList = new NormsList("");
         nodeType = ITEM_NODE;
     }
 
     public ProductLgbk(ResultSet rs) {
         try {
             id = rs.getInt("id");
-            lgbk = new SimpleStringProperty(rs.getString("lgbk"));
-            hierarchy = new SimpleStringProperty(rs.getString("hierarchy"));
-            description_en = new SimpleStringProperty(rs.getString("description_en"));
-            description_ru = new SimpleStringProperty(rs.getString("description_ru"));
+            lgbk = rs.getString("lgbk");
+            hierarchy = rs.getString("hierarchy");
+            description_en = rs.getString("description_en");
+            description_ru = rs.getString("description_ru");
             familyId = rs.getInt("family_id");
             isNotUsed = rs.getBoolean("not_used");
             nodeType = rs.getInt("node_type");
@@ -76,10 +74,10 @@ public class ProductLgbk implements PriceListContentItem {
     }
 
     public ProductLgbk(AnchorPane root) {
-        lgbk = new SimpleStringProperty(Utils.getControlValue(root, "tfLgbk"));
-        hierarchy = new SimpleStringProperty(Utils.getControlValue(root, "tfHierarchy"));
-        description_en = new SimpleStringProperty(Utils.getControlValue(root, "tfDescriptionEn"));
-        description_ru = new SimpleStringProperty(Utils.getControlValue(root, "tfDescriptionRu"));
+        lgbk = Utils.getControlValue(root, "tfLgbk");
+        hierarchy = Utils.getControlValue(root, "tfHierarchy");
+        description_en = Utils.getControlValue(root, "tfDescriptionEn");
+        description_ru = Utils.getControlValue(root, "tfDescriptionRu");
 
         String familyValue = Utils.getControlValue(root, "cbFamily").trim();
         familyId = familyValue.length() > 0 ? ProductFamilies.getInstance().getFamilyIdByName(familyValue) : -1;
@@ -89,8 +87,8 @@ public class ProductLgbk implements PriceListContentItem {
     }
 
     public ProductLgbk(Product product) {
-        lgbk = new SimpleStringProperty(product.getLgbk() == null ? "nnn" : product.getLgbk());
-        hierarchy = new SimpleStringProperty(product.getHierarchy() == null ? "nnn" : product.getHierarchy());
+        lgbk = product.getLgbk() == null ? "nnn" : product.getLgbk();
+        hierarchy = product.getHierarchy() == null ? "nnn" : product.getHierarchy();
         normsList = new NormsList("");
         nodeType = ITEM_NODE;
     }
@@ -116,14 +114,14 @@ public class ProductLgbk implements PriceListContentItem {
     }
 
     public String getDescription() {
-        if (description_ru.getValue() == null || description_ru.getValue().isEmpty()) {
-            if (description_en.getValue() == null || description_en.getValue().isEmpty()) {
+        if (description_ru == null || description_ru.isEmpty()) {
+            if (description_en == null || description_en.isEmpty()) {
                 return "";
             } else {
-                return description_en.getValue();
+                return description_en;
             }
         } else {
-            return description_ru.getValue();
+            return description_ru;
         }
     }
 
@@ -132,14 +130,14 @@ public class ProductLgbk implements PriceListContentItem {
     }
 
     public String getDescriptionEnRu() {
-        if (description_en.getValue() == null || description_en.getValue().isEmpty()) {
-            if (description_ru.getValue() == null || description_ru.getValue().isEmpty()) {
+        if (description_en == null || description_en.isEmpty()) {
+            if (description_ru == null || description_ru.isEmpty()) {
                 return "";
             } else {
-                return description_ru.getValue();
+                return description_ru;
             }
         } else {
-            return description_en.getValue();
+            return description_en;
         }
     }
 
@@ -171,9 +169,9 @@ public class ProductLgbk implements PriceListContentItem {
     }
 
     public boolean compare(ProductLgbk anotherInstance) {
-        String currLgbk = lgbk.get();
+        String currLgbk = lgbk;
         String anotherLgbk = anotherInstance.getLgbk();
-        String currHierarchy = hierarchy.get().replaceAll("\\.", "");
+        String currHierarchy = hierarchy.replaceAll("\\.", "");
         String anotherHierarchy = anotherInstance.getHierarchy().replaceAll("\\.", "");
 
         if (currLgbk.equals(anotherLgbk) &&
@@ -184,92 +182,17 @@ public class ProductLgbk implements PriceListContentItem {
         }
     }
 
-    public int getId() {
-        return id;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProductLgbk)) return false;
+        ProductLgbk that = (ProductLgbk) o;
+        return Objects.equals(lgbk, that.lgbk) && Objects.equals(hierarchy, that.hierarchy);
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getLgbk() {
-        return lgbk.get();
-    }
-
-    public StringProperty lgbkProperty() {
-        return lgbk;
-    }
-
-    public void setLgbk(String lgbk) {
-        this.lgbk.set(lgbk);
-    }
-
-    public String getHierarchy() {
-        return hierarchy.get();
-    }
-
-    public StringProperty hierarchyProperty() {
-        return hierarchy;
-    }
-
-    public void setHierarchy(String hierarchy) {
-        this.hierarchy.set(hierarchy);
-    }
-
-    public String getDescription_en() {
-        return description_en.get();
-    }
-
-    public StringProperty description_enProperty() {
-        return description_en;
-    }
-
-    public void setDescription_en(String description_en) {
-        this.description_en.set(description_en);
-    }
-
-    public String getDescription_ru() {
-        return description_ru.get();
-    }
-
-    public StringProperty description_ruProperty() {
-        return description_ru;
-    }
-
-    public void setDescription_ru(String description_ru) {
-        this.description_ru.set(description_ru);
-    }
-
-    public NormsList getNormsList() {
-        return normsList;
-    }
-
-    public void setNormsList(NormsList normsList) {
-        this.normsList = normsList;
-    }
-
-    public int getFamilyId() {
-        return familyId;
-    }
-
-    public void setFamilyId(int familyId) {
-        this.familyId = familyId;
-    }
-
-    public boolean isNotUsed() {
-        return isNotUsed;
-    }
-
-    public void setNotUsed(boolean notUsed) {
-        isNotUsed = notUsed;
-    }
-
-    public int getNodeType() {
-        return nodeType;
-    }
-
-    public void setNodeType(int nodeType) {
-        this.nodeType = nodeType;
+    @Override
+    public int hashCode() {
+        return lgbk.concat("_").concat(hierarchy).hashCode();
     }
 
     /*@Override

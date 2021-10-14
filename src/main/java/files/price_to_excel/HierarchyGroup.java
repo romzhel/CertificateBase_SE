@@ -13,10 +13,7 @@ import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
 import utils.comparation.products.ProductNameResolver;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 
 import static files.ExcelCellStyleFactory.CELL_ALIGN_HLEFT;
 import static ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet.LANG_RU;
@@ -28,7 +25,7 @@ public class HierarchyGroup {
 
     private PriceListSheet priceListSheet;
     private String name;
-    private TreeSet<Product> products;
+    private Set<Product> products;
 
     public HierarchyGroup(String name, PriceListSheet priceListSheet) {
         this.priceListSheet = priceListSheet;
@@ -53,7 +50,7 @@ public class HierarchyGroup {
         return products.size();
     }
 
-    public TreeSet<Product> getProducts() {
+    public Set<Product> getProducts() {
         return products;
     }
 

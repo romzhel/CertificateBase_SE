@@ -16,6 +16,7 @@ import ui_windows.product.data.DataItem;
 import utils.Utils;
 import utils.comparation.te.ChangedItem;
 import utils.comparation.te.ChangedProperty;
+import utils.comparation.te.ImportedProductToProductMapper;
 import utils.comparation.te.TotalComparisonResult;
 
 import java.io.File;
@@ -38,15 +39,12 @@ public class NowImportResultToExcel {
         workbook = new XSSFWorkbook();
     }
 
-    public File export(TotalComparisonResult result, File targetFile) {//TODO в отчёте отображается только одно изменение
-//        Platform.runLater(() -> {
+    public File export(TotalComparisonResult result, File targetFile) {
         File reportFile = targetFile != null ? targetFile : new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
                 "Сохранение результатов импорта", Dialogs.EXCEL_FILES_ALL, "ImportReport_" +
                         Utils.getDateTime().replaceAll("\\:", "-") + ".xlsx").get(0);
 
         if ((reportFile != null)) {
-//                new Thread(() -> {
-
             try {
                 logger.trace("filling main import report sheet");
 
@@ -97,9 +95,8 @@ public class NowImportResultToExcel {
                     e.printStackTrace();
                 }
             }
-//                }).start();
         }
-//        });
+
         return reportFile;
     }
 
@@ -118,12 +115,18 @@ public class NowImportResultToExcel {
     }
 
     private void fillNewItemsValues(List<ImportedProduct> importedProductList) {
+        ImportedProductToProductMapper mapper = new ImportedProductToProductMapper();
         XSSFRow row;
 
         for (ImportedProduct importedProduct : importedProductList) {
             row = sheet.createRow(rowNum++);
 
-            Product newProduct = Products.getInstance().getProductByMaterial(importedProduct.getId());
+            Product newProduct = Products.getInstance().getProductByVendorMaterialId(importedProduct.getId());
+
+            if (newProduct == null) {//для случаев, когда изменения не применяются
+                newProduct = mapper.mapToProduct(importedProduct);
+            }
+
             fillItemDetails(newProduct, row);
             fillCell(row.createCell(colIndex++), "added");
         }
@@ -136,7 +139,7 @@ public class NowImportResultToExcel {
             for (ChangedProperty changedProperty : changedItem.getChangedPropertyList()) {
                 row = sheet.createRow(rowNum++);
 
-                Product changedProduct = Products.getInstance().getProductByMaterial(changedItem.getId());
+                Product changedProduct = Products.getInstance().getProductByVendorMaterialId(changedItem.getId());
                 fillItemDetails(changedProduct, row);
                 fillChangeDetails(changedProperty, row);
             }

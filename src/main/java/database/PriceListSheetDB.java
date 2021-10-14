@@ -61,7 +61,7 @@ public class PriceListSheetDB extends DbRequest {
             addData.setInt(index++, pls.getLeadTimeCorrection());
             addData.setBoolean(index++, pls.isGroupNameDisplaying());
             addData.setString(index++, pls.getColumnsSelector().getSelectedItemsAsString());
-            addData.setString(index++, pls.getContentTable().exportToString());
+            addData.setString(index++, pls.getContentTable().exportContentToString());
             addData.setString(index++, pls.getDchainSelector().getSelectedItemsAsString());
             addData.setInt(index++, pls.getDiscount());
             addData.setInt(index++, pls.getSortOrder() == HierarchyGroup.SORT_MATERIAL ? 0 : 1);
@@ -98,7 +98,7 @@ public class PriceListSheetDB extends DbRequest {
             updateData.setInt(index++, pls.getLeadTimeCorrection());
             updateData.setBoolean(index++, pls.isGroupNameDisplaying());
             updateData.setString(index++, pls.getColumnsSelector().getSelectedItemsAsString());
-            updateData.setString(index++, pls.getContentTable().exportToString());
+            updateData.setString(index++, pls.getContentTable().exportContentToString());
             updateData.setString(index++, pls.getDchainSelector().getSelectedItemsAsString());
             updateData.setInt(index++, pls.getDiscount());
             updateData.setInt(index++, pls.getSortOrder() == HierarchyGroup.SORT_MATERIAL ? 0 : 1);

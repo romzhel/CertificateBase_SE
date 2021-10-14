@@ -2,13 +2,20 @@ package ui_windows.options_window.product_lgbk;
 
 import core.Initializable;
 import database.ProductLgbksDB;
+import javafx.application.Platform;
 import javafx.scene.control.TreeTableView;
+import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 import ui.Dialogs;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.product.Product;
+import utils.comparation.te.ChangedItem;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+@Data
+@Log4j2
 public class ProductLgbks implements Initializable {
     private static ProductLgbks instance;
     private List<ProductLgbk> productLgbks;
@@ -34,8 +41,12 @@ public class ProductLgbks implements Initializable {
     }
 
     public void addItems(Collection<ProductLgbk> items) {
-        if (new ProductLgbksDB().putData(items)) {
-            productLgbks.addAll(items);
+        Collection<ProductLgbk> nonDoubleItems = items.stream()
+                .filter(lgbk -> !hasDublicates(lgbk))
+                .collect(Collectors.toList());
+
+        if (new ProductLgbksDB().putData(nonDoubleItems)) {
+            productLgbks.addAll(nonDoubleItems);
             ProductLgbkGroups.getInstance().createFromLgbks(this);
 
             if (productLgbksTable != null) {
@@ -151,8 +162,9 @@ public class ProductLgbks implements Initializable {
         for (ProductLgbk currLgbk : productLgbks) {
             compHier = currLgbk.getHierarchy().replaceAll("\\.", "").trim();
             if (currLgbk.getId() == findingLgbk.getId() ||
-                    currLgbk.getLgbk().equals(findingLgbk.getLgbk()) && findingLgbk.getHierarchy()
-                            .contains(compHier) && !compHier.isEmpty()) {
+                    currLgbk.getLgbk().equals(findingLgbk.getLgbk()) &&
+                            (findingLgbk.getHierarchy().contains(compHier) && !compHier.isEmpty() ||
+                                    findingLgbk.getHierarchy().equals(compHier))) {
                 return currLgbk;
             }
         }
@@ -160,23 +172,28 @@ public class ProductLgbks implements Initializable {
         return null;
     }
 
+    public void treatStructureChanges(Collection<ChangedItem> changedItemList) {
+        ProductLgbkUtils utils = new ProductLgbkUtils();
+        Map<ProductLgbk, Set<ProductLgbk>> newToOldgbkMap = utils.getOldToNewGbkMap(changedItemList);
+
+        if (newToOldgbkMap.keySet().size() > 0) {
+            List<ProductLgbk> sortedList = new ArrayList<>(newToOldgbkMap.keySet());
+            sortedList.sort((o1, o2) -> utils.getDoubleName(o1).compareToIgnoreCase(utils.getDoubleName(o2)));
+            for (ProductLgbk plgbk : sortedList) {
+                log.info("Обнаружена новая структура LGBK/Hierarchy: {}", plgbk);
+            }
+            Platform.runLater(() -> Dialogs.showMessage("Новые LGBK/Hierarchy",
+                    "Обнаружено новых кодов LGBK/Hierarchy: " + newToOldgbkMap.keySet().size()));
+
+            utils.addMissedGroupItem(newToOldgbkMap);
+            utils.copyGbkSetting(newToOldgbkMap);
+            ProductLgbks.getInstance().addItems(newToOldgbkMap.keySet());
+
+            utils.copyPriceToNewItems(newToOldgbkMap);
+        }
+    }
+
     public ProductLgbk getLgbkByProduct(Product product) {
         return getLgbkByLgbk(new ProductLgbk(product));
-    }
-
-    public List<ProductLgbk> getItems() {
-        return productLgbks;
-    }
-
-    public void setProductLgbks(ArrayList<ProductLgbk> productLgbks) {
-        this.productLgbks = productLgbks;
-    }
-
-    public ProductLgbksTable getProductLgbksTable() {
-        return productLgbksTable;
-    }
-
-    public void setProductLgbksTable(ProductLgbksTable productLgbksTable) {
-        this.productLgbksTable = productLgbksTable;
     }
 }

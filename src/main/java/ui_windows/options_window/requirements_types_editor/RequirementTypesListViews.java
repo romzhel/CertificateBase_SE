@@ -13,6 +13,7 @@ import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.product.MultiEditor;
 import ui_windows.product.MultiEditorItem;
 import ui_windows.product.Product;
+import ui_windows.product.Products;
 import ui_windows.product.data.DataItem;
 
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class RequirementTypesListViews {
 //            HashSet<Integer> globalNorms = new HashSet<>();
             HashSet<Integer> productNorms = new HashSet<>();
             for (Product product : multiEditor.getEditedItems()) {
-                globalNorms.addAll(product.getGlobalNorms());
+                globalNorms.addAll(Products.getInstance().getGlobalNorms(product));
                 productNorms.addAll(product.getNormsList().getIntegerItems());
             }
 

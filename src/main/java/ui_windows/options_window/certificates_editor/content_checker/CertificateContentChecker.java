@@ -3,6 +3,7 @@ package ui_windows.options_window.certificates_editor.content_checker;
 import core.InitModule;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import lombok.extern.log4j.Log4j2;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -24,9 +25,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import static ui_windows.product.data.DataItem.*;
 
+@Log4j2
 public class CertificateContentChecker {
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
@@ -39,7 +42,7 @@ public class CertificateContentChecker {
             workbook.createSheet("certificate(s)_countries_report");
             sheet = workbook.getSheetAt(0);
 
-            ArrayList<Product> itemsWithNotOkCountry = new ArrayList<>();
+            List<Product> itemsWithNotOkCountry = new ArrayList<>();
 
             for (Certificate certificate : certificates) {
                 itemsWithNotOkCountry.addAll(getItemsWithBadCountries(certificate));
@@ -55,8 +58,8 @@ public class CertificateContentChecker {
         }).start();
     }
 
-    private ArrayList<Product> getItemsWithBadCountries(Certificate certificate) {
-        ArrayList<Product> itemsWithNotOkCountry = new ArrayList<>();
+    private List<Product> getItemsWithBadCountries(Certificate certificate) {
+        List<Product> itemsWithNotOkCountry = new ArrayList<>();
 
         int firstRow = rowIndex;
         addRow(0, certificate.getFileName());
@@ -75,14 +78,18 @@ public class CertificateContentChecker {
                     String comparingValue = "^".concat(name).concat("[^a-zA-Z]").concat(".*");
                     boolean articleMatches = product.getArticle().matches(comparingValue);
 
-                    if (!product.getCountry().isEmpty() && (articleMatches || certificate.isMaterialMatch() && product.getMaterial().matches(comparingValue))) {
-                        ItemsGroup<String, Product> countryGroup = new ItemsGroup<>(product.getCountry(), (o1, o2) -> o1.getArticle().compareTo(o2.getArticle()));
+                    try {
+                        if (!product.getCountry().isEmpty() && (articleMatches || certificate.isMaterialMatch() && product.getMaterial().matches(comparingValue))) {
+                            ItemsGroup<String, Product> countryGroup = new ItemsGroup<>(product.getCountry(), (o1, o2) -> o1.getArticle().compareTo(o2.getArticle()));
 
-                        if (!certificate.getCountries().contains(product.getCountry())) {
-                            countryGroup.addItem(product);
+                            if (!certificate.getCountries().contains(product.getCountry())) {
+                                countryGroup.addItem(product);
+                            }
+
+                            nameGroup.addGroup(countryGroup);
                         }
-
-                        nameGroup.addGroup(countryGroup);
+                    } catch (Exception e) {
+                        log.warn("country not found for {}", product);
                     }
                 }
 

@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.product.Product;
-import utils.comparation.products.ProductNameResolver;
+import ui_windows.product.Products;
 import utils.comparation.se.ComparingRules;
 import utils.property_change_protect.ChangeProtectService;
 import utils.property_change_protect.ProductProtectChange;
@@ -24,12 +24,11 @@ public class TotalComparator {
         ChangeProtectService protectService = new ChangeProtectService();
         comparisonResult = new TotalComparisonResult();
 
-        Map<String, Product> leftItems = collectionToMap(items1, rules);
+        Map<String, Product> leftItems = collectionToMap(items1);
         logger.trace("Подготовка к сравнению завершена, прошло времени {} мс", System.currentTimeMillis() - t0);
 
         for (ImportedProduct importedItem : items2) {
-            String resolvedId = ProductNameResolver.resolve(importedItem.getId());
-            Product existItem = leftItems.remove(resolvedId);
+            Product existItem = leftItems.remove(importedItem.getId());
 
             if (existItem != null) {
                 ChangedItem changedItem = comparator.compare(existItem, importedItem, rules);
@@ -60,11 +59,11 @@ public class TotalComparator {
         return comparisonResult;
     }
 
-    private Map<String, Product> collectionToMap(Collection<Product> items, ComparingRules<?> rules) {
+    private Map<String, Product> collectionToMap(Collection<Product> items) {
         return items.stream()
 //                .peek(item -> logger.debug("add collection item to map '{}'", item))
                 .collect(Collectors.toMap(
-                        item -> rules.treatMaterial(item.getMaterial()),
+                        item -> Products.getInstance().getVendorMaterial(item),
                         item -> item
                 ));
     }

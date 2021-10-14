@@ -30,6 +30,7 @@ public class FileColumnMappingService {
 
     private void init() {
         titleNameToDataItemMapping = Stream.of(new Object[][]{
+                {"vendor", DATA_VENDOR},
                 {"material", DATA_ORDER_NUMBER},
                 {"заказной номер", DATA_ORDER_NUMBER},
                 {"order number", DATA_ORDER_NUMBER},

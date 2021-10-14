@@ -24,13 +24,14 @@ import ui_windows.product.Products;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class InitModule {
     private static final Logger logger = LogManager.getLogger(InitModule.class);
-    private static HashSet<Product> customItems = new HashSet<>();
+    private static Set<Product> customItems = new HashSet<>();
     private Application application;
 
-    public static HashSet<Product> getCustomItems() {
+    public static Set<Product> getCustomItems() {
         return customItems;
     }
 

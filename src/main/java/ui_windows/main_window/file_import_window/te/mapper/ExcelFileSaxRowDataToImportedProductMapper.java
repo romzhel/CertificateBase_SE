@@ -7,6 +7,7 @@ import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProperty;
 import ui_windows.main_window.file_import_window.te.importer.SaxRowData;
 import ui_windows.product.data.DataItem;
+import ui_windows.product.vendors.VendorEnum;
 import utils.PriceUtils;
 
 import java.lang.reflect.Field;
@@ -14,10 +15,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static ui_windows.product.data.DataItem.DATA_EMPTY;
-import static ui_windows.product.data.DataItem.DATA_ORDER_NUMBER;
 
 @Log4j2
 public class ExcelFileSaxRowDataToImportedProductMapper {
+    private final PropertiesToImportedProductMapper mapper = new PropertiesToImportedProductMapper();
 
     public ImportedProduct getProductFromFileRecord(SaxRowData record, ImportDataSheet importDataSheet) throws RuntimeException {
         Map<DataItem, ImportedProperty> propertyMap = importDataSheet.getColumnParams().stream()
@@ -36,7 +37,10 @@ public class ExcelFileSaxRowDataToImportedProductMapper {
                         (property) -> property)
                 );
 
-        return propertyMap.get(DATA_ORDER_NUMBER) != null && propertyMap.values().size() > 1 ? new ImportedProduct(propertyMap) : null;
+        ImportedProduct importedProduct = mapper.importedProductMapper(propertyMap);
+        importedProduct.setVendor(importDataSheet.getVendor());
+
+        return importedProduct;
     }
 
     private Object getValue(SaxRowData record, ImportColumnParameter param) throws RuntimeException {
@@ -58,14 +62,18 @@ public class ExcelFileSaxRowDataToImportedProductMapper {
                 result = (int) getDoubleFromString(value);
             } else if (fieldType.equals("Double")) {
                 result = getDoubleFromString(value);
+            } else if (fieldType.equals("Boolean")) {
+                result = value.equalsIgnoreCase("true") || value.equals("1");
+            } else if (fieldType.equals("VendorEnum")) {
+                result = VendorEnum.recognizeVendor(value);
             } else {
                 throw new RuntimeException("unsupported field type for value " + value);
             }
 
             return result;
         } catch (Exception e) {
-            log.error("error set Product field '{}' with value '{} => {}'", field, value, result);
-            throw new RuntimeException(e);
+            log.error("error set Product field '{}' with value '{} => {}', {}", field.getName(), value, result, record);
+            return null;
         }
     }
 

@@ -1,25 +1,25 @@
 package ui_windows.main_window.file_import_window.te.importer;
 
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import ui_windows.product.data.DataItem;
+import ui_windows.product.vendors.VendorEnum;
 
 import java.util.Map;
 
-@Getter
+@Data
+@NoArgsConstructor
 public class ImportedProduct {
     private String id;
-    private final Map<DataItem, ImportedProperty> properties;
-
-    public ImportedProduct(Map<DataItem, ImportedProperty> properties) {
-        this.properties = properties;
-        id = properties.get(DataItem.DATA_ORDER_NUMBER).getNewValue().toString();
-    }
+    private VendorEnum vendor;
+    private Map<DataItem, ImportedProperty> properties;
 
     @Override
     public String toString() {
         return "ImportedProduct{" +
                 "id='" + id + '\'' +
+                "vendor='" + vendor.name() + '\'' +
                 ", properties=" + Strings.join(properties.values(), ',') +
                 '}';
     }

@@ -14,4 +14,13 @@ public class ChangedProperty extends ImportedProperty {
     public ChangedProperty(ImportedProperty ip) {
         super(ip.getNewValue(), ip.getDataItem(), ip.getSource(), ip.getParams());
     }
+
+    @Override
+    public String toString() {
+        return "ChangedProperty{" +
+                "dataItem=" + dataItem +
+                ", oldValue=" + oldValue +
+                ", newValue=" + newValue +
+                '}';
+    }
 }

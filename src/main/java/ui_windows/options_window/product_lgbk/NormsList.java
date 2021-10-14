@@ -16,7 +16,7 @@ public class NormsList {
         norms = new LinkedList<>();
     }
 
-    public NormsList(ArrayList<Integer> norms) {
+    public NormsList(List<Integer> norms) {
         this.norms = norms;
     }
 

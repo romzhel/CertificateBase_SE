@@ -4,6 +4,7 @@ import core.Initializable;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
@@ -11,17 +12,15 @@ import ui_windows.product.Product;
 import ui_windows.product.Products;
 import utils.ItemsGroup;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.*;
 
+@Log4j2
 public class ProductLgbkGroups implements Initializable {
     private static final Logger logger = LogManager.getLogger(ProductLgbkGroups.class);
     private static ProductLgbkGroups instance;
     private ProductLgbk rootNode;
     private TreeItem<ProductLgbk> treeItemRoot;
-    private TreeSet<ItemsGroup<ProductLgbk, ProductLgbk>> lgbkGroups;
+    private Set<ItemsGroup<ProductLgbk, ProductLgbk>> lgbkGroups;
 
     private ProductLgbkGroups() {
         lgbkGroups = new TreeSet<>((o1, o2) ->
@@ -38,7 +37,7 @@ public class ProductLgbkGroups implements Initializable {
     @Override
     public void init() {
         lgbkGroups.clear();
-        if (ProductLgbks.getInstance().getItems().size() > 0) {
+        if (ProductLgbks.getInstance().getProductLgbks().size() > 0) {
             createFromLgbks(ProductLgbks.getInstance());
         } else {
             createFromProducts(Products.getInstance());
@@ -48,7 +47,7 @@ public class ProductLgbkGroups implements Initializable {
         getFullTreeSet();
     }
 
-    public ArrayList<ProductLgbk> createFromProducts(Products products) {
+    public List<ProductLgbk> createFromProducts(Products products) {
         rootNode = new ProductLgbk("Все позиции", "...", ProductLgbk.ROOT_NODE);
         ArrayList<ProductLgbk> newProductLgbks = new ArrayList<>();
 
@@ -86,7 +85,7 @@ public class ProductLgbkGroups implements Initializable {
         lgbkGroups.clear();
 
         //1-ый проход - ROOT && GROUP nodes
-        for (ProductLgbk lgbk : productLgbks.getItems()) {
+        for (ProductLgbk lgbk : productLgbks.getProductLgbks()) {
             if (lgbk.getNodeType() == ProductLgbk.ROOT_NODE) {
                 rootNode = lgbk;
                 continue;
@@ -98,7 +97,7 @@ public class ProductLgbkGroups implements Initializable {
         }
 
         //2-ой проход ITEM nodes
-        for (ProductLgbk lgbk : productLgbks.getItems()) {
+        for (ProductLgbk lgbk : productLgbks.getProductLgbks()) {
             if (lgbk.getNodeType() == ProductLgbk.ITEM_NODE) {
                 Iterator<ItemsGroup<ProductLgbk, ProductLgbk>> iterator = lgbkGroups.iterator();
                 boolean wasFound = false;
@@ -115,10 +114,12 @@ public class ProductLgbkGroups implements Initializable {
                 }
             }
         }
+
+        getFullTreeSet();
     }
 
     public void checkConsistency() {
-        ArrayList<ProductLgbk> newLgbks = createFromProducts(Products.getInstance());
+        List<ProductLgbk> newLgbks = createFromProducts(Products.getInstance());
 
         String newNames = "";
         for (ProductLgbk plgbk : newLgbks) {
@@ -141,7 +142,7 @@ public class ProductLgbkGroups implements Initializable {
         }
     }
 
-    public TreeItem<ProductLgbk> getFullTreeSet() {
+    public synchronized TreeItem<ProductLgbk> getFullTreeSet() {
         treeItemRoot = new TreeItem<>(rootNode);
 
         for (ItemsGroup<ProductLgbk, ProductLgbk> lgbkGroup : lgbkGroups) {
@@ -157,8 +158,8 @@ public class ProductLgbkGroups implements Initializable {
         return treeItemRoot;
     }
 
-    public ArrayList<ProductLgbk> getLgbks() {
-        ArrayList<ProductLgbk> result = new ArrayList<>();
+    public List<ProductLgbk> getLgbks() {
+        List<ProductLgbk> result = new ArrayList<>();
 
         result.add(rootNode);
 
@@ -197,9 +198,13 @@ public class ProductLgbkGroups implements Initializable {
                 String comp3 = tempLgbk.getHierarchy().replaceAll("\\.", "");
                 String comp4 = lookingForLgbk.getHierarchy();
 
-                if (comp4.contains(comp3) && !comp3.isEmpty() || comp3.isEmpty() && comp4.isEmpty()) {
-                    result.setLgbkItem(tempLgbk);
-                    break;
+                try {
+                    if (comp4.contains(comp3) && !comp3.isEmpty() || comp3.isEmpty() && comp4.isEmpty()) {
+                        result.setLgbkItem(tempLgbk);
+                        break;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -221,11 +226,11 @@ public class ProductLgbkGroups implements Initializable {
                 (lgbkAndParent.getLgbkItem() != null ? lgbkAndParent.getLgbkItem().getDescription() : "");
     }
 
-    public TreeItem<ProductLgbk> getTreeItem(ProductLgbk lookingForLgbk) {
+    public synchronized TreeItem<ProductLgbk> getTreeItem(ProductLgbk lookingForLgbk) {
         if (treeItemRoot == null || lookingForLgbk == null) return null;
         if (treeItemRoot.getValue().equals(lookingForLgbk)) return treeItemRoot;
 
-        for (TreeItem<ProductLgbk> groupTreeItem : treeItemRoot.getChildren()) {
+        for (TreeItem<ProductLgbk> groupTreeItem : new ArrayList<>(treeItemRoot.getChildren())) {//todo concurrent execution
             if (groupTreeItem.getValue().getId() == lookingForLgbk.getId()) return groupTreeItem;
 
             if (groupTreeItem.getValue().getLgbk().equals(lookingForLgbk.getLgbk())) {
@@ -244,8 +249,8 @@ public class ProductLgbkGroups implements Initializable {
         return null;
     }
 
-    public HashSet<Integer> getGlobalNormIds(ProductLgbk productLgbk) {
-        HashSet<Integer> globalNorms = new HashSet<>();
+    public synchronized Set<Integer> getGlobalNormIds(ProductLgbk productLgbk) {
+        Set<Integer> globalNorms = new HashSet<>();
 
         TreeItem<ProductLgbk> selectedTreeItem = getTreeItem(productLgbk);
         while (selectedTreeItem != null) {

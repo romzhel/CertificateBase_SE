@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class LastImportCodeUtils {
 
     public String getChangesCodes(ChangedItem changedItem) {
-        Product product = Products.getInstance().getProductByMaterial(changedItem.getId());
+        Product product = Products.getInstance().getProductByVendorMaterialId(changedItem.getId());
 
         String existingCodes = product.getLastImportcodes();
         Set<String> changedCodeSet = changedItem.getChangedPropertyList().stream()

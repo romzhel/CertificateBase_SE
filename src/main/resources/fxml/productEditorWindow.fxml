@@ -50,7 +50,7 @@
                                    prefWidth="160.0"/>
                         <TextArea fx:id="taDescription" layoutX="124.0" layoutY="59.0" prefHeight="40.0"
                                   prefWidth="931.0" wrapText="true"/>
-                        <ComboBox fx:id="cbType" layoutX="124.0" layoutY="149.0" prefHeight="25.0" prefWidth="931.0"/>
+                        <ComboBox fx:id="cbType" layoutX="124.0" layoutY="149.0" prefHeight="25.0" prefWidth="824.0"/>
                         <Label layoutX="21.0" layoutY="7.0" prefHeight="17.0" prefWidth="110.0" text="Общие сведения"
                                textAlignment="RIGHT">
                             <font>
@@ -198,7 +198,9 @@
                         <Label alignment="CENTER_RIGHT" layoutX="6.0" layoutY="513.0" prefHeight="17.0"
                                prefWidth="109.0" text="Комментарий " textAlignment="RIGHT" wrapText="true"/>
                         <Label alignment="CENTER_RIGHT" layoutX="3.0" layoutY="531.0" prefHeight="17.0"
-                               prefWidth="112.0" text="к прайсу " textAlignment="RIGHT" wrapText="true"/>
+                               prefWidth="112.0" text="в прайсе " textAlignment="RIGHT" wrapText="true"/>
+                        <TextField fx:id="tfVendor" editable="false" layoutX="954.0" layoutY="149.0" prefHeight="25.0"
+                                   prefWidth="100.0"/>
                     </children>
                 </AnchorPane>
             </content>

@@ -6,6 +6,8 @@ import core.Module;
 import core.SharedData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ui_windows.options_window.families_editor.ProductFamilies;
+import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.product.Product;
@@ -22,6 +24,7 @@ import static core.SharedData.*;
 import static ui_windows.main_window.filter_window_se.FilterParameters_SE.*;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.ALL_ITEMS;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.PRICE_ITEMS;
+import static ui_windows.options_window.families_editor.ProductFamilies.UNKNOWN;
 import static ui_windows.product.data.DataItem.DATA_EMPTY;
 
 public class Filter_SE implements Module, Initializable {
@@ -66,7 +69,7 @@ public class Filter_SE implements Module, Initializable {
                     String.format(".*%s.*", parameters.getSearchText().replaceAll("\\*", ".*")),
                     Pattern.CASE_INSENSITIVE);
         } catch (PatternSyntaxException e) {
-            System.out.println(e.getMessage());
+            logger.warn("find text regex parse error {}", e.getMessage());
             pattern = Pattern.compile(
                     String.format(".*%s.*", parameters.getSearchText().replaceAll("[*()\\[\\]]", ".*")),
                     Pattern.CASE_INSENSITIVE);
@@ -86,10 +89,11 @@ public class Filter_SE implements Module, Initializable {
         for (Product product : dataSet) {
             searchTextMatches = pattern.matcher(product.getArticle()).matches() || pattern.matcher(product.getMaterial()).matches();
             priceMatches = parameters.getFilterItems() == null || parameters.getFilterItems() == ALL_ITEMS ||
-                    parameters.getFilterItems() == PRICE_ITEMS && product.isPrice();
+                    parameters.getFilterItems() == PRICE_ITEMS && product.getPrice();
+            ProductFamily pf = ProductFamilies.getInstance().getProductFamily(product);
             familyMatches = parameters.getFamily() == ALL_FAMILIES ||
-                    parameters.getFamily() == FAMILY_NOT_ASSIGNED && product.getProductFamily() == null ||
-                    parameters.getFamily() == product.getProductFamily();
+                    parameters.getFamily() == FAMILY_NOT_ASSIGNED && pf == UNKNOWN ||
+                    parameters.getFamily() == pf;
             lgbkMatches = parameters.getLgbk().getLgbk().equals(TEXT_ALL_ITEMS) ||
                     parameters.getLgbk() == LGBK_NO_DATA && (product.getLgbk() == null || product.getLgbk().isEmpty()) ||
                     parameters.getLgbk().getLgbk().equals(product.getLgbk());
@@ -103,7 +107,7 @@ public class Filter_SE implements Module, Initializable {
                 result.add(product);
 
                 long t = System.currentTimeMillis();
-                parameters.getFamilies().add(product.getProductFamilyDefValue(FAMILY_NOT_ASSIGNED));
+                parameters.getFamilies().add(pf == UNKNOWN ? FAMILY_NOT_ASSIGNED : pf);
 
                 ProductLgbk productLgbk = new ProductLgbk(product);
                 ProductLgbk lgbk = ProductLgbkGroups.getInstance().getLgbkAndParent(productLgbk).getLgbkItem();

@@ -192,7 +192,7 @@ public class Utils {
         }
     }
 
-    public static void setControlValue(AnchorPane root, String id, ArrayList<?> items) {
+    public static void setControlValue(AnchorPane root, String id, List<?> items) {
         if (items == null) return;
         ComboBox<String> cb = null;
         for (Node n : root.getChildren()) {

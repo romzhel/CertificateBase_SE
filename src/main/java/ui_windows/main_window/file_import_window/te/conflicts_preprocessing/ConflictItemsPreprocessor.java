@@ -4,7 +4,7 @@ import core.ThreadManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
-import utils.comparation.products.ProductNameResolver;
+import ui_windows.main_window.file_import_window.te.mapper.PropertiesToImportedProductMapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,31 +17,31 @@ public class ConflictItemsPreprocessor {
     public void process(ImportedProduct importedItem) {
         ConflictItemService conflictItemService = new ConflictItemService();
         ImportedItemService importedItemService = new ImportedItemService();
-        String resolvedMaterial = ProductNameResolver.resolve(importedItem.getId());
 
-        if (conflictItems.containsKey(resolvedMaterial)) {
-            ConflictItem mergedItem = conflictItemService.merge(importedItem, conflictItems.get(resolvedMaterial));
-            conflictItems.put(resolvedMaterial, mergedItem);
+        if (conflictItems.containsKey(importedItem.getId())) {
+            ConflictItem mergedItem = conflictItemService.merge(importedItem, conflictItems.get(importedItem.getId()));
+            conflictItems.put(importedItem.getId(), mergedItem);
             logger.debug("item '{}' was merged to '{}'", importedItem.getId(), mergedItem.getId());
-        } else if (processedItems.containsKey(resolvedMaterial)) {
-            ImportedProduct existingItem = processedItems.get(resolvedMaterial);
+        } else if (processedItems.containsKey(importedItem.getId())) {
+            ImportedProduct existingItem = processedItems.get(importedItem.getId());
             ImportedProduct mergedImportedItem = importedItemService.merge(existingItem, importedItem);
             if (mergedImportedItem != null) {
-                processedItems.put(resolvedMaterial, mergedImportedItem);
+                processedItems.put(importedItem.getId(), mergedImportedItem);
                 logger.debug("item '{}' was merged to '{}'", importedItem.getId(), mergedImportedItem.getId());
             } else {
-                processedItems.remove(resolvedMaterial);
+                processedItems.remove(importedItem.getId());
                 ConflictItem conflictItem = conflictItemService.merge(existingItem, importedItem);
-                conflictItems.put(resolvedMaterial, conflictItem);
+                conflictItems.put(importedItem.getId(), conflictItem);
                 logger.debug("item '{}' was merged to '{}'", importedItem.getId(), conflictItem.getId());
             }
         } else {
-            processedItems.put(resolvedMaterial, importedItem);
+            processedItems.put(importedItem.getId(), importedItem);
 //            logger.debug("item '{}' was added to processed items", importedItem);
         }
     }
 
     public List<ImportedProduct> processConflictsAndGetItems() throws RuntimeException {
+        PropertiesToImportedProductMapper mapper = new PropertiesToImportedProductMapper();
         List<ImportedProduct> result = new LinkedList<>(processedItems.values());
         List<ConflictItem> items = new ArrayList<>(conflictItems.values());
 
@@ -59,7 +59,7 @@ public class ConflictItemsPreprocessor {
                                     )
                             )
                     )
-                    .map(conflictItem -> new ImportedProduct(conflictItem.getPropertyMap()))
+                    .map(conflictItem -> mapper.importedProductMapper(conflictItem.getPropertyMap()))
                     .collect(Collectors.toList());
 
             result.addAll(treatedItems);

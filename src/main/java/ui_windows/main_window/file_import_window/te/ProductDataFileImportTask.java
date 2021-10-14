@@ -12,6 +12,7 @@ import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.file_import_window.te.importer.ExcelFileImporter_v2;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
+import ui_windows.options_window.product_lgbk.ProductLgbks;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
 import utils.Utils;
@@ -59,14 +60,15 @@ public class ProductDataFileImportTask implements Runnable {
             }
         }
 
+        List<Product> existItems = Products.getInstance().getItems();
         List<ImportedProduct> importedItems = importer.getProducts(filesImportParameters.getFiles(), true);
         ComparingRules<Product> comparingRules = new ComparingRulesImportNow();
-        TotalComparisonResult comparisonResult = comparator.compare(Products.getInstance().getItems(), importedItems, comparingRules);
+        TotalComparisonResult comparisonResult = comparator.compare(existItems, importedItems, comparingRules);
 
         boolean treatItemWithNoCost = filesImportParameters.getParams().getOrDefault(RESET_NON_FOUND_ITEMS_COST, false);
         if (treatItemWithNoCost) {
-            logger.trace("Сбрасываем стоимость ненайденных позиций");
             costResetter.calcNoCostItemsInResult(comparisonResult);
+            logger.trace("Reset cost of non-found positions during import");
         }
 
         Platform.runLater(() -> Dialogs.showMessage("Результаты импорта",
@@ -87,6 +89,9 @@ public class ProductDataFileImportTask implements Runnable {
         );
 
         if (applyChanges) {
+            logger.info("find and treat GBK/Hierarchy structure changes");//STRONGLY before apply changes to existing Products
+            ProductLgbks.getInstance().treatStructureChanges(comparisonResult.getChangedItemList());
+
             List<Product> newItemsForDB = new LinkedList<>(changesFixer.fixNewProducts(comparisonResult.getNewItemList()));
             changedItemsForDB.addAll(changesFixer.fixChangedProducts(comparisonResult.getChangedItemList()));
             changedItemsForDB.addAll(changesFixer.fixChangedProducts(comparisonResult.getNoCostItemList()));

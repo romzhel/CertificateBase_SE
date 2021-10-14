@@ -2,15 +2,17 @@ package ui_windows.main_window.file_import_window.te;
 
 import core.ThreadManager;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import javafx.util.StringConverter;
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.util.Strings;
 import ui.Dialogs;
 import ui_windows.main_window.file_import_window.te.importer.ImportDataSheet;
 import ui_windows.product.data.DataItem;
+import ui_windows.product.vendors.VendorEnum;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,15 +22,19 @@ import java.util.stream.Collectors;
 import static ui_windows.product.data.DataItem.DATA_EMPTY;
 import static ui_windows.product.data.DataItem.DATA_ORDER_NUMBER;
 
+@Log4j2
 public class ColumnMappingWindowController {
-    private static final Logger logger = LogManager.getLogger(ColumnMappingWindowController.class);
-
     @FXML
     private TableView<ImportColumnParameter> tvFields;
     @FXML
     private ComboBox<ImportDataSheet> cbSheetNames;
     @FXML
     private Label lblSource;
+    @FXML
+    private Button btnReset;
+    @FXML
+    private ComboBox<VendorEnum> cbxVendor;
+
     private ImportDataSheet inputSheet;
     private ImportDataSheet result;
 
@@ -38,33 +44,30 @@ public class ColumnMappingWindowController {
         lblSource.setText(inputData.getFileName().concat("/").concat(inputData.getSheetName()));
         tvFields.getItems().addAll(inputData.getColumnParams());
 
-        /*cbSheetNames.getItems().addAll(inputData);
-        cbSheetNames.setCellFactory(new Callback<ListView<ImportDataSheet>, ListCell<ImportDataSheet>>() {
+        cbxVendor.setConverter(new StringConverter<VendorEnum>() {
             @Override
-            public ListCell<ImportDataSheet> call(ListView<ImportDataSheet> param) {
-                return new ListCell<ImportDataSheet>(){
-                    @Override
-                    protected void updateItem(ImportDataSheet item, boolean empty) {
-                        super.updateItem(item, empty);
+            public String toString(VendorEnum vendor) {
+                return vendor.name();
+            }
 
-                        if (item == null) {
-                            setGraphic(null);
-                            setText(null);
-                        } else {
-                            setGraphic(null);
-                            setText(item.getFileName().concat("/").concat(item.getSheetName()));
-                        }
-                    }
-                };
+            @Override
+            public VendorEnum fromString(String name) {
+                return VendorEnum.valueOf(name);
             }
         });
-        cbSheetNames.valueProperty().addListener((observable, oldValue, newValue) -> {
-            tvFields.getItems().clear();
-            tvFields.getItems().addAll(newValue.getColumnParams());
+        cbxVendor.getItems().addAll(VendorEnum.values());
+        cbxVendor.getSelectionModel().select(0);
+        cbxVendor.setOnAction(eh -> {
+            log.debug("action select vendor: '{}'", cbxVendor.getSelectionModel().getSelectedItem());
+            inputSheet.setVendor(cbxVendor.getSelectionModel().getSelectedItem());
         });
-        if (cbSheetNames.getItems().size() > 0) {
-            cbSheetNames.getSelectionModel().select(0);
-        }*/
+
+        btnReset.setOnAction(event -> {
+            inputData.getColumnParams().stream()
+                    .filter(item -> item.getDataItem() != DATA_ORDER_NUMBER)
+                    .forEach(item -> item.setDataItem(DATA_EMPTY));
+            tvFields.refresh();
+        });
     }
 
     public void apply() {

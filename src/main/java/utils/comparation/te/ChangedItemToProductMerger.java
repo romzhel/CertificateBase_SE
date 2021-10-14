@@ -17,8 +17,8 @@ public class ChangedItemToProductMerger {
             try {
                 field.set(product, property.getNewValue());
 
-            } catch (IllegalAccessException e) {
-                log.error("reflection error with product id={} field={}", product.getMaterial(), property);
+            } catch (Exception e) {
+                log.error("reflection error with product={}, changedItem={} field={}", product, changedItem, property);
             }
         }
 

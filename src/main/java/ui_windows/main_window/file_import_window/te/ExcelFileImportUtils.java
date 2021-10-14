@@ -48,7 +48,7 @@ public class ExcelFileImportUtils {
     public List<ImportColumnParameter> getImportColumnParams(List<String> titles) {
         FileColumnMappingService mappingService = FileColumnMappingService.getInstance();
         return titles.stream()
-                .filter(title -> !title.isEmpty())
+                .filter(title -> title != null && !title.isEmpty())
                 .map(title -> {
                     ImportColumnParameter param = new ImportColumnParameter();
                     param.setColumnTitle(title);

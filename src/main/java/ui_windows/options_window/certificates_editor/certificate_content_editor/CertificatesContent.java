@@ -31,7 +31,13 @@ public class CertificatesContent implements Initializable {
         content = new CertificatesContentDB().getData();
         long t0 = System.currentTimeMillis();
         mapContent = new HashMap<>(2000);
-        for (CertificateContent cont : content) {
+        addContent(content);
+        logger.trace("хэш мэп контента сертификатов сформирован за {} мсек", System.currentTimeMillis() - t0);
+        System.out.print("");
+    }
+
+    public void addContent(Collection<CertificateContent> contentList) {
+        for (CertificateContent cont : contentList) {
             String[] names = cont.getEquipmentName().split("[,;]");
             for (String name : names) {
                 name = name.replaceAll("\\s*(x+.*$)*", "");
@@ -43,8 +49,6 @@ public class CertificatesContent implements Initializable {
                 mapContent.putIfAbsent(name, Collections.singleton(cont));
             }
         }
-        logger.trace("хэш мэп контента сертификатов сформирован за {} мсек", System.currentTimeMillis() - t0);
-        System.out.print("");
     }
 
     public List<CertificateContent> getItems() {

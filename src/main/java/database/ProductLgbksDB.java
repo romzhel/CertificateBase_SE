@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class ProductLgbksDB extends DbRequest {
 
@@ -28,8 +29,8 @@ public class ProductLgbksDB extends DbRequest {
         }
     }
 
-    public ArrayList getData() {
-        ArrayList<ProductLgbk> productLgbks = new ArrayList<>();
+    public List<ProductLgbk> getData() {
+        List<ProductLgbk> productLgbks = new ArrayList<>();
         try {
             ResultSet rs = connection.prepareStatement("SELECT * FROM lgbk").executeQuery();
 
@@ -64,10 +65,17 @@ public class ProductLgbksDB extends DbRequest {
             int[] result = addData.executeBatch();
             connection.commit();
 
-            for (int res : result) {
-                if (res != 1) {
-                    logAndMessage("", new RuntimeException("Данные LGBK/Hierarchy не были добавлены в БД"));
-                    return false;
+            ResultSet keys = addData.getGeneratedKeys();
+            if (keys.next()) {
+                int firstId = keys.getInt(1) - pls.size() + 1;
+                int index = 0;
+                for (ProductLgbk lgbk : pls) {
+                    if (result[index++] == 1) {
+                        lgbk.setId(firstId++);
+                    } else {
+                        logAndMessage("", new RuntimeException("Данные LGBK/Hierarchy не были добавлены в БД"));
+                        return false;
+                    }
                 }
             }
         } catch (SQLException e) {

@@ -63,7 +63,7 @@ public class TotalPriceComparisonResultToExcelExporter extends ReportToExcelTemp
 
     private void fillChangedItemsData(SXSSFSheet sheet) {
         for (ChangedItem item : comparisonResult.getChangedItemList()) {
-            Product changedItem = Products.getInstance().getProductByMaterial(item.getId());
+            Product changedItem = Products.getInstance().getProductByVendorMaterialId(item.getId());
             ChangedValue<String> changedSource = comparisonResult.getChangedSourceMap().get(item.getId());
 
             for (ChangedProperty property : item.getChangedPropertyList()) {
@@ -99,14 +99,13 @@ public class TotalPriceComparisonResultToExcelExporter extends ReportToExcelTemp
 
     private void fillItemsData(SXSSFSheet sheet, List<ImportedProduct> newItemList, String comment) {
         for (ImportedProduct item : newItemList) {
-            Product product = Products.getInstance().getProductByMaterial(item.getId());
+            Product product = Products.getInstance().getProductByVendorMaterialId(item.getId());
 
             Row row = sheet.createRow(rowNum++);
 
             String itemSheetName = item.getProperties().get(DATA_ORDER_NUMBER).getSource().getSheetName();
             int itemSheetIndex = comparisonResult.getSheetNames().indexOf(itemSheetName);
             fillProductData(product, row, itemDataStyles[itemSheetIndex]);
-
 
             colIndex = values.length + itemSheetIndex * sheetTitles.length;
 
@@ -115,6 +114,11 @@ public class TotalPriceComparisonResultToExcelExporter extends ReportToExcelTemp
     }
 
     private void fillProductData(Product changedItem, Row row, CellStyle cellStyle) {
+        if (changedItem == null) {
+            log.warn("fill null product data");
+            return;
+        }
+
         colIndex = 0;
         for (DataItem dataItem : values) {
             fillCell(row.createCell(colIndex++), dataItem.getValue(changedItem), cellStyle);
