@@ -79,7 +79,8 @@ public class ProductsDB extends DbRequest {
                 for (int res : result) {
                     if (res != 1) {
                         String message = "Product update error";
-                        logAndMessage(String.format("%s '%s',\nchanged records: %d", message, alpr.get(index), res), new RuntimeException(message));
+                        logAndMessage(String.format("%s '%s' vendor '%s',\nchanged records: %d",
+                                message, alpr.get(index), alpr.get(index).getVendor().toString(), res), new RuntimeException(message));
                         return false;
                     }
                     index++;

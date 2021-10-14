@@ -37,7 +37,10 @@ public class ExcelFileSaxRowDataToImportedProductMapper {
                         (property) -> property)
                 );
 
-        return mapper.importedProductMapper(propertyMap);
+        ImportedProduct importedProduct = mapper.importedProductMapper(propertyMap);
+        importedProduct.setVendor(importDataSheet.getVendor());
+
+        return importedProduct;
     }
 
     private Object getValue(SaxRowData record, ImportColumnParameter param) throws RuntimeException {

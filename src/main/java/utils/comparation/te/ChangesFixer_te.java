@@ -32,6 +32,7 @@ public class ChangesFixer_te {
         for (ImportedProduct importedProduct : importedProductList) {
             String history = historyBuilder.createHistoryForNewItem(importedProduct);
             Product newProduct = mapper.mapToProduct(importedProduct);
+            newProduct.setVendor(importedProduct.getVendor());
             newProduct.setHistory(history);
             newProduct.setLastImportcodes("new");
             newProduct.setLastChangeDate(Utils.getDateTime());

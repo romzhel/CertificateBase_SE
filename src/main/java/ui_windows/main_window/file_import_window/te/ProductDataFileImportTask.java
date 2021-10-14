@@ -67,8 +67,8 @@ public class ProductDataFileImportTask implements Runnable {
 
         boolean treatItemWithNoCost = filesImportParameters.getParams().getOrDefault(RESET_NON_FOUND_ITEMS_COST, false);
         if (treatItemWithNoCost) {
-            logger.trace("Сбрасываем стоимость ненайденных позиций");
             costResetter.calcNoCostItemsInResult(comparisonResult);
+            logger.trace("Reset cost of non-found positions during import");
         }
 
         Platform.runLater(() -> Dialogs.showMessage("Результаты импорта",
