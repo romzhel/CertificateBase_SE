@@ -38,6 +38,7 @@ public class PropertiesToImportedProductMapper {
 
         String vendorMaterialId = Products.getInstance().getVendorMaterial(vendor, material);
         importedProduct.setId(vendorMaterialId);
+        importedProduct.setVendor(vendor);
 
         return importedProduct;
     }

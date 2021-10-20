@@ -6,7 +6,7 @@
 
     <groupId>groupId</groupId>
     <artifactId>CertificateBase</artifactId>
-    <version>1.6.0-rc4${suffix.test}</version>
+    <version>1.6.0-rc5${suffix.test}</version>
 
     <properties>
         <db.version>3.21.0.1</db.version>
@@ -14,7 +14,7 @@
         <!--        <poi.version>3.17</poi.version>-->
         <poi.version>5.0.0</poi.version>
         <!--        <poi.version>4.1.2</poi.version>-->
-        <app.date>14.10.2021</app.date>
+        <app.date>20.10.2021</app.date>
         <!--                                <suffix.test>-test</suffix.test>-->
         <suffix.test></suffix.test>
     </properties>
