@@ -111,6 +111,7 @@ public class ProductsDB extends DbRequest {
                     count = 0;
                     addData.setString(++count, alpr.get(j).getMaterial());
                     count = setData(alpr, count, j, addData);
+                    addData.setInt(++count, alpr.get(j).getVendor().getId());
                     addData.addBatch();
                 }
 
