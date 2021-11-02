@@ -6,6 +6,7 @@ import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
 import ui_windows.product.Product;
+import ui_windows.product.vendors.VendorEnum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,11 +152,10 @@ public class ProductFamilies implements Initializable {
     }
 
     public boolean isSpProduct(Product product) {
-        ProductFamily pf = getProductFamily(product);
-        return pf.getId() == 24;
+        return product.getVendor() == VendorEnum.VANDERBILT;
     }
 
-    public boolean isSpLgbkName(String lgbk) {
-        return lgbk.startsWith("LVB");
+    public boolean isSpHierarchyName(String hierarchy) {
+        return hierarchy.startsWith("LVB");
     }
 }

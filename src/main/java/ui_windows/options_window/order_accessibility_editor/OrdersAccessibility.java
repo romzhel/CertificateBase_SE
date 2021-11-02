@@ -73,10 +73,10 @@ public class OrdersAccessibility implements Initializable {
             return ordersAccessibilityMap.get(dchain);
         }
 
-        Set<String> spPositions = new HashSet<>(Arrays.asList("LVBAC", "LVBIN", "LVBVI"));
+        Set<String> spPositions = new HashSet<>(Arrays.asList("VIN", "VAC", "VVI"));
         Set<String> setsPositions = new HashSet<>(Arrays.asList("RU5:SETS"));
 
-        if (spPositions.contains(product.getLgbk())) {
+        if (spPositions.contains(product.getHierarchy())) {
             return alternativeOrdersAccessibilityMap.get("sp");
         } else if (setsPositions.contains(product.getLgbk())) {
             return alternativeOrdersAccessibilityMap.get("sets");

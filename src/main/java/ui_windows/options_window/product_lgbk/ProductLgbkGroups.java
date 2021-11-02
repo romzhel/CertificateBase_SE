@@ -49,7 +49,7 @@ public class ProductLgbkGroups implements Initializable {
 
     public List<ProductLgbk> createFromProducts(Products products) {
         rootNode = new ProductLgbk("Все позиции", "...", ProductLgbk.ROOT_NODE);
-        ArrayList<ProductLgbk> newProductLgbks = new ArrayList<>();
+        List<ProductLgbk> newProductLgbks = new ArrayList<>();
 
         for (Product product : products.getItems()) {
             String hierarchyName = product.getHierarchy();
