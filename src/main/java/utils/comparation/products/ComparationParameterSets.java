@@ -23,8 +23,8 @@ public class ComparationParameterSets {
                 new MultiEditorItem(DATA_MIN_ORDER, false),
                 new MultiEditorItem(DATA_PACKSIZE, false),
                 new MultiEditorItem(DATA_LEAD_TIME_EU, false),
-                new MultiEditorItem(DATA_WEIGHT, false)
-
+                new MultiEditorItem(DATA_WEIGHT, false),
+                new MultiEditorItem(DATA_DCHAIN, false)
         };
         return parameters;
     }
@@ -52,7 +52,8 @@ public class ComparationParameterSets {
                 new MultiEditorItem(DATA_MIN_ORDER, false),
                 new MultiEditorItem(DATA_PACKSIZE, false),
                 new MultiEditorItem(DATA_LEAD_TIME_EU, false),
-                new MultiEditorItem(DATA_WEIGHT, false)
+                new MultiEditorItem(DATA_WEIGHT, false),
+                new MultiEditorItem(DATA_DCHAIN, false)
         };
         return parameters;
     }

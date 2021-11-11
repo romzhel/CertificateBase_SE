@@ -127,8 +127,8 @@ public class ProductEditorWindowController implements Initializable {
     private CertificateVerificationTable certificateVerificationTable;
     private ComboBoxEqTypeSelector comboBoxEqTypeSelector;
     private PriceBox priceBox;
-    private ProtectedBox minOrderBox, packetSizeBox, leadTimeBox, weightBox, descriptionBox, descriptionEnBox;
-    private ProtectedBox[] boxes = {minOrderBox, packetSizeBox, leadTimeBox, weightBox, descriptionBox, descriptionEnBox};
+    private ProtectedBox minOrderBox, packetSizeBox, leadTimeBox, weightBox, descriptionBox, descriptionEnBox, statusBox;
+    private ProtectedBox[] boxes = {minOrderBox, packetSizeBox, leadTimeBox, weightBox, descriptionBox, descriptionEnBox, statusBox};
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -167,8 +167,8 @@ public class ProductEditorWindowController implements Initializable {
 
         initFamilySelector();
 
-        TextInputControl[] controls = {tfMinOrder, tfPacketSize, tfLeadTime, tfWeight, taDescription, taDescriptionEn};
-        DataItem[] dataItems = {DATA_MIN_ORDER, DATA_PACKSIZE, DATA_LEAD_TIME_EU, DATA_WEIGHT, DATA_DESCRIPTION_RU, DATA_DESCRIPTION_EN};
+        TextInputControl[] controls = {tfMinOrder, tfPacketSize, tfLeadTime, tfWeight, taDescription, taDescriptionEn, tfAccessibility};
+        DataItem[] dataItems = {DATA_MIN_ORDER, DATA_PACKSIZE, DATA_LEAD_TIME_EU, DATA_WEIGHT, DATA_DESCRIPTION_RU, DATA_DESCRIPTION_EN, DATA_DCHAIN};
 
         for (int i = 0; i < boxes.length; i++) {
             boxes[i] = new ProtectedBox(controls[i], dataItems[i]);
