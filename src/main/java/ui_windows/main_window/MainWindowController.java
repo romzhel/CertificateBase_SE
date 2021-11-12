@@ -88,7 +88,16 @@ public class MainWindowController implements Initializable {
                 if (generationMode < 3) {
                     logger.info("Generating price-list {}", PriceLists.getInstance().getItems()
                             .get(mPriceList.getItems().indexOf(mi)).getName());
-                    new PriceGenerationScript().run(mPriceList.getItems().indexOf(mi), generationMode);
+                    ThreadManager.startNewThread(
+                            "Price generator Thread",
+                            ExecutionIndicator.getInstance().wrapTask(
+                                    new PriceGenerationScript(mPriceList.getItems().indexOf(mi), generationMode)),
+                            throwable -> {
+                                logger.error("Execution error: ", throwable);
+                                ThreadManager.executeFxTaskSafe(() ->
+                                        Dialogs.showMessage("Ошибка во время выполнения", throwable.getMessage()));
+                            }
+                    );
                 }
             });
         }
@@ -108,7 +117,6 @@ public class MainWindowController implements Initializable {
                         logger.error("Произошла ошибка: {}", throwable.getMessage(), throwable);
                     }
                     ThreadManager.executeFxTaskSafe(() -> Dialogs.showMessage("Сведения о выполнении", throwable.getMessage()));
-                    return null;
                 });
     }
 
@@ -127,7 +135,8 @@ public class MainWindowController implements Initializable {
                         logger.error(throwable);
                         Platform.runLater(() -> Dialogs.showMessage("Ошибка сравнения прайс-листов", throwable.getMessage()));
                         throw new RuntimeException(throwable);
-                    }, () -> ExecutionIndicator.getInstance().stop()
+                    }, () -> ExecutionIndicator.getInstance().stop(),
+                    () -> ExecutionIndicator.getInstance().stop()
             );
         }
     }

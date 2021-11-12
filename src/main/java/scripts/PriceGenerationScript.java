@@ -8,7 +8,6 @@ import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
-import ui_windows.ExecutionIndicator;
 import ui_windows.main_window.DataSelectorMenu;
 import ui_windows.main_window.MainWindow;
 import ui_windows.options_window.price_lists_editor.PriceList;
@@ -24,93 +23,83 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import static core.SharedData.SHD_CUSTOM_DATA;
 import static files.reports.ReportParameterEnum.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static ui_windows.product.data.DataItem.*;
 
-public class PriceGenerationScript {
+public class PriceGenerationScript implements Runnable {
     public static final Logger logger = LogManager.getLogger(PriceGenerationScript.class);
     public final static int ONLY_PRICE = 0;
     public final static int REPORTS_FOR_CHECK = 1;
     public final static int REPORTS_FOR_USING = 2;
+    private int priceIndex;
+    private int generationMode;
 
-    public void run(int priceIndex, int generationMode) {
-        new Thread(() -> {
-            ExecutionIndicator.getInstance().start();
-            PriceList priceList = PriceLists.getInstance().getItems().get(priceIndex);
-            priceList.generate();
-            logger.trace("прайс-лист сгенерирован");
+    public PriceGenerationScript(int priceIndex, int generationMode) {
+        this.priceIndex = priceIndex;
+        this.generationMode = generationMode;
+    }
 
-            File priceListFile = null;
-            File outOfPriceFile = null;
-            File priceComparisonFile = null;
+    @Override
+    public void run() throws RuntimeException {
+//        new Thread(() -> {
+//            ExecutionIndicator.getInstance().start();
+        PriceList priceList = PriceLists.getInstance().getItems().get(priceIndex);
+        priceList.generate();
+        logger.trace("прайс-лист сгенерирован");
 
-            try {
-                ExecutorService executorService = Executors.newSingleThreadExecutor();
-                priceListFile = executorService.submit(() -> new ExportPriceListToExcel_SE(priceList,
-                        generationMode == ONLY_PRICE).call()).get();
+        File outOfPriceFile = null;
+        File priceComparisonFile = null;
 
-                if (generationMode == REPORTS_FOR_USING) {
-                    priceListTasks(priceList, priceListFile);
-                }
+        File priceListFile = new ExportPriceListToExcel_SE(priceList, generationMode == ONLY_PRICE).call();
 
-                if (generationMode == ONLY_PRICE) {
-                    Utils.openFile(priceListFile);
-                    executorService.shutdown();
-                    executorService.awaitTermination(1, TimeUnit.MINUTES);
-                    ExecutionIndicator.getInstance().stop();
-                    return;
-                }
+        if (generationMode == REPORTS_FOR_USING) {
+            priceListTasks(priceList, priceListFile);
+        }
 
-                if (priceListFile != null) {
-                    Path path = Folders.getInstance().getTempFolder().resolve(Utils.getDateTimeForFileName() +
-                            "_out_of_price_report.xlsx");
+        if (generationMode == ONLY_PRICE) {
+            Utils.openFile(priceListFile);
+            return;
+        }
 
-                    DataItem[] columns = new DataItem[]{DATA_FAMILY_NAME, DATA_RESPONSIBLE, DATA_ORDER_NUMBER,
-                            DATA_ARTICLE, DATA_DESCRIPTION, DATA_COUNTRY_WITH_COMMENTS, DATA_DCHAIN_WITH_COMMENT,
-                            DATA_CERTIFICATE};
+        if (priceListFile != null) {
+            Path path = Folders.getInstance().getTempFolder().resolve(Utils.getDateTimeForFileName() +
+                    "_out_of_price_report.xlsx");
 
-                    Map<ReportParameterEnum, Object> reportParams = new HashMap<>();
-                    reportParams.put(REPORT_PATH, path);
-                    reportParams.put(REPORT_COLUMNS, Arrays.asList(columns));
-                    reportParams.put(REPORT_ITEMS, SHD_CUSTOM_DATA.getData());
+            DataItem[] columns = new DataItem[]{DATA_FAMILY_NAME, DATA_RESPONSIBLE, DATA_ORDER_NUMBER,
+                    DATA_ARTICLE, DATA_DESCRIPTION, DATA_COUNTRY_WITH_COMMENTS, DATA_DCHAIN_WITH_COMMENT,
+                    DATA_CERTIFICATE};
 
-                    new ReportToExcel(reportParams).export();
+            Map<ReportParameterEnum, Object> reportParams = new HashMap<>();
+            reportParams.put(REPORT_PATH, path);
+            reportParams.put(REPORT_COLUMNS, Arrays.asList(columns));
+            reportParams.put(REPORT_ITEMS, SHD_CUSTOM_DATA.getData());
 
-                    DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION.activate();
+            new ReportToExcel(reportParams).export();
 
-                    logger.trace("out of price report generated");
+            DataSelectorMenu.MENU_DATA_CUSTOM_SELECTION.activate();
 
-                    PricesComparisonTask pricesComparatorTask = new PricesComparisonTask();
+            logger.trace("out of price report generated");
 
-                    File previousPriceList = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
-                            "Выберите прайс для сравнения", Dialogs.EXCEL_FILES_ALL,
-                            priceList.getDestination().getPath()).get(0);
+            PricesComparisonTask pricesComparatorTask = new PricesComparisonTask();
 
-                    pricesComparatorTask.comparePriceFilesAndGenerateReport(previousPriceList, priceListFile,
-                            Folders.getInstance().getTempFolder());
+            File previousPriceList = new Dialogs().selectAnyFileTS(MainWindow.getMainStage(),
+                    "Выберите прайс для сравнения", Dialogs.EXCEL_FILES_ALL,
+                    priceList.getDestination().getPath()).get(0);
 
-                    logger.trace("price lists have been compared");//
-                }
+            pricesComparatorTask.comparePriceFilesAndGenerateReport(previousPriceList, priceListFile,
+                    Folders.getInstance().getTempFolder());
 
-                executorService.shutdown();
+            logger.trace("price lists have been compared");//
+        }
 
 //                Utils.copyFilesToClipboardTS(Arrays.asList(priceListFile, outOfPriceFile, priceComparisonFile));
-                Utils.openFile(priceListFile.getParentFile());
+        Utils.openFile(priceListFile.getParentFile());
 
 //                OutlookEmailSender outlookEmailSender = new OutlookEmailSender();
 //                outlookEmailSender.send();
-            } catch (Exception e) {
-                logger.error("ошибка генерации прайс-листа {}", e.getMessage(), e);
-            } finally {
-                ExecutionIndicator.getInstance().stop();
-            }
-        }).start();
     }
 
     private void priceListTasks(PriceList priceList, File tempFile) {

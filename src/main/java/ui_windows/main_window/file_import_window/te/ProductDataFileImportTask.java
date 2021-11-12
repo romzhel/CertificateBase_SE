@@ -137,7 +137,6 @@ public class ProductDataFileImportTask implements Runnable {
                 },
                 throwable -> {
                     logger.error("can't open import report file '{}', error: {}", importReport[0], throwable.getMessage());
-                    return null;
                 });
     }
 }

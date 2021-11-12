@@ -2,7 +2,6 @@ package core;
 
 import exceptions.OperationCancelledByUserException;
 import javafx.application.Platform;
-import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,17 +9,18 @@ import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public class ThreadManager {
     private static final Logger logger = LogManager.getLogger(ThreadManager.class);
 
-    public static void startNewThread(String name, Runnable task, Callback<Throwable, Void> exceptionAction, Runnable... finalActions) {
+    public static void startNewThread(String name, Runnable task, Consumer<Throwable> exceptionAction, Runnable... finalActions) {
         Thread thread = new Thread(task, name);
         thread.setDaemon(true);
         thread.setUncaughtExceptionHandler((th, ex) -> {
             if (exceptionAction != null) {
                 Arrays.stream(finalActions).forEach(Runnable::run);
-                exceptionAction.call(ex);
+                exceptionAction.accept(ex);
             }
         });
         thread.start();

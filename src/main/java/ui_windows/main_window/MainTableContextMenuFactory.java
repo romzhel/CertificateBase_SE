@@ -83,7 +83,6 @@ public class MainTableContextMenuFactory {
                         logger.error("{}: {}", exception.getClass(), exception.getMessage(), exception);
                         Dialogs.showMessage("Ошибка выполнения отчёта", exception.getClass() + ": " +
                                 exception.getMessage());
-                        return null;
                     },
                     () -> ExecutionIndicator.getInstance().stop()
             );

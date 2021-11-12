@@ -38,11 +38,17 @@ public class PricesComparisonTask {
         String fileName = String.format("prices_comparison_report_%s_vs_%s.xlsx",
                 newPriceFile.getName().replaceAll(".xlsx", ""),
                 prevPriceFile.getName().replaceAll(".xlsx", ""));
-        reportFolder = reportFolder == null ? Paths.get(fileName) : reportFolder.resolve(fileName);
-        params.put(PRICE_COMPARISON_REPORT_PATH, reportFolder);
+        params.put(PRICE_COMPARISON_REPORT_PATH, reportFolder == null ? Paths.get(fileName) : reportFolder.resolve(fileName));
         params.put(PRICE_COMPARISON_RESULT, priceComparisonResult);
 
         TotalPriceComparisonResultToExcelExporter toExcelExporter = new TotalPriceComparisonResultToExcelExporter(params);
         toExcelExporter.export();
+
+        fileName = String.format("cost_changes_report_%s_vs_%s.xlsx",
+                newPriceFile.getName().replaceAll(".xlsx", ""),
+                prevPriceFile.getName().replaceAll(".xlsx", ""));
+        params.put(PRICE_COMPARISON_REPORT_PATH, reportFolder == null ? Paths.get(fileName) : reportFolder.resolve(fileName));
+        PriceChangesToExcelExporter priceChangesToExcelExporter = new PriceChangesToExcelExporter(params);
+        priceChangesToExcelExporter.export();
     }
 }

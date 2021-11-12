@@ -140,7 +140,7 @@ public class ExportPriceListToExcel_SE implements Callable<File> {
     }
 
     @Override
-    public File call() throws Exception {
+    public File call() {
         return resultFile;
     }
 

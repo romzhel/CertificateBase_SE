@@ -20,6 +20,7 @@ public class ExcelCellStyleFactory_v2 {
     public final CellStyle CELL_ALIGN_HLEFT_BOLD_BROWN;
     public final CellStyle CELL_ALIGN_HLEFT_BROWN;
     public final CellStyle CELL_ALIGN_HCENTER_BROWN;
+    public final CellStyle CELL_ALIGN_HCENTER_TEXT_FORMAT;
 
     public ExcelCellStyleFactory_v2(SXSSFWorkbook workbook) {
         Font boldFont = getFont(workbook, true, -1);
@@ -78,6 +79,11 @@ public class ExcelCellStyleFactory_v2 {
         CELL_CURRENCY_FORMAT_VCENTER = workbook.createCellStyle();
         CELL_CURRENCY_FORMAT_VCENTER.setDataFormat(dataFormat.getFormat("# ##0.00\\ [$€-x-euro1];[Red]# ##0.00\\ [$€-x-euro1]"));
         CELL_CURRENCY_FORMAT_VCENTER.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        CELL_ALIGN_HCENTER_TEXT_FORMAT = workbook.createCellStyle();
+        DataFormat fmt = workbook.createDataFormat();
+        CELL_ALIGN_HCENTER_TEXT_FORMAT.setAlignment(HorizontalAlignment.CENTER);
+        CELL_ALIGN_HCENTER_TEXT_FORMAT.setDataFormat(fmt.getFormat("@"));
     }
 
     private Font getFont(SXSSFWorkbook workbook, boolean isBold, int indexedColor) {
