@@ -4,6 +4,7 @@ import files.reports.ReportParameterEnum;
 import lombok.extern.log4j.Log4j2;
 import ui_windows.main_window.file_import_window.te.importer.ExcelFileImporter_v2;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
+import utils.Utils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -44,11 +45,9 @@ public class PricesComparisonTask {
         TotalPriceComparisonResultToExcelExporter toExcelExporter = new TotalPriceComparisonResultToExcelExporter(params);
         toExcelExporter.export();
 
-        fileName = String.format("cost_changes_report_%s_vs_%s.xlsx",
-                newPriceFile.getName().replaceAll(".xlsx", ""),
-                prevPriceFile.getName().replaceAll(".xlsx", ""));
+        fileName = String.format("STEP_import_%s.xlsx", Utils.getDateTimeForFileName());
         params.put(PRICE_COMPARISON_REPORT_PATH, reportFolder == null ? Paths.get(fileName) : reportFolder.resolve(fileName));
-        PriceChangesToExcelExporter priceChangesToExcelExporter = new PriceChangesToExcelExporter(params);
-        priceChangesToExcelExporter.export();
+        StepExportToExcelExporter stepExportToExcelExporter = new StepExportToExcelExporter(params);
+        stepExportToExcelExporter.export();
     }
 }

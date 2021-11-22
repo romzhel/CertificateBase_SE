@@ -10,21 +10,22 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.product.Products;
 import ui_windows.product.data.DataItem;
+import utils.Utils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static files.reports.ReportParameterEnum.PRICE_COMPARISON_REPORT_PATH;
 import static files.reports.ReportParameterEnum.PRICE_COMPARISON_RESULT;
 import static ui_windows.product.data.DataItem.DATA_LOCAL_PRICE;
-import static ui_windows.product.data.DataItem.DATA_ORDER_NUMBER;
 
 @Log4j2
-public class PriceChangesToExcelExporter extends ReportToExcelTemplate_v2 {
+public class StepExportToExcelExporter extends ReportToExcelTemplate_v2 {
     private final String[] titles = {"ssn", "cost1", "cost2", "eCi", "imall"};
-    private final int[] colWidths = {8200, 6150, 6150, 6150, 6150};
+    private final int[] colWidths = {8200, 5000, 5000, 5000, 5000};
     private final CellStyle[] itemDataStyles = {
             styles.CELL_ALIGN_HCENTER_TEXT_FORMAT,
             styles.CELL_ALIGN_HCENTER_TEXT_FORMAT,
@@ -34,7 +35,7 @@ public class PriceChangesToExcelExporter extends ReportToExcelTemplate_v2 {
     };
     private TotalPriceComparisonResult comparisonResult;
 
-    public PriceChangesToExcelExporter(Map<ReportParameterEnum, Object> params) {
+    public StepExportToExcelExporter(Map<ReportParameterEnum, Object> params) {
         super(params);
     }
 
@@ -54,51 +55,54 @@ public class PriceChangesToExcelExporter extends ReportToExcelTemplate_v2 {
         log.trace("Checking params...");
         getAndCheckParams();
 
-        SXSSFSheet sheet = workbook.createSheet("Cost changes report");
+        SXSSFSheet sheet = workbook.createSheet(String.format("STEP_import_%s", Utils.getDateTimeForFileName()));
 
         log.trace("Filling report titles");
         fillTitles(sheet);
 
         log.trace("Filling report data");
-        fillItems(sheet, comparisonResult.getNewItemList(), "10", "true");
+        fillItems(sheet, comparisonResult.getNewItemList(), "10", "true", o -> o.matches("^0+\\.0+$"));
         fillChangedItems(sheet, "10", "true");
         fillItems(sheet, comparisonResult.getGoneItemList(), "-10", "false");
 
         saveToFile();
     }
 
-    private void fillItems(SXSSFSheet sheet, List<ImportedProduct> itemList, String eCi, String iMall) {
-        Row row;
+    private void fillItems(SXSSFSheet sheet, List<ImportedProduct> itemList, String eCi, String iMall, Predicate<String>... skip) throws RuntimeException {
         for (ImportedProduct ip : itemList) {
-            colIndex = 0;
+            String ssn = Products.getInstance().getSsnNotEmpty(Products.getInstance().getProductByVendorMaterialId(ip.getId()));
             String cost = ip.getProperties().get(DATA_LOCAL_PRICE).getNewValue().toString().replaceAll(",", ".");
-            row = sheet.createRow(rowNum++);
-            fillCell(row.createCell(colIndex), ip.getProperties().get(DATA_ORDER_NUMBER).getNewValue(), itemDataStyles[colIndex++]);
-            fillCell(row.createCell(colIndex), cost, itemDataStyles[colIndex++]);
-            fillCell(row.createCell(colIndex), cost, itemDataStyles[colIndex++]);
-            fillCell(row.createCell(colIndex), eCi, itemDataStyles[colIndex++]);
-            fillCell(row.createCell(colIndex), iMall, itemDataStyles[colIndex++]);
+
+            fillRow(sheet, eCi, iMall, ssn, cost, skip);
         }
     }
 
-    private void fillChangedItems(SXSSFSheet sheet, String eCi, String iMall) {
-        Row row;
+    private void fillChangedItems(SXSSFSheet sheet, String eCi, String iMall, Predicate<String>... skip) throws RuntimeException {
         List<ChangedItem> priceChangeList = comparisonResult.getChangedItemList().stream()
                 .filter(item -> item.getChangedPropertyList().stream().anyMatch(property -> property.getDataItem() == DATA_LOCAL_PRICE))
                 .collect(Collectors.toList());
 
         for (ChangedItem item : priceChangeList) {
-            colIndex = 0;
-            Object ssn = Products.getInstance().getProductByVendorMaterialId(item.getId()).getMaterial();
+            String ssn = Products.getInstance().getSsnNotEmpty(Products.getInstance().getProductByVendorMaterialId(item.getId()));
             String cost = getValue(item, DATA_LOCAL_PRICE).toString().replaceAll(",", ".");
 
-            row = sheet.createRow(rowNum++);
-            fillCell(row.createCell(colIndex), ssn, itemDataStyles[colIndex++]);
-            fillCell(row.createCell(colIndex), cost, itemDataStyles[colIndex++]);
-            fillCell(row.createCell(colIndex), cost, itemDataStyles[colIndex++]);
-            fillCell(row.createCell(colIndex), eCi, itemDataStyles[colIndex++]);
-            fillCell(row.createCell(colIndex), iMall, itemDataStyles[colIndex++]);
+            fillRow(sheet, eCi, iMall, ssn, cost, skip);
         }
+    }
+
+    private void fillRow(SXSSFSheet sheet, String eCi, String iMall, String ssn, String cost, Predicate<String>... skip) throws RuntimeException {
+        if (skip.length > 0 && skip[0].test(cost)) {
+            log.info("position '{}' with cost = {} was ignored", ssn, cost);
+            return;
+        }
+
+        Row row = sheet.createRow(rowNum++);
+        colIndex = 0;
+        fillCell(row.createCell(colIndex), ssn, itemDataStyles[colIndex++]);
+        fillCell(row.createCell(colIndex), cost, itemDataStyles[colIndex++]);
+        fillCell(row.createCell(colIndex), cost, itemDataStyles[colIndex++]);
+        fillCell(row.createCell(colIndex), eCi, itemDataStyles[colIndex++]);
+        fillCell(row.createCell(colIndex), iMall, itemDataStyles[colIndex++]);
     }
 
     private Object getValue(ChangedItem item, DataItem dataItem) throws RuntimeException {
