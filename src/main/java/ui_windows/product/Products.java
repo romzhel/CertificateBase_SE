@@ -149,4 +149,9 @@ public class Products implements Initializable {
     public int getLeadTimeRu(Product product) {
         return product.getLeadTime() + 14;
     }
+
+    public String getSsnNotEmpty(Product product) {
+        return product.getProductForPrint() == null || product.getProductForPrint().isEmpty() ?
+                product.getMaterial() : product.getProductForPrint();
+    }
 }

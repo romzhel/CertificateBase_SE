@@ -535,14 +535,12 @@ public enum DataItem {
         public void fillExcelCell(
                 Cell cell, Product product, Map<String, Object> options) {
             cell.setCellType(CellType.STRING);
-            cell.setCellValue(product.getProductForPrint() == null || product.getProductForPrint().isEmpty() ?
-                    product.getMaterial() : product.getProductForPrint());
+            cell.setCellValue(Products.getInstance().getSsnNotEmpty(product));
             cell.setCellStyle(CELL_ALIGN_HLEFT_VCENTER);
         }
 
         public Object getValue(Product product) {
-            return product.getProductForPrint() == null || product.getProductForPrint().isEmpty() ?
-                    product.getMaterial() : product.getProductForPrint();
+            return Products.getInstance().getSsnNotEmpty(product);
         }
     },
     DATA_LGBK_PRICE(40, "LGBK для прайса", "lgbk") {
