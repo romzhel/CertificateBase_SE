@@ -3,13 +3,13 @@ package ui_windows.main_window.file_import_window.te;
 import core.ThreadManager;
 import database.ProductsDB;
 import exceptions.OperationCancelledByUserException;
-import files.reports.NowImportResultToExcel;
+import files.Folders;
+import files.reports.NowImportResultToExcel_v2;
 import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
 import ui_windows.main_window.DataSelectorMenu;
-import ui_windows.main_window.MainWindow;
 import ui_windows.main_window.file_import_window.te.importer.ExcelFileImporter_v2;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.options_window.product_lgbk.ProductLgbks;
@@ -23,7 +23,6 @@ import utils.comparation.te.TotalComparator;
 import utils.comparation.te.TotalComparisonResult;
 import utils.comparation.te.TotalComparisonResultService;
 
-import java.io.File;
 import java.util.*;
 
 import static ui_windows.main_window.file_import_window.te.FilesImportParametersEnum.*;
@@ -122,21 +121,13 @@ public class ProductDataFileImportTask implements Runnable {
             logger.info("DB updating is finished");
         }
 
-        final File[] importReport = new File[1];
-        ThreadManager.startNewThread("Excel Report Thread", () -> {
-                    NowImportResultToExcel reportCreator = new NowImportResultToExcel();
-                    importReport[0] = reportCreator.export(comparisonResult, ThreadManager.executeFxTaskSafe(() ->
-                            new Dialogs().selectAnyFile(
-                                    MainWindow.getMainStage(),
-                                    "Сохранение отчёта импорта",
-                                    Dialogs.EXCEL_FILES_ALL,
-                                    Utils.getDateTimeForFileName().concat("_import_report.xlsx")).get(0)
-                    ));
-
-                    Utils.openFile(importReport[0]);
-                },
+        String fileName = Utils.getDateTimeForFileName().concat("_import_report.xlsx");
+        ThreadManager.startNewThread("Excel Report Thread",
+                new NowImportResultToExcel_v2(comparisonResult, Folders.getInstance().getTempFolder().resolve(fileName)),
                 throwable -> {
-                    logger.error("can't open import report file '{}', error: {}", importReport[0], throwable.getMessage());
+                    logger.error("error creating import result file: {}", throwable.getMessage());
+                    Platform.runLater(() -> Dialogs.showMessage("Ошибка во время выполнения", throwable.getMessage()));
                 });
+        Utils.openFile(Folders.getInstance().getTempFolder().toFile());
     }
 }
