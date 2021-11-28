@@ -42,11 +42,10 @@ public class Selector<T> {
     }
 
     public void actualize(FilterParameters_SE parameters) {
+//        Platform.runLater(() -> {//работа листенера и изменение списка элементов приводят к исключению
         comboBox.setOnAction(null);
 
-        if (comboBox.getItems().size() < 3 || parameters.getLastChange() < changeLevel ||
-                parameters.getLastChange() == changeLevel && valueSupplier.get().equals(FilterParameters_SE.TEXT_ALL_ITEMS)) {
-
+        if (parameters.getLastChange() != changeLevel) {
             comboBox.getItems().clear();
             comboBox.getItems().addAll(valuesSupplier.get());
             comboBox.getItems().sort((o1, o2) -> converter.apply(o1).compareToIgnoreCase(converter.apply(o2)));
@@ -55,6 +54,7 @@ public class Selector<T> {
         if (!comboBox.getItems().contains(valueSupplier.get())) {
             comboBox.getItems().add(valueSupplier.get());
         }
+
         comboBox.getSelectionModel().select(valueSupplier.get());
 
         comboBox.setOnAction(event -> {
@@ -63,6 +63,7 @@ public class Selector<T> {
         });
 
         comboBox.setVisibleRowCount(Math.min(comboBox.getItems().size(), 10));
+//        });
     }
 
     public void sync() {
