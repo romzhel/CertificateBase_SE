@@ -34,7 +34,7 @@ public class SearchBox extends Region {
                 clearButton.setVisible(textBox.getText().length() != 0);
 
                 FilterParameters_SE parameters = SHD_FILTER_PARAMETERS.getData();
-                parameters.setSearchText(newValue);
+                parameters.calcFilterPredicate();
                 SHD_FILTER_PARAMETERS.setData(this.getClass(), parameters);
             }
         });

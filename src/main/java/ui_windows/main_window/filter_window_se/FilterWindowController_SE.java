@@ -9,13 +9,19 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.WindowEvent;
+import lombok.extern.log4j.Log4j2;
 import ui.Dialogs;
+import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
+import ui_windows.options_window.product_lgbk.LgbkAndParent;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
+import ui_windows.options_window.product_lgbk.ProductLgbkGroups;
+import ui_windows.product.Product;
 import ui_windows.product.data.DataItem;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static core.SharedData.SHD_DISPLAYED_DATA;
@@ -23,8 +29,10 @@ import static core.SharedData.SHD_FILTER_PARAMETERS;
 import static ui_windows.main_window.filter_window_se.FilterParameters_SE.*;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.ALL_ITEMS;
 import static ui_windows.main_window.filter_window_se.ItemsSelection.PRICE_ITEMS;
+import static ui_windows.options_window.families_editor.ProductFamilies.UNKNOWN;
 import static ui_windows.product.data.DataItem.DATA_EMPTY;
 
+@Log4j2
 public class FilterWindowController_SE implements Initializable, Module {
     private static final String TEXT_ALL_ITEMS = "--- Все ---";
     private static final int SELECTOR_LGBK_ROWS_MAX = 10;
@@ -71,6 +79,8 @@ public class FilterWindowController_SE implements Initializable, Module {
         if (SHD_FILTER_PARAMETERS.getData() instanceof FilterParameters_SE) {
             filterParameters = SHD_FILTER_PARAMETERS.getData();
 
+            readFilterStatisticParams();
+
             initMainSelection();
 
             familySelector = new Selector<>(cbFamily,
@@ -100,9 +110,26 @@ public class FilterWindowController_SE implements Initializable, Module {
         }
     }
 
+    private void readFilterStatisticParams() {
+        filterParameters.clearComboBoxItems();
+        List<Product> displayedProducts = SHD_DISPLAYED_DATA.getData();
+        for (Product product : displayedProducts) {
+            ProductFamily pf = ProductFamilies.getInstance().getProductFamily(product);
+            filterParameters.getFamilies().add(pf == UNKNOWN ? FAMILY_NOT_ASSIGNED : pf);
+
+            ProductLgbk productLgbk = new ProductLgbk(product);
+            LgbkAndParent lap = ProductLgbkGroups.getInstance().getLgbkAndParent(productLgbk);
+            ProductLgbk gbk = lap.getLgbkParent();
+            ProductLgbk hier = lap.getLgbkItem();
+            filterParameters.getLgbks().add(gbk == null || gbk.getLgbk().isEmpty() ? LGBK_NO_DATA : gbk);
+            filterParameters.getHierarchies().add(hier == null || hier.getHierarchy().isEmpty() ? LGBK_NO_DATA : hier);
+        }
+    }
+
     private void refresh() {
         if (SHD_FILTER_PARAMETERS.getData() instanceof FilterParameters_SE) {
             filterParameters = SHD_FILTER_PARAMETERS.getData();
+            readFilterStatisticParams();
 
             rbAllItems.setSelected(filterParameters.getFilterItems() == ALL_ITEMS);
             rbPriceItems.setSelected(filterParameters.getFilterItems() == PRICE_ITEMS);

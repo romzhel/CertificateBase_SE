@@ -2,7 +2,10 @@ package ui_windows.main_window.filter_window_se;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 import ui.components.SearchBox;
+import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamily;
 import ui_windows.options_window.product_lgbk.ProductLgbk;
 import ui_windows.product.data.DataItem;
@@ -11,22 +14,27 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import static ui_windows.main_window.filter_window_se.CustomValueMatcher.START_WITH;
-import static ui_windows.main_window.filter_window_se.ItemsSelection.ALL_ITEMS;
+import static ui_windows.main_window.filter_window_se.ItemsSelection.PRICE_ITEMS;
+import static ui_windows.options_window.families_editor.ProductFamilies.UNKNOWN;
 import static ui_windows.product.data.DataItem.*;
 
+@Data
+@Log4j2
 public class FilterParameters_SE {
     public final static String TEXT_TEMPLATE = "--- %s ---";
     public final static String TEXT_ALL_ITEMS = String.format(TEXT_TEMPLATE, "Все");
-    public final static String TEXT_NOT_ASSIGNED = String.format(TEXT_TEMPLATE, "Не назначено");
-    public final static String TEXT_NO_DATA = String.format(TEXT_TEMPLATE, "Не присвоено");
-    public final static String TEXT_NO_SELECTED = String.format(TEXT_TEMPLATE, "Не выбрано");
     public final static ProductFamily ALL_FAMILIES = new ProductFamily(TEXT_ALL_ITEMS);
-    public final static ProductFamily FAMILY_NOT_ASSIGNED = new ProductFamily(TEXT_NOT_ASSIGNED);
     public final static ProductLgbk ALL_LGBKS = new ProductLgbk(TEXT_ALL_ITEMS, TEXT_ALL_ITEMS);
-    public final static ProductLgbk LGBK_NO_DATA = new ProductLgbk(TEXT_NO_DATA, TEXT_NO_DATA);
+    public final static String TEXT_NOT_ASSIGNED = String.format(TEXT_TEMPLATE, "Не назначено");
+    public final static ProductFamily FAMILY_NOT_ASSIGNED = new ProductFamily(TEXT_NOT_ASSIGNED);
     public final static ProductLgbk LGBK_NOT_ASSIGNED = new ProductLgbk(TEXT_NOT_ASSIGNED, TEXT_NOT_ASSIGNED);
+    public final static String TEXT_NO_DATA = String.format(TEXT_TEMPLATE, "Не присвоено");
+    public final static ProductLgbk LGBK_NO_DATA = new ProductLgbk(TEXT_NO_DATA, TEXT_NO_DATA);
+    public final static String TEXT_NO_SELECTED = String.format(TEXT_TEMPLATE, "Не выбрано");
     public final static int CHANGE_NONE = -1;
     public final static int CHANGE_GLOBAL = 0;
     public final static int CHANGE_PRICE = 1;
@@ -37,7 +45,7 @@ public class FilterParameters_SE {
     public final static int CHANGE_CUSTOM_PROPERTY = 6;
     public final static int CHANGE_CUSTOM_VALUE = 7;
     public final static int CHANGE_CUSTOM_VALUE_MATCHER = 8;
-
+    public static SearchBox searchBox = new SearchBox();
     private ItemsSelection filterItems;
     private ProductFamily family;
     private ProductLgbk lgbk;
@@ -45,15 +53,16 @@ public class FilterParameters_SE {
     private DataItem customProperty;
     private String customValue;
     private CustomValueMatcher customValueMatcher;
-    private static SearchBox searchBox = new SearchBox();
     private IntegerProperty lastChange;
     private Set<ProductFamily> families;
     private Set<ProductLgbk> lgbks;
     private Set<ProductLgbk> hierarchies;
     private Set<DataItem> customProperties;
 
+    private FilterPredicate filterPredicate;
+
     public FilterParameters_SE() {
-        filterItems = ALL_ITEMS;
+        filterItems = PRICE_ITEMS;
         family = ALL_FAMILIES;
         lgbk = ALL_LGBKS;
         hierarchy = ALL_LGBKS;
@@ -137,7 +146,63 @@ public class FilterParameters_SE {
         hierarchies.add(ALL_LGBKS);
     }
 
-    public ItemsSelection getFilterItems() {
+    public void calcFilterPredicate() {
+        this.filterPredicate = null;
+
+        String searchText = searchBox.getText();
+        if (!searchText.isEmpty()) {
+            Pattern pattern;
+            try {
+                pattern = Pattern.compile(
+                        String.format(".*%s.*", searchText.replaceAll("\\*", ".*")),
+                        Pattern.CASE_INSENSITIVE);
+            } catch (PatternSyntaxException e) {
+                log.warn("find text regex parse error {}", e.getMessage());
+                pattern = Pattern.compile(
+                        String.format(".*%s.*", searchText.replaceAll("[*()\\[\\]]", ".*")),
+                        Pattern.CASE_INSENSITIVE);
+            }
+
+            Pattern finalPattern = pattern;
+            addFilterPredicate(new FilterPredicate(product -> finalPattern.matcher(product.getArticle()).matches() || finalPattern.matcher(product.getMaterial()).matches()));
+        }
+
+        if (filterItems == PRICE_ITEMS) {
+            addFilterPredicate(new FilterPredicate(product -> product.getPrice() && !product.getBlocked()));
+        }
+
+        if (family != ALL_FAMILIES) {
+            addFilterPredicate(new FilterPredicate(product -> {
+                ProductFamily pf = ProductFamilies.getInstance().getProductFamily(product);
+                return family == pf || family == FAMILY_NOT_ASSIGNED && pf == UNKNOWN;
+            }));
+        }
+
+        if (!lgbk.getLgbk().equals(TEXT_ALL_ITEMS)) {
+            addFilterPredicate(new FilterPredicate(product -> lgbk.getLgbk().equals(product.getLgbk()) ||
+                    lgbk == LGBK_NO_DATA && (product.getLgbk() == null || product.getLgbk().isEmpty())));
+        }
+
+        if (!hierarchy.getHierarchy().equals(TEXT_ALL_ITEMS)) {
+            addFilterPredicate(new FilterPredicate(product -> product.getHierarchy().contains(hierarchy.getHierarchy().replaceAll("\\.", "")) ||
+                    hierarchy == LGBK_NO_DATA && (product.getHierarchy() == null || product.getHierarchy().isEmpty())));
+        }
+
+        if (customProperty != null && !customValue.isEmpty()) {
+            addFilterPredicate(new FilterPredicate(product -> customValueMatcher.matches(
+                    customProperty.getValue(product).toString(), customValue)));
+        }
+    }
+
+    public void addFilterPredicate(FilterPredicate filterPredicate) {
+        if (this.filterPredicate == null) {
+            this.filterPredicate = filterPredicate;
+        } else {
+            this.filterPredicate.addPredicate(filterPredicate);
+        }
+    }
+
+    /*public ItemsSelection getFilterItems() {
         return filterItems;
     }
 
@@ -167,25 +232,25 @@ public class FilterParameters_SE {
 
     public String getSearchText() {
         return searchBox.getText();
-    }
+    }*/
 
     public static SearchBox getSearchBox() {
         return searchBox;
     }
 
-    public Set<ProductFamily> getFamilies() {
+    /*public Set<ProductFamily> getFamilies() {
         return families;
     }
 
     public Set<ProductLgbk> getLgbks() {
         return lgbks;
-    }
+    }*/
 
     public int getLastChange() {
         return lastChange.get();
     }
 
-    public Set<ProductLgbk> getHierarchies() {
+    /*public Set<ProductLgbk> getHierarchies() {
         return hierarchies;
     }
 
@@ -195,7 +260,7 @@ public class FilterParameters_SE {
 
     public void setLastChange(int lastChange) {
         this.lastChange.set(lastChange);
-    }
+    }*/
 
     @Override
     public String toString() {
