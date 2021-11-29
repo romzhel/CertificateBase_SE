@@ -24,9 +24,10 @@ import static ui_windows.product.data.DataItem.DATA_LOCAL_PRICE;
 
 @Log4j2
 public class StepExportToExcelExporter extends ReportToExcelTemplate_v2 {
-    private final String[] titles = {"ssn", "cost1", "cost2", "eCi", "imall"};
-    private final int[] colWidths = {8200, 5000, 5000, 5000, 5000};
+    private final String[] titles = {"ssn", "cost1", "cost2", "eCi", "imall", "Product Classification Link"};
+    private final int[] colWidths = {8200, 5000, 5000, 5000, 5000, 7500};
     private final CellStyle[] itemDataStyles = {
+            styles.CELL_ALIGN_HCENTER_TEXT_FORMAT,
             styles.CELL_ALIGN_HCENTER_TEXT_FORMAT,
             styles.CELL_ALIGN_HCENTER_TEXT_FORMAT,
             styles.CELL_ALIGN_HCENTER_TEXT_FORMAT,
@@ -103,6 +104,7 @@ public class StepExportToExcelExporter extends ReportToExcelTemplate_v2 {
         fillCell(row.createCell(colIndex), cost, itemDataStyles[colIndex++]);
         fillCell(row.createCell(colIndex), eCi, itemDataStyles[colIndex++]);
         fillCell(row.createCell(colIndex), iMall, itemDataStyles[colIndex++]);
+        fillCell(row.createCell(colIndex), "OPC_2092617", itemDataStyles[colIndex++]);
     }
 
     private Object getValue(ChangedItem item, DataItem dataItem) throws RuntimeException {
