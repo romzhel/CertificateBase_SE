@@ -34,7 +34,7 @@ public class DataSelectorMenuItem extends RadioMenuItem {
 
     public void activate() {
         Platform.runLater(() -> {
-            ((FilterParameters_SE) SHD_FILTER_PARAMETERS.getData()).setItems(itemsSelection);
+            ((FilterParameters_SE) SHD_FILTER_PARAMETERS.getData()).setFilterItems(itemsSelection);
             SHD_DATA_SET.setData(this.getClass(), syncDataSource.syncData());
             MainTable.setContextMenu(syncContextMenu.getContextMenu());
 

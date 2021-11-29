@@ -85,22 +85,22 @@ public class FilterWindowController_SE implements Initializable, Module {
 
             familySelector = new Selector<>(cbFamily,
                     ProductFamily::getName,
-                    CHANGE_FAMILY, filterParameters::getFamilies, filterParameters::getFamily,
-                    (pf) -> filterParameters.setProductFamily(pf),
+                    filterParameters::getFamilies, filterParameters::getFamily,
+                    (pf) -> filterParameters.setFamily(pf),
                     this::sync);
             lgbkSelector = new Selector<>(cbLgbk,
                     pl -> pl.equals(ALL_LGBKS) || pl.equals(LGBK_NO_DATA) ? pl.getLgbk() : pl.getCombineDescriptionLgbk(),
-                    CHANGE_LGBK, filterParameters::getLgbks, filterParameters::getLgbk,
+                    filterParameters::getLgbks, filterParameters::getLgbk,
                     (lgbk) -> filterParameters.setLgbk(lgbk),
                     this::sync);
             hierarchySelector = new Selector<>(cbHierarchy,
                     (h) -> h.equals(ALL_LGBKS) || h.equals(LGBK_NO_DATA) ? h.getHierarchy() : h.getCombineDescriptionHierarchy(),
-                    CHANGE_HIERARCHY, filterParameters::getHierarchies, filterParameters::getHierarchy,
+                    filterParameters::getHierarchies, filterParameters::getHierarchy,
                     (hier) -> filterParameters.setHierarchy(hier),
                     this::sync);
             customPropertySelector = new Selector<>(cbCustomProperty,
                     (di) -> di == DATA_EMPTY ? TEXT_NO_SELECTED : di.getDisplayingName(),
-                    CHANGE_NONE, filterParameters::getCustomProperties, filterParameters::getCustomProperty,
+                    filterParameters::getCustomProperties, filterParameters::getCustomProperty,
                     (di) -> filterParameters.setCustomProperty(di),
                     this::sync);
 
@@ -156,7 +156,7 @@ public class FilterWindowController_SE implements Initializable, Module {
         itemsGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 int index = Arrays.asList(rbAllItems, rbPriceItems).indexOf((RadioButton) newValue);
-                filterParameters.setItems(ItemsSelection.values()[index]);
+                filterParameters.setFilterItems(ItemsSelection.values()[index]);
                 sync(null);
             }
         });
@@ -191,6 +191,7 @@ public class FilterWindowController_SE implements Initializable, Module {
     }
 
     public void sync(Selector<?> selector) {
+        filterParameters.setChangedSelector(selector);
         if (refreshMode == REFRESH_AND_SEND_DATA) {
             SHD_FILTER_PARAMETERS.setData(this.getClass(), filterParameters);
         }

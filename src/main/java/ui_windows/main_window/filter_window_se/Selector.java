@@ -10,14 +10,13 @@ import java.util.function.Supplier;
 
 public class Selector<T> {
     private ComboBox<T> comboBox;
-    private int changeLevel;
     private Supplier<Set<T>> valuesSupplier;
     private Supplier<T> valueSupplier;
     private Consumer<T> valueSetter;
     private Consumer<Selector<T>> syncAction;
     private Function<T, String> converter;
 
-    public Selector(ComboBox<T> comboBox, Function<T, String> converter, int changeLevel, Supplier<Set<T>> valuesSupplier,
+    public Selector(ComboBox<T> comboBox, Function<T, String> converter, Supplier<Set<T>> valuesSupplier,
                     Supplier<T> valueSupplier, Consumer<T> valueSetter, Consumer<Selector<T>> syncAction) {
         super();
         comboBox.setConverter(new StringConverter<T>() {
@@ -34,7 +33,6 @@ public class Selector<T> {
 
         this.comboBox = comboBox;
         this.converter = converter;
-        this.changeLevel = changeLevel;
         this.valueSupplier = valueSupplier;
         this.valuesSupplier = valuesSupplier;
         this.valueSetter = valueSetter;
@@ -43,27 +41,29 @@ public class Selector<T> {
 
     public void actualize(FilterParameters_SE parameters) {
 //        Platform.runLater(() -> {//работа листенера и изменение списка элементов приводят к исключению
-        comboBox.setOnAction(null);
 
-        if (parameters.getLastChange() != changeLevel) {
+        if (comboBox.getSelectionModel().isSelected(0) || parameters.getChangedSelector() != this) {
+            comboBox.setOnAction(null);
+
             comboBox.getItems().clear();
             comboBox.getItems().addAll(valuesSupplier.get());
             comboBox.getItems().sort((o1, o2) -> converter.apply(o1).compareToIgnoreCase(converter.apply(o2)));
-        }
 
-        if (!comboBox.getItems().contains(valueSupplier.get())) {
-            comboBox.getItems().add(valueSupplier.get());
-        }
 
-        comboBox.getSelectionModel().select(valueSupplier.get());
+            if (!comboBox.getItems().contains(valueSupplier.get())) {
+                comboBox.getItems().add(valueSupplier.get());
+            }
 
-        comboBox.setOnAction(event -> {
-            valueSetter.accept(comboBox.getValue());
-            sync();
-        });
+            comboBox.getSelectionModel().select(valueSupplier.get());
 
-        comboBox.setVisibleRowCount(Math.min(comboBox.getItems().size(), 10));
+            comboBox.setOnAction(event -> {
+                valueSetter.accept(comboBox.getValue());
+                sync();
+            });
+
+            comboBox.setVisibleRowCount(Math.min(comboBox.getItems().size(), 10));
 //        });
+        }
     }
 
     public void sync() {
