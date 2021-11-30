@@ -101,6 +101,11 @@ public class TotalPriceComparisonResultToExcelExporter extends ReportToExcelTemp
         for (ImportedProduct item : newItemList) {
             Product product = Products.getInstance().getProductByVendorMaterialId(item.getId());
 
+            if (product == null) {
+                log.warn("can't find product for {}", item);
+                continue;
+            }
+
             Row row = sheet.createRow(rowNum++);
 
             String itemSheetName = item.getProperties().get(DATA_ORDER_NUMBER).getSource().getSheetName();
@@ -114,11 +119,6 @@ public class TotalPriceComparisonResultToExcelExporter extends ReportToExcelTemp
     }
 
     private void fillProductData(Product changedItem, Row row, CellStyle cellStyle) {
-        if (changedItem == null) {
-            log.warn("fill null product data");
-            return;
-        }
-
         colIndex = 0;
         for (DataItem dataItem : values) {
             fillCell(row.createCell(colIndex++), dataItem.getValue(changedItem), cellStyle);

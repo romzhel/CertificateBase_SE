@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
+import ui_windows.product.Product;
 import ui_windows.product.Products;
 import ui_windows.product.data.DataItem;
 import utils.Utils;
@@ -71,7 +72,14 @@ public class StepExportToExcelExporter extends ReportToExcelTemplate_v2 {
 
     private void fillItems(SXSSFSheet sheet, List<ImportedProduct> itemList, String eCi, String iMall, Predicate<String>... skip) throws RuntimeException {
         for (ImportedProduct ip : itemList) {
-            String ssn = Products.getInstance().getSsnNotEmpty(Products.getInstance().getProductByVendorMaterialId(ip.getId()));
+            Product product = Products.getInstance().getProductByVendorMaterialId(ip.getId());
+
+            if (product == null) {
+                log.warn("can't find product for {}", ip.getId());
+                continue;
+            }
+
+            String ssn = Products.getInstance().getSsnNotEmpty(product);
             String cost = ip.getProperties().get(DATA_LOCAL_PRICE).getNewValue().toString().replaceAll(",", ".");
 
             fillRow(sheet, eCi, iMall, ssn, cost, skip);
