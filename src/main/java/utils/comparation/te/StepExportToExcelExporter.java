@@ -1,77 +1,54 @@
 package utils.comparation.te;
 
-import files.reports.ReportParameterEnum;
-import files.reports.ReportToExcelTemplate_v2;
+import files.reports.ReportCell;
+import files.reports.ReportToExcelTemplate_v3;
 import lombok.extern.log4j.Log4j2;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
 import ui_windows.product.data.DataItem;
 import utils.Utils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
+import java.nio.file.Path;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
-import static files.reports.ReportParameterEnum.PRICE_COMPARISON_REPORT_PATH;
-import static files.reports.ReportParameterEnum.PRICE_COMPARISON_RESULT;
 import static ui_windows.product.data.DataItem.DATA_LOCAL_PRICE;
 
 @Log4j2
-public class StepExportToExcelExporter extends ReportToExcelTemplate_v2 {
-    private final String[] titles = {"ssn", "cost1", "cost2", "eCi", "imall", "Product Classification Link"};
-    private final int[] colWidths = {8200, 5000, 5000, 5000, 5000, 7500};
-    private final CellStyle[] itemDataStyles = {
-            styles.CELL_ALIGN_HCENTER_TEXT_FORMAT,
-            styles.CELL_ALIGN_HCENTER_TEXT_FORMAT,
-            styles.CELL_ALIGN_HCENTER_TEXT_FORMAT,
-            styles.CELL_ALIGN_HCENTER_TEXT_FORMAT,
-            styles.CELL_ALIGN_HCENTER_TEXT_FORMAT,
-            styles.CELL_ALIGN_HCENTER_TEXT_FORMAT
-    };
-    private TotalPriceComparisonResult comparisonResult;
+public class StepExportToExcelExporter extends ReportToExcelTemplate_v3<TotalPriceComparisonResult> {
 
-    public StepExportToExcelExporter(Map<ReportParameterEnum, Object> params) {
-        super(params);
+    public StepExportToExcelExporter(TotalPriceComparisonResult data, Path reportFilePath) {
+        super(data, reportFilePath);
     }
 
     @Override
-    protected void getAndCheckParams() throws RuntimeException {
-        super.getAndCheckParams();
-
-        confirmAndCheckReportFile(PRICE_COMPARISON_REPORT_PATH, "Сохранение отчета сравнения прайсов");
-        comparisonResult = (TotalPriceComparisonResult) params.get(PRICE_COMPARISON_RESULT);
-        if (comparisonResult == null) {
-            log.warn("Illegal params: comparison result = null");
-            throw new IllegalArgumentException("Param 'PRICE_COMPARISON_RESULT' not found");
-        }
-    }
-
-    public void export() throws RuntimeException {
-        log.trace("Checking params...");
+    public void run() {
         getAndCheckParams();
+        confirmAndCheckReportFile("Выберите путь сохранения файла отчета импорта");
 
-        SXSSFSheet sheet = workbook.createSheet(String.format("STEP_import_%s", Utils.getDateTimeForFileName()));
+        log.trace("filling STEP export report sheet");
+        currentSheet = workbook.createSheet(String.format("STEP_import_%s", Utils.getDateTimeForFileName()));
+        rowNum = 0;
 
-        log.trace("Filling report titles");
-        fillTitles(sheet);
+        fillRow(new ReportCell("ssn", styles.CELL_ALIGN_HCENTER_BOLD),
+                new ReportCell("cost1", styles.CELL_ALIGN_HCENTER_BOLD),
+                new ReportCell("cost2", styles.CELL_ALIGN_HCENTER_BOLD),
+                new ReportCell("eCi", styles.CELL_ALIGN_HCENTER_BOLD),
+                new ReportCell("imall", styles.CELL_ALIGN_HCENTER_BOLD),
+                new ReportCell("Product Classification Link", styles.CELL_ALIGN_HCENTER_BOLD)
+        );
 
-        log.trace("Filling report data");
-        fillItems(sheet, comparisonResult.getNewItemList(), "10", "true", o -> o.matches("^0+\\.0+$"));
-        fillChangedItems(sheet, "10", "true");
-        fillItems(sheet, comparisonResult.getGoneItemList(), "-10", "false");
+        setColumnSize(8200, 5000, 5000, 5000, 5000, 7500);
+
+        fillNewItems();
+        fillChangedItems();
+        fillGoneItems();
 
         saveToFile();
     }
 
-    private void fillItems(SXSSFSheet sheet, List<ImportedProduct> itemList, String eCi, String iMall, Predicate<String>... skip) throws RuntimeException {
-        for (ImportedProduct ip : itemList) {
+    private void fillNewItems() {
+        for (ImportedProduct ip : data.getNewItemList()) {
             Product product = Products.getInstance().getProductByVendorMaterialId(ip.getId());
 
             if (product == null) {
@@ -82,37 +59,56 @@ public class StepExportToExcelExporter extends ReportToExcelTemplate_v2 {
             String ssn = Products.getInstance().getSsnNotEmpty(product);
             String cost = ip.getProperties().get(DATA_LOCAL_PRICE).getNewValue().toString().replaceAll(",", ".");
 
-            fillRow(sheet, eCi, iMall, ssn, cost, skip);
+            checkZeroCostAndFillRow(ssn, cost);
         }
     }
 
-    private void fillChangedItems(SXSSFSheet sheet, String eCi, String iMall, Predicate<String>... skip) throws RuntimeException {
-        List<ChangedItem> priceChangeList = comparisonResult.getChangedItemList().stream()
+    private void fillChangedItems() {
+        data.getChangedItemList().stream()
                 .filter(item -> item.getChangedPropertyList().stream().anyMatch(property -> property.getDataItem() == DATA_LOCAL_PRICE))
-                .collect(Collectors.toList());
+                .forEach(item -> {
+                    String ssn = Products.getInstance().getSsnNotEmpty(Products.getInstance().getProductByVendorMaterialId(item.getId()));
+                    String cost = getValue(item, DATA_LOCAL_PRICE).toString().replaceAll(",", ".");
 
-        for (ChangedItem item : priceChangeList) {
-            String ssn = Products.getInstance().getSsnNotEmpty(Products.getInstance().getProductByVendorMaterialId(item.getId()));
-            String cost = getValue(item, DATA_LOCAL_PRICE).toString().replaceAll(",", ".");
+                    checkZeroCostAndFillRow(ssn, cost);
+                });
+    }
 
-            fillRow(sheet, eCi, iMall, ssn, cost, skip);
+    private void fillGoneItems() {
+        for (ImportedProduct ip : data.getGoneItemList()) {
+            Product product = Products.getInstance().getProductByVendorMaterialId(ip.getId());
+
+            if (product == null) {
+                log.warn("can't find product for {}", ip.getId());
+                continue;
+            }
+
+            String ssn = Products.getInstance().getSsnNotEmpty(product);
+            String cost = ip.getProperties().get(DATA_LOCAL_PRICE).getNewValue().toString().replaceAll(",", ".");
+
+            fillRow(new ReportCell(ssn, styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
+                    new ReportCell(cost, styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
+                    new ReportCell(cost, styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
+                    new ReportCell("-10", styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
+                    new ReportCell("false", styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
+                    new ReportCell("OPC_2092617", styles.CELL_ALIGN_HCENTER_TEXT_FORMAT)
+            );
         }
     }
 
-    private void fillRow(SXSSFSheet sheet, String eCi, String iMall, String ssn, String cost, Predicate<String>... skip) throws RuntimeException {
-        if (skip.length > 0 && skip[0].test(cost)) {
+    public void checkZeroCostAndFillRow(String ssn, String cost) {
+        if (cost.matches("^0+\\.0+$")) {
             log.info("position '{}' with cost = {} was ignored", ssn, cost);
             return;
         }
 
-        Row row = sheet.createRow(rowNum++);
-        colIndex = 0;
-        fillCell(row.createCell(colIndex), ssn, itemDataStyles[colIndex++]);
-        fillCell(row.createCell(colIndex), cost, itemDataStyles[colIndex++]);
-        fillCell(row.createCell(colIndex), cost, itemDataStyles[colIndex++]);
-        fillCell(row.createCell(colIndex), eCi, itemDataStyles[colIndex++]);
-        fillCell(row.createCell(colIndex), iMall, itemDataStyles[colIndex++]);
-        fillCell(row.createCell(colIndex), "OPC_2092617", itemDataStyles[colIndex++]);
+        fillRow(new ReportCell(ssn, styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
+                new ReportCell(cost, styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
+                new ReportCell(cost, styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
+                new ReportCell("10", styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
+                new ReportCell("true", styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
+                new ReportCell("OPC_2092617", styles.CELL_ALIGN_HCENTER_TEXT_FORMAT)
+        );
     }
 
     private Object getValue(ChangedItem item, DataItem dataItem) throws RuntimeException {
@@ -127,20 +123,6 @@ public class StepExportToExcelExporter extends ReportToExcelTemplate_v2 {
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void fillTitles(SXSSFSheet sheet) throws RuntimeException {
-        Row titleRow = sheet.createRow(rowNum++);
-
-        colIndex = 0;
-        for (String title : titles) {
-            fillCell(titleRow.createCell(colIndex), title, styles.CELL_ALIGN_HCENTER_BOLD);
-            sheet.setColumnWidth(colIndex, colWidths[colIndex]);
-            colIndex++;
-        }
-
-        sheet.createFreezePane(0, 1);
-        sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, titles.length - 1));
     }
 }
 

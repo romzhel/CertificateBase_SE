@@ -1,5 +1,6 @@
 package utils.comparation.te;
 
+import files.Folders;
 import files.reports.ReportParameterEnum;
 import lombok.extern.log4j.Log4j2;
 import ui_windows.main_window.file_import_window.te.importer.ExcelFileImporter_v2;
@@ -36,18 +37,18 @@ public class PricesComparisonTask {
         priceComparisonResult.getSheetNames().addAll(fileImporter.getSheetNames());
 
         Map<ReportParameterEnum, Object> params = new HashMap<>();
-        String fileName = String.format("prices_comparison_report_%s_vs_%s.xlsx",
-                newPriceFile.getName().replaceAll(".xlsx", ""),
-                prevPriceFile.getName().replaceAll(".xlsx", ""));
+        String fileName = String.format("prices_comparison_report_%s_vs_%s", newPriceFile.getName(),
+                prevPriceFile.getName()).replaceAll(".xlsx", "").concat(".xlsx");
         params.put(PRICE_COMPARISON_REPORT_PATH, reportFolder == null ? Paths.get(fileName) : reportFolder.resolve(fileName));
         params.put(PRICE_COMPARISON_RESULT, priceComparisonResult);
 
         TotalPriceComparisonResultToExcelExporter toExcelExporter = new TotalPriceComparisonResultToExcelExporter(params);
         toExcelExporter.export();
 
+        log.info("creating STEP export report");
         fileName = String.format("STEP_import_%s.xlsx", Utils.getDateTimeForFileName());
-        params.put(PRICE_COMPARISON_REPORT_PATH, reportFolder == null ? Paths.get(fileName) : reportFolder.resolve(fileName));
-        StepExportToExcelExporter stepExportToExcelExporter = new StepExportToExcelExporter(params);
-        stepExportToExcelExporter.export();
+        Path reportPath = Folders.getInstance().getTempFolder().resolve(fileName);
+        new StepExportToExcelExporter(priceComparisonResult, reportPath).run();
+        Utils.openFile(Folders.getInstance().getTempFolder().toFile());
     }
 }
