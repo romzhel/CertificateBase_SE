@@ -59,8 +59,7 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
                 newProduct = mapper.mapToProduct(importedProduct);
             }
 
-            fillRow(false,
-                    new ReportCell(DATA_FAMILY_NAME.getValue(newProduct), styles.CELL_ALIGN_HLEFT),
+            fillRow(new ReportCell(DATA_FAMILY_NAME.getValue(newProduct), styles.CELL_ALIGN_HLEFT),
                     new ReportCell(DATA_RESPONSIBLE.getValue(newProduct), styles.CELL_ALIGN_HLEFT),
                     new ReportCell(DATA_ORDER_NUMBER.getValue(newProduct), styles.CELL_ALIGN_HLEFT),
                     new ReportCell(DATA_ARTICLE.getValue(newProduct), styles.CELL_ALIGN_HLEFT),
@@ -85,8 +84,7 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
         currentSheet = workbook.createSheet("BlockedChanges_".concat(Utils.getDateTimeForFileName()));
         rowNum = 0;
 
-        fillRow(true,
-                new ReportCell("Направление", styles.CELL_ALIGN_HLEFT_BOLD),
+        fillRow(new ReportCell("Направление", styles.CELL_ALIGN_HLEFT_BOLD),
                 new ReportCell("Ответственный", styles.CELL_ALIGN_HLEFT_BOLD),
                 new ReportCell("Заказной номер", styles.CELL_ALIGN_HLEFT_BOLD),
                 new ReportCell("Артикул", styles.CELL_ALIGN_HLEFT_BOLD),
@@ -100,6 +98,9 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
                 new ReportCell("Заблокированное изменение", styles.CELL_ALIGN_HLEFT_BOLD)
         );
 
+        setColumnSize();
+        decorateTitles();
+
         List<ChangedItem> sortedList = new ArrayList<>(data.getNonChangedProtectedItemList());
         sortedList.sort(Comparator.comparing(ChangedItem::getId));
         for (ChangedItem changedItem : sortedList) {
@@ -107,8 +108,7 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
 
             for (ChangedProperty changedProperty : changedItem.getProtectedField()) {
 
-                fillRow(false,
-                        new ReportCell(DATA_FAMILY_NAME.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
+                fillRow(new ReportCell(DATA_FAMILY_NAME.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
                         new ReportCell(DATA_RESPONSIBLE.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
                         new ReportCell(DATA_ORDER_NUMBER.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
                         new ReportCell(DATA_ARTICLE.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
@@ -124,9 +124,6 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
                 );
             }
         }
-
-        currentSheet.createFreezePane(colIndex + 10, 1);
-        currentSheet.setAutoFilter(new CellRangeAddress(0, 0, 0, colIndex));
     }
 
     private void fillNoCostItemsSheet() {
@@ -144,8 +141,7 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
     private void fillTitles() {
         rowNum = 0;
 
-        fillRow(true,
-                new ReportCell("Направление", styles.CELL_ALIGN_HLEFT_BOLD),
+        fillRow(new ReportCell("Направление", styles.CELL_ALIGN_HLEFT_BOLD),
                 new ReportCell("Ответственный", styles.CELL_ALIGN_HLEFT_BOLD),
                 new ReportCell("Заказной номер", styles.CELL_ALIGN_HLEFT_BOLD),
                 new ReportCell("Артикул", styles.CELL_ALIGN_HLEFT_BOLD),
@@ -158,14 +154,16 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
                 new ReportCell("     ", styles.CELL_ALIGN_HLEFT_BOLD),
                 new ReportCell("Новое значение", styles.CELL_ALIGN_HLEFT_BOLD)
         );
+
+        setColumnSize();
+        decorateTitles();
     }
 
     private void fillChangedItemData(ChangedItem changedItem) {
         for (ChangedProperty changedProperty : changedItem.getChangedPropertyList()) {
             Product changedProduct = Products.getInstance().getProductByVendorMaterialId(changedItem.getId());
 
-            fillRow(false,
-                    new ReportCell(DATA_FAMILY_NAME.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
+            fillRow(new ReportCell(DATA_FAMILY_NAME.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
                     new ReportCell(DATA_RESPONSIBLE.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
                     new ReportCell(DATA_ORDER_NUMBER.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
                     new ReportCell(DATA_ARTICLE.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),

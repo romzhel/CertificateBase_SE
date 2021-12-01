@@ -51,16 +51,11 @@ public abstract class ReportToExcelTemplate_v3<T> implements Runnable {
         }
     }
 
-    protected void fillRow(boolean autoSize, ReportCell... cells) {
+    protected void fillRow(ReportCell... cells) {
         SXSSFRow row = currentSheet.createRow(rowNum++);
         colIndex = 0;
         for (ReportCell reportCell : cells) {
             fillCell(row.createCell(colIndex), reportCell.getValue(), reportCell.getStyle());
-            if (autoSize) {
-                currentSheet.trackColumnForAutoSizing(colIndex);
-                currentSheet.autoSizeColumn(colIndex);
-                currentSheet.setColumnWidth(colIndex, currentSheet.getColumnWidth(colIndex) + 1000);
-            }
 
             if (reportCell.getCombinedCellsCount() > 0) {
                 currentSheet.addMergedRegion(
@@ -71,10 +66,21 @@ public abstract class ReportToExcelTemplate_v3<T> implements Runnable {
         }
     }
 
-    protected void autoSizeColumns() {
+    protected void setColumnSize(int... widthList) {
         for (int i = 0; i < currentSheet.getRow(rowNum - 1).getLastCellNum() + 1; i++) {
-            currentSheet.autoSizeColumn(i);
+            if (widthList.length == 0) {
+                currentSheet.trackColumnForAutoSizing(i);
+                currentSheet.autoSizeColumn(i);
+                currentSheet.setColumnWidth(i, currentSheet.getColumnWidth(i) + 1000);
+            } else if (i < widthList.length) {
+                currentSheet.setColumnWidth(i, widthList[i]);
+            }
         }
+    }
+
+    protected void decorateTitles() {
+        currentSheet.createFreezePane(colIndex + 10, 1);
+        currentSheet.setAutoFilter(new CellRangeAddress(0, rowNum - 1, 0, colIndex - 1));
     }
 
     protected void fillCell(SXSSFCell cell, Object value, CellStyle style) {
