@@ -6,6 +6,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class OrdersAccessibilityTable {
     private TableView<OrderAccessibility> tableView;
 
@@ -19,7 +22,7 @@ public class OrdersAccessibilityTable {
         int[] width = new int[]{100, 100, 250, 250, 30, 30, 250, 100};
 
         for (int i = 0; i < cols.length; i++) {
-            if (cols[i] == "orderable") {
+            if (cols[i].equals("orderable")) {
                 TableColumn<OrderAccessibility, Boolean> colB = new TableColumn<>(titles[i]);
 
                 colB.setCellValueFactory(param -> new SimpleBooleanProperty(param.getValue().isOrderable()));
@@ -36,7 +39,10 @@ public class OrdersAccessibilityTable {
                 tableView.getColumns().add(colS);
             }
         }
-        tableView.getItems().addAll(OrdersAccessibility.getInstance().getOrdersAccessibilityMap().values());
+
+        List<OrderAccessibility> itemList = new ArrayList<>(OrdersAccessibility.getInstance().getOrdersAccessibilityMap().values());
+        itemList.sort((o1, o2) -> (o1.getStatusCode() + o1.getSesCode()).compareToIgnoreCase((o2.getStatusCode() + o2.getSesCode())));
+        tableView.getItems().addAll(itemList);
     }
 
     public TableView<OrderAccessibility> getTableView() {

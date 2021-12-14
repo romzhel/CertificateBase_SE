@@ -158,4 +158,17 @@ public class ProductFamilies implements Initializable {
     public boolean isSpHierarchyName(String hierarchy) {
         return hierarchy.startsWith("LVB");
     }
+
+
+    /**
+     * Проверка доступности продукта по семейству
+     *
+     * @param product
+     * @return true - если семейство продуктов используется
+     * false - если продукт относится к SP_Siemens или Неизвестному семейству
+     */
+    public boolean isAccessibleByFamily(Product product) {
+        ProductFamily family = getProductFamily(product);
+        return family != UNKNOWN && !family.getName().equals("SP_Siemens");
+    }
 }

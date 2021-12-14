@@ -5,8 +5,10 @@ import database.AccessibilityDB;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import ui_windows.product.Product;
+import ui_windows.product.vendors.VendorEnum;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
@@ -73,13 +75,10 @@ public class OrdersAccessibility implements Initializable {
             return ordersAccessibilityMap.get(dchain);
         }
 
-        Set<String> spPositions = new HashSet<>(Arrays.asList("VIN", "VAC", "VVI"));
-        Set<String> setsPositions = new HashSet<>(Arrays.asList("RU5:SETS"));
-
-        if (spPositions.contains(product.getHierarchy())) {
-            return alternativeOrdersAccessibilityMap.get("sp");
-        } else if (setsPositions.contains(product.getLgbk())) {
-            return alternativeOrdersAccessibilityMap.get("sets");
+        if (product.getVendor() == VendorEnum.VANDERBILT) {
+            return ordersAccessibilityMap.get("sp");
+        } else if (product.getLgbk().equals("RU5:SETS")) {
+            return ordersAccessibilityMap.get("st");
         } else {
             return EMPTY;
         }

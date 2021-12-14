@@ -649,6 +649,17 @@ public enum DataItem {
         public Object getValue(Product product) {
             return product.getHistory();
         }
+    },
+    DATA_LOCAL_PRICE_BY_STATUS(49, "Стоимость по коду доступности", null) {
+        public void fillExcelCell(Cell cell, Product product, Map<String, Object> options) {
+            cell.setCellType(CellType.STRING);
+            cell.setCellStyle(CELL_CURRENCY_FORMAT_VCENTER);
+            cell.setCellValue(PriceUtils.checkServicePositionByStatusAndGetCost(product));
+        }
+
+        public Object getValue(Product product) {
+            return PriceUtils.checkServicePositionByStatusAndGetCost(product);
+        }
     };
 
     private int id;

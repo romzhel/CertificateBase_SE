@@ -21,6 +21,7 @@ public class ExcelCellStyleFactory_v2 {
     public final CellStyle CELL_ALIGN_HLEFT_BROWN;
     public final CellStyle CELL_ALIGN_HCENTER_BROWN;
     public final CellStyle CELL_ALIGN_HCENTER_TEXT_FORMAT;
+    public final CellStyle CELL_ALIGN_HLEFT_TEXT_FORMAT;
 
     public ExcelCellStyleFactory_v2(SXSSFWorkbook workbook) {
         Font boldFont = getFont(workbook, true, -1);
@@ -84,6 +85,11 @@ public class ExcelCellStyleFactory_v2 {
         DataFormat fmt = workbook.createDataFormat();
         CELL_ALIGN_HCENTER_TEXT_FORMAT.setAlignment(HorizontalAlignment.CENTER);
         CELL_ALIGN_HCENTER_TEXT_FORMAT.setDataFormat(fmt.getFormat("@"));
+
+        CELL_ALIGN_HLEFT_TEXT_FORMAT = workbook.createCellStyle();
+        fmt = workbook.createDataFormat();
+        CELL_ALIGN_HLEFT_TEXT_FORMAT.setAlignment(HorizontalAlignment.LEFT);
+        CELL_ALIGN_HLEFT_TEXT_FORMAT.setDataFormat(fmt.getFormat("@"));
     }
 
     private Font getFont(SXSSFWorkbook workbook, boolean isBold, int indexedColor) {

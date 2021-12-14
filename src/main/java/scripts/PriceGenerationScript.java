@@ -14,6 +14,7 @@ import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.price_lists_editor.PriceLists;
 import ui_windows.product.data.DataItem;
 import utils.Utils;
+import utils.comparation.te.BudgetEvaluationToExcelExporter;
 import utils.comparation.te.PricesComparisonTask;
 
 import java.io.File;
@@ -97,6 +98,10 @@ public class PriceGenerationScript implements Runnable {
 
 //                Utils.copyFilesToClipboardTS(Arrays.asList(priceListFile, outOfPriceFile, priceComparisonFile));
         Utils.openFile(priceListFile.getParentFile());
+
+        String fileName = Utils.getDateTimeForFileName() + ".xlsx";
+        Path budgetEvalReportPath = Folders.getInstance().getTempFolder().resolve("budget_eval_" + fileName);
+        new BudgetEvaluationToExcelExporter(budgetEvalReportPath).run();
 
 //                OutlookEmailSender outlookEmailSender = new OutlookEmailSender();
 //                outlookEmailSender.send();

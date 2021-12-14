@@ -1,6 +1,8 @@
 package utils;
 
 import lombok.extern.log4j.Log4j2;
+import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
+import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
 import ui_windows.options_window.price_lists_editor.PriceList;
 import ui_windows.options_window.price_lists_editor.PriceLists;
 import ui_windows.options_window.price_lists_editor.se.price_sheet.PriceListSheet;
@@ -64,5 +66,28 @@ public class PriceUtils {
         }
 
         return 0.0;
+    }
+
+    public static double checkServicePositionByStatusAndGetCost(Product product) {
+        PriceListSheet priceListSheet = PriceLists.getInstance().getItems().get(0).getSheets().get(1);
+        OrderAccessibility oa = OrdersAccessibility.getInstance().getOrderAccessibility(product);
+
+        double cost = product.getLocalPrice();
+        if (priceListSheet.getDchainSelector().getSelectedItems().contains(oa)) {
+            cost *= (100 - priceListSheet.getDiscount()) / 100.0;
+        }
+
+        return cost;
+    }
+
+    public static boolean isAccessibleByStatus(Product product) {
+        PriceList priceList = PriceLists.getInstance().getItems().get(0);
+
+        String statuses = "";
+        for (PriceListSheet sheet : priceList.getSheets()) {
+            statuses += sheet.getDchainSelector().getSelectedItemsAsString() + ",";
+        }
+
+        return statuses.contains(product.getDchain());
     }
 }
