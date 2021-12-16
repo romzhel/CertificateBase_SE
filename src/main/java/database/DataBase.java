@@ -28,27 +28,22 @@ public class DataBase implements Initializable {
     private SQLiteConfig config;
     private SQLiteDataSource sqLiteDataSource;
 
-    private DataBase() throws Exception {
-        try {
-            SQLiteConfig sqLiteConfig = new SQLiteConfig();
-            sqLiteConfig.setJournalMode(SQLiteConfig.JournalMode.TRUNCATE);
-            sqLiteDataSource = new SQLiteDataSource(sqLiteConfig);
+    private DataBase() {
+        SQLiteConfig sqLiteConfig = new SQLiteConfig();
+        sqLiteConfig.setJournalMode(SQLiteConfig.JournalMode.TRUNCATE);
+        sqLiteDataSource = new SQLiteDataSource(sqLiteConfig);
 //            Class.forName("org.sqlite.JDBC");
 //            config = new SQLiteConfig();
 //            config.setJournalMode(SQLiteConfig.JournalMode.TRUNCATE);
-        } catch (Exception e) {
-            logger.fatal(e.getMessage());
-            throw new RuntimeException(e);
-        }
     }
 
     public static DataBase getInstance() {
         if (instance == null) {
-            try {
-                instance = new DataBase();
-            } catch (Exception e) {
-                logger.fatal("error DB class creating {}", e.getMessage(), e);
-            }
+//            try {
+            instance = new DataBase();
+//            } catch (Exception e) {
+//                logger.fatal("error DB class creating {}", e.getMessage(), e);
+//            }
         }
         return instance;
     }
@@ -56,21 +51,27 @@ public class DataBase implements Initializable {
     @Override
     public void init() throws Exception {
         firstStart = true;
-        Path cashedBdFile = Folders.getInstance().getCashedDbFile();
-        try {
-//            dbConnection = DriverManager.getConnection("jdbc:sqlite:" + cashedBdFile.getPath(), config.toProperties());
+        Path cashedDbFile = Folders.getInstance().getCashedDbFile();
+//        try {
+//            dbConnection = DriverManager.getConnection("jdbc:sqlite:" + cashedDbFile.getPath(), config.toProperties());
 
-            sqLiteDataSource.setUrl("jdbc:sqlite:" + cashedBdFile.toString());
-            dbConnection = sqLiteDataSource.getConnection();
+        sqLiteDataSource.setUrl("jdbc:sqlite:" + cashedDbFile.toString());
+        dbConnection = sqLiteDataSource.getConnection();
 
-            dbFile = Folders.getInstance().getMainDbFile().toFile();
+        dbFile = Folders.getInstance().getMainDbFile().toFile();
 
-            logger.debug("cashed db file {} is connected, journaling mode {}", cashedBdFile, getDbJournalingMode());
-            logger.debug("main db file is {}", dbFile);
-        } catch (SQLException e2) {
-            logger.fatal("can't connect to DB file {}: {}", cashedBdFile, e2.getMessage());
-            throw new RuntimeException(e2);
-        }
+        logger.debug("cashed db file {} is connected, journaling mode {}", cashedDbFile, getDbJournalingMode());
+        logger.debug("main db file is {}", dbFile);
+
+        logger.info("check app version");
+        DbUtils.getInstance().checkAppVersion(dbConnection);
+        logger.info("app version is actual");
+//        } catch (AppExpiredException e1) {
+//            throw e1;
+//        } catch (SQLiteException e2) {
+//            logger.fatal("can't connect to DB file {}: {}", cashedDbFile, e2.getMessage());
+//            throw e2;
+//        }
     }
 
     public Connection reconnect() {
@@ -149,7 +150,7 @@ public class DataBase implements Initializable {
             Statement stat = dbConnection.createStatement();
             ResultSet rs = stat.executeQuery("PRAGMA journal_mode");
             result = rs.getString(1);
-            rs.close();
+            stat.close();
         } catch (SQLException e) {
             logger.warn("error getting db journaling mode {}", e.getMessage());
         }

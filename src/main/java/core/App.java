@@ -24,9 +24,13 @@ public class App {
         return instance;
     }
 
-    public String getVersion() {
+    public String getVersionWithDate() {
         return String.format("%s от %s", properties.getProperty("app_version"), properties.getProperty("app_date"))
                 .replace("- ", " ");
+    }
+
+    public String getVersion() {
+        return properties.getProperty("app_version");
     }
 
     public String getDbFileName() {

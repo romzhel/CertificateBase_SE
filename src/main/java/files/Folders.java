@@ -2,6 +2,7 @@ package files;
 
 import core.App;
 import core.Initializable;
+import lombok.Data;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+@Data
 public class Folders implements Initializable {
     public static final Path APP_FOLDER = Paths.get(System.getProperty("user.home"), "AppData", "Roaming", "CertificateBase");
     private static final Logger logger = LogManager.getLogger(Folders.class);
@@ -142,7 +144,7 @@ public class Folders implements Initializable {
 
         //TODO может быть ошибка при отсутствии доступа к диску
         Arrays.stream(new Path[]{certFolder, manualsFolder, dbBackupFolder, templatesFolder, remoteLogsFolder,
-                appLogsFolder, tempFolder})
+                        appLogsFolder, tempFolder})
                 .filter(Files::notExists)
                 .peek(path -> logger.debug("папка {} отсутствует", path))
                 .forEach(path -> {
@@ -175,45 +177,5 @@ public class Folders implements Initializable {
 
     public Path getCalcCertFile(Path fileName) throws Exception {
         return Utils.getFileFromMultiLocation(fileName, cashedCertFolder, certFolder);
-    }
-
-    public Path getMainDbFile() {
-        return mainDbFile;
-    }
-
-    public Path getCashedDbFile() {
-        return cashedDbFile;
-    }
-
-    public Path getCertFolder() {
-        return certFolder;
-    }
-
-    public Path getManualsFolder() {
-        return manualsFolder;
-    }
-
-    public Path getTempFolder() {
-        return tempFolder;
-    }
-
-    public Path getDbBackupFolder() {
-        return dbBackupFolder;
-    }
-
-    public Path getTemplatesFolder() {
-        return templatesFolder;
-    }
-
-    public Path getAppLogsFolder() {
-        return appLogsFolder;
-    }
-
-    public Path getRemoteLogsFolder() {
-        return remoteLogsFolder;
-    }
-
-    public Path getCashedCertFolder() {
-        return cashedCertFolder;
     }
 }
