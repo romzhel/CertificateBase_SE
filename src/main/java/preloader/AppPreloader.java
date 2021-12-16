@@ -34,11 +34,12 @@ public class AppPreloader extends Preloader {
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             primaryStage.initStyle(StageStyle.TRANSPARENT);
-            lblVersion.setText("Версия " + App.getProperties().getVersion());
+            lblVersion.setText("Версия " + App.getProperties().getVersionWithDate());
             primaryStage.show();
             logger.trace("preloader is shown");
         } catch (Exception e) {
             logger.error("Preloader error : {}", e.getMessage(), e);
+            throw e;
         }
     }
 

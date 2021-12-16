@@ -8,6 +8,8 @@ import core.InitModule;
 import core.logger.LoggerInit;
 import core.logger.LogsBackuper;
 import database.DataBase;
+import database.DbUtils;
+import exceptions.AppExpiredException;
 import files.Folders;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -20,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
+import org.sqlite.SQLiteException;
 import preloader.AppPreloader;
 import ui.Dialogs;
 import ui_windows.ExecutionIndicator;
@@ -30,9 +33,12 @@ import utils.BytesToReadableFormatConverter;
 import utils.Utils;
 import utils.files.ResourceSynchronizer;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.concurrent.Executors;
@@ -86,7 +92,7 @@ public class MainWindow extends Application {
     public void init() throws Exception {
         try {
             logger.info("App starting, user = {}, app version = {}, db = {}", System.getProperty("user.name"),
-                    App.getProperties().getVersion(), App.getProperties().getDbFileName());
+                    App.getProperties().getVersionWithDate(), App.getProperties().getDbFileName());
 
             long freeMem = Runtime.getRuntime().freeMemory();
             long totalMem = Runtime.getRuntime().totalMemory();
@@ -100,18 +106,36 @@ public class MainWindow extends Application {
             logger.info("System available processors count: {}", availableProcessors);
 
             new InitModule().init(this);
-        } catch (SQLException sqle) {
+        } catch (AppExpiredException aee) {
+            logger.fatal("App expired: {}", aee.getMessage(), aee);
+            Dialogs.showMessageTS("Ошибка инициализации приложения", "Приложение устарело. Необходимо " +
+                    "синхронизировать папку OneDrive на локальном компьютере и запускать программу оттуда (или через " +
+                    "ярлык)\n\nСейчас откроется окно браузера, из которого можно будет осуществить синхронизацию.");
+            openOneDriveInBrowser();
+        } catch (SQLiteException sqle) {
             logger.fatal("SQL error: {}", sqle.getMessage(), sqle);
+            String addReason = "";
+            if (DbUtils.getInstance().isAppVersionNeedUpdateInDb()) {
+                addReason = ", причиной которой может стать использование устаревшей " +
+                        "версии программы\n\nНеобходимо Синхронизировать (не Скачать) папку с OneDrive на локальном " +
+                        "компьютере и запускать программу из неё (или через ярлык)";
+                openOneDriveInBrowser();
+            }
+
             Dialogs.showMessageTS("Ошибка инициализации приложения", "Во время инициализации программы " +
-                    "произошла ошибка\n\n" + sqle.getMessage() + ", причиной которой может стать использование устаревшей " +
-                    "версии программы\n\n");
-            Platform.exit();
+                    "произошла ошибка\n\n" + sqle.getMessage() + addReason);
         } catch (Exception e) {
             logger.fatal("App init error: {}", e.getMessage(), e);
             Dialogs.showMessageTS("Ошибка инициализации приложения", "Во время инициализации программы " +
                     "произошла ошибка:\n\n" + e.getMessage());
             Platform.exit();
         }
+    }
+
+    private void openOneDriveInBrowser() throws IOException, URISyntaxException {
+        Desktop desk = Desktop.getDesktop();
+        desk.browse(new URI("https://siemens-my.sharepoint.com/:f:/p/roman_zheludkov/EowUKO6Ud21Jui5vjUKLHrIBTLcLWldNhPz9lDo6V7TvrA?e=UAtJ8Y"));
+        Platform.exit();
     }
 
     @Override
@@ -128,7 +152,7 @@ public class MainWindow extends Application {
             scene.setOnKeyPressed(event -> {
                 if (event.getCode().getName().equals("F12")) {
                     try {
-                        Dialogs.showMessage("Инфо", App.getProperties().getVersion());
+                        Dialogs.showMessage("Инфо", App.getProperties().getVersionWithDate());
                     } catch (Exception e) {
                     }
                 }

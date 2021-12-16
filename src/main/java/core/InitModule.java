@@ -72,6 +72,9 @@ public class InitModule {
         }
 
         DataBase.getInstance().disconnect();
+
+        ThreadManager.startNewThread("Version Sync", new AppVersionSynchronizer(),
+                throwable -> logger.warn("can't sync app version in db"));
     }
 
     private void logAndNotifyPreloader(String details) throws Exception {
