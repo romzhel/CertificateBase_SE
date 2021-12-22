@@ -99,7 +99,7 @@ public class TotalPriceComparisonResultToExcelExporter extends ReportToExcelTemp
 
     private void fillItemsData(SXSSFSheet sheet, List<ImportedProduct> newItemList, String comment) {
         for (ImportedProduct item : newItemList) {
-            Product product = Products.getInstance().getProductByVendorMaterialId(item.getId());
+            Product product = Products.getInstance().getProductByMaterial(item.getId().substring(1));
 
             if (product == null) {
                 log.warn("can't find product for {}", item);

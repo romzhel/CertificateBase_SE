@@ -49,7 +49,7 @@ public class StepExportToExcelExporter extends ReportToExcelTemplate_v3<TotalPri
 
     private void fillNewItems() {
         for (ImportedProduct ip : data.getNewItemList()) {
-            Product product = Products.getInstance().getProductByVendorMaterialId(ip.getId());
+            Product product = Products.getInstance().getProductByMaterial(ip.getId().substring(1));
 
             if (product == null) {
                 log.warn("can't find product for {}", ip.getId());
@@ -76,7 +76,7 @@ public class StepExportToExcelExporter extends ReportToExcelTemplate_v3<TotalPri
 
     private void fillGoneItems() {
         for (ImportedProduct ip : data.getGoneItemList()) {
-            Product product = Products.getInstance().getProductByVendorMaterialId(ip.getId());
+            Product product = Products.getInstance().getProductByMaterial(ip.getId().substring(1));
 
             if (product == null) {
                 log.warn("can't find product for {}", ip.getId());

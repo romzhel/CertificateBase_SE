@@ -56,6 +56,24 @@ public class Products implements Initializable {
         return productMap.get(id);
     }
 
+    public Product getProductByUnknownVendorAndMaterialId(String id) {
+        Product result = productMap.get(id);
+
+        if (result != null) {
+            return result;
+        }
+
+        id = id.replaceFirst(String.valueOf(id.charAt(0)), String.valueOf(49 - id.charAt(0)));
+
+        return productMap.get(id);
+    }
+
+    public Product getProductByMaterial(String material) {
+        Product result = productMap.get("1" + material);
+
+        return result == null ? productMap.get("0" + material) : result;
+    }
+
     public Product getItemByMaterialOrArticle(String name) {
         for (VendorEnum vendor : VendorEnum.values()) {
             String id = getVendorMaterial(vendor, name);
