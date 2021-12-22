@@ -4,6 +4,7 @@ import files.ExcelCellStyleFactory;
 import files.reports.ReportToExcelTemplate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -14,10 +15,7 @@ import ui_windows.product.Products;
 import ui_windows.product.data.DataItem;
 import utils.Utils;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static ui_windows.product.data.DataItem.*;
@@ -48,8 +46,9 @@ public class ArticlesRequestHandler extends ReportToExcelTemplate {
         Map<String, Set<Product>> result = new HashMap<>();
         for (String item : requestItems) {
             result.put(item, Products.getInstance().getItems().stream()
-                    .filter(product -> product.getArticle().matches("^" + item + "\\s*[\\d\\-]+.*$"))
-                    .collect(Collectors.toSet())
+                            .filter(product -> product.getArticle().equals(item) || product.getArticle().matches("^" + item + "\\s*[\\d\\-]+.*$"))
+//                    .filter(product -> product.getArticle().matches("^" + item + "(\\s*[\\d\\-]+.*)?$"))//todo значение item со знаками распознаётся как выражение
+                            .collect(Collectors.toSet())
             );
         }
 
@@ -81,10 +80,23 @@ public class ArticlesRequestHandler extends ReportToExcelTemplate {
             xssfCell = xssfRow.createCell(colIndex++);
             xssfCell.setCellValue(entry.getKey());
 
+            List<String> sortedCountryList = entry.getValue().stream()
+                    .map(Product::getCountry)
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            xssfCell = xssfRow.createCell(8);
+            xssfCell.setCellValue(Strings.join(sortedCountryList, ','));
+
             xssfCell = xssfRow.createCell(colIndex++);
             xssfCell.setCellValue(entry.getValue().size());
 
-            for (Product product : entry.getValue()) {
+            List<Product> sortedList = entry.getValue().stream()
+                    .sorted((o1, o2) -> (o1.getCountry() + o1.getDchain()).compareTo(o2.getCountry() + o2.getDchain()))
+                    .collect(Collectors.toList());
+
+            for (Product product : sortedList) {
                 xssfRow = xssfSheet.createRow(rowIndex++);
 
                 colIndex = 2;
@@ -108,8 +120,9 @@ public class ArticlesRequestHandler extends ReportToExcelTemplate {
                 DATA_RESPONSIBLE,
                 DATA_ARTICLE,
                 DATA_DESCRIPTION,
-                DATA_IS_IN_PRICE,
-                DATA_DCHAIN_WITH_COMMENT
+                DATA_IN_WHICH_PRICE_LIST,
+                DATA_DCHAIN_WITH_COMMENT,
+                DATA_COUNTRY
         };
     }
 }
