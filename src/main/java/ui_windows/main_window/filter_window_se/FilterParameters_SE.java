@@ -116,7 +116,7 @@ public class FilterParameters_SE {
                     hierarchy == LGBK_NO_DATA && (product.getHierarchy() == null || product.getHierarchy().isEmpty())));
         }
 
-        if (customProperty != null && !customValue.isEmpty()) {
+        if (customProperty != DATA_EMPTY && !customValue.isEmpty()) {
             addFilterPredicate(new FilterPredicate(product -> customValueMatcher.matches(
                     customProperty.getValue(product).toString(), customValue)));
         }
