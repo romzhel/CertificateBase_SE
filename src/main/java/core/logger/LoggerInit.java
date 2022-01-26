@@ -28,6 +28,7 @@ public class LoggerInit {
         fileAppender.addAttribute("fileName", "${basePath}/logs/certBase_" + Utils.getDateTimeForFileName() + ".log");
         fileAppender.addAttribute("append", "true");
         LayoutComponentBuilder fileLayout = builder.newLayout("PatternLayout");
+        fileLayout.addAttribute("charset", "UTF-8");
         fileLayout.addAttribute("pattern", "%d{yyyy-MM-dd HH:mm:ss.SSS} [%-15.-15t] %-5level %35.35c - %msg%n");
         fileAppender.add(fileLayout);
         builder.add(fileAppender);
@@ -44,12 +45,14 @@ public class LoggerInit {
         builder.add(fileAppenderErrors);
 
         AppenderComponentBuilder consoleAppender = builder.newAppender("STDOUT", "Console");
-        consoleAppender
-                .addAttribute("target", "SYSTEM_OUT");
-        consoleAppender.add(builder.newLayout("PatternLayout")
-                .addAttribute("pattern", "%d{HH:mm:ss.SSS} [%-15.-15t] %-5level %35.35c - %msg%n"));
-        consoleAppender.add(builder.newFilter("ThresholdFilter", Filter.Result.ACCEPT, Filter.Result.DENY)
-                .addAttribute("level", Level.TRACE));
+        consoleAppender.addAttribute("target", "SYSTEM_OUT");
+        consoleAppender.add(
+                builder.newLayout("PatternLayout")
+                        .addAttribute("charset", "CP866")
+                        .addAttribute("pattern", "%d{HH:mm:ss.SSS} [%-15.-15t] %-5level %35.35c - %msg%n"));
+        consoleAppender.add(
+                builder.newFilter("ThresholdFilter", Filter.Result.ACCEPT, Filter.Result.DENY)
+                        .addAttribute("level", Level.TRACE));
         builder.add(consoleAppender);
 
         RootLoggerComponentBuilder rootLogger = builder.newRootLogger(Level.TRACE);
