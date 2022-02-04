@@ -42,7 +42,7 @@ public class BudgetEvaluationToExcelExporter extends ReportToExcelTemplate_v3<Vo
         for (DataItem data : dataList) {
             titleCells.add(new ReportCell(data.getDisplayingName(), styles.CELL_ALIGN_HLEFT_BOLD));
         }
-        fillRow(titleCells.toArray(new ReportCell[0]));
+        fillRow(0, titleCells.toArray(new ReportCell[0]));
 
         int[] colWidth = new int[dataList.length];
         Arrays.fill(colWidth, 5000);
@@ -64,7 +64,7 @@ public class BudgetEvaluationToExcelExporter extends ReportToExcelTemplate_v3<Vo
                     for (DataItem data : dataList) {
                         dataCells.add(new ReportCell(data.getValue(product), styles.CELL_ALIGN_HLEFT_TEXT_FORMAT));
                     }
-                    fillRow(dataCells.toArray(new ReportCell[0]));
+                    fillRow(0, dataCells.toArray(new ReportCell[0]));
                 });
 
         saveToFile();

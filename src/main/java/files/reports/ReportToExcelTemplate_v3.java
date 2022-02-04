@@ -51,9 +51,8 @@ public abstract class ReportToExcelTemplate_v3<T> implements Runnable {
         }
     }
 
-    protected void fillRow(ReportCell... cells) {
+    protected void fillRow(int colIndex, ReportCell... cells) {
         SXSSFRow row = currentSheet.createRow(rowNum++);
-        colIndex = 0;
         for (ReportCell reportCell : cells) {
             fillCell(row.createCell(colIndex), reportCell.getValue(), reportCell.getStyle());
 
@@ -80,7 +79,7 @@ public abstract class ReportToExcelTemplate_v3<T> implements Runnable {
 
     protected void decorateTitles() {
         currentSheet.createFreezePane(colIndex + 10, 1);
-        currentSheet.setAutoFilter(new CellRangeAddress(0, rowNum - 1, 0, colIndex - 1));
+        currentSheet.setAutoFilter(new CellRangeAddress(0, Math.max(0, rowNum - 1), 0, Math.max(0, colIndex - 1)));
     }
 
     protected void fillCell(SXSSFCell cell, Object value, CellStyle style) {

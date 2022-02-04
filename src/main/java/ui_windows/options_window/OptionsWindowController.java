@@ -394,8 +394,10 @@ public class OptionsWindowController implements Initializable {
                 System.out.println("Can't open created file");
             }
         }).start();*/
+    }
 
-
+    public void actionCertPositionsReport() {
+        new CertificatePositionsReportScript().process(tvCertificates.getSelectionModel().getSelectedItems());
     }
 
 //    public void actionAddPriceList() {

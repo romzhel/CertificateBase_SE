@@ -59,7 +59,8 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
                 newProduct = mapper.mapToProduct(importedProduct);
             }
 
-            fillRow(new ReportCell(DATA_FAMILY_NAME.getValue(newProduct), styles.CELL_ALIGN_HLEFT),
+            fillRow(0,
+                    new ReportCell(DATA_FAMILY_NAME.getValue(newProduct), styles.CELL_ALIGN_HLEFT),
                     new ReportCell(DATA_RESPONSIBLE.getValue(newProduct), styles.CELL_ALIGN_HLEFT),
                     new ReportCell(DATA_ORDER_NUMBER.getValue(newProduct), styles.CELL_ALIGN_HLEFT),
                     new ReportCell(DATA_ARTICLE.getValue(newProduct), styles.CELL_ALIGN_HLEFT),
@@ -84,7 +85,8 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
         currentSheet = workbook.createSheet("BlockedChanges_".concat(Utils.getDateTimeForFileName()));
         rowNum = 0;
 
-        fillRow(new ReportCell("Направление", styles.CELL_ALIGN_HLEFT_BOLD),
+        fillRow(0,
+                new ReportCell("Направление", styles.CELL_ALIGN_HLEFT_BOLD),
                 new ReportCell("Ответственный", styles.CELL_ALIGN_HLEFT_BOLD),
                 new ReportCell("Заказной номер", styles.CELL_ALIGN_HLEFT_BOLD),
                 new ReportCell("Артикул", styles.CELL_ALIGN_HLEFT_BOLD),
@@ -108,7 +110,8 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
 
             for (ChangedProperty changedProperty : changedItem.getProtectedField()) {
 
-                fillRow(new ReportCell(DATA_FAMILY_NAME.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
+                fillRow(0,
+                        new ReportCell(DATA_FAMILY_NAME.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
                         new ReportCell(DATA_RESPONSIBLE.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
                         new ReportCell(DATA_ORDER_NUMBER.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
                         new ReportCell(DATA_ARTICLE.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
@@ -141,7 +144,8 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
     private void fillTitles() {
         rowNum = 0;
 
-        fillRow(new ReportCell("Направление", styles.CELL_ALIGN_HLEFT_BOLD),
+        fillRow(0,
+                new ReportCell("Направление", styles.CELL_ALIGN_HLEFT_BOLD),
                 new ReportCell("Ответственный", styles.CELL_ALIGN_HLEFT_BOLD),
                 new ReportCell("Заказной номер", styles.CELL_ALIGN_HLEFT_BOLD),
                 new ReportCell("Артикул", styles.CELL_ALIGN_HLEFT_BOLD),
@@ -163,7 +167,8 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
         for (ChangedProperty changedProperty : changedItem.getChangedPropertyList()) {
             Product changedProduct = Products.getInstance().getProductByVendorMaterialId(changedItem.getId());
 
-            fillRow(new ReportCell(DATA_FAMILY_NAME.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
+            fillRow(0,
+                    new ReportCell(DATA_FAMILY_NAME.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
                     new ReportCell(DATA_RESPONSIBLE.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
                     new ReportCell(DATA_ORDER_NUMBER.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),
                     new ReportCell(DATA_ARTICLE.getValue(changedProduct), styles.CELL_ALIGN_HLEFT),

@@ -54,6 +54,9 @@
                                                 <MenuItem fx:id="miCheckCertificates" mnemonicParsing="false"
                                                           onAction="#actionCheckCertificates"
                                                           text="     Поиск несоответствий     "/>
+                                                <MenuItem fx:id="miReportCertPositions" mnemonicParsing="false"
+                                                          onAction="#actionCertPositionsReport"
+                                                          text="     Отчёт по позициям сертификата     "/>
                                                 <SeparatorMenuItem mnemonicParsing="false"/>
                                                 <MenuItem fx:id="miOpenFile" mnemonicParsing="false"
                                                           onAction="#actionOpenCertificateFile"

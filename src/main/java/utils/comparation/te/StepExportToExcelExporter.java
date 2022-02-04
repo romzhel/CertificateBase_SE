@@ -30,7 +30,8 @@ public class StepExportToExcelExporter extends ReportToExcelTemplate_v3<TotalPri
         currentSheet = workbook.createSheet(String.format("STEP_import_%s", Utils.getDateTimeForFileName()));
         rowNum = 0;
 
-        fillRow(new ReportCell("ssn", styles.CELL_ALIGN_HCENTER_BOLD),
+        fillRow(0,
+                new ReportCell("ssn", styles.CELL_ALIGN_HCENTER_BOLD),
                 new ReportCell("cost1", styles.CELL_ALIGN_HCENTER_BOLD),
                 new ReportCell("cost2", styles.CELL_ALIGN_HCENTER_BOLD),
                 new ReportCell("eCi", styles.CELL_ALIGN_HCENTER_BOLD),
@@ -86,7 +87,8 @@ public class StepExportToExcelExporter extends ReportToExcelTemplate_v3<TotalPri
             String ssn = Products.getInstance().getSsnNotEmpty(product);
             String cost = ip.getProperties().get(DATA_LOCAL_PRICE).getNewValue().toString().replaceAll(",", ".");
 
-            fillRow(new ReportCell(ssn, styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
+            fillRow(0,
+                    new ReportCell(ssn, styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
                     new ReportCell(cost, styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
                     new ReportCell(cost, styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
                     new ReportCell("-10", styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
@@ -102,7 +104,8 @@ public class StepExportToExcelExporter extends ReportToExcelTemplate_v3<TotalPri
             return;
         }
 
-        fillRow(new ReportCell(ssn, styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
+        fillRow(0,
+                new ReportCell(ssn, styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
                 new ReportCell(cost, styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
                 new ReportCell(cost, styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
                 new ReportCell("10", styles.CELL_ALIGN_HCENTER_TEXT_FORMAT),
