@@ -15,10 +15,10 @@ import java.util.Map;
 import static ui_windows.product.data.DataItem.*;
 
 @Log4j2
-public class CertPositionsToExcel extends ReportToExcelTemplate_v3<Map<Certificate, Map<String, List<Product>>>> {
+public class CertCountriesToExcel extends ReportToExcelTemplate_v3<Map<Certificate, Map<String, Map<String, List<Product>>>>> {
     private DataItem[] productProps;
 
-    public CertPositionsToExcel(Map<Certificate, Map<String, List<Product>>> data, Path reportFilePath) {
+    public CertCountriesToExcel(Map<Certificate, Map<String, Map<String, List<Product>>>> data, Path reportFilePath) {
         super(data, reportFilePath);
     }
 
@@ -47,21 +47,25 @@ public class CertPositionsToExcel extends ReportToExcelTemplate_v3<Map<Certifica
     }
 
     private void fillSheet() {
-        for (Map.Entry<Certificate, Map<String, List<Product>>> entry : data.entrySet()) {
+        for (Map.Entry<Certificate, Map<String, Map<String, List<Product>>>> entry : data.entrySet()) {
             String certName = String.format("%s (%s)", entry.getKey().getName(), entry.getKey().getFileName());
             fillRow(0, new ReportCell(certName, styles.CELL_ALIGN_HLEFT_BOLD));
 
-            for (Map.Entry<String, List<Product>> nameMapEntry : entry.getValue().entrySet()) {
-                fillRow(1,
-                        new ReportCell(nameMapEntry.getKey(), styles.CELL_ALIGN_HLEFT_BOLD));
+            for (Map.Entry<String, Map<String, List<Product>>> nameMapEntry : entry.getValue().entrySet()) {
+                fillRow(1, new ReportCell(nameMapEntry.getKey(), styles.CELL_ALIGN_HLEFT));
 
-                for (Product product : nameMapEntry.getValue()) {
-                    List<ReportCell> reportCells = new LinkedList<>();
-                    for (DataItem dataItem : productProps) {
-                        reportCells.add(new ReportCell(dataItem.getValue(product), styles.CELL_ALIGN_HLEFT));
+                for (Map.Entry<String, List<Product>> countryEntry : nameMapEntry.getValue().entrySet()) {
+                    fillRow(2, new ReportCell(countryEntry.getKey() + " - " +
+                            (countryEntry.getValue().size() == 0 ? "OK" : "NOT OK"), styles.CELL_ALIGN_HLEFT));
+
+                    for (Product product : countryEntry.getValue()) {
+                        List<ReportCell> reportCells = new LinkedList<>();
+                        for (DataItem dataItem : productProps) {
+                            reportCells.add(new ReportCell(dataItem.getValue(product), styles.CELL_ALIGN_HLEFT));
+                        }
+
+                        fillRow(3, reportCells.toArray(new ReportCell[productProps.length]));
                     }
-
-                    fillRow(2, reportCells.toArray(new ReportCell[productProps.length]));
                 }
             }
         }
@@ -71,6 +75,7 @@ public class CertPositionsToExcel extends ReportToExcelTemplate_v3<Map<Certifica
         List<ReportCell> titles = new ArrayList<>();
         titles.add(new ReportCell("Сертификат", styles.CELL_ALIGN_HLEFT_BOLD));
         titles.add(new ReportCell("Сокращение", styles.CELL_ALIGN_HLEFT_BOLD));
+        titles.add(new ReportCell("Страна", styles.CELL_ALIGN_HLEFT_BOLD));
 
         for (DataItem dataItem : productProps) {
             titles.add(new ReportCell(dataItem.getDisplayingName(), styles.CELL_ALIGN_HLEFT_BOLD));
@@ -79,7 +84,7 @@ public class CertPositionsToExcel extends ReportToExcelTemplate_v3<Map<Certifica
         rowNum = 0;
         fillRow(0, titles.toArray(new ReportCell[0]));
 
-        setColumnSize(5000, 5000, 5000, 5000, 10000, 5000, 5000, 5000, 5000, 5000);
+        setColumnSize(5000, 5000, 5000, 5000, 5000, 10000, 5000, 5000, 5000, 5000, 5000);
         decorateTitles();
     }
 }

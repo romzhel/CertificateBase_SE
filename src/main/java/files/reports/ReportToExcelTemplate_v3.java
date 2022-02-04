@@ -28,6 +28,7 @@ public abstract class ReportToExcelTemplate_v3<T> implements Runnable {
     protected File reportFile;
     protected int rowNum;
     protected int colIndex;
+    protected int maxColIndex;
 
     public ReportToExcelTemplate_v3(T data, Path reportFilePath) {
         this.data = data;
@@ -63,6 +64,8 @@ public abstract class ReportToExcelTemplate_v3<T> implements Runnable {
 
             colIndex += 1 + reportCell.getCombinedCellsCount();
         }
+
+        maxColIndex = Math.max(maxColIndex, colIndex);
     }
 
     protected void setColumnSize(int... widthList) {
@@ -78,8 +81,8 @@ public abstract class ReportToExcelTemplate_v3<T> implements Runnable {
     }
 
     protected void decorateTitles() {
-        currentSheet.createFreezePane(colIndex + 10, 1);
-        currentSheet.setAutoFilter(new CellRangeAddress(0, Math.max(0, rowNum - 1), 0, Math.max(0, colIndex - 1)));
+        currentSheet.createFreezePane(maxColIndex + 10, 1);
+        currentSheet.setAutoFilter(new CellRangeAddress(0, Math.max(0, rowNum - 1), 0, Math.max(0, maxColIndex - 1)));
     }
 
     protected void fillCell(SXSSFCell cell, Object value, CellStyle style) {

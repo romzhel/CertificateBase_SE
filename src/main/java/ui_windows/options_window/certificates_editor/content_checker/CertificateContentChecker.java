@@ -59,13 +59,15 @@ public class CertificateContentChecker {
     }
 
     private List<Product> getItemsWithBadCountries(Certificate certificate) {
+
+
         List<Product> itemsWithNotOkCountry = new ArrayList<>();
 
         int firstRow = rowIndex;
         addRow(0, certificate.getFileName());
 
         for (CertificateContent cc : certificate.getContent()) {
-            String[] names = cc.getEquipmentName().split("\\,");
+            String[] names = cc.getEquipmentName().replaceAll("\\s", "").split("\\,");
 
             addRow(1, cc.getProductType().getType());
 
@@ -77,6 +79,10 @@ public class CertificateContentChecker {
                 for (Product product : Products.getInstance().getItems()) {
                     String comparingValue = "^".concat(name).concat("[^a-zA-Z]").concat(".*");
                     boolean articleMatches = product.getArticle().matches(comparingValue);
+
+                    if (articleMatches) {
+                        System.out.println();
+                    }
 
                     try {
                         if (!product.getCountry().isEmpty() && (articleMatches || certificate.isMaterialMatch() && product.getMaterial().matches(comparingValue))) {

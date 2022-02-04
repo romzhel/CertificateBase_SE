@@ -6,7 +6,7 @@
 
     <groupId>groupId</groupId>
     <artifactId>CertificateBase</artifactId>
-    <version>1.6.3-rc1${suffix.test}</version>
+    <version>1.6.3-rc2${suffix.test}</version>
 
     <properties>
         <!--        <db.version>3.21.0.1</db.version>-->

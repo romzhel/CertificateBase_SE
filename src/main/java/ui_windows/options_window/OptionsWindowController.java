@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui.Dialogs;
 import ui_windows.options_window.certificates_editor.*;
-import ui_windows.options_window.certificates_editor.content_checker.CertificateContentChecker;
 import ui_windows.options_window.families_editor.FamiliesEditorWindow;
 import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.families_editor.ProductFamiliesTable;
@@ -347,7 +346,8 @@ public class OptionsWindowController implements Initializable {
     }
 
     public void actionCertCheckCountries() {
-        new CertificateContentChecker(tvCertificates.getSelectionModel().getSelectedItems());
+//        new CertificateContentChecker(tvCertificates.getSelectionModel().getSelectedItems());
+        new CertificateCountriesReportScript().process(tvCertificates.getSelectionModel().getSelectedItems());
     }
 
     public void actionCheckCertificates() {
