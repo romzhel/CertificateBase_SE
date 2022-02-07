@@ -2,7 +2,6 @@ package files.reports;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.util.CellRangeAddress;
 import ui_windows.main_window.file_import_window.te.importer.ImportedProduct;
 import ui_windows.product.Product;
 import ui_windows.product.Products;
@@ -76,9 +75,6 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
         for (ChangedItem changedItem : sortedList) {
             fillChangedItemData(changedItem);
         }
-
-        currentSheet.createFreezePane(colIndex + 10, 1);
-        currentSheet.setAutoFilter(new CellRangeAddress(0, 0, 0, colIndex));
     }
 
     private void fillBlockedChangesSheet() {
@@ -99,9 +95,6 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
                 new ReportCell("     ", styles.CELL_ALIGN_HLEFT_BOLD),
                 new ReportCell("Заблокированное изменение", styles.CELL_ALIGN_HLEFT_BOLD)
         );
-
-        setColumnSize();
-        decorateTitles();
 
         List<ChangedItem> sortedList = new ArrayList<>(data.getNonChangedProtectedItemList());
         sortedList.sort(Comparator.comparing(ChangedItem::getId));
@@ -136,9 +129,6 @@ public class NowImportResultToExcel_v2 extends ReportToExcelTemplate_v3<TotalCom
         for (ChangedItem changedItem : data.getNoCostItemList()) {
             fillChangedItemData(changedItem);
         }
-
-        currentSheet.createFreezePane(colIndex + 10, 1);
-        currentSheet.setAutoFilter(new CellRangeAddress(0, 0, 0, colIndex));
     }
 
     private void fillTitles() {
