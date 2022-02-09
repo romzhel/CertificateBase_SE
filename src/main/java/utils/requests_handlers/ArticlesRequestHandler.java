@@ -46,8 +46,10 @@ public class ArticlesRequestHandler extends ReportToExcelTemplate {
         Map<String, Set<Product>> result = new HashMap<>();
         for (String item : requestItems) {
             result.put(item, Products.getInstance().getItems().stream()
-                            .filter(product -> product.getArticle().equals(item) || product.getArticle().matches("^" + item + "\\s*[\\d\\-]+.*$"))
+//                            .filter(product -> product.getArticle().equals(item) || product.getArticle().matches("^" + item + "\\s*[\\d\\-\\.]+.*$"))
+                            .filter(product -> product.getArticle().equals(item) || product.getArticle().matches("^" + item + "[^A-Za-z]+.*$"))
 //                    .filter(product -> product.getArticle().matches("^" + item + "(\\s*[\\d\\-]+.*)?$"))//todo значение item со знаками распознаётся как выражение
+                            .filter(product -> !product.getDchain().equals("89"))
                             .collect(Collectors.toSet())
             );
         }
@@ -72,11 +74,13 @@ public class ArticlesRequestHandler extends ReportToExcelTemplate {
         }
         logger.trace("заголовки созданы");
 
+        xssfSheet.setRowSumsBelow(false);
+
         int groupStart = 0;
         for (Map.Entry<String, Set<Product>> entry : result.entrySet()) {
-            groupStart = rowIndex;
             colIndex = 0;
             xssfRow = xssfSheet.createRow(rowIndex++);
+            groupStart = rowIndex;
             xssfCell = xssfRow.createCell(colIndex++);
             xssfCell.setCellValue(entry.getKey());
 
@@ -106,8 +110,8 @@ public class ArticlesRequestHandler extends ReportToExcelTemplate {
                 }
             }
 
-//            xssfRow = xssfSheet.createRow(rowIndex++);
-//            xssfSheet.groupRow(groupStart, rowIndex - 1);
+            xssfSheet.groupRow(groupStart, rowIndex - 1);
+            xssfSheet.setRowGroupCollapsed(groupStart, true);
         }
         logger.trace("Данные внесены, создание файла Excel");
 
