@@ -81,7 +81,7 @@ public class TotalPriceComparisonResultToExcelExporter extends ReportToExcelTemp
                 Row row = sheet.createRow(rowNum++);
 
                 CellStyle cellStyle = itemDataStyles[currentSheetIndex];
-                fillProductData(changedItem, row, cellStyle);
+                    fillProductData(changedItem, row, cellStyle);
 
                 String direction = initialSheetIndex <= currentSheetIndex ? "->" : "<-";
                 CellStyle directionStyle = initialSheetIndex < currentSheetIndex ? styles.CELL_ALIGN_HCENTER_BROWN : styles.CELL_ALIGN_HCENTER;

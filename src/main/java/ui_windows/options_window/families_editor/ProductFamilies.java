@@ -156,7 +156,11 @@ public class ProductFamilies implements Initializable {
     }
 
     public boolean isSpHierarchyName(String hierarchy) {
-        return hierarchy.startsWith("LVB");
+        return hierarchy.startsWith("VAC") | hierarchy.startsWith("VIN");
+    }
+
+    public boolean isSpGbkName(String gbk) {
+        return gbk.equals("H22M");
     }
 
 

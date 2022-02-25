@@ -8,7 +8,6 @@ import javafx.scene.control.Tab;
 import javafx.util.Callback;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
-import ui_windows.options_window.families_editor.ProductFamilies;
 import ui_windows.options_window.order_accessibility_editor.OrderAccessibility;
 import ui_windows.options_window.order_accessibility_editor.OrdersAccessibility;
 import ui_windows.options_window.price_lists_editor.se.PriceListContentTable;
@@ -269,15 +268,15 @@ public class PriceListSheet extends Tab {
 
             Map<ProductLgbk, Boolean> priceMap = contentTable.getGbkInPriceMap();
             if (priceMap.getOrDefault(productLgbk, priceMap.getOrDefault(parentLgbk, false))) {
-                boolean dchainMatchesSP = product.getDchain().trim().isEmpty() && ProductFamilies.getInstance().isSpProduct(product);
-                boolean dchainMatchesSets = product.getDchain().trim().isEmpty() && product.getLgbk().startsWith("RU5");
-
-                if (dchainMatchesSP || dchainMatchesSets) {
-                    return true;
-                } else {
-                    return dchainSelector.getSelectedItems().stream()
-                            .anyMatch(oa -> product.getDchain().equals(oa.getStatusCode()));
-                }
+//                boolean dchainMatchesSP = product.getDchain().trim().isEmpty() && ProductFamilies.getInstance().isSpProduct(product);
+//                boolean dchainMatchesSets = product.getDchain().trim().isEmpty() && product.getLgbk().startsWith("RU5");
+//
+//                if (dchainMatchesSP || dchainMatchesSets) {
+//                    return true;
+//                } else {
+                return dchainSelector.getSelectedItems().stream()
+                        .anyMatch(oa -> product.getDchain().isEmpty() || product.getDchain().equals(oa.getStatusCode()));
+//                }
             }
         } catch (Exception e) {
             log.error("in price looking error for {}, gbk/parent {}/{}", product, productLgbk, parentLgbk);
