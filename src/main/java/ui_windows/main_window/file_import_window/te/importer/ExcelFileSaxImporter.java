@@ -10,7 +10,7 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.xml.sax.*;
@@ -42,7 +42,7 @@ public class ExcelFileSaxImporter {
         for (File file : files) {
             try (OPCPackage pkg = OPCPackage.open(file.getPath(), PackageAccess.READ)) {
                 xssfReader = new XSSFReader(pkg);
-                SharedStringsTable sst = xssfReader.getSharedStringsTable();
+                SharedStrings sst = xssfReader.getSharedStringsTable();
                 stylesTable = xssfReader.getStylesTable();
 
                 XMLReader parser = fetchSheetParser(sst);
@@ -65,7 +65,7 @@ public class ExcelFileSaxImporter {
         }
     }
 
-    public XMLReader fetchSheetParser(SharedStringsTable sst) throws SAXException, ParserConfigurationException {
+    public XMLReader fetchSheetParser(SharedStrings sst) throws SAXException, ParserConfigurationException {
         XMLReader parser = XMLHelper.newXMLReader();
         ContentHandler handler = new SheetHandler(sst);
         parser.setContentHandler(handler);
@@ -73,7 +73,7 @@ public class ExcelFileSaxImporter {
     }
 
     private class SheetHandler extends DefaultHandler {
-        private final SharedStringsTable sst;
+        private final SharedStrings sst;
         private final LruCache<Integer, String> lruCache = new LruCache<>(50);
         private final DataFormatter dataFormatter = new DataFormatter();
         private String lastContents;
@@ -83,7 +83,7 @@ public class ExcelFileSaxImporter {
         private String formatString;
         private String lastCellRef;
 
-        private SheetHandler(SharedStringsTable sst) {
+        private SheetHandler(SharedStrings sst) {
             this.sst = sst;
         }
 
