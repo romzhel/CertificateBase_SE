@@ -20,7 +20,7 @@ import static ui_windows.product.data.DataItem.DATA_EMPTY;
 public class ExcelFileSaxRowDataToImportedProductMapper {
     private final PropertiesToImportedProductMapper mapper = new PropertiesToImportedProductMapper();
 
-    public ImportedProduct getProductFromFileRecord(SaxRowData record, ImportDataSheet importDataSheet) throws RuntimeException {
+    public ImportedProduct getProductFromFileRecord(SaxRowData record, ImportDataSheet importDataSheet, boolean isImportFromNow) throws RuntimeException {
         Map<DataItem, ImportedProperty> propertyMap = importDataSheet.getColumnParams().stream()
                 .filter(param -> param.getDataItem() != DATA_EMPTY)
                 .map(param -> {
@@ -37,7 +37,7 @@ public class ExcelFileSaxRowDataToImportedProductMapper {
                         (property) -> property)
                 );
 
-        return mapper.importedProductMapper(propertyMap);
+        return mapper.importedProductMapper(propertyMap, isImportFromNow);
     }
 
     private Object getValue(SaxRowData record, ImportColumnParameter param) throws RuntimeException {

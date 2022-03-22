@@ -60,7 +60,7 @@ public class ProductDataFileImportTask implements Runnable {
         }
 
         List<Product> existItems = Products.getInstance().getItems();
-        List<ImportedProduct> importedItems = importer.getProducts(filesImportParameters.getFiles(), true);
+        List<ImportedProduct> importedItems = importer.getProducts(filesImportParameters.getFiles(), true, true);
         ComparingRules<Product> comparingRules = new ComparingRulesImportNow();
         TotalComparisonResult comparisonResult = comparator.compare(existItems, importedItems, comparingRules);
 

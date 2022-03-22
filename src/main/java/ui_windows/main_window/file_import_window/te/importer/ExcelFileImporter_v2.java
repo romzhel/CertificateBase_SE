@@ -25,6 +25,7 @@ public class ExcelFileImporter_v2 extends AbstractFileImporter {
     private ImportDataSheet currentSheet;
     private ExcelFileSaxRowDataToImportedProductMapper saxRowDataMapper = new ExcelFileSaxRowDataToImportedProductMapper();
     private boolean manualMode;
+    private boolean isImportFromNow;
     @Getter
     private List<String> sheetNames = new LinkedList<>();
 
@@ -33,8 +34,9 @@ public class ExcelFileImporter_v2 extends AbstractFileImporter {
     }
 
     @Override
-    public List<ImportedProduct> getProducts(List<File> files, boolean manualMode) throws RuntimeException {
+    public List<ImportedProduct> getProducts(List<File> files, boolean manualMode, boolean isImportFromNow) throws RuntimeException {
         this.manualMode = manualMode;
+        this.isImportFromNow = isImportFromNow;
         conflictItemsPreprocessor.clearCash();
 
         try {
@@ -65,9 +67,9 @@ public class ExcelFileImporter_v2 extends AbstractFileImporter {
 
     private void processSaxData(SaxRowData saxRowData) throws RuntimeException {
         if (isTitlesFound) {
-            ImportedProduct importedItem = saxRowDataMapper.getProductFromFileRecord(saxRowData, currentSheet);
+            ImportedProduct importedItem = saxRowDataMapper.getProductFromFileRecord(saxRowData, currentSheet, isImportFromNow);
             if (importedItem != null) {
-                conflictItemsPreprocessor.process(importedItem);
+                conflictItemsPreprocessor.process(importedItem, isImportFromNow);
             }
         } else {
             if (dataRecognizer.isRowContainsTitles(saxRowData)) {

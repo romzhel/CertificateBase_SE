@@ -4,5 +4,5 @@ import java.io.File;
 import java.util.List;
 
 public interface FileImporter {
-    List<ImportedProduct> getProducts(List<File> files, boolean manualMode);
+    List<ImportedProduct> getProducts(List<File> files, boolean manualMode, boolean isImportFromNow);
 }

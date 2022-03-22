@@ -29,8 +29,8 @@ public class PricesComparisonTask {
         }
 
         ExcelFileImporter_v2 fileImporter = new ExcelFileImporter_v2();
-        List<ImportedProduct> prevPriceItems = fileImporter.getProducts(Collections.singletonList(prevPriceFile), false);
-        List<ImportedProduct> newPriceItems = fileImporter.getProducts(Collections.singletonList(newPriceFile), false);
+        List<ImportedProduct> prevPriceItems = fileImporter.getProducts(Collections.singletonList(prevPriceFile), false, false);
+        List<ImportedProduct> newPriceItems = fileImporter.getProducts(Collections.singletonList(newPriceFile), false, false);
 
         TotalPriceComparator priceComparator = new TotalPriceComparator();
         TotalPriceComparisonResult priceComparisonResult = priceComparator.compare(prevPriceItems, newPriceItems);

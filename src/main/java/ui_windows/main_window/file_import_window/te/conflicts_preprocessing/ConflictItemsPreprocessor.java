@@ -13,8 +13,11 @@ public class ConflictItemsPreprocessor {
     private static final Logger logger = LogManager.getLogger(ConflictItemsPreprocessor.class);
     private Map<String, ImportedProduct> processedItems = new HashMap<>();
     private Map<String, ConflictItem> conflictItems = new HashMap<>();
+    private boolean isImportFromNow;
 
-    public void process(ImportedProduct importedItem) {
+    public void process(ImportedProduct importedItem, boolean isImportFromNow) {
+        this.isImportFromNow = isImportFromNow;
+
         ConflictItemService conflictItemService = new ConflictItemService();
         ImportedItemService importedItemService = new ImportedItemService();
 
@@ -59,7 +62,7 @@ public class ConflictItemsPreprocessor {
                                     )
                             )
                     )
-                    .map(conflictItem -> mapper.importedProductMapper(conflictItem.getPropertyMap()))
+                    .map(conflictItem -> mapper.importedProductMapper(conflictItem.getPropertyMap(), isImportFromNow))
                     .collect(Collectors.toList());
 
             result.addAll(treatedItems);

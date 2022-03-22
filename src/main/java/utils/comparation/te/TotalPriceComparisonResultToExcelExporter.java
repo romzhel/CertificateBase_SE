@@ -64,6 +64,11 @@ public class TotalPriceComparisonResultToExcelExporter extends ReportToExcelTemp
     private void fillChangedItemsData(SXSSFSheet sheet) {
         for (ChangedItem item : comparisonResult.getChangedItemList()) {
             Product changedItem = Products.getInstance().getProductByVendorMaterialId(item.getId());
+
+            if (changedItem == null) {
+                log.error("Не найден продукт: {}", item);
+            }
+
             ChangedValue<String> changedSource = comparisonResult.getChangedSourceMap().get(item.getId());
 
             for (ChangedProperty property : item.getChangedPropertyList()) {
@@ -81,7 +86,7 @@ public class TotalPriceComparisonResultToExcelExporter extends ReportToExcelTemp
                 Row row = sheet.createRow(rowNum++);
 
                 CellStyle cellStyle = itemDataStyles[currentSheetIndex];
-                    fillProductData(changedItem, row, cellStyle);
+                fillProductData(changedItem, row, cellStyle);
 
                 String direction = initialSheetIndex <= currentSheetIndex ? "->" : "<-";
                 CellStyle directionStyle = initialSheetIndex < currentSheetIndex ? styles.CELL_ALIGN_HCENTER_BROWN : styles.CELL_ALIGN_HCENTER;
